@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="ד״ר עדי שריד">
 
-<title>הרצאות – ניתוח נתונים סטטיסטי</title>
+<title>0. פתיחה: על הקורס – ניתוח נתונים סטטיסטי</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,30 +27,65 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed534de03bf6871c3482ab8e720c3f4d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-a243188cf494e5744575b691b115f0af.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed534de03bf6871c3482ab8e720c3f4d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1a2625010dce5936c3d3734aae06b7e6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b891a872652c848a6e39a0a6e5c6998f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1a2625010dce5936c3d3734aae06b7e6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed534de03bf6871c3482ab8e720c3f4d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-a243188cf494e5744575b691b115f0af.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed534de03bf6871c3482ab8e720c3f4d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1a2625010dce5936c3d3734aae06b7e6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-b891a872652c848a6e39a0a6e5c6998f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1a2625010dce5936c3d3734aae06b7e6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -81,7 +117,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -250,7 +286,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">ניתוח נתונים סטטיסטי</span>
     </a>
   </div>
@@ -261,7 +297,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">בית</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -270,22 +306,22 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
         <li>
-    <a class="dropdown-item" href="./lectures.html">
+    <a class="dropdown-item" href="../lectures.html">
  <span class="dropdown-text">כל ההרצאות</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li>
-    <a class="dropdown-item" href="./lectures/00-course-intro.html">
+    <a class="dropdown-item" href="../lectures/00-course-intro.html">
  <span class="dropdown-text">0. פתיחה: על הקורס</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./lectures/01-nonparametric.html">
+    <a class="dropdown-item" href="../lectures/01-nonparametric.html">
  <span class="dropdown-text">1. שיטות א-פרמטריות</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./syllabus.html"> 
+    <a class="nav-link" href="../syllabus.html"> 
 <span class="menu-text">סילבוס</span></a>
   </li>  
   <li class="nav-item">
@@ -311,21 +347,55 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">בעמוד זה</h2>
+   
+  <ul>
+  <li><a href="#ברוכים-הבאים" id="toc-ברוכים-הבאים" class="nav-link active" data-scroll-target="#ברוכים-הבאים">ברוכים הבאים</a></li>
+  <li><a href="#למה-הקורס-הזה" id="toc-למה-הקורס-הזה" class="nav-link" data-scroll-target="#למה-הקורס-הזה">למה הקורס הזה?</a></li>
+  <li><a href="#מה-תדעו-לעשות-בסוף-הקורס" id="toc-מה-תדעו-לעשות-בסוף-הקורס" class="nav-link" data-scroll-target="#מה-תדעו-לעשות-בסוף-הקורס">מה תדעו לעשות בסוף הקורס</a></li>
+  <li><a href="#תוכנית-הקורס" id="toc-תוכנית-הקורס" class="nav-link" data-scroll-target="#תוכנית-הקורס">תוכנית הקורס</a></li>
+  <li><a href="#הודעה-ההרצאה-השנייה-מבוטלת" id="toc-הודעה-ההרצאה-השנייה-מבוטלת" class="nav-link" data-scroll-target="#הודעה-ההרצאה-השנייה-מבוטלת">הודעה: ההרצאה השנייה מבוטלת</a></li>
+  <li><a href="#חומרי-הקורס-איפה-הכול-נמצא" id="toc-חומרי-הקורס-איפה-הכול-נמצא" class="nav-link" data-scroll-target="#חומרי-הקורס-איפה-הכול-נמצא">חומרי הקורס: איפה הכול נמצא</a></li>
+  <li><a href="#מה-זה-github-ולמה-זה-מעניין-אתכם" id="toc-מה-זה-github-ולמה-זה-מעניין-אתכם" class="nav-link" data-scroll-target="#מה-זה-github-ולמה-זה-מעניין-אתכם">מה זה GitHub, ולמה זה מעניין אתכם</a></li>
+  <li><a href="#איך-משיגים-את-כל-החומרים" id="toc-איך-משיגים-את-כל-החומרים" class="nav-link" data-scroll-target="#איך-משיגים-את-כל-החומרים">איך משיגים את כל החומרים</a></li>
+  <li><a href="#סביבת-עבודה" id="toc-סביבת-עבודה" class="nav-link" data-scroll-target="#סביבת-עבודה">סביבת עבודה</a></li>
+  <li><a href="#הרכב-הציון" id="toc-הרכב-הציון" class="nav-link" data-scroll-target="#הרכב-הציון">הרכב הציון</a></li>
+  <li><a href="#למה-הפרויקט-חשוב-יותר-מ-15" id="toc-למה-הפרויקט-חשוב-יותר-מ-15" class="nav-link" data-scroll-target="#למה-הפרויקט-חשוב-יותר-מ-15">למה הפרויקט חשוב (יותר מ-15%)</a></li>
+  <li><a href="#שעות-קבלה-ויצירת-קשר" id="toc-שעות-קבלה-ויצירת-קשר" class="nav-link" data-scroll-target="#שעות-קבלה-ויצירת-קשר">שעות קבלה ויצירת קשר</a></li>
+  <li><a href="#כללי-התנהלות" id="toc-כללי-התנהלות" class="nav-link" data-scroll-target="#כללי-התנהלות">כללי התנהלות</a></li>
+  <li><a href="#שאלות" id="toc-שאלות" class="nav-link" data-scroll-target="#שאלות">שאלות?</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/00-course-intro.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div><div class="quarto-alternate-formats"><h2>תבניות אחרות</h2><ul><li><a href="00-course-intro-slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">הרצאות</h1>
+<h1 class="title">0. פתיחה: על הקורס</h1>
+<p class="subtitle lead">ניתוח נתונים סטטיסטי · מפגש ראשון</p>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">כותב</div>
+    <div class="quarto-title-meta-contents">
+             <p>ד״ר עדי שריד </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">פורסם</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">1 באוקטובר 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -335,75 +405,106 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>לכל הרצאה יש <strong>דף סיכום</strong> לקריאה ו<strong>מצגת</strong> להצגה בכיתה. הקישור למצגת מופיע בצד הדף, תחת “פורמטים נוספים”. לוח הזמנים עדיין עשוי להשתנות.</p>
+<section id="ברוכים-הבאים" class="level2">
+<h2 class="anchored" data-anchor-id="ברוכים-הבאים">ברוכים הבאים</h2>
+<p><strong>ניתוח נתונים סטטיסטי</strong> (0571-3137)<br>
+הפקולטה להנדסה, אוניברסיטת תל אביב · סמסטר א׳ תשפ״ז</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td><strong>הרצאה</strong></td>
+<td>ד״ר עדי שריד · יום ב׳ 09:00–12:00 · סמואלי הנדסה, חדר 001</td>
+</tr>
+<tr class="even">
+<td><strong>תרגול</strong></td>
+<td>גב׳ אביטל שמיר · יום ד׳ 14:30–15:30 (קבוצה 02) או 15:30–16:30 (קבוצה 03)</td>
+</tr>
+<tr class="odd">
+<td><strong>אתר הקורס</strong></td>
+<td><a href="https://adisarid.github.io/nanas-tau/" class="uri">https://adisarid.github.io/nanas-tau/</a></td>
+</tr>
+<tr class="even">
+<td><strong>Moodle</strong></td>
+<td><a href="https://moodle.tau.ac.il/course/view.php?id=571313701">הודעות, תרגילי בית והגשות</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="למה-הקורס-הזה" class="level2">
+<h2 class="anchored" data-anchor-id="למה-הקורס-הזה">למה הקורס הזה?</h2>
+<ul>
+<li>כמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם</li>
+<li>הסטטיסטיקה שלמדתם עד עכשיו עסקה במדגם אחד או שניים. כאן נעבור ל<strong>מודלים</strong>: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים</li>
+<li>כלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא <strong>שיקול הדעת</strong>:
+<ul>
+<li>איזו שיטה מתאימה לשאלה ולנתונים</li>
+<li>האם ההנחות שלה מתקיימות</li>
+<li>מה הפלט אומר, ומה הוא <strong>לא</strong> אומר</li>
+<li>איפה הניתוח (שלכם, של עמית או של מודל שפה) שגוי</li>
+</ul></li>
+</ul>
+</section>
+<section id="מה-תדעו-לעשות-בסוף-הקורס" class="level2">
+<h2 class="anchored" data-anchor-id="מה-תדעו-לעשות-בסוף-הקורס">מה תדעו לעשות בסוף הקורס</h2>
+<ol type="1">
+<li>לבחור שיטה סטטיסטית מתאימה לשאלת מחקר ולסוג הנתונים</li>
+<li>לבדוק את ההנחות של השיטה, ולדעת מה עושים כשהן לא מתקיימות</li>
+<li>להריץ את הניתוח ב-R (או ב-Python) ולקרוא את הפלט</li>
+<li>לתכנן ניסוי כך שהנתונים יענו על השאלה</li>
+<li>לפרש תוצאות ולהציג אותן למי שמקבל את ההחלטה</li>
+</ol>
+</section>
+<section id="תוכנית-הקורס" class="level2">
+<h2 class="anchored" data-anchor-id="תוכנית-הקורס">תוכנית הקורס</h2>
+<div class="small">
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>#</th>
-<th>נושא</th>
-<th>חומרים</th>
+<th>הרצאה</th>
+<th>תרגול</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>0</td>
-<td>פתיחה: על הקורס</td>
-<td><a href="./lectures/00-course-intro.html">סיכום</a> · <a href="lectures/00-course-intro-slides.html">מצגת</a></td>
-</tr>
-<tr class="even">
 <td>1</td>
 <td>שיטות א-פרמטריות</td>
-<td><a href="./lectures/01-nonparametric.html">סיכום</a> · <a href="lectures/01-nonparametric-slides.html">מצגת</a></td>
-</tr>
-<tr class="odd">
-<td>2</td>
-<td><strong>מבוטלת</strong> (כנס בחו״ל). מועד ההשלמה יפורסם ב-Moodle</td>
-<td></td>
+<td>שיטות א-פרמטריות</td>
 </tr>
 <tr class="even">
+<td>2</td>
+<td><strong>מבוטלת</strong>, ראו בשקף הבא</td>
+<td>חזרה על התפלגויות</td>
+</tr>
+<tr class="odd">
 <td>3</td>
 <td>רגרסיה לינארית מרובה</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>4</td>
-<td>ניתוח שונות חד-כיווני (One-way ANOVA)</td>
-<td></td>
+<td>רגרסיה פשוטה ומרובה</td>
 </tr>
 <tr class="even">
-<td>5</td>
-<td>ניגודים והשוואות מרובות</td>
-<td></td>
+<td>4–6</td>
+<td>ניתוח שונות (ANOVA): חד-כיווני, ניגודים, רב-כיווני</td>
+<td>בהתאם</td>
 </tr>
 <tr class="odd">
-<td>6</td>
-<td>ניתוח שונות רב-כיווני (Two-way ANOVA)</td>
-<td></td>
-</tr>
-<tr class="even">
 <td>7</td>
-<td>תכנון ניסויים (DOE)</td>
-<td></td>
+<td>תכנון ניסויים</td>
+<td>בהתאם</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>8</td>
 <td>רגרסיה לוגיסטית</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>9</td>
-<td>ניתוח גורמים ראשיים (PCA)</td>
-<td></td>
+<td>בהתאם</td>
 </tr>
 <tr class="odd">
-<td>10</td>
-<td>סדרות עתיות וחיזוי (א)</td>
-<td></td>
+<td>9</td>
+<td>ניתוח גורמים ראשיים (PCA)</td>
+<td>בהתאם</td>
 </tr>
 <tr class="even">
-<td>11</td>
-<td>סדרות עתיות וחיזוי (ב)</td>
-<td></td>
+<td>10–11</td>
+<td>סדרות עתיות וחיזוי</td>
+<td>בהתאם</td>
 </tr>
 <tr class="odd">
 <td>12</td>
@@ -413,12 +514,143 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>13</td>
 <td>חזרה לבחינה</td>
-<td></td>
+<td>בהתאם</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="small muted">
+<p>התוכנית עשויה להשתנות. העדכונים יופיעו באתר וב-Moodle.</p>
+</div>
+</section>
+<section id="הודעה-ההרצאה-השנייה-מבוטלת" class="level2">
+<h2 class="anchored" data-anchor-id="הודעה-ההרצאה-השנייה-מבוטלת">הודעה: ההרצאה השנייה מבוטלת</h2>
+<ul>
+<li>בשבוע השני אהיה בחו״ל בכנס, ולכן <strong>ההרצאה השנייה לא תתקיים</strong></li>
+<li><strong>התרגול באותו שבוע מתקיים כרגיל</strong> (חזרה על התפלגויות)</li>
+<li>תתקיים הרצאת השלמה. <strong>המועד יפורסם ב-Moodle</strong></li>
+</ul>
+</section>
+<section id="חומרי-הקורס-איפה-הכול-נמצא" class="level2">
+<h2 class="anchored" data-anchor-id="חומרי-הקורס-איפה-הכול-נמצא">חומרי הקורס: איפה הכול נמצא</h2>
+<ul>
+<li><strong>אתר הקורס</strong> (<a href="https://adisarid.github.io/nanas-tau/" class="uri">https://adisarid.github.io/nanas-tau/</a>) הוא המקום המרכזי לחומרים, ויש אליו קישור גם מ-Moodle</li>
+<li>לכל הרצאה יש:
+<ul>
+<li><strong>מצגת</strong>, שבה אני משתמש בכיתה</li>
+<li><strong>דף סיכום</strong> לקריאה, עם ההסברים המלאים וכל הקוד</li>
+</ul></li>
+<li><strong>Moodle</strong> משמש להודעות, לתרגילי בית ולהגשות</li>
+</ul>
+<p>ההבדל בין המצגת לדף הסיכום: המצגת מקוצרת, ודף הסיכום מכיל הסברים מורחבים, טבלאות מלאות ופתרונות. כדאי לקרוא את דף הסיכום אחרי כל הרצאה. הקישור למצגת נמצא בצד הדף, תחת “פורמטים נוספים”.</p>
+</section>
+<section id="מה-זה-github-ולמה-זה-מעניין-אתכם" class="level2">
+<h2 class="anchored" data-anchor-id="מה-זה-github-ולמה-זה-מעניין-אתכם">מה זה GitHub, ולמה זה מעניין אתכם</h2>
+<ul>
+<li>כל חומרי הקורס מנוהלים ב-<strong><a href="https://github.com/adisarid/nanas-tau">GitHub</a></strong>, פלטפורמה לניהול קוד וגרסאות</li>
+<li>המאגר (<span class="en">repository</span>) פתוח לכולם:
+<ul>
+<li>כל הקוד שמייצר את התרשימים והניתוחים בהרצאות</li>
+<li>קובצי הנתונים (תיקיית <code>data/</code>)</li>
+<li>ההיסטוריה של כל שינוי</li>
+</ul></li>
+<li>זה גם הכלי שבו עובדים צוותי Data ופיתוח בתעשייה. כדאי להכיר אותו כבר עכשיו</li>
+</ul>
+</section>
+<section id="איך-משיגים-את-כל-החומרים" class="level2">
+<h2 class="anchored" data-anchor-id="איך-משיגים-את-כל-החומרים">איך משיגים את כל החומרים</h2>
+<p><strong>הדרך הפשוטה:</strong> באתר הקורס, דרך תפריט “הרצאות”.</p>
+<p><strong>כדי להריץ את הקוד בעצמכם:</strong></p>
+<ol type="1">
+<li>נכנסים ל-<a href="https://github.com/adisarid/nanas-tau" class="uri">https://github.com/adisarid/nanas-tau</a></li>
+<li>לוחצים על <strong>Code</strong> ואז על <strong>Download ZIP</strong></li>
+<li>פותחים את התיקייה ב-IDE ומריצים</li>
+</ol>
+<p><strong>למי שמכיר git:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/adisarid/nanas-tau.git</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<p>ואחר כך <code>git pull</code> אחרי כל הרצאה, כדי לקבל את העדכונים.</p>
+<p><strong>מצאתם טעות?</strong> בכל עמוד באתר יש קישור “דווח על בעיה” שפותח <span class="en">issue</span> ב-GitHub. אפשר גם לכתוב לי במייל.</p>
+</section>
+<section id="סביבת-עבודה" class="level2">
+<h2 class="anchored" data-anchor-id="סביבת-עבודה">סביבת עבודה</h2>
+<ul>
+<li><strong>שפה:</strong> R או Python, לבחירתכם. הדוגמאות בהרצאות כתובות ב-R</li>
+<li><strong>סביבת עבודה (IDE):</strong>
+<ul>
+<li><a href="https://code.visualstudio.com/">VS Code</a>: המועדפת עליי</li>
+<li><a href="https://positron.posit.co/">Positron</a></li>
+<li><a href="https://posit.co/download/rstudio-desktop/">RStudio</a></li>
+</ul></li>
+<li>כדאי להתקין לפני ההרצאה הבאה ולוודא שאפשר להריץ קוד מהאתר</li>
+</ul>
+</section>
+<section id="הרכב-הציון" class="level2">
+<h2 class="anchored" data-anchor-id="הרכב-הציון">הרכב הציון</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>רכיב</th>
+<th>משקל</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>בחינה סופית</strong></td>
+<td><strong>85%</strong></td>
+</tr>
+<tr class="even">
+<td><strong>פרויקט</strong> (בקבוצות)</td>
+<td><strong>15%</strong></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>הבחינה:</strong> שלוש שעות. מותר מחשבון לא גרפי ודף נוסחאות שהכנתם בעצמכם (עד 10 עמודים, או 15 למי שזכאי/ת להתאמות)</li>
+<li><strong>תרגילי הבית</strong> לא נכנסים לציון, אבל הם ההכנה הטובה ביותר לבחינה</li>
+</ul>
+</section>
+<section id="למה-הפרויקט-חשוב-יותר-מ-15" class="level2">
+<h2 class="anchored" data-anchor-id="למה-הפרויקט-חשוב-יותר-מ-15">למה הפרויקט חשוב (יותר מ-15%)</h2>
+<ul>
+<li>זה המקום היחיד בקורס שבו תעבדו על <strong>נתונים אמיתיים</strong> מההתחלה עד הסוף:
+<ul>
+<li>מנסחים שאלה</li>
+<li>בוחרים שיטה</li>
+<li>בודקים הנחות</li>
+<li>מנתחים</li>
+<li>מציגים</li>
+</ul></li>
+<li>זה בדיוק מה שתעשו בעבודה. הבחינה בודקת אם אתם יודעים את השיטות, והפרויקט בודק אם אתם יודעים <strong>להשתמש</strong> בהן</li>
+<li>עבודה בקבוצה, עם קוד והצגה של התוצאות</li>
+<li>הנחיות מלאות, לוחות זמנים ומדיניות שימוש בכלי AI יפורסמו ב-Moodle</li>
+</ul>
+</section>
+<section id="שעות-קבלה-ויצירת-קשר" class="level2">
+<h2 class="anchored" data-anchor-id="שעות-קבלה-ויצירת-קשר">שעות קבלה ויצירת קשר</h2>
+<ul>
+<li><strong>שעות קבלה בתיאום מראש.</strong> כתבו לי למייל ונקבע זמן, בזום או פנים אל פנים</li>
+<li><strong>מייל:</strong> <a href="mailto:adi@sarid-ins.co.il">adi@sarid-ins.co.il</a></li>
+<li>כדי שהמייל לא ילך לאיבוד, כתבו בשורת הנושא <strong>“ננס:”</strong> ואחריה הנושא</li>
+<li>שאלות על התרגול ועל תרגילי הבית: לאביטל, בתרגול או בערוצים שתפרסם</li>
+<li>שאלות שרלוונטיות לכולם: עדיף בפורום ב-Moodle, כדי שכולם ייהנו מהתשובה</li>
+</ul>
+</section>
+<section id="כללי-התנהלות" class="level2">
+<h2 class="anchored" data-anchor-id="כללי-התנהלות">כללי התנהלות</h2>
+<ul>
+<li><strong>שאלו.</strong> אין שאלות טיפשיות, ואם משהו לא ברור לכם, כנראה שהוא לא ברור גם לאחרים</li>
+<li><strong>הריצו את הקוד.</strong> לקרוא קוד זה לא כמו להריץ אותו. שנו פרמטרים, שברו דברים ותראו מה קורה</li>
+<li><strong>כלי AI</strong> הם חלק מהעבודה המודרנית, והם ישתלבו בקורס. אבל בבחינה אתם לבד, עם דף נוסחאות ומחשבון. ודאו שאתם מבינים כל שורה שהכלי כתב בשבילכם</li>
+<li><strong>עדכונים</strong> מתפרסמים ב-Moodle. ודאו שההתראות אצלכם פעילות</li>
+</ul>
+</section>
+<section id="שאלות" class="level2">
+<h2 class="anchored" data-anchor-id="שאלות">שאלות?</h2>
+<p><a href="https://adisarid.github.io/nanas-tau/" class="uri">https://adisarid.github.io/nanas-tau/</a></p>
+<p><a href="mailto:adi@sarid-ins.co.il">adi@sarid-ins.co.il</a></p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -842,7 +1074,7 @@ ul.task-list li input[type="checkbox"] {
     </div>   
     <div class="nav-footer-center">
 <p>ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז</p>
-<div class="toc-actions"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/00-course-intro.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
