@@ -1,0 +1,107 @@
+[
+  {
+    "objectID": "syllabus.html",
+    "href": "syllabus.html",
+    "title": "סילבוס",
+    "section": "",
+    "text": "הסילבוס הרשמי נמצא במערכת הסילבוסים של האוניברסיטה."
+  },
+  {
+    "objectID": "syllabus.html#על-הקורס",
+    "href": "syllabus.html#על-הקורס",
+    "title": "סילבוס",
+    "section": "על הקורס",
+    "text": "על הקורס\nהקורס מציג שיטות סטטיסטיות לאיסוף נתונים ולניתוחם, עם יישומים בתעשייה ובשירותים. ההדגשים: לבחור את השיטה הנכונה, לבדוק את ההנחות שלה, לפרש פלט של תוכנה ולבקר ניתוחים (גם כאלה שנוצרו בעזרת כלי AI).\nדרישות קדם: סטטיסטיקה (0571-2804)."
+  },
+  {
+    "objectID": "syllabus.html#נושאים",
+    "href": "syllabus.html#נושאים",
+    "title": "סילבוס",
+    "section": "נושאים",
+    "text": "נושאים\n\nשיטות א-פרמטריות\nרגרסיה לינארית מרובה\nניתוח שונות חד-כיווני, ניגודים והשוואות מרובות\nניתוח שונות רב-כיווני\nתכנון ניסויים\nרגרסיה לוגיסטית\nניתוח גורמים ראשיים (PCA)\nסדרות עתיות וחיזוי\n\nהסדר המלא לפי שבועות מופיע בעמוד ההרצאות."
+  },
+  {
+    "objectID": "syllabus.html#הערכה",
+    "href": "syllabus.html#הערכה",
+    "title": "סילבוס",
+    "section": "הערכה",
+    "text": "הערכה\n\n\n\nרכיב\nמשקל\n\n\n\n\nפרויקט (בקבוצות)\n15%\n\n\nבחינה סופית\n85%\n\n\n\nבבחינה מותר דף נוסחאות שהכנתם בעצמכם: עד 10 עמודים, או 15 עמודים למי שזכאי/ת להתאמות."
+  },
+  {
+    "objectID": "syllabus.html#ספרות-מומלצת",
+    "href": "syllabus.html#ספרות-מומלצת",
+    "title": "סילבוס",
+    "section": "ספרות מומלצת",
+    "text": "ספרות מומלצת\n\nHines, W. W., Montgomery, D. C., Goldsman, D. M., & Borror, C. M. (2008). Probability and Statistics in Engineering. Wiley.\nHosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013). Applied Logistic Regression (3rd ed.). Wiley.\nGibbons, J. D., & Chakraborti, S. (2011). Nonparametric Statistical Inference (5th ed.). CRC Press."
+  },
+  {
+    "objectID": "lectures.html",
+    "href": "lectures.html",
+    "title": "הרצאות",
+    "section": "",
+    "text": "לכל הרצאה יש דף סיכום לקריאה ומצגת להצגה בכיתה. הקישור למצגת מופיע בצד הדף, תחת “פורמטים נוספים”. לוח הזמנים עדיין עשוי להשתנות.\n\n\n\n#\nנושא\nחומרים\n\n\n\n\n1\nשיטות א-פרמטריות\nסיכום · מצגת\n\n\n2\nייקבע (מועד השלמה יפורסם)\n\n\n\n3\nרגרסיה לינארית מרובה\n\n\n\n4\nניתוח שונות חד-כיווני (One-way ANOVA)\n\n\n\n5\nניגודים והשוואות מרובות\n\n\n\n6\nניתוח שונות רב-כיווני (Two-way ANOVA)\n\n\n\n7\nתכנון ניסויים (DOE)\n\n\n\n8\nרגרסיה לוגיסטית\n\n\n\n9\nניתוח גורמים ראשיים (PCA)\n\n\n\n10\nסדרות עתיות וחיזוי (א)\n\n\n\n11\nסדרות עתיות וחיזוי (ב)\n\n\n\n12\nשיעור השלמה\n\n\n\n13\nחזרה לבחינה"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ניתוח נתונים סטטיסטי",
+    "section": "",
+    "text": "ברוכים הבאים לאתר הקורס. כאן יופיעו המצגות וסיכומי ההרצאות, יחד עם דוגמאות קוד ב-R. בקורס נלמד לבחור את השיטה הסטטיסטית המתאימה, לבדוק את ההנחות שלה ולפרש את התוצאות על נתונים אמיתיים מהתעשייה ומהשירותים."
+  },
+  {
+    "objectID": "index.html#איפה-מה",
+    "href": "index.html#איפה-מה",
+    "title": "ניתוח נתונים סטטיסטי",
+    "section": "איפה מה",
+    "text": "איפה מה\n\nהרצאות: כל הרצאה זמינה גם כמצגת וגם כדף סיכום לקריאה.\nסילבוס: נושאים, הרכב הציון וספרות.\nMoodle: הודעות, תרגילי בית והגשות."
+  },
+  {
+    "objectID": "index.html#הרכב-הציון",
+    "href": "index.html#הרכב-הציון",
+    "title": "ניתוח נתונים סטטיסטי",
+    "section": "הרכב הציון",
+    "text": "הרכב הציון\n\n\n\nרכיב\nמשקל\n\n\n\n\nפרויקט\n15%\n\n\nבחינה סופית\n85%"
+  },
+  {
+    "objectID": "index.html#מה-צריך-להתקין",
+    "href": "index.html#מה-צריך-להתקין",
+    "title": "ניתוח נתונים סטטיסטי",
+    "section": "מה צריך להתקין",
+    "text": "מה צריך להתקין\nבקורס עובדים עם R ו-Positron (או RStudio). כל דוגמאות הקוד באתר אפשר להעתיק ולהריץ."
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html",
+    "href": "lectures/01-nonparametric.html",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "",
+    "text": "הערהבהכנה\n\n\n\nההרצאה בבנייה. העמוד הזה כרגע רק בודק שהתבנית עובדת (עברית מימין לשמאל, קוד R ותרשימים)."
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#למה-צריך-שיטות-א-פרמטריות",
+    "href": "lectures/01-nonparametric.html#למה-צריך-שיטות-א-פרמטריות",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "למה צריך שיטות א-פרמטריות?",
+    "text": "למה צריך שיטות א-פרמטריות?\n\nמבחן t מניח התפלגות נורמלית (או מדגם גדול)\nבפועל: זמני תגובה, הכנסות, דירוגים, ערכים חריגים"
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#התפלגות-מוטה-בפועל",
+    "href": "lectures/01-nonparametric.html#התפלגות-מוטה-בפועל",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "התפלגות מוטה בפועל",
+    "text": "התפלגות מוטה בפועל\n\n\nקוד\nresponse_times &lt;- tibble(\n  version = rep(c(\"A\", \"B\"), each = 200),\n  ms = c(rlnorm(200, log(300), 0.6), rlnorm(200, log(340), 0.6))\n)\n\nggplot(response_times, aes(ms, fill = version)) +\n  geom_histogram(bins = 40, alpha = 0.7, position = \"identity\") +\n  scale_x_continuous(labels = label_number(suffix = \" ms\", big.mark = \",\")) +\n  labs(title = \"זמני תגובה בשתי גרסאות של מערכת\",\n       subtitle = \"התפלגות מוטה ימינה — הממוצע לא מייצג טוב את ה׳טיפוסי׳\",\n       x = \"Response time\", y = \"Count\", fill = NULL)"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#למה-צריך-שיטות-א-פרמטריות",
+    "href": "lectures/01-nonparametric-slides.html#למה-צריך-שיטות-א-פרמטריות",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "למה צריך שיטות א-פרמטריות?",
+    "text": "למה צריך שיטות א-פרמטריות?\n\nמבחן t מניח התפלגות נורמלית (או מדגם גדול)\nבפועל: זמני תגובה, הכנסות, דירוגים, ערכים חריגים"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#התפלגות-מוטה-בפועל",
+    "href": "lectures/01-nonparametric-slides.html#התפלגות-מוטה-בפועל",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "התפלגות מוטה בפועל",
+    "text": "התפלגות מוטה בפועל\n\nresponse_times &lt;- tibble(\n  version = rep(c(\"A\", \"B\"), each = 200),\n  ms = c(rlnorm(200, log(300), 0.6), rlnorm(200, log(340), 0.6))\n)\n\nggplot(response_times, aes(ms, fill = version)) +\n  geom_histogram(bins = 40, alpha = 0.7, position = \"identity\") +\n  scale_x_continuous(labels = label_number(suffix = \" ms\", big.mark = \",\")) +\n  labs(title = \"זמני תגובה בשתי גרסאות של מערכת\",\n       subtitle = \"התפלגות מוטה ימינה — הממוצע לא מייצג טוב את ה׳טיפוסי׳\",\n       x = \"Response time\", y = \"Count\", fill = NULL)"
+  }
+]
