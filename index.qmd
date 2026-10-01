@@ -39,4 +39,10 @@ toc: false
 
 ## מה צריך להתקין
 
-בקורס עובדים עם [R](https://cran.r-project.org/) ו-[Positron](https://positron.posit.co/) (או RStudio). כל דוגמאות הקוד באתר אפשר להעתיק ולהריץ.
+**שפה:** [R](https://cran.r-project.org/) או [Python](https://www.python.org/downloads/), לבחירתכם. דוגמאות הקוד באתר כתובות ב-R, ואפשר להעתיק ולהריץ את כולן.
+
+**סביבת עבודה (IDE), אחת מאלה:**
+
+- [VS Code](https://code.visualstudio.com/): המועדפת עליי. עובדת עם R ועם Python דרך הרחבות.
+- [Positron](https://positron.posit.co/): סביבה חדשה של Posit, תומכת ב-R וב-Python.
+- [RStudio](https://posit.co/download/rstudio-desktop/): הסביבה הקלאסית ל-R.
