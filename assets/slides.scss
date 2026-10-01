@@ -1,11 +1,11 @@
 /*-- scss:defaults --*/
 $font-family-sans-serif: "Heebo", system-ui, -apple-system, Arial, sans-serif;
-$code-block-font-size: 0.6em;
+$code-block-font-size: 0.55em;
 $presentation-heading-font: "Heebo", sans-serif;
 $presentation-heading-font-weight: 800;
 $presentation-heading-color: #1B2A4A;
 $link-color: #2B59C3;
-$presentation-font-size-root: 34px;
+$presentation-font-size-root: 32px;
 
 /*-- scss:rules --*/
 @import url("https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap");
@@ -29,3 +29,8 @@ $presentation-font-size-root: 34px;
 .reveal #title-slide .title { font-size: 2.2em; }
 .reveal #title-slide .quarto-title-authors { justify-content: flex-start; }
 .reveal #title-slide .subtitle { color: #2B59C3; }
+
+// Display math is LTR and must not overflow to the left under RTL.
+.reveal .math.display, .reveal mjx-container[display="true"] { direction: ltr; text-align: center; display: block; }
+.reveal table { font-size: 0.8em; }
+.reveal .smaller pre code { font-size: 1.25em; }

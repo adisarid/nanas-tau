@@ -15,7 +15,7 @@ Copy to lectures/NN-slug.qmd, then:
   3. quarto render lectures/NN-slug.qmd  (locally — CI never runs R)
 Conventions (see README):
   - every `##` is a slide; it is also a section on the notes page
-  - long explanations go in .content-visible when-format="html" blocks
+  - long explanations go in .content-hidden when-format="revealjs" blocks
   - speaker notes go in ::: notes
 -->
 
@@ -45,7 +45,7 @@ ggplot(mtcars, aes(wt, mpg)) +
   labs(title = "כותרת התרשים", x = "Weight", y = "MPG")
 ```
 
-::: {.content-visible when-format="html"}
+::: {.content-hidden when-format="revealjs"}
 הסבר מורחב לקריאה בבית — מופיע רק בדף הסיכום, לא במצגת.
 :::
 

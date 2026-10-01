@@ -1,9 +1,14 @@
 # data/
 
-Datasets used in lectures. One file per dataset, and each one gets an entry below
-(source, licence, what it's used for). Datasets that are generated or simulated in
-code don't need a file, only a row here.
+Datasets used in lectures, one subfolder per lecture topic. Each file gets a row
+below (source and what it's used for). Data simulated inside a lecture needs no file.
 
-| File | Source / licence | Used in |
+| File | Source | Used in |
 |---|---|---|
-| (simulated in code) | `rlnorm` response times | Lecture 1 |
+| `nonparametric/api_latency.csv` | Ohad Eisenhandler's deck (numbers); framing as API latency is new | L1 sign test, signed-rank |
+| `nonparametric/exam_grades.csv` | Ohad Eisenhandler's deck | L1 sign test |
+| `nonparametric/tsp_heuristics.csv` | Ohad Eisenhandler's deck | L1 paired sign test |
+| `nonparametric/production_output.csv` | Ohad Eisenhandler's deck | L1 rank-sum |
+| `nonparametric/cotton_strength.csv` | Ohad Eisenhandler's deck (after Montgomery's cotton example) | L1 Kruskal–Wallis, contrasts |
+| `nonparametric/argentina_world_cup.csv` | Ohad's deck, checked against FIFA ranks (2006 = 6, 2010 = 5) and extended with 2022. Empty rank = did not take part or did not reach the last 16 | L1 summary question |
+| `nonparametric/llm_prompt_eval.csv` | Constructed for this course | L1 Friedman |

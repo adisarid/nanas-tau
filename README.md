@@ -57,9 +57,10 @@ renv/, renv.lock          R package environment
 ### Authoring conventions
 
 - **Slides and notes come from the same source.** Every `##` heading starts a new slide and is also a section on the notes page. Keep slides short.
-  - Longer explanations that should appear only on the notes page go in `::: {.content-visible when-format="html"}`.
+  - Longer explanations that should appear only on the notes page go in `::: {.content-hidden when-format="revealjs"}`. Don't use `when-format="html"`: Quarto counts revealjs as html, so that content would show on the slides too.
   - Content that should appear only in the slides goes in `::: {.content-visible when-format="revealjs"}`.
   - Speaker notes go in `::: notes`.
+- **Dense slides:** add `{.smaller}` to the `##` heading. Put a chart chunk's output on its own slide with `#| output-location: slide`, so the code doesn't squeeze it.
 - **First chunk** of every lecture: `source("../R/setup.R")` with `include: false`.
 - **Charts:**
   - Use ggplot2 with the default `theme_nanas()`.

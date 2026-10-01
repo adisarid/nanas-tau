@@ -12,32 +12,664 @@ format:
 #| label: setup
 #| include: false
 source("../R/setup.R")
+library(knitr)
+data_dir <- "../data/nonparametric"
 ```
 
-::: {.callout-note}
-## בהכנה
-ההרצאה בבנייה. העמוד הזה כרגע רק בודק שהתבנית עובדת (עברית מימין לשמאל, קוד R ותרשימים).
+## על מה נדבר היום
+
+- מתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה
+- **מבחן הסימן**: השערות על החציון, גם למדגמים מזווגים
+- **מבחן הדירוגים המסומנים** ([Wilcoxon signed-rank]{.en})
+- **מבחן סכום הדירוגים** ([Wilcoxon rank-sum / Mann–Whitney]{.en})
+- **ניתוח שונות א-פרמטרי**: [Kruskal–Wallis]{.en} ו-[Friedman]{.en}
+- **מתאם על דירוגים**: [Spearman]{.en} ו-[Kendall]{.en}
+
+::: notes
+ההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R.
 :::
 
-## למה צריך שיטות א-פרמטריות?
+# למה צריך שיטות א-פרמטריות?
 
-- מבחן t מניח התפלגות נורמלית (או מדגם גדול)
-- בפועל: זמני תגובה, הכנסות, דירוגים, ערכים חריגים
+## הרעיון
 
-## התפלגות מוטה בפועל
+- שיטות פרמטריות (מבחן t, ANOVA) מניחות **התפלגות ידועה** של תגובת המערכת, בדרך כלל נורמלית
+- שיטות א-פרמטריות מסתפקות ב**מידע חלקי** על ההתפלגות
+- הן נשענות פחות על הערכים עצמם ויותר על **הסדר שלהם (הדירוג)**
+- אין שיטה אחת לכל דבר: לכל השערה יש מבחן ייעודי
+
+::: {.content-hidden when-format="revealjs"}
+בפועל, נתונים "לא נורמליים" הם הכלל ולא החריג. זמני תגובה של מערכות, הכנסות, זמני המתנה בתור, ציוני שביעות רצון בסולם 1–5 ודירוגים בתחרות הם כולם מוטים, בדידים או מלאים בערכים חריגים. כשהמדגם קטן, משפט הגבול המרכזי לא מספיק כדי להציל אותנו.
+:::
+
+## כשהתוחלת בכלל לא קיימת
+
+דוגמה: $f(x) = \dfrac{1}{(1+x)^2}, \quad x \in [0, \infty)$
+
+$$
+\mu = \int_0^\infty \frac{x}{(1+x)^2}\,dx = \infty
+$$
+
+$$
+F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
+$$
+
+- אין טעם לבדוק השערות על התוחלת, כי היא אינסופית
+- **החציון** מוגדר היטב, ואפשר לבדוק השערות עליו
+
+## סימולציה: ממוצע מול חציון
 
 ```{r}
-#| label: skewed-histogram
-#| echo: true
-response_times <- tibble(
-  version = rep(c("A", "B"), each = 200),
-  ms = c(rlnorm(200, log(300), 0.6), rlnorm(200, log(340), 0.6))
-)
+#| label: running-mean-median
+#| output-location: slide
+# F(x) = 1 - 1/(1+x)  =>  x = 1/(1-u) - 1
+n <- 20000
+heavy <- tibble(
+  i = 1:n,
+  x = 1 / (1 - runif(n)) - 1
+) |>
+  mutate(
+    `ממוצע מצטבר` = cummean(x),
+    `חציון מצטבר` = map_dbl(i, \(k) median(x[seq_len(k)]))
+  ) |>
+  filter(i %% 20 == 0) |>
+  pivot_longer(c(`ממוצע מצטבר`, `חציון מצטבר`), names_to = "stat")
 
-ggplot(response_times, aes(ms, fill = version)) +
-  geom_histogram(bins = 40, alpha = 0.7, position = "identity") +
-  scale_x_continuous(labels = label_number(suffix = " ms", big.mark = ",")) +
-  labs(title = "זמני תגובה בשתי גרסאות של מערכת",
-       subtitle = "התפלגות מוטה ימינה — הממוצע לא מייצג טוב את ה׳טיפוסי׳",
-       x = "Response time", y = "Count", fill = NULL)
+ggplot(heavy, aes(i, value, colour = stat)) +
+  geom_hline(yintercept = 1, linetype = "dashed", colour = "grey50") +
+  geom_line(linewidth = 0.8) +
+  scale_x_log10(labels = label_comma()) +
+  scale_colour_manual(values = c(nanas_pal[["accent"]], nanas_pal[["primary"]])) +
+  labs(title = "החציון מתכנס ל-1, הממוצע ממשיך לטפס",
+       subtitle = "דגימות מהתפלגות שבה התוחלת אינסופית",
+       x = "Sample size (log scale)", y = NULL, colour = NULL)
 ```
+
+::: {.content-hidden when-format="revealjs"}
+הממוצע "קופץ" בכל פעם שמגיעה תצפית קיצונית, ולעולם לא מתייצב. החציון מתייצב מהר מאוד סביב 1. זו האינטואיציה לכל ההרצאה: סטטיסטיים שמבוססים על סדר ודירוג **עמידים** לערכים קיצוניים.
+:::
+
+## מפת דרכים {.smaller}
+
+| השאלה | השיטה הפרמטרית | השיטה הא-פרמטרית |
+|---|---|---|
+| מרכז ההתפלגות | מבחן t / Z על התוחלת | מבחן הסימן, מבחן הדירוגים המסומנים |
+| שני מדגמים מזווגים | מבחן t מזווג | מבחן הסימן / דירוגים מסומנים על ההפרשים |
+| שתי אוכלוסיות בלתי תלויות | מבחן t לשני מדגמים | מבחן סכום הדירוגים |
+| השפעה של משתנה קטגוריאלי | ANOVA חד-כיווני | [Kruskal–Wallis]{.en} |
+| טיפולים בתוך בלוקים | ANOVA עם בלוקים | [Friedman]{.en} |
+| מתאם בין שני משתנים | מתאם פירסון | [Spearman's ρ]{.en}, [Kendall's τ]{.en} |
+
+: {tbl-colwidths="[34,33,33]"}
+
+# מבחן הסימן
+
+## השערות על החציון
+
+$$
+H_0: \tilde{\mu} = z \qquad H_1: \tilde{\mu} \neq z
+$$
+
+- תחת $H_0$, כל הפרש $x_i - z$ חיובי או שלילי בהסתברות $0.5$
+- $r^+$: מספר ההפרשים החיוביים
+- סטטיסטי המבחן: $r = \min(r^+,\; n - r^+)$
+- תחת $H_0$ נצפה ש-$r$ יהיה קרוב ל-$n/2$, וערך קטן מעיד נגד $H_0$
+
+$$
+r^+ \sim \text{Binomial}(n, 0.5)
+\qquad
+P(r \le y) = 2\,P(r^+ \le y), \quad y < n/2
+$$
+
+## הערך הקריטי
+
+הערך הקריטי $R^*_\alpha$ הוא הערך הגדול ביותר שמקיים
+
+$$
+P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\right)^n \le \alpha
+$$
+
+**כלל ההכרעה:** אם $r_0 \le R^*_\alpha$, דוחים את $H_0$.
+
+```{r}
+#| label: sign-critical
+# Critical value of the sign test: largest r with 2 * P(Bin(n, 0.5) <= r) <= alpha
+sign_critical <- function(n, alpha) {
+  max(which(2 * pbinom(0:n, n, 0.5) <= alpha)) - 1
+}
+sapply(c(`0.01` = 0.01, `0.05` = 0.05, `0.10` = 0.10), \(a) sign_critical(20, a))
+```
+
+::: {.content-hidden when-format="revealjs"}
+בבחינה הערך הקריטי נתון בטבלה. ב-R מחשבים אותו בשורה אחת, או מוותרים עליו ומסתכלים ישר על ה-p-value.
+:::
+
+## דוגמה: זמני תגובה של API
+
+ה-SLA של שירות קובע שהחציון של זמן התגובה הוא **200 ms**. נדגמו 20 בקשות:
+
+```{r}
+#| label: api-data
+api <- read_csv(file.path(data_dir, "api_latency.csv"), show_col_types = FALSE)
+api |> mutate(diff = latency_ms - 200, sign = if_else(diff > 0, "+", "-")) |>
+  count(sign)
+```
+
+```{r}
+#| label: api-plot
+#| output-location: slide
+#| fig-height: 3
+ggplot(api, aes(latency_ms, 0, colour = latency_ms > 200)) +
+  geom_vline(xintercept = 200, linetype = "dashed", colour = "grey40") +
+  geom_point(size = 4, alpha = 0.8, position = position_jitter(height = 0.02, seed = 1)) +
+  scale_colour_manual(values = c(`FALSE` = nanas_pal[["accent"]], `TRUE` = nanas_pal[["primary"]]),
+                      labels = c("מתחת ל-200", "מעל 200")) +
+  scale_y_continuous(NULL, breaks = NULL, limits = c(-0.1, 0.1)) +
+  labs(title = "15 מתוך 20 בקשות מעל 200 ms", x = "Latency (ms)", colour = NULL)
+```
+
+## מבחן הסימן: חישוב
+
+- $r^+ = 15 \;\Rightarrow\; r_0 = \min(15, 5) = 5$
+- ב-$\alpha = 0.01$: $R^*_{0.01} = 3$, ו-$5 > 3$, ולכן **לא דוחים** את $H_0$
+- ב-$\alpha = 0.05$: $R^*_{0.05} = 5$, ו-$5 \le 5$, ולכן **דוחים**
+
+```{r}
+#| label: api-sign
+binom.test(sum(api$latency_ms > 200), n = nrow(api), p = 0.5)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**איך קוראים את הפלט:** `number of successes = 15` הוא $r^+$, ו-`p-value = 0.04139` הוא $2 \cdot P(r^+ \le 5)$. המסקנה תלויה ברמת המובהקות שנקבעה **מראש**: ב-1% אין מספיק ראיות, וב-5% יש.
+:::
+
+## דוגמה: חציון הציונים במועד ב׳ {.smaller}
+
+מרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-$\alpha = 0.1$?
+
+```{r}
+#| label: grades
+grades <- read_csv(file.path(data_dir, "exam_grades.csv"), show_col_types = FALSE)
+grades$grade
+binom.test(sum(grades$grade > 80), n = nrow(grades))$p.value  # sign test
+t.test(grades$grade, mu = 80)$p.value                          # assuming normality
+```
+
+- $r^+ = 3$, $r_0 = 3 > R^*_{0.1,11} = 2$, ולכן טענת המרצה **מתקבלת**
+- גם מבחן t (בהנחת נורמליות) לא דוחה את $H_0$
+
+## מבחן הסימן למדגמים מזווגים
+
+כשהתצפיות **מזווגות**, מריצים את מבחן הסימן על ההפרשים $d_i = x_i - y_i$, עם $H_0: \tilde{\mu}_d = 0$.
+
+**דוגמה:** 11 מופעים של בעיית הסוכן הנוסע ([TSP]{.en}) נפתרו בשתי היוריסטיקות. בטבלה: הפער (%) מהפתרון האופטימלי של מודל תכנות בשלמים.
+
+```{r}
+#| label: tsp
+tsp <- read_csv(file.path(data_dir, "tsp_heuristics.csv"), show_col_types = FALSE)
+tsp |>
+  mutate(sign = if_else(heuristic_1 > heuristic_2, "+", "-")) |>
+  pivot_longer(-instance, values_transform = as.character) |>
+  pivot_wider(names_from = instance) |>
+  kable()
+```
+
+## TSP: התוצאה
+
+```{r}
+#| label: tsp-test
+n_plus <- sum(tsp$heuristic_1 > tsp$heuristic_2)
+binom.test(n_plus, n = nrow(tsp))
+```
+
+- $r^+ = 2$, ו-$p = 0.065 < 0.1$, ולכן **דוחים** $H_0$: חציון ההפרשים אינו 0
+- להיוריסטיקה 1 יש פער קטן יותר מהאופטימום ברוב המופעים
+
+# מבחן הדירוגים המסומנים
+
+## הרחבה של מבחן הסימן
+
+- מתבסס לא רק על **הסימן** של ההפרשים אלא גם על **גודלם**
+- מתאים להתפלגויות **רציפות וסימטריות**, שבהן התוחלת והחציון שווים
+- לרוב חזק יותר ממבחן הסימן
+- אפשר להפעיל גם על הפרשים של מדגמים מזווגים
+
+## שלבי המבחן {.smaller}
+
+
+1. מדרגים את $|x_i - z|$ בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות
+2. מצמידים לכל דרגה את הסימן של ההפרש שלה
+3. $R^+$ הוא סכום הדרגות החיוביות ו-$R^-$ סכום הדרגות השליליות, וסטטיסטי המבחן הוא $R = \min(R^+, R^-)$
+4. דוחים את $H_0$ אם $R \le R^*_{\alpha,n}$ (טבלה), או לפי קירוב נורמלי:
+
+$$
+E(R^+) = \frac{n(n+1)}{4} \qquad V(R^+) = \frac{n(n+1)(2n+1)}{24}
+$$
+
+## חזרה לזמני התגובה
+
+```{r}
+#| label: signed-rank-table
+signed <- api |>
+  mutate(diff = latency_ms - 200,
+         rank = rank(abs(diff)),
+         signed_rank = sign(diff) * rank) |>
+  arrange(rank)
+
+signed |> summarise(R_plus  = sum(rank[diff > 0]),
+                    R_minus = sum(rank[diff < 0]))
+```
+
+$$
+R = \min(156.5,\; 53.5) = 53.5 < 60 = R^*_{0.1,\,20}
+$$
+
+ולכן **דוחים** את $H_0$ ב-$\alpha = 0.1$.
+
+::: {.content-hidden when-format="revealjs"}
+```{r}
+#| label: signed-rank-full
+signed |> select(request, diff, signed_rank) |> kable()
+```
+:::
+
+## בדיקה ב-R
+
+```{r}
+#| label: signed-rank-r
+wilcox.test(api$latency_ms, mu = 200, exact = FALSE)
+```
+
+- `V` ב-R הוא $R^+$ (156.5), לא $\min(R^+, R^-)$
+- `exact = FALSE`: יש דרגות זהות, ולכן R משתמש בקירוב הנורמלי
+
+## כשהמבחנים לא מסכימים
+
+נחזור ל-TSP:
+
+```{r}
+#| label: tsp-disagree
+c(sign        = binom.test(n_plus, nrow(tsp))$p.value,
+  signed_rank = wilcox.test(tsp$heuristic_1, tsp$heuristic_2,
+                            paired = TRUE, exact = FALSE)$p.value)
+```
+
+- ב-$\alpha = 0.1$ מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא
+- **אם ההתפלגות סימטרית**, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע
+- **אם אי אפשר להניח סימטריה**, מבחן הסימן קובע
+
+::: {.content-hidden when-format="revealjs"}
+כדאי לשים לב ממה נובע הפער. בשני המופעים שבהם היוריסטיקה 2 עדיפה (מופעים 3 ו-4) הפערים גדולים מאוד: 11 ו-4 נקודות אחוז. מבחן הסימן סופר רק כמה פעמים כל שיטה ניצחה, ומבחן הדירוגים המסומנים מתחשב גם בגודל הניצחון. השאלה איזה מבחן לבחור היא שאלה על ההנחות, ולא על איזה מבחן נותן את התשובה שרצינו. ואת ההחלטה מקבלים **לפני** שמסתכלים על התוצאה.
+:::
+
+# מבחן סכום הדירוגים
+
+## שתי אוכלוסיות בלתי תלויות {.smaller}
+
+- $n$ תצפיות מאוכלוסייה א׳ ו-$m$ תצפיות מאוכלוסייה ב׳, עם $m \le n$ ו-$N = n + m$
+- $H_0: F_1(x) = F_2(x)$ מול $H_1: F_1(x) \neq F_2(x)$
+- **השיטה** ([Wilcoxon rank-sum]{.en}): מאחדים את כל התצפיות לרשימה אחת וממיינים
+- **סטטיסטי המבחן** $T$: סכום הדרגות של התצפיות מהמדגם **הקטן**
+
+$$
+E(T) = \frac{m(n+m+1)}{2} \qquad V(T) = \frac{mn(n+m+1)}{12}
+$$
+
+דוחים את $H_0$ אם $\left|\frac{T - E(T)}{\sigma_T}\right| > Z_{1-\alpha/2}$
+
+::: {.content-hidden when-format="revealjs"}
+**מאיפה מגיעה התוחלת?** תחת $H_0$ כל תצפית יכולה לתפוס כל מקום ברשימה המאוחדת באותה הסתברות, ולכן $E(R_i) = \frac{N+1}{2}$ לכל תצפית. סכום של $m$ תצפיות נותן $E(T) = m \cdot \frac{N+1}{2}$. חישוב השונות דורש גם את השונות המשותפת בין הדרגות (הן לא בלתי תלויות, כי שתי תצפיות לא יכולות לקבל אותה דרגה), והתוצאה היא הנוסחה שלמעלה.
+:::
+
+## דוגמה: שיפור בתהליך ייצור
+
+שיפור טכנולוגי בתהליך הייצור לא שינה את **צורת** ההתפלגות של התפוקה היומית, אבל הזיז אותה כלפי מעלה. **האם התפוקה עלתה ב-3 יחידות ביום?** ($\alpha = 0.05$)
+
+```{r}
+#| label: production
+prod <- read_csv(file.path(data_dir, "production_output.csv"), show_col_types = FALSE)
+prod |> group_by(period) |> summarise(units = paste(units, collapse = ", "))
+```
+
+**הטריק:** מורידים 3 מהתצפיות שאחרי השיפור. אם התפוקה עלתה ב-3 בדיוק, שני המדגמים מגיעים מאותה התפלגות.
+
+## דירוג הרשימה המאוחדת
+
+```{r}
+#| label: production-ranks
+#| output-location: slide
+#| fig-height: 2.6
+prod_shift <- prod |>
+  mutate(adj = if_else(period == "after", units - 3, units),
+         rank = rank(adj))
+
+ggplot(prod_shift, aes(adj, 0, colour = period, label = rank)) +
+  geom_point(size = 9, alpha = 0.85) +
+  geom_text(colour = "white", fontface = "bold", size = 4) +
+  scale_colour_manual(values = c(after = nanas_pal[["accent"]], before = nanas_pal[["primary"]]),
+                      labels = c(after = "אחרי (פחות 3)", before = "לפני")) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(title = "הדרגות של המדגם המאוחד", x = "Daily output (units)", colour = NULL)
+```
+
+$$
+T_0 = 5 + 7 + 8 + 9 + 11 = 40, \quad
+E(T) = \tfrac{5 \cdot 12}{2} = 30, \quad
+V(T) = \tfrac{5 \cdot 6 \cdot 12}{12} = 30
+$$
+
+$$
+\left|\frac{40 - 30}{\sqrt{30}}\right| = 1.82 < 1.96
+$$
+
+ולכן **לא דוחים** $H_0$: הנתונים מתיישבים עם שיפור של 3 יחידות ביום.
+
+## אותו מבחן ב-R
+
+```{r}
+#| label: production-r
+after  <- prod$units[prod$period == "after"]
+before <- prod$units[prod$period == "before"]
+wilcox.test(after, before, mu = 3)
+```
+
+- ב-R הסטטיסטי `W` הוא $T - \frac{m(m+1)}{2} = 40 - 15 = 25$ (סטטיסטי [Mann–Whitney U]{.en})
+- `mu = 3` בודק הזזה של 3 יחידות, בלי לחסר ידנית
+- R מחשב p-value **מדויק** (0.082) ולא את הקירוב הנורמלי, אבל המסקנה זהה
+
+# ניתוח שונות א-פרמטרי
+
+## [Kruskal–Wallis]{.en}
+
+**השאלה:** האם משתנה קטגוריאלי (פקטור עם $a$ רמות) מסביר את השונות בתגובת המערכת?
+
+$$
+y_{ij} = \mu + \tau_i + \varepsilon_{ij}
+$$
+
+- ב-ANOVA מניחים $\varepsilon_{ij} \sim N(0, \sigma^2)$. כאן מניחים רק ש-$\varepsilon_{ij}$ באים מאותה התפלגות **רציפה**
+- $H_0: \tau_1 = \dots = \tau_a = 0$ מול $H_1: \tau_i \neq 0$ עבור $i$ כלשהו
+- מדרגים את כל $N$ התצפיות יחד. תחת $H_0$ הדרגות מתפזרות באופן אחיד בין הרמות:
+
+$$
+E(\bar{R}_i) = \frac{N+1}{2}
+$$
+
+## הסטטיסטי: ANOVA על הדרגות {.smaller}
+
+**ב-ANOVA (בהנחת נורמליות):**
+
+$$
+\frac{SS_{\text{treatments}}}{\sigma^2} = \frac{\sum_{i=1}^{a} n_i(\bar{y}_i - \bar{y})^2}{\sigma^2} \sim \chi^2_{a-1}
+$$
+
+**ב-[Kruskal–Wallis]{.en}:** אותו רעיון, על הדרגות $\bar{R}_i$ במקום על הערכים
+
+$$
+K = \frac{12}{N(N+1)} \sum_{i=1}^{a} n_i\left(\bar{R}_i - \frac{N+1}{2}\right)^2
+$$
+
+- כש-$a > 3$ ו-$n_i > 4$: $K \sim \chi^2_{a-1}$ בקירוב
+- דוחים את $H_0$ אם $K > \chi^2_{\alpha,\,a-1}$
+
+## דוגמה: חוזק מתיחה של בד לפי אחוז כותנה
+
+```{r}
+#| label: cotton-plot
+#| output-location: slide
+cotton <- read_csv(file.path(data_dir, "cotton_strength.csv"), show_col_types = FALSE) |>
+  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))
+
+ggplot(cotton, aes(cotton_pct, strength)) +
+  geom_boxplot(width = 0.5, outlier.shape = NA, colour = "grey55") +
+  geom_point(aes(colour = cotton_pct), size = 3, alpha = 0.8,
+             position = position_jitter(width = 0.08, seed = 2), show.legend = FALSE) +
+  labs(title = "חוזק המתיחה עולה עד 30% כותנה ואז צונח",
+       subtitle = "5 רמות, 6 דגימות בכל רמה",
+       x = "Cotton (%)", y = "Tensile strength")
+```
+
+## [Kruskal–Wallis]{.en} מול מבחן F {.smaller}
+
+```{r}
+#| label: cotton-tests
+cotton |> group_by(cotton_pct) |> summarise(mean_rank = mean(rank))
+
+kruskal.test(strength ~ cotton_pct, data = cotton)
+summary(aov(strength ~ cotton_pct, data = cotton))
+```
+
+::: {.content-hidden when-format="revealjs"}
+שני המבחנים דוחים את $H_0$ בבירור: $K = 19.8$ ($p = 5.4 \times 10^{-4}$) מול $F = 13.9$ ($p = 4.3 \times 10^{-6}$). ה-p-value של המבחן הא-פרמטרי גדול יותר. זה המחיר שמשלמים על ויתור על הנחת הנורמליות: כשההנחה **מתקיימת**, המבחן הפרמטרי חזק יותר. הערך ש-R מדווח (19.814) כולל תיקון קטן לדרגות זהות.
+:::
+
+## הערכת קונטרסטים עם חציונים {.smaller}
+
+תזכורת: $C = \sum_i c_i \tau_i$ הוא **קונטרסט** אם $\sum_i c_i = 0$.
+
+- לפי ממוצעים: $\hat{\tau}_i = \bar{y}_i - \bar{y}$
+- הניסיון הטבעי לעבור לחציונים, $\hat{\tau}_i = \text{median}_j\{y_{ij}\} - \text{median}_{k,j}\{y_{kj}\}$, **מפר** את התנאי $\sum_i \hat{\tau}_i = 0$
+
+**החלופה:**
+
+$$
+\hat{\tau}_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik},
+\qquad
+Z_{ik} = \underset{j,m}{\text{median}}\{y_{ij} - y_{km}\}
+$$
+
+מכיוון ש-$Z_{ik} = -Z_{ki}$, מתקיים $\sum_i \hat{\tau}_i = 0$.
+
+::: {.content-hidden when-format="revealjs"}
+**דוגמה קטנה:** $y_{1j} = \{3,7,8\}$ ו-$y_{2j} = \{0,1,2\}$. החציון הכללי הוא 2.5, וחציוני הקבוצות הם 7 ו-1. בגישה הנאיבית $\hat\tau_1 = 4.5$, $\hat\tau_2 = -1.5$, וסכומם אינו 0. בגישה החלופית $Z_{12} = \text{median}\{3,7,8,2,6,7,1,5,6\} = 6$ ו-$Z_{21} = -6$, ולכן $\hat\tau_1 = 3$, $\hat\tau_2 = -3$.
+:::
+
+## קונטרסט בדוגמת הכותנה
+
+$C = \tfrac{1}{2}(\tau_1 + \tau_5) - \tau_4$: הקצוות (15% ו-35%) מול 30%.
+
+```{r}
+#| label: cotton-contrast
+levels_y <- split(cotton$strength, cotton$cotton_pct)
+Z <- outer(seq_along(levels_y), seq_along(levels_y),
+           Vectorize(\(i, k) median(outer(levels_y[[i]], levels_y[[k]], "-"))))
+tau_hat <- rowMeans(Z)
+round(tau_hat, 2)
+0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]
+```
+
+$$
+\hat{C} = \tfrac{1}{2}(-1.86 - 1.83) - 3.22 = -5.07
+$$
+
+## [Friedman]{.en}: טיפולים בתוך בלוקים
+
+כשכל "יחידה" (בלוק) מקבלת **את כל** הטיפולים, למשל אותו עובד שעובד בשלוש שיטות או אותה משימה שנבדקת בשלושה מודלים, ההשוואה צריכה להיות **בתוך** כל בלוק.
+
+- $b$ בלוקים ו-$k$ טיפולים
+- מדרגים את הטיפולים **בתוך כל בלוק** בנפרד, מ-1 עד $k$
+- $R_j$ הוא סכום הדרגות של טיפול $j$ על פני כל הבלוקים
+
+$$
+Q = \frac{12}{b\,k\,(k+1)} \sum_{j=1}^{k} R_j^2 \;-\; 3\,b\,(k+1) \;\sim\; \chi^2_{k-1}
+$$
+
+## דוגמה: הערכת פרומפטים למודל שפה
+
+צוות בודק שלוש גרסאות של פרומפט על 8 משימות מבחן ([eval set]{.en}). כל תשובה מקבלת ציון 0–100. המשימות שונות מאוד בקושי שלהן, ולכן **המשימה היא הבלוק**.
+
+```{r}
+#| label: llm-plot
+#| output-location: slide
+#| fig-height: 4
+llm <- read_csv(file.path(data_dir, "llm_prompt_eval.csv"), show_col_types = FALSE) |>
+  mutate(prompt = factor(prompt, levels = c("baseline", "few_shot", "reasoning")))
+
+ggplot(llm, aes(prompt, score, group = task)) +
+  geom_line(colour = "grey70") +
+  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +
+  labs(title = "בכל משימה, איזה פרומפט טוב יותר?",
+       subtitle = "כל קו הוא משימה אחת. ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים",
+       x = NULL, y = "Score")
+```
+
+## [Friedman]{.en}: חישוב
+
+```{r}
+#| label: llm-friedman
+llm |>
+  group_by(task) |> mutate(rank = rank(score)) |>
+  group_by(prompt) |> summarise(R = sum(rank))
+
+friedman.test(score ~ prompt | task, data = llm)
+```
+
+$$
+Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 > \chi^2_{0.05,2} = 5.99
+$$
+
+::: {.content-hidden when-format="revealjs"}
+אם היינו מתעלמים מהבלוקים ומריצים [Kruskal–Wallis]{.en} רגיל, השונות הגדולה **בין המשימות** הייתה "מטביעה" את ההבדל בין הפרומפטים. נסו בעצמכם: `kruskal.test(score ~ prompt, data = llm)`. אותו עיקרון יחזור כשנגיע לתכנון ניסויים: בלוקים מנטרלים מקור שונות שלא מעניין אותנו.
+:::
+
+# מתאם על דירוגים
+
+## למה לא פירסון?
+
+מתאם פירסון ($r$) מודד את חוזק הקשר **הלינארי** בין שני משתנים, אבל:
+
+- הוא רגיש מאוד לערכים חריגים
+- הוא לא מתאים למשתנים **אורדינליים** (סולמות סדר, כמו "מרוצה מאוד" עד "לא מרוצה")
+- הוא לא מתאים כשהשונות לא אחידה
+
+**החלופה:** מדדים שמבוססים על **הדרגות**, ולכן מודדים קשר **מונוטוני**, לא בהכרח לינארי.
+
+- **[Spearman's ρ]{.en}:** מתאם פירסון על הדרגות
+- **[Kendall's τ]{.en}:** מבוסס על זוגות בהתאמה מול זוגות בחוסר התאמה
+
+## [Kendall's τ]{.en}
+
+זוג תצפיות $(x_i, y_i), (x_j, y_j)$ הוא **בהתאמה** ([concordant]{.en}) אם $x_i > x_j$ וגם $y_i > y_j$, או $x_i < x_j$ וגם $y_i < y_j$. אחרת הזוג **בחוסר התאמה** ([discordant]{.en}).
+
+$$
+\tau = \frac{n_c - n_d}{n_0}, \qquad n_0 = \binom{n}{2}
+$$
+
+- $n_c$: מספר הזוגות בהתאמה, $n_d$: מספר הזוגות בחוסר התאמה
+- $-1 \le \tau \le 1$
+- יש כמה גרסאות לטיפול בשוויון (ב-R: `tau-b`)
+
+## דוגמה: קשר מונוטוני וערך חריג אחד
+
+```{r}
+#| label: corr-sim
+#| output-location: slide
+#| fig-height: 4
+corr_data <- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |>
+  add_row(x = 2, y = 160)   # one data-entry error
+
+stats <- c(
+  pearson  = cor(corr_data$x, corr_data$y),
+  spearman = cor(corr_data$x, corr_data$y, method = "spearman"),
+  kendall  = cor(corr_data$x, corr_data$y, method = "kendall")
+)
+round(stats, 2)
+
+ggplot(corr_data, aes(x, y)) +
+  geom_point(size = 2.5) +
+  annotate("label", x = 3.5, y = 160, label = "שגיאת הקלדה", hjust = 0) +
+  labs(title = sprintf("Pearson = %.2f · Spearman = %.2f · Kendall = %.2f",
+                       stats["pearson"], stats["spearman"], stats["kendall"]),
+       subtitle = "קשר מונוטוני ברור, עם תצפית חריגה אחת",
+       x = "x", y = "y")
+```
+
+::: {.content-hidden when-format="revealjs"}
+תצפית חריגה אחת (למשל שגיאת הקלדה) מספיקה כדי לגרור את פירסון כמעט לאפס. ספירמן וקנדל כמעט לא מושפעים ממנה. לקנדל יש גם פרשנות ישירה: $\frac{1+\tau}{2}$ הוא ההסתברות שזוג אקראי של תצפיות יהיה בהתאמה.
+:::
+
+# סיכום
+
+## מה לקחת מההרצאה {.smaller}
+
+| השאלה | פרמטרי | א-פרמטרי | ב-R |
+|---|---|---|---|
+| מרכז ההתפלגות | t / Z | סימן, דירוגים מסומנים | `binom.test`, `wilcox.test` |
+| מזווג | t מזווג | אותו מבחן על ההפרשים | `wilcox.test(paired = TRUE)` |
+| שני מדגמים ב״ת | t לשני מדגמים | סכום הדירוגים | `wilcox.test(x, y)` |
+| פקטור אחד | ANOVA | Kruskal–Wallis | `kruskal.test` |
+| טיפולים × בלוקים | ANOVA עם בלוקים | Friedman | `friedman.test` |
+| מתאם | Pearson | Spearman, Kendall | `cor(method = )` |
+
+- שיטות א-פרמטריות לא "חינמיות": כשההנחות הפרמטריות **כן** מתקיימות, הן חלשות יותר
+- גם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן
+
+# שאלת סיכום: ארגנטינה במונדיאל
+
+## הנתונים
+
+```{r}
+#| label: argentina-plot
+#| output-location: slide
+#| fig-height: 4
+arg <- read_csv(file.path(data_dir, "argentina_world_cup.csv"), show_col_types = FALSE)
+
+ggplot(arg, aes(year, rank, colour = host_in_europe)) +
+  geom_point(size = 3.5) +
+  geom_point(data = filter(arg, is.na(rank)), aes(y = 18), shape = 4, size = 3, colour = "grey50") +
+  scale_y_reverse(breaks = c(1, 4, 8, 12, 16)) +
+  scale_colour_manual(values = c(`TRUE` = nanas_pal[["primary"]], `FALSE` = nanas_pal[["accent"]]),
+                      labels = c(`TRUE` = "באירופה", `FALSE` = "מחוץ לאירופה")) +
+  labs(title = "הדירוג של ארגנטינה במונדיאלים, 1930–2022",
+       subtitle = "×: לא השתתפה או לא הגיעה ל-16 הגדולות",
+       x = "Year", y = "Final rank", colour = NULL)
+```
+
+## השאלות {.smaller}
+
+א. תנו לפחות שתי סיבות לכך שאי אפשר להניח שהדירוג של ארגנטינה מתפלג נורמלית.
+
+ב. על סמך המונדיאלים **עד 2018**: האם אפשר לקבוע ב-$\alpha = 0.05$ שבמחצית מהמונדיאלים העתידיים ארגנטינה תעבור את רבע הגמר (כלומר תגיע לדירוג 1–4)?
+
+ג. מה ההסתברות לטעות מסוג ראשון במבחן שביצעתם בסעיף ב׳?
+
+ד. האם ארגנטינה מצליחה יותר במונדיאלים שנערכים **מחוץ** לאירופה? ($\alpha = 0.05$)
+
+ה. **עדכון:** הוסיפו את מונדיאל 2022 (קטאר, ארגנטינה זכתה). האם המסקנה בסעיף ב׳ משתנה? מה זה מלמד אתכם?
+
+ו. **ביקורת:** איך טיפלנו בשנים המסומנות ב-×? האם זה הוגן?
+
+## פתרון (סעיפים א–ג)
+
+::: {.content-hidden when-format="revealjs"}
+**א.** הדירוג בדיד ולא רציף. התומך שלו חסום (1 עד 16 ומעלה), בניגוד לנורמלית שהתומך שלה כל הישר. וההתפלגות לא סימטרית.
+
+**ב.** $H_0: \tilde\mu = 4.5$ (החציון מפריד בין דירוג 4 לשאר). אי אפשר להניח סימטריה, ולכן משתמשים במבחן הסימן.
+:::
+
+```{r}
+#| label: argentina-sign
+arg18 <- arg |> filter(year <= 2018) |> mutate(rank_filled = coalesce(rank, 17))
+n_top4 <- sum(arg18$rank_filled < 4.5)
+c(n = nrow(arg18), r0 = n_top4, R_crit = sign_critical(nrow(arg18), 0.05))
+binom.test(n_top4, nrow(arg18))$p.value     # = alpha in (c): 2 * P(r <= 5)
+```
+
+$r_0 = 5 \le 5 = R^*_{0.05,21}$, ולכן **דוחים** $H_0$: אי אפשר לקבוע שהחציון הוא 4.5. התשובה לשאלה היא **לא**.
+
+**ג.** $\alpha = 2\left(\tfrac{1}{2}\right)^{21}\sum_{i=0}^{5}\binom{21}{i} = 0.027$
+
+## פתרון (סעיפים ד–ו) {.smaller}
+
+```{r}
+#| label: argentina-ranksum
+with(arg18, wilcox.test(rank_filled[!host_in_europe], rank_filled[host_in_europe],
+                        exact = FALSE))$p.value
+
+arg22 <- arg |> mutate(rank_filled = coalesce(rank, 17))
+binom.test(sum(arg22$rank_filled < 4.5), nrow(arg22))$p.value
+```
+
+- **ד.** $p \approx 0.48$: **לא דוחים**. אין ראיה לכך שארגנטינה מצליחה יותר מחוץ לאירופה
+- **ה.** עם 2022: $r_0 = 6 > 5 = R^*_{0.05,22}$ ו-$p = 0.052$, ולכן **כבר לא דוחים**. טורניר אחד הפך את המסקנה. במדגם קטן, תוצאה שנמצאת על סף המובהקות היא שבירה
+- **ו.** 1938, 1950 ו-1954 הן שנים שבהן ארגנטינה **לא השתתפה בכלל**. אם מתייחסים אליהן כאל "דירוג גרוע", מערבבים שתי שאלות שונות. איך המסקנות משתנות אם משמיטים אותן?
