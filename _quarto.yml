@@ -41,6 +41,9 @@ website:
             text: "1. שיטות א-פרמטריות"
       - href: syllabus.qmd
         text: סילבוס
+      - href: https://moodle.tau.ac.il/course/view.php?id=571313701
+        text: Moodle
+        target: _blank
     right:
       - icon: github
         href: https://github.com/adisarid/nanas-tau

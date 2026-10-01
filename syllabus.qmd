@@ -2,7 +2,7 @@
 title: "סילבוס"
 ---
 
-הסילבוס הרשמי נמצא ב[מערכת הסילבוסים של האוניברסיטה](https://www.ims.tau.ac.il/Tal/Syllabus/Syllabus_L.aspx?course=0571313701&year=2026).
+הסילבוס הרשמי נמצא ב[מערכת הסילבוסים של האוניברסיטה](https://www.ims.tau.ac.il/Tal/Syllabus/Syllabus_L.aspx?course=0571313701&year=2026). הודעות, תרגילי בית והגשות נמצאים ב-[Moodle](https://moodle.tau.ac.il/course/view.php?id=571313701).
 
 ## על הקורס
 

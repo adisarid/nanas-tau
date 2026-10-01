@@ -7,7 +7,7 @@ Course materials for **TAU 0571-3137, Statistical Data Analysis**, Faculty of En
 - **TA:** Avital Shamir. Recitations Wed 14:30–15:30 (group 02) and 15:30–16:30 (group 03).
 - **Official syllabus:** [TAU syllabus system](https://www.ims.tau.ac.il/Tal/Syllabus/Syllabus_L.aspx?course=0571313701&year=2026)
 - **Grading:** project 15%, final exam 85% (3h exam, self-prepared formula sheet of up to 10 pages)
-- **Moodle** handles announcements, homework and submissions. This repo is for lecture content only.
+- **[Moodle](https://moodle.tau.ac.il/course/view.php?id=571313701)** handles announcements, homework and submissions. This repo is for lecture content only.
 
 The materials build on Ohad's earlier version of the course (PowerPoint decks), rewritten from scratch. The aim is a modern look, real-world examples drawn from industry and AI practice, and every chart and computation shown in **R** code.
 
