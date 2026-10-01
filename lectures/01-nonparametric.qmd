@@ -1,0 +1,43 @@
+---
+title: "1. שיטות א-פרמטריות"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה 1"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: 01-nonparametric-slides.html
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+```
+
+::: {.callout-note}
+## בהכנה
+ההרצאה בבנייה. העמוד הזה כרגע רק בודק שהתבנית עובדת (עברית מימין לשמאל, קוד R ותרשימים).
+:::
+
+## למה צריך שיטות א-פרמטריות?
+
+- מבחן t מניח התפלגות נורמלית (או מדגם גדול)
+- בפועל: זמני תגובה, הכנסות, דירוגים, ערכים חריגים
+
+## התפלגות מוטה בפועל
+
+```{r}
+#| label: skewed-histogram
+#| echo: true
+response_times <- tibble(
+  version = rep(c("A", "B"), each = 200),
+  ms = c(rlnorm(200, log(300), 0.6), rlnorm(200, log(340), 0.6))
+)
+
+ggplot(response_times, aes(ms, fill = version)) +
+  geom_histogram(bins = 40, alpha = 0.7, position = "identity") +
+  scale_x_continuous(labels = label_number(suffix = " ms", big.mark = ",")) +
+  labs(title = "זמני תגובה בשתי גרסאות של מערכת",
+       subtitle = "התפלגות מוטה ימינה — הממוצע לא מייצג טוב את ה׳טיפוסי׳",
+       x = "Response time", y = "Count", fill = NULL)
+```

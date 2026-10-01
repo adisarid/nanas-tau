@@ -1,0 +1,31 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Heebo", system-ui, -apple-system, Arial, sans-serif;
+$code-block-font-size: 0.6em;
+$presentation-heading-font: "Heebo", sans-serif;
+$presentation-heading-font-weight: 800;
+$presentation-heading-color: #1B2A4A;
+$link-color: #2B59C3;
+$presentation-font-size-root: 34px;
+
+/*-- scss:rules --*/
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap");
+
+.reveal .slides { direction: rtl; text-align: right; }
+.reveal .slides h1, .reveal .slides h2, .reveal .slides h3 { text-align: right; }
+.reveal ul, .reveal ol { display: block; margin-right: 1em; margin-left: 0; }
+
+.reveal pre, .reveal code, .reveal .sourceCode, .reveal .cell-output {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+.reveal .cell-output-display, .reveal figure { direction: ltr; text-align: center; }
+
+.reveal .en { direction: ltr; unicode-bidi: isolate; }
+.reveal .small { font-size: 0.7em; }
+.reveal .muted { color: #6B7280; }
+.reveal .slide-number { direction: ltr; }
+.reveal #title-slide, .reveal #title-slide * { text-align: right; }
+.reveal #title-slide .title { font-size: 2.2em; }
+.reveal #title-slide .quarto-title-authors { justify-content: flex-start; }
+.reveal #title-slide .subtitle { color: #2B59C3; }

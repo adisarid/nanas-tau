@@ -1,0 +1,11 @@
+/.quarto/
+**/*.quarto_ipynb
+/_site/
+*_files/
+.Rproj.user/
+.Rhistory
+.RData
+.DS_Store
+~$*
+# Never commit exams, solutions or student data (see README "What is not in this repo")
+/_private/

@@ -1,0 +1,61 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "lectures/*.qmd"
+
+execute:
+  freeze: auto        # code runs locally only; CI reuses _freeze/
+  warning: false
+  message: false
+
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    fig.align: center
+    fig.width: 8
+    fig.height: 4.5
+    dpi: 150
+
+lang: he
+dir: rtl
+
+website:
+  title: "ניתוח נתונים סטטיסטי"
+  site-url: https://adisarid.github.io/nanas-tau/
+  repo-url: https://github.com/adisarid/nanas-tau
+  repo-actions: [source, issue]
+  page-navigation: true
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: בית
+      - text: הרצאות
+        menu:
+          - href: lectures.qmd
+            text: "כל ההרצאות"
+          - text: "---"
+          - href: lectures/01-nonparametric.qmd
+            text: "1. שיטות א-פרמטריות"
+      - href: syllabus.qmd
+        text: סילבוס
+    right:
+      - icon: github
+        href: https://github.com/adisarid/nanas-tau
+        aria-label: GitHub
+  page-footer:
+    center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
+
+format:
+  html:
+    theme:
+      light: [cosmo, assets/styles.scss]
+      dark: [darkly, assets/styles.scss]
+    toc: true
+    toc-title: "בעמוד זה"
+    code-fold: false
+    code-tools: false
+    code-copy: true
+    highlight-style: github

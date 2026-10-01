@@ -1,0 +1,28 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Heebo", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+$font-family-monospace: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+$primary: #2B59C3;
+$link-color: #2B59C3;
+$border-radius: 0.5rem;
+
+/*-- scss:rules --*/
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap");
+
+h1, h2, h3 { font-weight: 800; letter-spacing: -0.01em; }
+
+// Code, console output and math stay left-to-right inside the RTL page.
+// isolate keeps Hebrew strings inside code as a self-contained bidi run.
+pre, code, .sourceCode, .cell-output, .cell-output pre {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+// Charts always run left-to-right (x axis 0 → right), see README "Charts".
+.cell-output-display, figure { direction: ltr; }
+figcaption { direction: rtl; text-align: center; }
+
+// English terms inline: [Kruskal–Wallis]{.en}
+.en { direction: ltr; unicode-bidi: isolate; }
+
+.callout { direction: rtl; }

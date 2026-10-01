@@ -1,0 +1,54 @@
+---
+title: "N. נושא ההרצאה"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה N"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: NN-slug-slides.html
+---
+
+<!--
+Copy to lectures/NN-slug.qmd, then:
+  1. set title / subtitle / output-file (NN-slug-slides.html)
+  2. add the lecture to the navbar menu in _quarto.yml and to lectures.qmd
+  3. quarto render lectures/NN-slug.qmd  (locally — CI never runs R)
+Conventions (see README):
+  - every `##` is a slide; it is also a section on the notes page
+  - long explanations go in .content-visible when-format="html" blocks
+  - speaker notes go in ::: notes
+-->
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+```
+
+## מה נלמד היום
+
+- נקודה ראשונה
+- נקודה שנייה
+
+::: notes
+הערות דובר — מופיעות רק בתצוגת המציג (S).
+:::
+
+## דוגמה מהשטח
+
+```{r}
+#| label: fig-example
+#| echo: true
+#| fig-cap: "כיתוב לתרשים"
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  labs(title = "כותרת התרשים", x = "Weight", y = "MPG")
+```
+
+::: {.content-visible when-format="html"}
+הסבר מורחב לקריאה בבית — מופיע רק בדף הסיכום, לא במצגת.
+:::
+
+## סיכום
+
+- מה לקחת מההרצאה

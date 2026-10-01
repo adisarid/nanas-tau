@@ -1,0 +1,21 @@
+{
+  "hash": "c18a222de937275a0753c20f5ab71193",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"1. שיטות א-פרמטריות\"\nsubtitle: \"ניתוח נתונים סטטיסטי · הרצאה 1\"\nauthor: \"ד״ר עדי שריד\"\ndate: last-modified\nformat:\n  revealjs:\n    output-file: 01-nonparametric-slides.html\n---\n\n\n\n::: {.callout-note}\n## בהכנה\nההרצאה בבנייה. העמוד הזה כרגע רק בודק שהתבנית עובדת (עברית מימין לשמאל, קוד R ותרשימים).\n:::\n\n## למה צריך שיטות א-פרמטריות?\n\n- מבחן t מניח התפלגות נורמלית (או מדגם גדול)\n- בפועל: זמני תגובה, הכנסות, דירוגים, ערכים חריגים\n\n## התפלגות מוטה בפועל\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nresponse_times <- tibble(\n  version = rep(c(\"A\", \"B\"), each = 200),\n  ms = c(rlnorm(200, log(300), 0.6), rlnorm(200, log(340), 0.6))\n)\n\nggplot(response_times, aes(ms, fill = version)) +\n  geom_histogram(bins = 40, alpha = 0.7, position = \"identity\") +\n  scale_x_continuous(labels = label_number(suffix = \" ms\", big.mark = \",\")) +\n  labs(title = \"זמני תגובה בשתי גרסאות של מערכת\",\n       subtitle = \"התפלגות מוטה ימינה — הממוצע לא מייצג טוב את ה׳טיפוסי׳\",\n       x = \"Response time\", y = \"Count\", fill = NULL)\n```\n\n::: {.cell-output-display}\n![](01-nonparametric_files/figure-revealjs/skewed-histogram-1.png){fig-align='center' width=1200}\n:::\n:::\n\n",
+    "supporting": [
+      "01-nonparametric_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-after-body": [
+        "\n<script>\n  // htmlwidgets need to know to resize themselves when slides are shown/hidden.\n  // Fire the \"slideenter\" event (handled by htmlwidgets.js) when the current\n  // slide changes (different for each slide format).\n  (function () {\n    // dispatch for htmlwidgets\n    function fireSlideEnter() {\n      const event = window.document.createEvent(\"Event\");\n      event.initEvent(\"slideenter\", true, true);\n      window.document.dispatchEvent(event);\n    }\n\n    function fireSlideChanged(previousSlide, currentSlide) {\n      fireSlideEnter();\n\n      // dispatch for shiny\n      if (window.jQuery) {\n        if (previousSlide) {\n          window.jQuery(previousSlide).trigger(\"hidden\");\n        }\n        if (currentSlide) {\n          window.jQuery(currentSlide).trigger(\"shown\");\n        }\n      }\n    }\n\n    // hookup for slidy\n    if (window.w3c_slidy) {\n      window.w3c_slidy.add_observer(function (slide_num) {\n        // slide_num starts at position 1\n        fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);\n      });\n    }\n\n  })();\n</script>\n\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

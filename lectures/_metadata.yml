@@ -1,0 +1,17 @@
+# Every lecture renders twice: a notes page (html) and a slide deck (revealjs).
+# The deck file name is set per lecture via `format.revealjs.output-file`.
+format-links: [revealjs]
+format:
+  html:
+    toc: true
+    code-fold: show
+  revealjs:
+    theme: [default, ../assets/slides.scss]
+    rtl: true
+    slide-number: true
+    transition: fade
+    code-line-numbers: false
+    chalkboard: false
+    footer: "ניתוח נתונים סטטיסטי · תשפ״ז"
+    fig-width: 9
+    fig-height: 5
