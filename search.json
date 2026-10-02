@@ -46,7 +46,7 @@
     "href": "lectures/00-course-intro-slides.html#למה-הקורס-הזה",
     "title": "0. פתיחה: על הקורס",
     "section": "למה הקורס הזה?",
-    "text": "למה הקורס הזה?\n\nכמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם\nהסטטיסטיקה שלמדתם עד עכשיו עסקה במדגם אחד או שניים. כאן נעבור למודלים: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים\nכלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא שיקול הדעת:\n\nאיזו שיטה מתאימה לשאלה ולנתונים\nהאם ההנחות שלה מתקיימות\nמה הפלט אומר, ומה הוא לא אומר\nאיפה הניתוח (שלכם, של עמית או של מודל שפה) שגוי"
+    "text": "למה הקורס הזה?\n\nכמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם\nהסטטיסטיקה שלמדתם עד עכשיו היא הבסיס לכל מה שנלמד בקורס. כאן נעבור למודלים: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים\nכלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא שיקול הדעת:\n\nאיזו שיטה מתאימה לשאלה ולנתונים\nהאם ההנחות שלה מתקיימות\nמה הפלט אומר, ומה הוא לא אומר\nאיפה הניתוח (שלכם, של עמית או של מודל שפה) שגוי"
   },
   {
     "objectID": "lectures/00-course-intro-slides.html#מה-תדעו-לעשות-בסוף-הקורס",
@@ -60,14 +60,14 @@
     "href": "lectures/00-course-intro-slides.html#תוכנית-הקורס",
     "title": "0. פתיחה: על הקורס",
     "section": "תוכנית הקורס",
-    "text": "תוכנית הקורס\n\n\n\n\n#\nהרצאה\nתרגול\n\n\n\n\n1\nשיטות א-פרמטריות\nשיטות א-פרמטריות\n\n\n2\nמבוטלת, ראו בשקף הבא\nחזרה על התפלגויות\n\n\n3\nרגרסיה לינארית מרובה\nרגרסיה פשוטה ומרובה\n\n\n4–6\nניתוח שונות (ANOVA): חד-כיווני, ניגודים, רב-כיווני\nבהתאם\n\n\n7\nתכנון ניסויים\nבהתאם\n\n\n8\nרגרסיה לוגיסטית\nבהתאם\n\n\n9\nניתוח גורמים ראשיים (PCA)\nבהתאם\n\n\n10–11\nסדרות עתיות וחיזוי\nבהתאם\n\n\n12\nשיעור השלמה\n\n\n\n13\nחזרה לבחינה\nבהתאם\n\n\n\n\n\nהתוכנית עשויה להשתנות. העדכונים יופיעו באתר וב-Moodle."
+    "text": "תוכנית הקורס\n\n\n\n\n#\nהרצאה\nתרגול\n\n\n\n\n1\nשיטות א-פרמטריות\nשיטות א-פרמטריות\n\n\n2\nתידחה, ראו בשקף הבא\nחזרה על התפלגויות\n\n\n3\nרגרסיה לינארית מרובה\nרגרסיה פשוטה ומרובה\n\n\n4–6\nניתוח שונות (ANOVA): חד-כיווני, ניגודים, רב-כיווני\nבהתאם\n\n\n7\nתכנון ניסויים\nבהתאם\n\n\n8\nרגרסיה לוגיסטית\nבהתאם\n\n\n9\nניתוח גורמים ראשיים (PCA)\nבהתאם\n\n\n10–11\nסדרות עתיות וחיזוי\nבהתאם\n\n\n12\nשיעור השלמה\n\n\n\n13\nחזרה לבחינה\nבהתאם\n\n\nטרם נקבע\n\nתרגול מעבדה: ויז׳ואליזציות\n\n\nטרם נקבע\n\nתרגול מעבדה: שימוש ב-GitHub\n\n\n\n\n\nהתוכנית עשויה להשתנות. העדכונים יופיעו באתר וב-Moodle."
   },
   {
     "objectID": "lectures/00-course-intro-slides.html#הודעה-ההרצאה-השנייה-מבוטלת",
     "href": "lectures/00-course-intro-slides.html#הודעה-ההרצאה-השנייה-מבוטלת",
     "title": "0. פתיחה: על הקורס",
     "section": "הודעה: ההרצאה השנייה מבוטלת",
-    "text": "הודעה: ההרצאה השנייה מבוטלת\n\nבשבוע השני אהיה בחו״ל בכנס, ולכן ההרצאה השנייה לא תתקיים\nהתרגול באותו שבוע מתקיים כרגיל (חזרה על התפלגויות)\nתתקיים הרצאת השלמה. המועד יפורסם ב-Moodle"
+    "text": "הודעה: ההרצאה השנייה מבוטלת\n\nבשבוע השני אהיה בחו״ל, ולכן ההרצאה השנייה לא תתקיים\nהתרגול באותו שבוע מתקיים כרגיל (חזרה על התפלגויות)\nתתקיים הרצאת השלמה. המועד יפורסם ב-Moodle"
   },
   {
     "objectID": "lectures/00-course-intro-slides.html#חומרי-הקורס-איפה-הכול-נמצא",
@@ -151,7 +151,7 @@
     "href": "lectures/00-course-intro.html#למה-הקורס-הזה",
     "title": "0. פתיחה: על הקורס",
     "section": "למה הקורס הזה?",
-    "text": "למה הקורס הזה?\n\nכמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם\nהסטטיסטיקה שלמדתם עד עכשיו עסקה במדגם אחד או שניים. כאן נעבור למודלים: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים\nכלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא שיקול הדעת:\n\nאיזו שיטה מתאימה לשאלה ולנתונים\nהאם ההנחות שלה מתקיימות\nמה הפלט אומר, ומה הוא לא אומר\nאיפה הניתוח (שלכם, של עמית או של מודל שפה) שגוי"
+    "text": "למה הקורס הזה?\n\nכמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם\nהסטטיסטיקה שלמדתם עד עכשיו היא הבסיס לכל מה שנלמד בקורס. כאן נעבור למודלים: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים\nכלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא שיקול הדעת:\n\nאיזו שיטה מתאימה לשאלה ולנתונים\nהאם ההנחות שלה מתקיימות\nמה הפלט אומר, ומה הוא לא אומר\nאיפה הניתוח (שלכם, של עמית או של מודל שפה) שגוי"
   },
   {
     "objectID": "lectures/00-course-intro.html#מה-תדעו-לעשות-בסוף-הקורס",
@@ -165,14 +165,14 @@
     "href": "lectures/00-course-intro.html#תוכנית-הקורס",
     "title": "0. פתיחה: על הקורס",
     "section": "תוכנית הקורס",
-    "text": "תוכנית הקורס\n\n\n\n\n#\nהרצאה\nתרגול\n\n\n\n\n1\nשיטות א-פרמטריות\nשיטות א-פרמטריות\n\n\n2\nמבוטלת, ראו בשקף הבא\nחזרה על התפלגויות\n\n\n3\nרגרסיה לינארית מרובה\nרגרסיה פשוטה ומרובה\n\n\n4–6\nניתוח שונות (ANOVA): חד-כיווני, ניגודים, רב-כיווני\nבהתאם\n\n\n7\nתכנון ניסויים\nבהתאם\n\n\n8\nרגרסיה לוגיסטית\nבהתאם\n\n\n9\nניתוח גורמים ראשיים (PCA)\nבהתאם\n\n\n10–11\nסדרות עתיות וחיזוי\nבהתאם\n\n\n12\nשיעור השלמה\n\n\n\n13\nחזרה לבחינה\nבהתאם\n\n\n\n\n\nהתוכנית עשויה להשתנות. העדכונים יופיעו באתר וב-Moodle."
+    "text": "תוכנית הקורס\n\n\n\n\n#\nהרצאה\nתרגול\n\n\n\n\n1\nשיטות א-פרמטריות\nשיטות א-פרמטריות\n\n\n2\nתידחה, ראו בשקף הבא\nחזרה על התפלגויות\n\n\n3\nרגרסיה לינארית מרובה\nרגרסיה פשוטה ומרובה\n\n\n4–6\nניתוח שונות (ANOVA): חד-כיווני, ניגודים, רב-כיווני\nבהתאם\n\n\n7\nתכנון ניסויים\nבהתאם\n\n\n8\nרגרסיה לוגיסטית\nבהתאם\n\n\n9\nניתוח גורמים ראשיים (PCA)\nבהתאם\n\n\n10–11\nסדרות עתיות וחיזוי\nבהתאם\n\n\n12\nשיעור השלמה\n\n\n\n13\nחזרה לבחינה\nבהתאם\n\n\nטרם נקבע\n\nתרגול מעבדה: ויז׳ואליזציות\n\n\nטרם נקבע\n\nתרגול מעבדה: שימוש ב-GitHub\n\n\n\n\n\nהתוכנית עשויה להשתנות. העדכונים יופיעו באתר וב-Moodle."
   },
   {
     "objectID": "lectures/00-course-intro.html#הודעה-ההרצאה-השנייה-מבוטלת",
     "href": "lectures/00-course-intro.html#הודעה-ההרצאה-השנייה-מבוטלת",
     "title": "0. פתיחה: על הקורס",
     "section": "הודעה: ההרצאה השנייה מבוטלת",
-    "text": "הודעה: ההרצאה השנייה מבוטלת\n\nבשבוע השני אהיה בחו״ל בכנס, ולכן ההרצאה השנייה לא תתקיים\nהתרגול באותו שבוע מתקיים כרגיל (חזרה על התפלגויות)\nתתקיים הרצאת השלמה. המועד יפורסם ב-Moodle"
+    "text": "הודעה: ההרצאה השנייה מבוטלת\n\nבשבוע השני אהיה בחו״ל, ולכן ההרצאה השנייה לא תתקיים\nהתרגול באותו שבוע מתקיים כרגיל (חזרה על התפלגויות)\nתתקיים הרצאת השלמה. המועד יפורסם ב-Moodle"
   },
   {
     "objectID": "lectures/00-course-intro.html#חומרי-הקורס-איפה-הכול-נמצא",
@@ -263,7 +263,7 @@
     "href": "index.html#מה-צריך-להתקין",
     "title": "ניתוח נתונים סטטיסטי",
     "section": "מה צריך להתקין",
-    "text": "מה צריך להתקין\nשפה: R או Python, לבחירתכם. דוגמאות הקוד באתר כתובות ב-R, ואפשר להעתיק ולהריץ את כולן.\nסביבת עבודה (IDE), אחת מאלה:\n\nVS Code: המועדפת עליי. עובדת עם R ועם Python דרך הרחבות.\nPositron: סביבה חדשה של Posit, תומכת ב-R וב-Python.\nRStudio: הסביבה הקלאסית ל-R."
+    "text": "מה צריך להתקין\nשפה: R או Python, לבחירתכם. דוגמאות הקוד באתר כתובות ב-R, ואפשר להעתיק ולהריץ את כולן.\nסביבת עבודה (IDE), אחת מאלה:\n\nVS Code: המועדפת עליי. עובדת עם R ועם Python. תומכת ב-AI בצורה טובה (GH Copilot, Claude, Codex)\nPositron: סביבה של Posit, תומכת ב-R וב-Python (מבוססת על vscode וכל ה-extensions עובדים גם).\nRStudio: הסביבה הקלאסית ל-R (עובדת פחות טוב עם AI, לא ממליץ)."
   },
   {
     "objectID": "lectures.html",
@@ -277,14 +277,49 @@
     "href": "lectures/01-nonparametric.html",
     "title": "1. שיטות א-פרמטריות",
     "section": "",
-    "text": "מתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nניתוח שונות א-פרמטרי: Kruskal–Wallis ו-Friedman\nמתאם על דירוגים: Spearman ו-Kendall\n\n\nההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R."
+    "text": "תזכורת קצרה: מהי בדיקת השערות\nמתי ההנחות של מבחן פרמטרי לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nטיב התאמה: מבחן חי-בריבוע ומבחן Kolmogorov–Smirnov\nמתאם על דירוגים: Spearman ו-Kendall"
   },
   {
     "objectID": "lectures/01-nonparametric.html#על-מה-נדבר-היום",
     "href": "lectures/01-nonparametric.html#על-מה-נדבר-היום",
     "title": "1. שיטות א-פרמטריות",
     "section": "",
-    "text": "מתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nניתוח שונות א-פרמטרי: Kruskal–Wallis ו-Friedman\nמתאם על דירוגים: Spearman ו-Kendall\n\n\nההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R."
+    "text": "תזכורת קצרה: מהי בדיקת השערות\nמתי ההנחות של מבחן פרמטרי לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nטיב התאמה: מבחן חי-בריבוע ומבחן Kolmogorov–Smirnov\nמתאם על דירוגים: Spearman ו-Kendall"
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#השאלה-האם-הזכרים-כבדים-יותר",
+    "href": "lectures/01-nonparametric.html#השאלה-האם-הזכרים-כבדים-יותר",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "השאלה: האם הזכרים כבדים יותר?",
+    "text": "השאלה: האם הזכרים כבדים יותר?\n\nנתוני Palmer Penguins: מדידות של פינגווינים בתחנת המחקר פאלמר באנטארקטיקה\nנתמקד במין אחד, Gentoo, ובמשתנה אחד: משקל הגוף (גרם)\nהשאלה: האם יש הבדל במשקל הממוצע בין זכרים לנקבות?\nהנתונים מגיעים עם R (מגרסה 4.5), בלי חבילה נוספת\n\n\n\nקוד\ngentoo &lt;- penguins |&gt; filter(species == \"Gentoo\", !is.na(sex))\ngentoo |&gt; summarise(n = n(), mean = mean(body_mass), sd = sd(body_mass), .by = sex)\n\n\n     sex  n mean    sd\n1 female 58 4680 281.6\n2   male 61 5485 313.2"
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#התפלגות-המשקל",
+    "href": "lectures/01-nonparametric.html#התפלגות-המשקל",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "התפלגות המשקל",
+    "text": "התפלגות המשקל\n\n\nקוד\nggplot(gentoo, aes(body_mass)) +\n  geom_histogram(binwidth = 100, fill = nanas_pal[[\"grey\"]]) +\n  labs(title = \"משקל הגוף של פינגווינים מסוג Gentoo\",\n       subtitle = \"119 פרטים, זכרים ונקבות יחד\",\n       x = \"Body mass (g)\", y = \"Count\")\n\n\n\n\n\n\n\n\n\nההתפלגות רחבה, ונראה שיש בה שתי “גבעות”. זה רמז שמסתתר כאן משתנה נוסף."
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#המשקל-לפי-מין",
+    "href": "lectures/01-nonparametric.html#המשקל-לפי-מין",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "המשקל לפי מין",
+    "text": "המשקל לפי מין\n\n\nקוד\nsex_means &lt;- gentoo |&gt; summarise(mean = mean(body_mass), .by = sex)\n\nggplot(gentoo, aes(body_mass, fill = sex)) +\n  geom_histogram(binwidth = 100, alpha = 0.6, position = \"identity\") +\n  geom_vline(aes(xintercept = mean, colour = sex), data = sex_means,\n             linetype = \"dashed\", linewidth = 0.9, show.legend = FALSE) +\n  scale_fill_manual(values = c(female = nanas_pal[[\"accent\"]], male = nanas_pal[[\"primary\"]])) +\n  scale_colour_manual(values = c(female = nanas_pal[[\"accent\"]], male = nanas_pal[[\"primary\"]])) +\n  labs(title = \"הזכרים כבדים בכ-800 גרם בממוצע\",\n       subtitle = \"הקווים המקווקווים: הממוצע בכל קבוצה\",\n       x = \"Body mass (g)\", y = \"Count\", fill = NULL)\n\n\n\n\n\n\n\n\n\nשתי ה”גבעות” הן שתי הקבוצות. ההבדל נראה גדול, אבל ההיסטוגרמות חופפות בחלקן. השאלה הסטטיסטית היא האם הבדל כזה יכול לנבוע ממקריות הדגימה בלבד."
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#מבחן-t-לשני-מדגמים",
+    "href": "lectures/01-nonparametric.html#מבחן-t-לשני-מדגמים",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "מבחן t לשני מדגמים",
+    "text": "מבחן t לשני מדגמים\n\\[\nH_0: \\mu_F = \\mu_M \\qquad H_1: \\mu_F \\neq \\mu_M\n\\]\n\\[\nt = \\frac{\\bar{x}_F - \\bar{x}_M}{\\sqrt{\\dfrac{s_F^2}{n_F} + \\dfrac{s_M^2}{n_M}}}\n= \\frac{4679.7 - 5484.8}{\\sqrt{\\dfrac{281.6^2}{58} + \\dfrac{313.2^2}{61}}}\n= \\frac{-805.1}{54.5} \\approx -14.76\n\\]\n\n\nקוד\nt.test(body_mass ~ sex, data = gentoo) |&gt;\n  print(digits = 6)  # a little more precision than the course default\n\n\n\n    Welch Two Sample t-test\n\ndata:  body_mass by sex\nt = -14.76, df = 116.6, p-value &lt;2e-16\nalternative hypothesis: true difference in means between group female and group male is not equal to 0\n95 percent confidence interval:\n -913.113 -697.076\nsample estimates:\nmean in group female   mean in group male \n             4679.74              5484.84"
+  },
+  {
+    "objectID": "lectures/01-nonparametric.html#איך-קוראים-את-הפלט",
+    "href": "lectures/01-nonparametric.html#איך-קוראים-את-הפלט",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "איך קוראים את הפלט",
+    "text": "איך קוראים את הפלט\n\nt = -14.76: ההפרש בין הממוצעים הוא כ-15 שגיאות תקן. הסימן שלילי כי R מחסר זכרים מנקבות\ndf = 116.6: Welch לא מניח שוויון שונויות, ולכן דרגות החופש לא שלמות\np-value &lt; 2e-16: אם \\(H_0\\) נכונה, הסיכוי לראות הפרש קיצוני כזה כמעט אפס. דוחים את \\(H_0\\)\nרווח הסמך (95%): הנקבות קלות מהזכרים ב-697 עד 913 גרם. הערך 0 לא נמצא ברווח\nההנחות: תצפיות בלתי תלויות, והתפלגות נורמלית בכל קבוצה (או מדגם גדול)\n\n\nלהזכיר: p-value איננו ההסתברות ש-H0 נכונה. זו ההסתברות לנתונים קיצוניים כאלה או יותר, בהינתן ש-H0 נכונה.\n\nכאן ההנחות סבירות: ההיסטוגרמות בכל קבוצה נראות פעמוניות, ויש כ-60 פרטים בכל קבוצה. בשאר ההרצאה נשאל מה עושים כשההנחה על ההתפלגות לא מתקיימת, למשל כשיש ערכים קיצוניים או כשהמדגם קטן."
   },
   {
     "objectID": "lectures/01-nonparametric.html#הרעיון",
@@ -298,7 +333,7 @@
     "href": "lectures/01-nonparametric.html#כשהתוחלת-בכלל-לא-קיימת",
     "title": "1. שיטות א-פרמטריות",
     "section": "כשהתוחלת בכלל לא קיימת",
-    "text": "כשהתוחלת בכלל לא קיימת\nדוגמה: \\(f(x) = \\dfrac{1}{(1+x)^2}, \\quad x \\in [0, \\infty)\\)\n\\[\n\\mu = \\int_0^\\infty \\frac{x}{(1+x)^2}\\,dx = \\infty\n\\]\n\\[\nF(a) = 1 - \\frac{1}{1+a} = 0.5 \\;\\Rightarrow\\; \\tilde{\\mu} = 1\n\\]\n\nאין טעם לבדוק השערות על התוחלת, כי היא אינסופית\nהחציון מוגדר היטב, ואפשר לבדוק השערות עליו"
+    "text": "כשהתוחלת בכלל לא קיימת\nדוגמה:\n\\[\nf(x) = \\dfrac{1}{(1+x)^2}, \\quad x \\in [0, \\infty)\n\\]\n\\[\n\\mu = \\int_0^\\infty \\frac{x}{(1+x)^2}\\,dx = \\infty\n\\]\n\\[\nF(a) = 1 - \\frac{1}{1+a} = 0.5 \\;\\Rightarrow\\; \\tilde{\\mu} = 1\n\\]\n\nאין טעם לבדוק השערות על התוחלת, כי היא אינסופית\nהחציון מוגדר היטב, ואפשר לבדוק השערות עליו"
   },
   {
     "objectID": "lectures/01-nonparametric.html#סימולציה-ממוצע-מול-חציון",
@@ -312,14 +347,14 @@
     "href": "lectures/01-nonparametric.html#מפת-דרכים",
     "title": "1. שיטות א-פרמטריות",
     "section": "מפת דרכים",
-    "text": "מפת דרכים\n\n\n\n\n\n\n\n\nהשאלה\nהשיטה הפרמטרית\nהשיטה הא-פרמטרית\n\n\n\n\nמרכז ההתפלגות\nמבחן t / Z על התוחלת\nמבחן הסימן, מבחן הדירוגים המסומנים\n\n\nשני מדגמים מזווגים\nמבחן t מזווג\nמבחן הסימן / דירוגים מסומנים על ההפרשים\n\n\nשתי אוכלוסיות בלתי תלויות\nמבחן t לשני מדגמים\nמבחן סכום הדירוגים\n\n\nהשפעה של משתנה קטגוריאלי\nANOVA חד-כיווני\nKruskal–Wallis\n\n\nטיפולים בתוך בלוקים\nANOVA עם בלוקים\nFriedman\n\n\nמתאם בין שני משתנים\nמתאם פירסון\nSpearman’s ρ, Kendall’s τ"
+    "text": "מפת דרכים\n\n\n\n\n\n\n\n\nהשאלה\nהשיטה הפרמטרית\nהשיטה הא-פרמטרית\n\n\n\n\nמרכז ההתפלגות\nמבחן t / Z על התוחלת\nמבחן הסימן (Sign test), מבחן הדירוגים המסומנים (Wilcoxon signed-rank)\n\n\nשני מדגמים מזווגים\nמבחן t מזווג\nמבחן הסימן / Wilcoxon signed-rank על ההפרשים\n\n\nשתי אוכלוסיות בלתי תלויות\nמבחן t לשני מדגמים\nמבחן סכום הדירוגים (Mann–Whitney)\n\n\nהתאמה להתפלגות נתונה\nמבחן חי-בריבוע לטיב התאמה (Goodness-of-fit)\nמבחן Kolmogorov–Smirnov\n\n\nהשוואה בין שתי התפלגויות\n\nKolmogorov–Smirnov לשני מדגמים\n\n\nמתאם בין שני משתנים\nמתאם פירסון\nSpearman’s ρ, Kendall’s τ"
   },
   {
     "objectID": "lectures/01-nonparametric.html#השערות-על-החציון",
     "href": "lectures/01-nonparametric.html#השערות-על-החציון",
     "title": "1. שיטות א-פרמטריות",
     "section": "השערות על החציון",
-    "text": "השערות על החציון\n\\[\nH_0: \\tilde{\\mu} = z \\qquad H_1: \\tilde{\\mu} \\neq z\n\\]\n\nתחת \\(H_0\\), כל הפרש \\(x_i - z\\) חיובי או שלילי בהסתברות \\(0.5\\)\n\\(r^+\\): מספר ההפרשים החיוביים\nסטטיסטי המבחן: \\(r = \\min(r^+,\\; n - r^+)\\)\nתחת \\(H_0\\) נצפה ש-\\(r\\) יהיה קרוב ל-\\(n/2\\), וערך קטן מעיד נגד \\(H_0\\)\n\n\\[\nr^+ \\sim \\text{Binomial}(n, 0.5)\n\\qquad\nP(r \\le y) = 2\\,P(r^+ \\le y), \\quad y &lt; n/2\n\\]"
+    "text": "השערות על החציון\n\\[\nH_0: \\tilde{\\mu} = z \\qquad H_1: \\tilde{\\mu} \\neq z\n\\]\n\nתחת \\(H_0\\), כל הפרש \\(x_i - z\\) חיובי או שלילי בהסתברות \\(0.5\\)\nתצפיות ששוות בדיוק ל-\\(z\\) (הפרש \\(0\\)) משמיטים, ו-\\(n\\) הוא מספר התצפיות שנשארו\n\\(r^+\\): מספר ההפרשים החיוביים\nסטטיסטי המבחן: \\(r = \\min(r^+,\\; n - r^+)\\)\nתחת \\(H_0\\) נצפה ש-\\(r\\) יהיה קרוב ל-\\(n/2\\), וערך קטן מעיד נגד \\(H_0\\)\n\n\\[\nr^+ \\sim \\text{Binomial}(n, 0.5)\n\\qquad\nP(r \\le y) = 2\\,P(r^+ \\le y), \\quad y &lt; n/2\n\\]"
   },
   {
     "objectID": "lectures/01-nonparametric.html#הערך-הקריטי",
@@ -347,21 +382,21 @@
     "href": "lectures/01-nonparametric.html#דוגמה-חציון-הציונים-במועד-ב",
     "title": "1. שיטות א-פרמטריות",
     "section": "דוגמה: חציון הציונים במועד ב׳",
-    "text": "דוגמה: חציון הציונים במועד ב׳\nמרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-\\(\\alpha = 0.1\\)?\n\n\nקוד\ngrades &lt;- read_csv(file.path(data_dir, \"exam_grades.csv\"), show_col_types = FALSE)\ngrades$grade\n\n\n [1] 79 75 85 95 70 60 65 75 74 89 72\n\n\nקוד\nbinom.test(sum(grades$grade &gt; 80), n = nrow(grades))$p.value  # sign test\n\n\n[1] 0.2266\n\n\nקוד\nt.test(grades$grade, mu = 80)$p.value                          # assuming normality\n\n\n[1] 0.2563\n\n\n\n\\(r^+ = 3\\), \\(r_0 = 3 &gt; R^*_{0.1,11} = 2\\), ולכן טענת המרצה מתקבלת\nגם מבחן t (בהנחת נורמליות) לא דוחה את \\(H_0\\)"
+    "text": "דוגמה: חציון הציונים במועד ב׳\nמרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-\\(\\alpha = 0.1\\)?\n\n\nקוד\ngrades &lt;- read_csv(file.path(data_dir, \"exam_grades.csv\"), show_col_types = FALSE)\ngrades$grade\n\n\n [1] 79 75 85 95 70 60 65 75 74 89 72\n\n\nקוד\nbinom.test(sum(grades$grade &gt; 80), n = nrow(grades))$p.value  # sign test\n\n\n[1] 0.2266\n\n\n\n\\(r^+ = 3\\), \\(r_0 = 3 &gt; R^*_{0.1,11} = 2\\), ולכן טענת המרצה אינה נדחית\nגם מבחן t לתוחלת (בהנחת נורמליות) לא דוחה את \\(H_0\\)\n\n\n\n\nקוד\nt.test(grades$grade, mu = 80) |&gt; print(digits = 6)\n\n\n\n    One Sample t-test\n\ndata:  grades$grade\nt = -1.204, df = 10, p-value = 0.256\nalternative hypothesis: true mean is not equal to 80\n95 percent confidence interval:\n 69.3750 83.1704\nsample estimates:\nmean of x \n  76.2727"
   },
   {
     "objectID": "lectures/01-nonparametric.html#מבחן-הסימן-למדגמים-מזווגים",
     "href": "lectures/01-nonparametric.html#מבחן-הסימן-למדגמים-מזווגים",
     "title": "1. שיטות א-פרמטריות",
     "section": "מבחן הסימן למדגמים מזווגים",
-    "text": "מבחן הסימן למדגמים מזווגים\nכשהתצפיות מזווגות, מריצים את מבחן הסימן על ההפרשים \\(d_i = x_i - y_i\\), עם \\(H_0: \\tilde{\\mu}_d = 0\\).\nדוגמה: 11 מופעים של בעיית הסוכן הנוסע (TSP) נפתרו בשתי היוריסטיקות. בטבלה: הפער (%) מהפתרון האופטימלי של מודל תכנות בשלמים.\n\n\nקוד\ntsp &lt;- read_csv(file.path(data_dir, \"tsp_heuristics.csv\"), show_col_types = FALSE)\ntsp |&gt;\n  mutate(sign = if_else(heuristic_1 &gt; heuristic_2, \"+\", \"-\")) |&gt;\n  pivot_longer(-instance, values_transform = as.character) |&gt;\n  pivot_wider(names_from = instance) |&gt;\n  kable()\n\n\n\n\n\nname\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n\n\n\n\nheuristic_1\n10\n9\n15\n10\n5\n14\n15\n11\n4\n4\n5\n\n\nheuristic_2\n12\n15\n4\n6\n7\n18\n18\n13\n9\n7\n10\n\n\nsign\n-\n-\n+\n+\n-\n-\n-\n-\n-\n-\n-"
+    "text": "מבחן הסימן למדגמים מזווגים\nכשהתצפיות מזווגות, מריצים את מבחן הסימן על ההפרשים \\(d_i = x_i - y_i\\), עם \\(H_0: \\tilde{\\mu}_d = 0\\).\nדוגמה: צוות מוצר שוקל להחליף את Sonnet 5.5 ב-Opus 5.5, היקר יותר, למשימות תיוג. שני המודלים תייגו את אותן 11 משימות. האם Opus טועה פחות? בטבלה: שיעור השגיאות (%) בכל משימה. \\(d_i\\) = Opus פחות Sonnet. (נתונים מדומים)\n\n\nקוד\nllm_err &lt;- read_csv(file.path(data_dir, \"llm_labelling_errors.csv\"), show_col_types = FALSE)\nllm_err |&gt;\n  mutate(sign = if_else(opus &gt; sonnet, \"+\", \"-\")) |&gt;\n  select(task = task_he, sonnet, opus, sign) |&gt;\n  kable()\n\n\n\n\n\ntask\nsonnet\nopus\nsign\n\n\n\n\nניתוב פניות שירות\n8.4\n6.9\n-\n\n\nסנטימנט בביקורות\n4.1\n3.6\n-\n\n\nזיהוי ספאם\n2.3\n2.1\n-\n\n\nזיהוי כוונה בצ׳אט\n11.2\n9.0\n-\n\n\nזיהוי תוכן פוגעני\n6.5\n12.4\n+\n\n\nשדות בחשבוניות\n9.8\n8.1\n-\n\n\nזיהוי שפה\n1.4\n0.6\n-\n\n\nתעדוף פניות רפואיות\n14.7\n11.6\n-\n\n\nסיווג סעיפים בחוזים\n13.0\n10.4\n-\n\n\nקטגוריית מוצר\n7.2\n6.0\n-\n\n\nזיהוי סרקזם\n15.3\n22.1\n+\n\n\n\n\n\nלמה מזווג? יש משימות קשות לכל מודל (סרקזם, תעדוף רפואי) ויש קלות (זיהוי שפה, ספאם). ההבדל בין המשימות גדול בהרבה מההבדל בין המודלים, ולכן משווים את שני המודלים בתוך כל משימה."
   },
   {
-    "objectID": "lectures/01-nonparametric.html#tsp-התוצאה",
-    "href": "lectures/01-nonparametric.html#tsp-התוצאה",
+    "objectID": "lectures/01-nonparametric.html#sonnet-מול-opus-התוצאה",
+    "href": "lectures/01-nonparametric.html#sonnet-מול-opus-התוצאה",
     "title": "1. שיטות א-פרמטריות",
-    "section": "TSP: התוצאה",
-    "text": "TSP: התוצאה\n\n\nקוד\nn_plus &lt;- sum(tsp$heuristic_1 &gt; tsp$heuristic_2)\nbinom.test(n_plus, n = nrow(tsp))\n\n\n\n    Exact binomial test\n\ndata:  n_plus and nrow(tsp)\nnumber of successes = 2, number of trials = 11, p-value = 0.07\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.02283 0.51776\nsample estimates:\nprobability of success \n                0.1818 \n\n\n\n\\(r^+ = 2\\), ו-\\(p = 0.065 &lt; 0.1\\), ולכן דוחים \\(H_0\\): חציון ההפרשים אינו 0\nלהיוריסטיקה 1 יש פער קטן יותר מהאופטימום ברוב המופעים"
+    "section": "Sonnet מול Opus: התוצאה",
+    "text": "Sonnet מול Opus: התוצאה\n\n\nקוד\nn_plus &lt;- sum(llm_err$opus &gt; llm_err$sonnet)\nbinom.test(n_plus, n = nrow(llm_err)) |&gt; print(digits = 6)\n\n\n\n    Exact binomial test\n\ndata:  n_plus and nrow(llm_err)\nnumber of successes = 2, number of trials = 11, p-value = 0.0654\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.0228312 0.5177559\nsample estimates:\nprobability of success \n              0.181818 \n\n\n\n\\(r^+ = 2\\), ו-\\(p = 0.065 &lt; 0.1\\), ולכן דוחים \\(H_0\\): חציון ההפרשים אינו 0\nOpus טועה פחות ב-9 מתוך 11 המשימות"
   },
   {
     "objectID": "lectures/01-nonparametric.html#הרחבה-של-מבחן-הסימן",
@@ -375,7 +410,7 @@
     "href": "lectures/01-nonparametric.html#שלבי-המבחן",
     "title": "1. שיטות א-פרמטריות",
     "section": "שלבי המבחן",
-    "text": "שלבי המבחן\n\nמדרגים את \\(|x_i - z|\\) בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות\nמצמידים לכל דרגה את הסימן של ההפרש שלה\n\\(R^+\\) הוא סכום הדרגות החיוביות ו-\\(R^-\\) סכום הדרגות השליליות, וסטטיסטי המבחן הוא \\(R = \\min(R^+, R^-)\\)\nדוחים את \\(H_0\\) אם \\(R \\le R^*_{\\alpha,n}\\) (טבלה), או לפי קירוב נורמלי:\n\n\\[\nE(R^+) = \\frac{n(n+1)}{4} \\qquad V(R^+) = \\frac{n(n+1)(2n+1)}{24}\n\\]"
+    "text": "שלבי המבחן\n\nמשמיטים הפרשים ששווים ל-\\(0\\) ומעדכנים את \\(n\\). מדרגים את \\(|x_i - z|\\) בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות\nמצמידים לכל דרגה את הסימן של ההפרש שלה\n\\(R^+\\) הוא סכום הדרגות החיוביות ו-\\(R^-\\) סכום הדרגות השליליות, וסטטיסטי המבחן הוא \\(R = \\min(R^+, R^-)\\)\nדוחים את \\(H_0\\) אם \\(R \\le R^*_{\\alpha,n}\\) (טבלה), או לפי קירוב נורמלי:\n\n\\[\nE(R^+) = \\frac{n(n+1)}{4} \\qquad V(R^+) = \\frac{n(n+1)(2n+1)}{24}\n\\]"
   },
   {
     "objectID": "lectures/01-nonparametric.html#חזרה-לזמני-התגובה",
@@ -396,7 +431,7 @@
     "href": "lectures/01-nonparametric.html#כשהמבחנים-לא-מסכימים",
     "title": "1. שיטות א-פרמטריות",
     "section": "כשהמבחנים לא מסכימים",
-    "text": "כשהמבחנים לא מסכימים\nנחזור ל-TSP:\n\n\nקוד\nc(sign        = binom.test(n_plus, nrow(tsp))$p.value,\n  signed_rank = wilcox.test(tsp$heuristic_1, tsp$heuristic_2,\n                            paired = TRUE, exact = FALSE)$p.value)\n\n\n       sign signed_rank \n    0.06543     0.18080 \n\n\n\nב-\\(\\alpha = 0.1\\) מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא\nאם ההתפלגות סימטרית, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע\nאם אי אפשר להניח סימטריה, מבחן הסימן קובע\n\nכדאי לשים לב ממה נובע הפער. בשני המופעים שבהם היוריסטיקה 2 עדיפה (מופעים 3 ו-4) הפערים גדולים מאוד: 11 ו-4 נקודות אחוז. מבחן הסימן סופר רק כמה פעמים כל שיטה ניצחה, ומבחן הדירוגים המסומנים מתחשב גם בגודל הניצחון. השאלה איזה מבחן לבחור היא שאלה על ההנחות, ולא על איזה מבחן נותן את התשובה שרצינו. ואת ההחלטה מקבלים לפני שמסתכלים על התוצאה."
+    "text": "כשהמבחנים לא מסכימים\nנחזור ל-Sonnet מול Opus:\n\n\nקוד\nc(sign        = binom.test(n_plus, nrow(llm_err))$p.value,\n  signed_rank = wilcox.test(llm_err$opus, llm_err$sonnet, paired = TRUE)$p.value)\n\n\n       sign signed_rank \n    0.06543     0.32031 \n\n\n\nב-\\(\\alpha = 0.1\\) מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא\nאם ההתפלגות סימטרית, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע\nאם אי אפשר להניח סימטריה, מבחן הסימן קובע\n\nכדאי לשים לב ממה נובע הפער. Opus מנצח ב-9 משימות, אבל בהפרשים קטנים (0.2 עד 3.1 נקודות אחוז). בשתי המשימות שבהן Sonnet עדיף, זיהוי תוכן פוגעני וזיהוי סרקזם, הפערים גדולים: 5.9 ו-6.8 נקודות אחוז. ההפרשים רחוקים מסימטריה, ולכן כאן מבחן הסימן הוא המתאים. ובכל זאת, למוצר יש מסקנה מעשית: לפני שמחליפים מודל, בודקים איפה הוא נכשל, ולא רק כמה פעמים הוא ניצח. ממוצע ההפרשים כאן הוא 0.1 בלבד, ומבחן t מזווג לא היה מוצא שום הבדל. מבחן הסימן סופר רק כמה פעמים כל שיטה ניצחה, ומבחן הדירוגים המסומנים מתחשב גם בגודל הניצחון. השאלה איזה מבחן לבחור היא שאלה על ההנחות, ולא על איזה מבחן נותן את התשובה שרצינו. ואת ההחלטה מקבלים לפני שמסתכלים על התוצאה."
   },
   {
     "objectID": "lectures/01-nonparametric.html#שתי-אוכלוסיות-בלתי-תלויות",
@@ -427,67 +462,53 @@
     "text": "אותו מבחן ב-R\n\n\nקוד\nafter  &lt;- prod$units[prod$period == \"after\"]\nbefore &lt;- prod$units[prod$period == \"before\"]\nwilcox.test(after, before, mu = 3)\n\n\n\n    Wilcoxon rank sum exact test\n\ndata:  after and before\nW = 25, p-value = 0.08\nalternative hypothesis: true location shift is not equal to 3\n\n\n\nב-R הסטטיסטי W הוא \\(T - \\frac{m(m+1)}{2} = 40 - 15 = 25\\) (סטטיסטי Mann–Whitney U)\nmu = 3 בודק הזזה של 3 יחידות, בלי לחסר ידנית\nR מחשב p-value מדויק (0.082) ולא את הקירוב הנורמלי, אבל המסקנה זהה"
   },
   {
-    "objectID": "lectures/01-nonparametric.html#kruskalwallis",
-    "href": "lectures/01-nonparametric.html#kruskalwallis",
+    "objectID": "lectures/01-nonparametric.html#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה",
+    "href": "lectures/01-nonparametric.html#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Kruskal–Wallis",
-    "text": "Kruskal–Wallis\nהשאלה: האם משתנה קטגוריאלי (פקטור עם \\(a\\) רמות) מסביר את השונות בתגובת המערכת?\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij}\n\\]\n\nב-ANOVA מניחים \\(\\varepsilon_{ij} \\sim N(0, \\sigma^2)\\). כאן מניחים רק ש-\\(\\varepsilon_{ij}\\) באים מאותה התפלגות רציפה\n\\(H_0: \\tau_1 = \\dots = \\tau_a = 0\\) מול \\(H_1: \\tau_i \\neq 0\\) עבור \\(i\\) כלשהו\nמדרגים את כל \\(N\\) התצפיות יחד. תחת \\(H_0\\) הדרגות מתפזרות באופן אחיד בין הרמות:\n\n\\[\nE(\\bar{R}_i) = \\frac{N+1}{2}\n\\]"
+    "section": "תזכורת: מבחן חי-בריבוע לטיב התאמה",
+    "text": "תזכורת: מבחן חי-בריבוע לטיב התאמה\n\\(H_0\\): ההסתברויות של \\(k\\) הקטגוריות הן \\(p_1, \\dots, p_k\\). \\(O_i\\) הוא המספר שנצפה, \\(E_i = n p_i\\) המספר הצפוי:\n\\[\n\\chi^2 = \\sum_{i=1}^{k} \\frac{(O_i - E_i)^2}{E_i} \\;\\sim\\; \\chi^2_{k-1-m}\n\\]\n\\(m\\) הוא מספר הפרמטרים שאמדנו מהנתונים. למה זה מבחן פרמטרי? ההשערה היא על הפרמטרים \\(p_i\\) של התפלגות מולטינומית, וההתפלגות \\(\\chi^2\\) של הסטטיסטי היא רק קירוב למדגם גדול, שנשען על קירוב נורמלי לספירות. לכן צריך \\(E_i \\ge 5\\) בכל קטגוריה. ב-KS, לעומת זאת, ההתפלגות של \\(D\\) תחת \\(H_0\\) מדויקת וזהה לכל \\(F_0\\) רציפה.\nדוגמה (נתונים מדומים): מודל שפה ענה על 400 שאלות אמריקאיות, והתשובה הנכונה מפוזרת שווה בשווה בין A–D. האם המודל מעדיף אותיות מסוימות (הטיית מיקום, position bias)?\n\n\nקוד\nanswers &lt;- c(A = 124, B = 102, C = 95, D = 79)   # letters the model chose\nchisq.test(answers, p = rep(1/4, 4)) |&gt; print(digits = 6)\n\n\n\n    Chi-squared test for given probabilities\n\ndata:  answers\nX-squared = 10.46, df = 3, p-value = 0.015\n\n\n\\(\\chi^2 = 10.46 &gt; 7.81 = \\chi^2_{0.95,\\,3}\\), ולכן דוחים \\(H_0\\): יש הטיית מיקום.\nהחישוב הידני: \\(E_i = 400 \\cdot \\tfrac14 = 100\\) בכל קטגוריה.\n\n\n\n\nA\nB\nC\nD\n\n\n\n\n\\(O_i\\)\n124\n102\n95\n79\n\n\n\\(\\frac{(O_i - E_i)^2}{E_i}\\)\n5.76\n0.04\n0.25\n4.41\n\n\n\n\\(\\chi^2 = 5.76 + 0.04 + 0.25 + 4.41 = 10.46\\), עם \\(k - 1 = 3\\) דרגות חופש: לא אמדנו אף פרמטר. כשמשתמשים במודל כ”שופט” בין תשובות, מערבבים את סדר התשובות. הסטייה הגדולה ביותר היא ב-A (נבחרת יותר מדי) וב-D (פחות מדי). ב-R רואים את זה ב-chisq.test(...)$residuals.\nכשאומדים פרמטרים. נניח שבודקים אם מספר הפניות לשעה מתפלג פואסונית, ואת \\(\\lambda\\) אומדים מהנתונים עצמם (\\(\\hat\\lambda = \\bar{x}\\)). אז \\(m = 1\\) ודרגות החופש הן \\(k - 2\\). כל פרמטר שאומדים “מקרב” את ההתפלגות לנתונים, ולכן צריך להוריד דרגת חופש כדי לפצות."
   },
   {
-    "objectID": "lectures/01-nonparametric.html#הסטטיסטי-anova-על-הדרגות",
-    "href": "lectures/01-nonparametric.html#הסטטיסטי-anova-על-הדרגות",
+    "objectID": "lectures/01-nonparametric.html#מבחן-kolmogorovsmirnov",
+    "href": "lectures/01-nonparametric.html#מבחן-kolmogorovsmirnov",
     "title": "1. שיטות א-פרמטריות",
-    "section": "הסטטיסטי: ANOVA על הדרגות",
-    "text": "הסטטיסטי: ANOVA על הדרגות\nב-ANOVA (בהנחת נורמליות):\n\\[\n\\frac{SS_{\\text{treatments}}}{\\sigma^2} = \\frac{\\sum_{i=1}^{a} n_i(\\bar{y}_i - \\bar{y})^2}{\\sigma^2} \\sim \\chi^2_{a-1}\n\\]\nב-Kruskal–Wallis: אותו רעיון, על הדרגות \\(\\bar{R}_i\\) במקום על הערכים\n\\[\nK = \\frac{12}{N(N+1)} \\sum_{i=1}^{a} n_i\\left(\\bar{R}_i - \\frac{N+1}{2}\\right)^2\n\\]\n\nכש-\\(a &gt; 3\\) ו-\\(n_i &gt; 4\\): \\(K \\sim \\chi^2_{a-1}\\) בקירוב\nדוחים את \\(H_0\\) אם \\(K &gt; \\chi^2_{\\alpha,\\,a-1}\\)"
+    "section": "מבחן Kolmogorov–Smirnov",
+    "text": "מבחן Kolmogorov–Smirnov\nכשהנתונים רציפים, החלוקה לקטגוריות מאבדת מידע. מבחן KS משווה את פונקציית ההתפלגות המצטברת:\n\n\\(F_n(x)\\): פונקציית ההתפלגות האמפירית, החלק מהתצפיות שקטנות או שוות ל-\\(x\\)\n\\(H_0: F(x) = F_0(x)\\) לכל \\(x\\), כש-\\(F_0\\) רציפה ונתונה במלואה\n\n\\[\nD = \\max_x \\left| F_n(x) - F_0(x) \\right|\n\\]\n\nדוחים את \\(H_0\\) אם \\(D &gt; D_{\\alpha,n}\\) (טבלה). למדגם גדול: \\(D_{0.05,n} \\approx 1.36/\\sqrt{n}\\)\nבחישוב ידני: ממיינים את התצפיות, ובודקים בכל \\(x_{(i)}\\) את שני הצדדים של המדרגה:\n\n\\[\nD = \\max_i \\left\\{ \\frac{i}{n} - F_0(x_{(i)}),\\;\\; F_0(x_{(i)}) - \\frac{i-1}{n} \\right\\}\n\\]"
   },
   {
-    "objectID": "lectures/01-nonparametric.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה",
-    "href": "lectures/01-nonparametric.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה",
+    "objectID": "lectures/01-nonparametric.html#דוגמה-זמנים-בין-פניות-לצאט",
+    "href": "lectures/01-nonparametric.html#דוגמה-זמנים-בין-פניות-לצאט",
     "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה",
-    "text": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה\n\n\nקוד\ncotton &lt;- read_csv(file.path(data_dir, \"cotton_strength.csv\"), show_col_types = FALSE) |&gt;\n  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))\n\nggplot(cotton, aes(cotton_pct, strength)) +\n  geom_boxplot(width = 0.5, outlier.shape = NA, colour = \"grey55\") +\n  geom_point(aes(colour = cotton_pct), size = 3, alpha = 0.8,\n             position = position_jitter(width = 0.08, seed = 2), show.legend = FALSE) +\n  labs(title = \"חוזק המתיחה עולה עד 30% כותנה ואז צונח\",\n       subtitle = \"5 רמות, 6 דגימות בכל רמה\",\n       x = \"Cotton (%)\", y = \"Tensile strength\")"
+    "section": "דוגמה: זמנים בין פניות לצ׳אט",
+    "text": "דוגמה: זמנים בין פניות לצ׳אט\nמודל האיוש של מוקד שירות מניח שהזמן בין פניות לצ׳אט מתפלג מעריכית עם ממוצע 2 דקות. נמדדו 10 זמנים. האם הנתונים סותרים את ההנחה? \\(\\alpha = 0.05\\)\n\n\nקוד\ngaps &lt;- c(0.4, 0.7, 1.1, 1.3, 1.9, 2.4, 3.6, 5.2, 6.8, 9.5)   # minutes\nn &lt;- length(gaps)\ntibble(i = 1:n, x = gaps, F0 = pexp(gaps, rate = 1/2)) |&gt;\n  mutate(`i/n - F0` = i/n - F0, `F0 - (i-1)/n` = F0 - (i - 1)/n) |&gt;\n  kable(digits = 3)\n\n\n\n\n\ni\nx\nF0\ni/n - F0\nF0 - (i-1)/n\n\n\n\n\n1\n0.4\n0.181\n-0.081\n0.181\n\n\n2\n0.7\n0.295\n-0.095\n0.195\n\n\n3\n1.1\n0.423\n-0.123\n0.223\n\n\n4\n1.3\n0.478\n-0.078\n0.178\n\n\n5\n1.9\n0.613\n-0.113\n0.213\n\n\n6\n2.4\n0.699\n-0.099\n0.199\n\n\n7\n3.6\n0.835\n-0.135\n0.235\n\n\n8\n5.2\n0.926\n-0.126\n0.226\n\n\n9\n6.8\n0.967\n-0.067\n0.167\n\n\n10\n9.5\n0.991\n0.009\n0.091"
   },
   {
-    "objectID": "lectures/01-nonparametric.html#kruskalwallis-מול-מבחן-f",
-    "href": "lectures/01-nonparametric.html#kruskalwallis-מול-מבחן-f",
+    "objectID": "lectures/01-nonparametric.html#התוצאה",
+    "href": "lectures/01-nonparametric.html#התוצאה",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Kruskal–Wallis מול מבחן F",
-    "text": "Kruskal–Wallis מול מבחן F\n\n\nקוד\ncotton |&gt; group_by(cotton_pct) |&gt; summarise(mean_rank = mean(rank))\n\n\n# A tibble: 5 × 2\n  cotton_pct mean_rank\n  &lt;fct&gt;          &lt;dbl&gt;\n1 15              9.67\n2 20             11.1 \n3 25             20.5 \n4 30             27.2 \n5 35              9.08\n\n\nקוד\nkruskal.test(strength ~ cotton_pct, data = cotton)\n\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  strength by cotton_pct\nKruskal-Wallis chi-squared = 20, df = 4, p-value = 5e-04\n\n\nקוד\nsummary(aov(strength ~ cotton_pct, data = cotton))\n\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \ncotton_pct   4  111.1    27.8    13.9 4.3e-06 ***\nResiduals   25   50.1     2.0                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nשני המבחנים דוחים את \\(H_0\\) בבירור: \\(K = 19.8\\) (\\(p = 5.4 \\times 10^{-4}\\)) מול \\(F = 13.9\\) (\\(p = 4.3 \\times 10^{-6}\\)). ה-p-value של המבחן הא-פרמטרי גדול יותר. זה המחיר שמשלמים על ויתור על הנחת הנורמליות: כשההנחה מתקיימת, המבחן הפרמטרי חזק יותר. הערך ש-R מדווח (19.814) כולל תיקון קטן לדרגות זהות."
+    "section": "התוצאה",
+    "text": "התוצאה\n\\(D_0 = 0.235\\), בתצפית \\(x_{(7)} = 3.6\\): \\(F_0(3.6) - \\frac{6}{10} = 0.835 - 0.6\\)\n\n\nקוד\nks.test(gaps, \"pexp\", rate = 1/2) |&gt; print(digits = 6)\n\n\n\n    Exact one-sample Kolmogorov-Smirnov test\n\ndata:  gaps\nD = 0.2347, p-value = 0.563\nalternative hypothesis: two-sided\n\n\n\n\\(D_0 = 0.235 &lt; 0.409 = D_{0.05,10}\\), ולכן לא דוחים את \\(H_0\\)\nאבל: הממוצע במדגם הוא 3.29 דקות, לא 2. עם 10 תצפיות למבחן אין כמעט עוצמה. “לא דחינו” איננו “הוכחנו”\n\nזהירות עם פרמטרים אמודים. ה-p-value של KS נכון רק כש-\\(F_0\\) נקבעה לפני שראינו את הנתונים. אם אומדים את הממוצע מהמדגם ואז בודקים מול מעריכית עם הממוצע הזה, ההתפלגות “מותאמת” לנתונים, \\(D\\) יוצא קטן מדי, והמבחן כמעט לא ידחה. לבדיקת נורמליות עם פרמטרים אמודים יש מבחנים ייעודיים (למשל Lilliefors או Shapiro–Wilk)."
   },
   {
-    "objectID": "lectures/01-nonparametric.html#הערכת-קונטרסטים-עם-חציונים",
-    "href": "lectures/01-nonparametric.html#הערכת-קונטרסטים-עם-חציונים",
+    "objectID": "lectures/01-nonparametric.html#ks-לשני-מדגמים",
+    "href": "lectures/01-nonparametric.html#ks-לשני-מדגמים",
     "title": "1. שיטות א-פרמטריות",
-    "section": "הערכת קונטרסטים עם חציונים",
-    "text": "הערכת קונטרסטים עם חציונים\nתזכורת: \\(C = \\sum_i c_i \\tau_i\\) הוא קונטרסט אם \\(\\sum_i c_i = 0\\).\n\nלפי ממוצעים: \\(\\hat{\\tau}_i = \\bar{y}_i - \\bar{y}\\)\nהניסיון הטבעי לעבור לחציונים, \\(\\hat{\\tau}_i = \\text{median}_j\\{y_{ij}\\} - \\text{median}_{k,j}\\{y_{kj}\\}\\), מפר את התנאי \\(\\sum_i \\hat{\\tau}_i = 0\\)\n\nהחלופה:\n\\[\n\\hat{\\tau}_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik},\n\\qquad\nZ_{ik} = \\underset{j,m}{\\text{median}}\\{y_{ij} - y_{km}\\}\n\\]\nמכיוון ש-\\(Z_{ik} = -Z_{ki}\\), מתקיים \\(\\sum_i \\hat{\\tau}_i = 0\\).\nדוגמה קטנה: \\(y_{1j} = \\{3,7,8\\}\\) ו-\\(y_{2j} = \\{0,1,2\\}\\). החציון הכללי הוא 2.5, וחציוני הקבוצות הם 7 ו-1. בגישה הנאיבית \\(\\hat\\tau_1 = 4.5\\), \\(\\hat\\tau_2 = -1.5\\), וסכומם אינו 0. בגישה החלופית \\(Z_{12} = \\text{median}\\{3,7,8,2,6,7,1,5,6\\} = 6\\) ו-\\(Z_{21} = -6\\), ולכן \\(\\hat\\tau_1 = 3\\), \\(\\hat\\tau_2 = -3\\)."
+    "section": "KS לשני מדגמים",
+    "text": "KS לשני מדגמים\nאותו רעיון, בלי \\(F_0\\): משווים בין שתי פונקציות התפלגות אמפיריות\n\\[\nH_0: F_1(x) = F_2(x) \\qquad D = \\max_x \\left| F_{1,n}(x) - F_{2,m}(x) \\right|\n\\]\nדוגמה: גרסה חדשה של שירות inference עלתה לאוויר. החציון של זמן התגובה כמעט לא השתנה, אבל משתמשים מתלוננים על “קפיצות”. נדגמו 60 בקשות מכל גרסה. (נתונים מדומים)\n\n\nקוד\nset.seed(1)\nlatency &lt;- tibble(\n  version = rep(c(\"v1\", \"v2\"), each = 60),\n  ms = c(rlnorm(60, log(220), 0.25), rlnorm(60, log(220), 0.65))\n)\nlatency |&gt; summarise(median = median(ms), iqr = IQR(ms), max = max(ms), .by = version)\n\n\n# A tibble: 2 × 4\n  version median   iqr   max\n  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 v1        227.  63.5  361.\n2 v2        225. 180.  1048."
   },
   {
-    "objectID": "lectures/01-nonparametric.html#קונטרסט-בדוגמת-הכותנה",
-    "href": "lectures/01-nonparametric.html#קונטרסט-בדוגמת-הכותנה",
+    "objectID": "lectures/01-nonparametric.html#שתי-פונקציות-התפלגות-מצטברות",
+    "href": "lectures/01-nonparametric.html#שתי-פונקציות-התפלגות-מצטברות",
     "title": "1. שיטות א-פרמטריות",
-    "section": "קונטרסט בדוגמת הכותנה",
-    "text": "קונטרסט בדוגמת הכותנה\n\\(C = \\tfrac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\): הקצוות (15% ו-35%) מול 30%.\n\n\nקוד\nlevels_y &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(levels_y), seq_along(levels_y),\n           Vectorize(\\(i, k) median(outer(levels_y[[i]], levels_y[[k]], \"-\"))))\ntau_hat &lt;- rowMeans(Z)\nround(tau_hat, 2)\n\n\n[1] -1.86 -1.26  1.73  3.22 -1.83\n\n\nקוד\n0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]\n\n\n[1] -5.065\n\n\n\\[\n\\hat{C} = \\tfrac{1}{2}(-1.86 - 1.83) - 3.22 = -5.07\n\\]"
+    "section": "שתי פונקציות התפלגות מצטברות",
+    "text": "שתי פונקציות התפלגות מצטברות\n\n\nקוד\ngrid &lt;- tibble(ms = sort(latency$ms)) |&gt;\n  mutate(v1 = ecdf(latency$ms[latency$version == \"v1\"])(ms),\n         v2 = ecdf(latency$ms[latency$version == \"v2\"])(ms),\n         gap = abs(v1 - v2))\nmax_gap &lt;- slice_max(grid, gap, n = 1, with_ties = FALSE)\n\nggplot(latency, aes(ms, colour = version)) +\n  stat_ecdf(linewidth = 0.9) +\n  geom_segment(aes(x = ms, xend = ms, y = v1, yend = v2), data = max_gap,\n               colour = \"grey20\", linewidth = 1, inherit.aes = FALSE) +\n  annotate(\"label\", x = max_gap$ms, y = (max_gap$v1 + max_gap$v2) / 2,\n           label = paste0(\"D = \", round(max_gap$gap, 2)), hjust = 1.1,\n           fill = \"white\", label.size = 0) +\n  scale_x_log10() +\n  scale_colour_manual(values = c(v1 = nanas_pal[[\"primary\"]], v2 = nanas_pal[[\"accent\"]])) +\n  labs(title = \"אותו חציון, פיזור שונה לגמרי\",\n       subtitle = \"הקו השחור: המרחק הגדול ביותר בין שתי הפונקציות\",\n       x = \"Response time (ms, log scale)\", y = \"F(x)\", colour = NULL)"
   },
   {
-    "objectID": "lectures/01-nonparametric.html#friedman-טיפולים-בתוך-בלוקים",
-    "href": "lectures/01-nonparametric.html#friedman-טיפולים-בתוך-בלוקים",
+    "objectID": "lectures/01-nonparametric.html#ks-מול-סכום-הדירוגים",
+    "href": "lectures/01-nonparametric.html#ks-מול-סכום-הדירוגים",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Friedman: טיפולים בתוך בלוקים",
-    "text": "Friedman: טיפולים בתוך בלוקים\nכשכל “יחידה” (בלוק) מקבלת את כל הטיפולים, למשל אותו עובד שעובד בשלוש שיטות או אותה משימה שנבדקת בשלושה מודלים, ההשוואה צריכה להיות בתוך כל בלוק.\n\n\\(b\\) בלוקים ו-\\(k\\) טיפולים\nמדרגים את הטיפולים בתוך כל בלוק בנפרד, מ-1 עד \\(k\\)\n\\(R_j\\) הוא סכום הדרגות של טיפול \\(j\\) על פני כל הבלוקים\n\n\\[\nQ = \\frac{12}{b\\,k\\,(k+1)} \\sum_{j=1}^{k} R_j^2 \\;-\\; 3\\,b\\,(k+1) \\;\\sim\\; \\chi^2_{k-1}\n\\]"
-  },
-  {
-    "objectID": "lectures/01-nonparametric.html#דוגמה-הערכת-פרומפטים-למודל-שפה",
-    "href": "lectures/01-nonparametric.html#דוגמה-הערכת-פרומפטים-למודל-שפה",
-    "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: הערכת פרומפטים למודל שפה",
-    "text": "דוגמה: הערכת פרומפטים למודל שפה\nצוות בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (eval set). כל תשובה מקבלת ציון 0–100. המשימות שונות מאוד בקושי שלהן, ולכן המשימה היא הבלוק.\n\n\nקוד\nllm &lt;- read_csv(file.path(data_dir, \"llm_prompt_eval.csv\"), show_col_types = FALSE) |&gt;\n  mutate(prompt = factor(prompt, levels = c(\"baseline\", \"few_shot\", \"reasoning\")))\n\nggplot(llm, aes(prompt, score, group = task)) +\n  geom_line(colour = \"grey70\") +\n  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +\n  labs(title = \"בכל משימה, איזה פרומפט טוב יותר?\",\n       subtitle = \"כל קו הוא משימה אחת. ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים\",\n       x = NULL, y = \"Score\")"
-  },
-  {
-    "objectID": "lectures/01-nonparametric.html#friedman-חישוב",
-    "href": "lectures/01-nonparametric.html#friedman-חישוב",
-    "title": "1. שיטות א-פרמטריות",
-    "section": "Friedman: חישוב",
-    "text": "Friedman: חישוב\n\n\nקוד\nllm |&gt;\n  group_by(task) |&gt; mutate(rank = rank(score)) |&gt;\n  group_by(prompt) |&gt; summarise(R = sum(rank))\n\n\n# A tibble: 3 × 2\n  prompt        R\n  &lt;fct&gt;     &lt;dbl&gt;\n1 baseline     10\n2 few_shot     16\n3 reasoning    22\n\n\nקוד\nfriedman.test(score ~ prompt | task, data = llm)\n\n\n\n    Friedman rank sum test\n\ndata:  score and prompt and task\nFriedman chi-squared = 9, df = 2, p-value = 0.01\n\n\n\\[\nQ = \\frac{12}{8 \\cdot 3 \\cdot 4}(10^2 + 16^2 + 22^2) - 3 \\cdot 8 \\cdot 4 = 105 - 96 = 9 &gt; \\chi^2_{0.05,2} = 5.99\n\\]\nאם היינו מתעלמים מהבלוקים ומריצים Kruskal–Wallis רגיל, השונות הגדולה בין המשימות הייתה “מטביעה” את ההבדל בין הפרומפטים. נסו בעצמכם: kruskal.test(score ~ prompt, data = llm). אותו עיקרון יחזור כשנגיע לתכנון ניסויים: בלוקים מנטרלים מקור שונות שלא מעניין אותנו."
+    "section": "KS מול סכום הדירוגים",
+    "text": "KS מול סכום הדירוגים\n\n\nקוד\nv1 &lt;- latency$ms[latency$version == \"v1\"]\nv2 &lt;- latency$ms[latency$version == \"v2\"]\nc(rank_sum = wilcox.test(v1, v2)$p.value,\n  ks       = ks.test(v1, v2)$p.value)\n\n\nrank_sum       ks \n 0.95187  0.02763 \n\n\n\nסכום הדירוגים רגיש בעיקר להזזה של המיקום. החציונים כמעט שווים, ולכן הוא לא מוצא כלום\nKS רגיש לכל הבדל בין ההתפלגויות: מיקום, פיזור או צורה. כאן הוא דוחה ב-\\(\\alpha = 0.05\\)\nבשירות אמיתי, הזנב (האחוזון ה-95 או ה-99) הוא מה שהמשתמשים מרגישים. לכן כדאי לבדוק יותר מהחציון\n\n\nשאלה לכיתה: למה סכום הדירוגים “עיוור” כאן? כי ב-v2 יש גם ערכים קטנים מאוד וגם גדולים מאוד, והדרגות שלהם מתקזזות בסכום."
   },
   {
     "objectID": "lectures/01-nonparametric.html#למה-לא-פירסון",
@@ -508,14 +529,14 @@
     "href": "lectures/01-nonparametric.html#דוגמה-קשר-מונוטוני-וערך-חריג-אחד",
     "title": "1. שיטות א-פרמטריות",
     "section": "דוגמה: קשר מונוטוני וערך חריג אחד",
-    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\n\nקוד\ncorr_data &lt;- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |&gt;\n  add_row(x = 2, y = 160)   # one data-entry error\n\nstats &lt;- c(\n  pearson  = cor(corr_data$x, corr_data$y),\n  spearman = cor(corr_data$x, corr_data$y, method = \"spearman\"),\n  kendall  = cor(corr_data$x, corr_data$y, method = \"kendall\")\n)\nround(stats, 2)\n\n\n pearson spearman  kendall \n    0.58     0.81     0.81 \n\n\nקוד\nggplot(corr_data, aes(x, y)) +\n  geom_point(size = 2.5) +\n  annotate(\"label\", x = 3.5, y = 160, label = \"שגיאת הקלדה\", hjust = 0) +\n  labs(title = sprintf(\"Pearson = %.2f · Spearman = %.2f · Kendall = %.2f\",\n                       stats[\"pearson\"], stats[\"spearman\"], stats[\"kendall\"]),\n       subtitle = \"קשר מונוטוני ברור, עם תצפית חריגה אחת\",\n       x = \"x\", y = \"y\")\n\n\n\n\n\n\n\n\n\nתצפית חריגה אחת (למשל שגיאת הקלדה) מספיקה כדי לגרור את פירסון כמעט לאפס. ספירמן וקנדל כמעט לא מושפעים ממנה. לקנדל יש גם פרשנות ישירה: \\(\\frac{1+\\tau}{2}\\) הוא ההסתברות שזוג אקראי של תצפיות יהיה בהתאמה."
+    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\n\nקוד\nset.seed(2026)   # own seed, so edits elsewhere in the lecture don't change this example\ncorr_data &lt;- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |&gt;\n  add_row(x = 2, y = 160)   # one data-entry error\n\nstats &lt;- c(\n  pearson  = cor(corr_data$x, corr_data$y),\n  spearman = cor(corr_data$x, corr_data$y, method = \"spearman\"),\n  kendall  = cor(corr_data$x, corr_data$y, method = \"kendall\")\n)\nround(stats, 2)\n\n\n pearson spearman  kendall \n    0.59     0.82     0.81 \n\n\nקוד\nggplot(corr_data, aes(x, y)) +\n  geom_point(size = 2.5) +\n  annotate(\"label\", x = 3.5, y = 160, label = \"שגיאת הקלדה\", hjust = 0) +\n  labs(title = sprintf(\"Pearson = %.2f · Spearman = %.2f · Kendall = %.2f\",\n                       stats[\"pearson\"], stats[\"spearman\"], stats[\"kendall\"]),\n       subtitle = \"קשר מונוטוני ברור, עם תצפית חריגה אחת\",\n       x = \"x\", y = \"y\")\n\n\n\n\n\n\n\n\n\nתצפית חריגה אחת (למשל שגיאת הקלדה) מספיקה כדי לגרור את פירסון כמעט לאפס. ספירמן וקנדל כמעט לא מושפעים ממנה. לקנדל יש גם פרשנות ישירה: \\(\\frac{1+\\tau}{2}\\) הוא ההסתברות שזוג אקראי של תצפיות יהיה בהתאמה."
   },
   {
     "objectID": "lectures/01-nonparametric.html#מה-לקחת-מההרצאה",
     "href": "lectures/01-nonparametric.html#מה-לקחת-מההרצאה",
     "title": "1. שיטות א-פרמטריות",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\n\nהשאלה\nפרמטרי\nא-פרמטרי\nב-R\n\n\n\n\nמרכז ההתפלגות\nt / Z\nסימן, דירוגים מסומנים\nbinom.test, wilcox.test\n\n\nמזווג\nt מזווג\nאותו מבחן על ההפרשים\nwilcox.test(paired = TRUE)\n\n\nשני מדגמים ב״ת\nt לשני מדגמים\nסכום הדירוגים\nwilcox.test(x, y)\n\n\nפקטור אחד\nANOVA\nKruskal–Wallis\nkruskal.test\n\n\nטיפולים × בלוקים\nANOVA עם בלוקים\nFriedman\nfriedman.test\n\n\nמתאם\nPearson\nSpearman, Kendall\ncor(method = )\n\n\n\n\nשיטות א-פרמטריות לא “חינמיות”: כשההנחות הפרמטריות כן מתקיימות, הן חלשות יותר\nגם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן"
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\n\nהשאלה\nפרמטרי\nא-פרמטרי\nב-R\n\n\n\n\nמרכז ההתפלגות\nt / Z\nסימן, דירוגים מסומנים\nbinom.test, wilcox.test\n\n\nמזווג\nt מזווג\nאותו מבחן על ההפרשים\nwilcox.test(paired = TRUE)\n\n\nשני מדגמים ב״ת\nt לשני מדגמים\nסכום הדירוגים\nwilcox.test(x, y)\n\n\nהתאמה להתפלגות\n\nחי-בריבוע, KS\nchisq.test, ks.test\n\n\nשתי התפלגויות\n\nKS לשני מדגמים\nks.test(x, y)\n\n\nמתאם\nPearson\nSpearman, Kendall\ncor(method = )\n\n\n\n\nשיטות א-פרמטריות לא “חינמיות”: כשההנחות הפרמטריות כן מתקיימות, הן חלשות יותר\nגם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן"
   },
   {
     "objectID": "lectures/01-nonparametric.html#הנתונים",
@@ -550,7 +571,56 @@
     "href": "lectures/01-nonparametric-slides.html#על-מה-נדבר-היום",
     "title": "1. שיטות א-פרמטריות",
     "section": "על מה נדבר היום",
-    "text": "על מה נדבר היום\n\nמתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nניתוח שונות א-פרמטרי: Kruskal–Wallis ו-Friedman\nמתאם על דירוגים: Spearman ו-Kendall\n\n\nההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R."
+    "text": "על מה נדבר היום\n\nתזכורת קצרה: מהי בדיקת השערות\nמתי ההנחות של מבחן פרמטרי לא מתקיימות, ולמה זה משנה\nמבחן הסימן: השערות על החציון, גם למדגמים מזווגים\nמבחן הדירוגים המסומנים (Wilcoxon signed-rank)\nמבחן סכום הדירוגים (Wilcoxon rank-sum / Mann–Whitney)\nטיב התאמה: מבחן חי-בריבוע ומבחן Kolmogorov–Smirnov\nמתאם על דירוגים: Spearman ו-Kendall"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#השאלה-האם-הזכרים-כבדים-יותר",
+    "href": "lectures/01-nonparametric-slides.html#השאלה-האם-הזכרים-כבדים-יותר",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "השאלה: האם הזכרים כבדים יותר?",
+    "text": "השאלה: האם הזכרים כבדים יותר?\n\nנתוני Palmer Penguins: מדידות של פינגווינים בתחנת המחקר פאלמר באנטארקטיקה\nנתמקד במין אחד, Gentoo, ובמשתנה אחד: משקל הגוף (גרם)\nהשאלה: האם יש הבדל במשקל הממוצע בין זכרים לנקבות?\nהנתונים מגיעים עם R (מגרסה 4.5), בלי חבילה נוספת\n\n\ngentoo &lt;- penguins |&gt; filter(species == \"Gentoo\", !is.na(sex))\ngentoo |&gt; summarise(n = n(), mean = mean(body_mass), sd = sd(body_mass), .by = sex)\n\n     sex  n mean    sd\n1 female 58 4680 281.6\n2   male 61 5485 313.2"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#התפלגות-המשקל",
+    "href": "lectures/01-nonparametric-slides.html#התפלגות-המשקל",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "התפלגות המשקל",
+    "text": "התפלגות המשקל\n\nggplot(gentoo, aes(body_mass)) +\n  geom_histogram(binwidth = 100, fill = nanas_pal[[\"grey\"]]) +\n  labs(title = \"משקל הגוף של פינגווינים מסוג Gentoo\",\n       subtitle = \"119 פרטים, זכרים ונקבות יחד\",\n       x = \"Body mass (g)\", y = \"Count\")"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#התפלגות-המשקל-output",
+    "href": "lectures/01-nonparametric-slides.html#התפלגות-המשקל-output",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "התפלגות המשקל",
+    "text": "התפלגות המשקל"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#המשקל-לפי-מין",
+    "href": "lectures/01-nonparametric-slides.html#המשקל-לפי-מין",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "המשקל לפי מין",
+    "text": "המשקל לפי מין\n\nsex_means &lt;- gentoo |&gt; summarise(mean = mean(body_mass), .by = sex)\n\nggplot(gentoo, aes(body_mass, fill = sex)) +\n  geom_histogram(binwidth = 100, alpha = 0.6, position = \"identity\") +\n  geom_vline(aes(xintercept = mean, colour = sex), data = sex_means,\n             linetype = \"dashed\", linewidth = 0.9, show.legend = FALSE) +\n  scale_fill_manual(values = c(female = nanas_pal[[\"accent\"]], male = nanas_pal[[\"primary\"]])) +\n  scale_colour_manual(values = c(female = nanas_pal[[\"accent\"]], male = nanas_pal[[\"primary\"]])) +\n  labs(title = \"הזכרים כבדים בכ-800 גרם בממוצע\",\n       subtitle = \"הקווים המקווקווים: הממוצע בכל קבוצה\",\n       x = \"Body mass (g)\", y = \"Count\", fill = NULL)"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#המשקל-לפי-מין-output",
+    "href": "lectures/01-nonparametric-slides.html#המשקל-לפי-מין-output",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "המשקל לפי מין",
+    "text": "המשקל לפי מין"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#מבחן-t-לשני-מדגמים",
+    "href": "lectures/01-nonparametric-slides.html#מבחן-t-לשני-מדגמים",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "מבחן t לשני מדגמים",
+    "text": "מבחן t לשני מדגמים\n\\[\nH_0: \\mu_F = \\mu_M \\qquad H_1: \\mu_F \\neq \\mu_M\n\\]\n\\[\nt = \\frac{\\bar{x}_F - \\bar{x}_M}{\\sqrt{\\dfrac{s_F^2}{n_F} + \\dfrac{s_M^2}{n_M}}}\n= \\frac{4679.7 - 5484.8}{\\sqrt{\\dfrac{281.6^2}{58} + \\dfrac{313.2^2}{61}}}\n= \\frac{-805.1}{54.5} \\approx -14.76\n\\]\n\nt.test(body_mass ~ sex, data = gentoo) |&gt;\n  print(digits = 6)  # a little more precision than the course default\n\n\n    Welch Two Sample t-test\n\ndata:  body_mass by sex\nt = -14.76, df = 116.6, p-value &lt;2e-16\nalternative hypothesis: true difference in means between group female and group male is not equal to 0\n95 percent confidence interval:\n -913.113 -697.076\nsample estimates:\nmean in group female   mean in group male \n             4679.74              5484.84"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#איך-קוראים-את-הפלט",
+    "href": "lectures/01-nonparametric-slides.html#איך-קוראים-את-הפלט",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "איך קוראים את הפלט",
+    "text": "איך קוראים את הפלט\n\nt = -14.76: ההפרש בין הממוצעים הוא כ-15 שגיאות תקן. הסימן שלילי כי R מחסר זכרים מנקבות\ndf = 116.6: Welch לא מניח שוויון שונויות, ולכן דרגות החופש לא שלמות\np-value &lt; 2e-16: אם \\(H_0\\) נכונה, הסיכוי לראות הפרש קיצוני כזה כמעט אפס. דוחים את \\(H_0\\)\nרווח הסמך (95%): הנקבות קלות מהזכרים ב-697 עד 913 גרם. הערך 0 לא נמצא ברווח\nההנחות: תצפיות בלתי תלויות, והתפלגות נורמלית בכל קבוצה (או מדגם גדול)\n\n\nלהזכיר: p-value איננו ההסתברות ש-H0 נכונה. זו ההסתברות לנתונים קיצוניים כאלה או יותר, בהינתן ש-H0 נכונה."
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#הרעיון",
@@ -564,7 +634,7 @@
     "href": "lectures/01-nonparametric-slides.html#כשהתוחלת-בכלל-לא-קיימת",
     "title": "1. שיטות א-פרמטריות",
     "section": "כשהתוחלת בכלל לא קיימת",
-    "text": "כשהתוחלת בכלל לא קיימת\nדוגמה: \\(f(x) = \\dfrac{1}{(1+x)^2}, \\quad x \\in [0, \\infty)\\)\n\\[\n\\mu = \\int_0^\\infty \\frac{x}{(1+x)^2}\\,dx = \\infty\n\\]\n\\[\nF(a) = 1 - \\frac{1}{1+a} = 0.5 \\;\\Rightarrow\\; \\tilde{\\mu} = 1\n\\]\n\nאין טעם לבדוק השערות על התוחלת, כי היא אינסופית\nהחציון מוגדר היטב, ואפשר לבדוק השערות עליו"
+    "text": "כשהתוחלת בכלל לא קיימת\nדוגמה:\n\\[\nf(x) = \\dfrac{1}{(1+x)^2}, \\quad x \\in [0, \\infty)\n\\]\n\\[\n\\mu = \\int_0^\\infty \\frac{x}{(1+x)^2}\\,dx = \\infty\n\\]\n\\[\nF(a) = 1 - \\frac{1}{1+a} = 0.5 \\;\\Rightarrow\\; \\tilde{\\mu} = 1\n\\]\n\nאין טעם לבדוק השערות על התוחלת, כי היא אינסופית\nהחציון מוגדר היטב, ואפשר לבדוק השערות עליו"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#סימולציה-ממוצע-מול-חציון",
@@ -585,14 +655,14 @@
     "href": "lectures/01-nonparametric-slides.html#מפת-דרכים",
     "title": "1. שיטות א-פרמטריות",
     "section": "מפת דרכים",
-    "text": "מפת דרכים\n\n\n\n\n\n\n\n\nהשאלה\nהשיטה הפרמטרית\nהשיטה הא-פרמטרית\n\n\n\n\nמרכז ההתפלגות\nמבחן t / Z על התוחלת\nמבחן הסימן, מבחן הדירוגים המסומנים\n\n\nשני מדגמים מזווגים\nמבחן t מזווג\nמבחן הסימן / דירוגים מסומנים על ההפרשים\n\n\nשתי אוכלוסיות בלתי תלויות\nמבחן t לשני מדגמים\nמבחן סכום הדירוגים\n\n\nהשפעה של משתנה קטגוריאלי\nANOVA חד-כיווני\nKruskal–Wallis\n\n\nטיפולים בתוך בלוקים\nANOVA עם בלוקים\nFriedman\n\n\nמתאם בין שני משתנים\nמתאם פירסון\nSpearman’s ρ, Kendall’s τ"
+    "text": "מפת דרכים\n\n\n\n\n\n\n\n\nהשאלה\nהשיטה הפרמטרית\nהשיטה הא-פרמטרית\n\n\n\n\nמרכז ההתפלגות\nמבחן t / Z על התוחלת\nמבחן הסימן (Sign test), מבחן הדירוגים המסומנים (Wilcoxon signed-rank)\n\n\nשני מדגמים מזווגים\nמבחן t מזווג\nמבחן הסימן / Wilcoxon signed-rank על ההפרשים\n\n\nשתי אוכלוסיות בלתי תלויות\nמבחן t לשני מדגמים\nמבחן סכום הדירוגים (Mann–Whitney)\n\n\nהתאמה להתפלגות נתונה\nמבחן חי-בריבוע לטיב התאמה (Goodness-of-fit)\nמבחן Kolmogorov–Smirnov\n\n\nהשוואה בין שתי התפלגויות\n\nKolmogorov–Smirnov לשני מדגמים\n\n\nמתאם בין שני משתנים\nמתאם פירסון\nSpearman’s ρ, Kendall’s τ"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#השערות-על-החציון",
     "href": "lectures/01-nonparametric-slides.html#השערות-על-החציון",
     "title": "1. שיטות א-פרמטריות",
     "section": "השערות על החציון",
-    "text": "השערות על החציון\n\\[\nH_0: \\tilde{\\mu} = z \\qquad H_1: \\tilde{\\mu} \\neq z\n\\]\n\nתחת \\(H_0\\), כל הפרש \\(x_i - z\\) חיובי או שלילי בהסתברות \\(0.5\\)\n\\(r^+\\): מספר ההפרשים החיוביים\nסטטיסטי המבחן: \\(r = \\min(r^+,\\; n - r^+)\\)\nתחת \\(H_0\\) נצפה ש-\\(r\\) יהיה קרוב ל-\\(n/2\\), וערך קטן מעיד נגד \\(H_0\\)\n\n\\[\nr^+ \\sim \\text{Binomial}(n, 0.5)\n\\qquad\nP(r \\le y) = 2\\,P(r^+ \\le y), \\quad y &lt; n/2\n\\]"
+    "text": "השערות על החציון\n\\[\nH_0: \\tilde{\\mu} = z \\qquad H_1: \\tilde{\\mu} \\neq z\n\\]\n\nתחת \\(H_0\\), כל הפרש \\(x_i - z\\) חיובי או שלילי בהסתברות \\(0.5\\)\nתצפיות ששוות בדיוק ל-\\(z\\) (הפרש \\(0\\)) משמיטים, ו-\\(n\\) הוא מספר התצפיות שנשארו\n\\(r^+\\): מספר ההפרשים החיוביים\nסטטיסטי המבחן: \\(r = \\min(r^+,\\; n - r^+)\\)\nתחת \\(H_0\\) נצפה ש-\\(r\\) יהיה קרוב ל-\\(n/2\\), וערך קטן מעיד נגד \\(H_0\\)\n\n\\[\nr^+ \\sim \\text{Binomial}(n, 0.5)\n\\qquad\nP(r \\le y) = 2\\,P(r^+ \\le y), \\quad y &lt; n/2\n\\]"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#הערך-הקריטי",
@@ -627,21 +697,28 @@
     "href": "lectures/01-nonparametric-slides.html#דוגמה-חציון-הציונים-במועד-ב",
     "title": "1. שיטות א-פרמטריות",
     "section": "דוגמה: חציון הציונים במועד ב׳",
-    "text": "דוגמה: חציון הציונים במועד ב׳\nמרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-\\(\\alpha = 0.1\\)?\n\ngrades &lt;- read_csv(file.path(data_dir, \"exam_grades.csv\"), show_col_types = FALSE)\ngrades$grade\n\n [1] 79 75 85 95 70 60 65 75 74 89 72\n\nbinom.test(sum(grades$grade &gt; 80), n = nrow(grades))$p.value  # sign test\n\n[1] 0.2266\n\nt.test(grades$grade, mu = 80)$p.value                          # assuming normality\n\n[1] 0.2563\n\n\n\n\\(r^+ = 3\\), \\(r_0 = 3 &gt; R^*_{0.1,11} = 2\\), ולכן טענת המרצה מתקבלת\nגם מבחן t (בהנחת נורמליות) לא דוחה את \\(H_0\\)"
+    "text": "דוגמה: חציון הציונים במועד ב׳\nמרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-\\(\\alpha = 0.1\\)?\n\ngrades &lt;- read_csv(file.path(data_dir, \"exam_grades.csv\"), show_col_types = FALSE)\ngrades$grade\n\n [1] 79 75 85 95 70 60 65 75 74 89 72\n\nbinom.test(sum(grades$grade &gt; 80), n = nrow(grades))$p.value  # sign test\n\n[1] 0.2266\n\n\n\n\\(r^+ = 3\\), \\(r_0 = 3 &gt; R^*_{0.1,11} = 2\\), ולכן טענת המרצה אינה נדחית\nגם מבחן t לתוחלת (בהנחת נורמליות) לא דוחה את \\(H_0\\)\n\n\n\nt.test(grades$grade, mu = 80) |&gt; print(digits = 6)\n\n\n    One Sample t-test\n\ndata:  grades$grade\nt = -1.204, df = 10, p-value = 0.256\nalternative hypothesis: true mean is not equal to 80\n95 percent confidence interval:\n 69.3750 83.1704\nsample estimates:\nmean of x \n  76.2727"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#מבחן-הסימן-למדגמים-מזווגים",
     "href": "lectures/01-nonparametric-slides.html#מבחן-הסימן-למדגמים-מזווגים",
     "title": "1. שיטות א-פרמטריות",
     "section": "מבחן הסימן למדגמים מזווגים",
-    "text": "מבחן הסימן למדגמים מזווגים\nכשהתצפיות מזווגות, מריצים את מבחן הסימן על ההפרשים \\(d_i = x_i - y_i\\), עם \\(H_0: \\tilde{\\mu}_d = 0\\).\nדוגמה: 11 מופעים של בעיית הסוכן הנוסע (TSP) נפתרו בשתי היוריסטיקות. בטבלה: הפער (%) מהפתרון האופטימלי של מודל תכנות בשלמים.\n\ntsp &lt;- read_csv(file.path(data_dir, \"tsp_heuristics.csv\"), show_col_types = FALSE)\ntsp |&gt;\n  mutate(sign = if_else(heuristic_1 &gt; heuristic_2, \"+\", \"-\")) |&gt;\n  pivot_longer(-instance, values_transform = as.character) |&gt;\n  pivot_wider(names_from = instance) |&gt;\n  kable()\n\n\n\n\nname\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n\n\n\n\nheuristic_1\n10\n9\n15\n10\n5\n14\n15\n11\n4\n4\n5\n\n\nheuristic_2\n12\n15\n4\n6\n7\n18\n18\n13\n9\n7\n10\n\n\nsign\n-\n-\n+\n+\n-\n-\n-\n-\n-\n-\n-"
+    "text": "מבחן הסימן למדגמים מזווגים\nכשהתצפיות מזווגות, מריצים את מבחן הסימן על ההפרשים \\(d_i = x_i - y_i\\), עם \\(H_0: \\tilde{\\mu}_d = 0\\).\nדוגמה: צוות מוצר שוקל להחליף את Sonnet 5.5 ב-Opus 5.5, היקר יותר, למשימות תיוג. שני המודלים תייגו את אותן 11 משימות. האם Opus טועה פחות? בטבלה: שיעור השגיאות (%) בכל משימה. \\(d_i\\) = Opus פחות Sonnet. (נתונים מדומים)\n\nllm_err &lt;- read_csv(file.path(data_dir, \"llm_labelling_errors.csv\"), show_col_types = FALSE)\nllm_err |&gt;\n  mutate(sign = if_else(opus &gt; sonnet, \"+\", \"-\")) |&gt;\n  select(task = task_he, sonnet, opus, sign) |&gt;\n  kable()"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#tsp-התוצאה",
-    "href": "lectures/01-nonparametric-slides.html#tsp-התוצאה",
+    "objectID": "lectures/01-nonparametric-slides.html#מבחן-הסימן-למדגמים-מזווגים-output",
+    "href": "lectures/01-nonparametric-slides.html#מבחן-הסימן-למדגמים-מזווגים-output",
     "title": "1. שיטות א-פרמטריות",
-    "section": "TSP: התוצאה",
-    "text": "TSP: התוצאה\n\nn_plus &lt;- sum(tsp$heuristic_1 &gt; tsp$heuristic_2)\nbinom.test(n_plus, n = nrow(tsp))\n\n\n    Exact binomial test\n\ndata:  n_plus and nrow(tsp)\nnumber of successes = 2, number of trials = 11, p-value = 0.07\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.02283 0.51776\nsample estimates:\nprobability of success \n                0.1818 \n\n\n\n\\(r^+ = 2\\), ו-\\(p = 0.065 &lt; 0.1\\), ולכן דוחים \\(H_0\\): חציון ההפרשים אינו 0\nלהיוריסטיקה 1 יש פער קטן יותר מהאופטימום ברוב המופעים"
+    "section": "מבחן הסימן למדגמים מזווגים",
+    "text": "מבחן הסימן למדגמים מזווגים\n\n\n\n\ntask\nsonnet\nopus\nsign\n\n\n\n\nניתוב פניות שירות\n8.4\n6.9\n-\n\n\nסנטימנט בביקורות\n4.1\n3.6\n-\n\n\nזיהוי ספאם\n2.3\n2.1\n-\n\n\nזיהוי כוונה בצ׳אט\n11.2\n9.0\n-\n\n\nזיהוי תוכן פוגעני\n6.5\n12.4\n+\n\n\nשדות בחשבוניות\n9.8\n8.1\n-\n\n\nזיהוי שפה\n1.4\n0.6\n-\n\n\nתעדוף פניות רפואיות\n14.7\n11.6\n-\n\n\nסיווג סעיפים בחוזים\n13.0\n10.4\n-\n\n\nקטגוריית מוצר\n7.2\n6.0\n-\n\n\nזיהוי סרקזם\n15.3\n22.1\n+"
+  },
+  {
+    "objectID": "lectures/01-nonparametric-slides.html#sonnet-מול-opus-התוצאה",
+    "href": "lectures/01-nonparametric-slides.html#sonnet-מול-opus-התוצאה",
+    "title": "1. שיטות א-פרמטריות",
+    "section": "Sonnet מול Opus: התוצאה",
+    "text": "Sonnet מול Opus: התוצאה\n\nn_plus &lt;- sum(llm_err$opus &gt; llm_err$sonnet)\nbinom.test(n_plus, n = nrow(llm_err)) |&gt; print(digits = 6)\n\n\n    Exact binomial test\n\ndata:  n_plus and nrow(llm_err)\nnumber of successes = 2, number of trials = 11, p-value = 0.0654\nalternative hypothesis: true probability of success is not equal to 0.5\n95 percent confidence interval:\n 0.0228312 0.5177559\nsample estimates:\nprobability of success \n              0.181818 \n\n\n\n\\(r^+ = 2\\), ו-\\(p = 0.065 &lt; 0.1\\), ולכן דוחים \\(H_0\\): חציון ההפרשים אינו 0\nOpus טועה פחות ב-9 מתוך 11 המשימות"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#הרחבה-של-מבחן-הסימן",
@@ -655,7 +732,7 @@
     "href": "lectures/01-nonparametric-slides.html#שלבי-המבחן",
     "title": "1. שיטות א-פרמטריות",
     "section": "שלבי המבחן",
-    "text": "שלבי המבחן\n\nמדרגים את \\(|x_i - z|\\) בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות\nמצמידים לכל דרגה את הסימן של ההפרש שלה\n\\(R^+\\) הוא סכום הדרגות החיוביות ו-\\(R^-\\) סכום הדרגות השליליות, וסטטיסטי המבחן הוא \\(R = \\min(R^+, R^-)\\)\nדוחים את \\(H_0\\) אם \\(R \\le R^*_{\\alpha,n}\\) (טבלה), או לפי קירוב נורמלי:\n\n\\[\nE(R^+) = \\frac{n(n+1)}{4} \\qquad V(R^+) = \\frac{n(n+1)(2n+1)}{24}\n\\]"
+    "text": "שלבי המבחן\n\nמשמיטים הפרשים ששווים ל-\\(0\\) ומעדכנים את \\(n\\). מדרגים את \\(|x_i - z|\\) בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות\nמצמידים לכל דרגה את הסימן של ההפרש שלה\n\\(R^+\\) הוא סכום הדרגות החיוביות ו-\\(R^-\\) סכום הדרגות השליליות, וסטטיסטי המבחן הוא \\(R = \\min(R^+, R^-)\\)\nדוחים את \\(H_0\\) אם \\(R \\le R^*_{\\alpha,n}\\) (טבלה), או לפי קירוב נורמלי:\n\n\\[\nE(R^+) = \\frac{n(n+1)}{4} \\qquad V(R^+) = \\frac{n(n+1)(2n+1)}{24}\n\\]"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#חזרה-לזמני-התגובה",
@@ -676,7 +753,7 @@
     "href": "lectures/01-nonparametric-slides.html#כשהמבחנים-לא-מסכימים",
     "title": "1. שיטות א-פרמטריות",
     "section": "כשהמבחנים לא מסכימים",
-    "text": "כשהמבחנים לא מסכימים\nנחזור ל-TSP:\n\nc(sign        = binom.test(n_plus, nrow(tsp))$p.value,\n  signed_rank = wilcox.test(tsp$heuristic_1, tsp$heuristic_2,\n                            paired = TRUE, exact = FALSE)$p.value)\n\n       sign signed_rank \n    0.06543     0.18080 \n\n\n\nב-\\(\\alpha = 0.1\\) מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא\nאם ההתפלגות סימטרית, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע\nאם אי אפשר להניח סימטריה, מבחן הסימן קובע"
+    "text": "כשהמבחנים לא מסכימים\nנחזור ל-Sonnet מול Opus:\n\nc(sign        = binom.test(n_plus, nrow(llm_err))$p.value,\n  signed_rank = wilcox.test(llm_err$opus, llm_err$sonnet, paired = TRUE)$p.value)\n\n       sign signed_rank \n    0.06543     0.32031 \n\n\n\nב-\\(\\alpha = 0.1\\) מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא\nאם ההתפלגות סימטרית, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע\nאם אי אפשר להניח סימטריה, מבחן הסימן קובע"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#שתי-אוכלוסיות-בלתי-תלויות",
@@ -714,81 +791,60 @@
     "text": "אותו מבחן ב-R\n\nafter  &lt;- prod$units[prod$period == \"after\"]\nbefore &lt;- prod$units[prod$period == \"before\"]\nwilcox.test(after, before, mu = 3)\n\n\n    Wilcoxon rank sum exact test\n\ndata:  after and before\nW = 25, p-value = 0.08\nalternative hypothesis: true location shift is not equal to 3\n\n\n\nב-R הסטטיסטי W הוא \\(T - \\frac{m(m+1)}{2} = 40 - 15 = 25\\) (סטטיסטי Mann–Whitney U)\nmu = 3 בודק הזזה של 3 יחידות, בלי לחסר ידנית\nR מחשב p-value מדויק (0.082) ולא את הקירוב הנורמלי, אבל המסקנה זהה"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#kruskalwallis",
-    "href": "lectures/01-nonparametric-slides.html#kruskalwallis",
+    "objectID": "lectures/01-nonparametric-slides.html#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה",
+    "href": "lectures/01-nonparametric-slides.html#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Kruskal–Wallis",
-    "text": "Kruskal–Wallis\nהשאלה: האם משתנה קטגוריאלי (פקטור עם \\(a\\) רמות) מסביר את השונות בתגובת המערכת?\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij}\n\\]\n\nב-ANOVA מניחים \\(\\varepsilon_{ij} \\sim N(0, \\sigma^2)\\). כאן מניחים רק ש-\\(\\varepsilon_{ij}\\) באים מאותה התפלגות רציפה\n\\(H_0: \\tau_1 = \\dots = \\tau_a = 0\\) מול \\(H_1: \\tau_i \\neq 0\\) עבור \\(i\\) כלשהו\nמדרגים את כל \\(N\\) התצפיות יחד. תחת \\(H_0\\) הדרגות מתפזרות באופן אחיד בין הרמות:\n\n\\[\nE(\\bar{R}_i) = \\frac{N+1}{2}\n\\]"
+    "section": "תזכורת: מבחן חי-בריבוע לטיב התאמה",
+    "text": "תזכורת: מבחן חי-בריבוע לטיב התאמה\n\\(H_0\\): ההסתברויות של \\(k\\) הקטגוריות הן \\(p_1, \\dots, p_k\\). \\(O_i\\) הוא המספר שנצפה, \\(E_i = n p_i\\) המספר הצפוי:\n\\[\n\\chi^2 = \\sum_{i=1}^{k} \\frac{(O_i - E_i)^2}{E_i} \\;\\sim\\; \\chi^2_{k-1-m}\n\\]\n\\(m\\) הוא מספר הפרמטרים שאמדנו מהנתונים. למה זה מבחן פרמטרי? ההשערה היא על הפרמטרים \\(p_i\\) של התפלגות מולטינומית, וההתפלגות \\(\\chi^2\\) של הסטטיסטי היא רק קירוב למדגם גדול, שנשען על קירוב נורמלי לספירות. לכן צריך \\(E_i \\ge 5\\) בכל קטגוריה. ב-KS, לעומת זאת, ההתפלגות של \\(D\\) תחת \\(H_0\\) מדויקת וזהה לכל \\(F_0\\) רציפה.\nדוגמה (נתונים מדומים): מודל שפה ענה על 400 שאלות אמריקאיות, והתשובה הנכונה מפוזרת שווה בשווה בין A–D. האם המודל מעדיף אותיות מסוימות (הטיית מיקום, position bias)?\n\nanswers &lt;- c(A = 124, B = 102, C = 95, D = 79)   # letters the model chose\nchisq.test(answers, p = rep(1/4, 4)) |&gt; print(digits = 6)\n\n\n    Chi-squared test for given probabilities\n\ndata:  answers\nX-squared = 10.46, df = 3, p-value = 0.015\n\n\n\\(\\chi^2 = 10.46 &gt; 7.81 = \\chi^2_{0.95,\\,3}\\), ולכן דוחים \\(H_0\\): יש הטיית מיקום."
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#הסטטיסטי-anova-על-הדרגות",
-    "href": "lectures/01-nonparametric-slides.html#הסטטיסטי-anova-על-הדרגות",
+    "objectID": "lectures/01-nonparametric-slides.html#מבחן-kolmogorovsmirnov",
+    "href": "lectures/01-nonparametric-slides.html#מבחן-kolmogorovsmirnov",
     "title": "1. שיטות א-פרמטריות",
-    "section": "הסטטיסטי: ANOVA על הדרגות",
-    "text": "הסטטיסטי: ANOVA על הדרגות\nב-ANOVA (בהנחת נורמליות):\n\\[\n\\frac{SS_{\\text{treatments}}}{\\sigma^2} = \\frac{\\sum_{i=1}^{a} n_i(\\bar{y}_i - \\bar{y})^2}{\\sigma^2} \\sim \\chi^2_{a-1}\n\\]\nב-Kruskal–Wallis: אותו רעיון, על הדרגות \\(\\bar{R}_i\\) במקום על הערכים\n\\[\nK = \\frac{12}{N(N+1)} \\sum_{i=1}^{a} n_i\\left(\\bar{R}_i - \\frac{N+1}{2}\\right)^2\n\\]\n\nכש-\\(a &gt; 3\\) ו-\\(n_i &gt; 4\\): \\(K \\sim \\chi^2_{a-1}\\) בקירוב\nדוחים את \\(H_0\\) אם \\(K &gt; \\chi^2_{\\alpha,\\,a-1}\\)"
+    "section": "מבחן Kolmogorov–Smirnov",
+    "text": "מבחן Kolmogorov–Smirnov\nכשהנתונים רציפים, החלוקה לקטגוריות מאבדת מידע. מבחן KS משווה את פונקציית ההתפלגות המצטברת:\n\n\\(F_n(x)\\): פונקציית ההתפלגות האמפירית, החלק מהתצפיות שקטנות או שוות ל-\\(x\\)\n\\(H_0: F(x) = F_0(x)\\) לכל \\(x\\), כש-\\(F_0\\) רציפה ונתונה במלואה\n\n\\[\nD = \\max_x \\left| F_n(x) - F_0(x) \\right|\n\\]\n\nדוחים את \\(H_0\\) אם \\(D &gt; D_{\\alpha,n}\\) (טבלה). למדגם גדול: \\(D_{0.05,n} \\approx 1.36/\\sqrt{n}\\)\nבחישוב ידני: ממיינים את התצפיות, ובודקים בכל \\(x_{(i)}\\) את שני הצדדים של המדרגה:\n\n\\[\nD = \\max_i \\left\\{ \\frac{i}{n} - F_0(x_{(i)}),\\;\\; F_0(x_{(i)}) - \\frac{i-1}{n} \\right\\}\n\\]"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה",
-    "href": "lectures/01-nonparametric-slides.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה",
+    "objectID": "lectures/01-nonparametric-slides.html#דוגמה-זמנים-בין-פניות-לצאט",
+    "href": "lectures/01-nonparametric-slides.html#דוגמה-זמנים-בין-פניות-לצאט",
     "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה",
-    "text": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה\n\ncotton &lt;- read_csv(file.path(data_dir, \"cotton_strength.csv\"), show_col_types = FALSE) |&gt;\n  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))\n\nggplot(cotton, aes(cotton_pct, strength)) +\n  geom_boxplot(width = 0.5, outlier.shape = NA, colour = \"grey55\") +\n  geom_point(aes(colour = cotton_pct), size = 3, alpha = 0.8,\n             position = position_jitter(width = 0.08, seed = 2), show.legend = FALSE) +\n  labs(title = \"חוזק המתיחה עולה עד 30% כותנה ואז צונח\",\n       subtitle = \"5 רמות, 6 דגימות בכל רמה\",\n       x = \"Cotton (%)\", y = \"Tensile strength\")"
+    "section": "דוגמה: זמנים בין פניות לצ׳אט",
+    "text": "דוגמה: זמנים בין פניות לצ׳אט\nמודל האיוש של מוקד שירות מניח שהזמן בין פניות לצ׳אט מתפלג מעריכית עם ממוצע 2 דקות. נמדדו 10 זמנים. האם הנתונים סותרים את ההנחה? \\(\\alpha = 0.05\\)\n\ngaps &lt;- c(0.4, 0.7, 1.1, 1.3, 1.9, 2.4, 3.6, 5.2, 6.8, 9.5)   # minutes\nn &lt;- length(gaps)\ntibble(i = 1:n, x = gaps, F0 = pexp(gaps, rate = 1/2)) |&gt;\n  mutate(`i/n - F0` = i/n - F0, `F0 - (i-1)/n` = F0 - (i - 1)/n) |&gt;\n  kable(digits = 3)\n\n\n\n\ni\nx\nF0\ni/n - F0\nF0 - (i-1)/n\n\n\n\n\n1\n0.4\n0.181\n-0.081\n0.181\n\n\n2\n0.7\n0.295\n-0.095\n0.195\n\n\n3\n1.1\n0.423\n-0.123\n0.223\n\n\n4\n1.3\n0.478\n-0.078\n0.178\n\n\n5\n1.9\n0.613\n-0.113\n0.213\n\n\n6\n2.4\n0.699\n-0.099\n0.199\n\n\n7\n3.6\n0.835\n-0.135\n0.235\n\n\n8\n5.2\n0.926\n-0.126\n0.226\n\n\n9\n6.8\n0.967\n-0.067\n0.167\n\n\n10\n9.5\n0.991\n0.009\n0.091"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה-output",
-    "href": "lectures/01-nonparametric-slides.html#דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה-output",
+    "objectID": "lectures/01-nonparametric-slides.html#התוצאה",
+    "href": "lectures/01-nonparametric-slides.html#התוצאה",
     "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה",
-    "text": "דוגמה: חוזק מתיחה של בד לפי אחוז כותנה"
+    "section": "התוצאה",
+    "text": "התוצאה\n\\(D_0 = 0.235\\), בתצפית \\(x_{(7)} = 3.6\\): \\(F_0(3.6) - \\frac{6}{10} = 0.835 - 0.6\\)\n\nks.test(gaps, \"pexp\", rate = 1/2) |&gt; print(digits = 6)\n\n\n    Exact one-sample Kolmogorov-Smirnov test\n\ndata:  gaps\nD = 0.2347, p-value = 0.563\nalternative hypothesis: two-sided\n\n\n\n\\(D_0 = 0.235 &lt; 0.409 = D_{0.05,10}\\), ולכן לא דוחים את \\(H_0\\)\nאבל: הממוצע במדגם הוא 3.29 דקות, לא 2. עם 10 תצפיות למבחן אין כמעט עוצמה. “לא דחינו” איננו “הוכחנו”"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#kruskalwallis-מול-מבחן-f",
-    "href": "lectures/01-nonparametric-slides.html#kruskalwallis-מול-מבחן-f",
+    "objectID": "lectures/01-nonparametric-slides.html#ks-לשני-מדגמים",
+    "href": "lectures/01-nonparametric-slides.html#ks-לשני-מדגמים",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Kruskal–Wallis מול מבחן F",
-    "text": "Kruskal–Wallis מול מבחן F\n\ncotton |&gt; group_by(cotton_pct) |&gt; summarise(mean_rank = mean(rank))\n\n# A tibble: 5 × 2\n  cotton_pct mean_rank\n  &lt;fct&gt;          &lt;dbl&gt;\n1 15              9.67\n2 20             11.1 \n3 25             20.5 \n4 30             27.2 \n5 35              9.08\n\nkruskal.test(strength ~ cotton_pct, data = cotton)\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  strength by cotton_pct\nKruskal-Wallis chi-squared = 20, df = 4, p-value = 5e-04\n\nsummary(aov(strength ~ cotton_pct, data = cotton))\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \ncotton_pct   4  111.1    27.8    13.9 4.3e-06 ***\nResiduals   25   50.1     2.0                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1"
+    "section": "KS לשני מדגמים",
+    "text": "KS לשני מדגמים\nאותו רעיון, בלי \\(F_0\\): משווים בין שתי פונקציות התפלגות אמפיריות\n\\[\nH_0: F_1(x) = F_2(x) \\qquad D = \\max_x \\left| F_{1,n}(x) - F_{2,m}(x) \\right|\n\\]\nדוגמה: גרסה חדשה של שירות inference עלתה לאוויר. החציון של זמן התגובה כמעט לא השתנה, אבל משתמשים מתלוננים על “קפיצות”. נדגמו 60 בקשות מכל גרסה. (נתונים מדומים)\n\nset.seed(1)\nlatency &lt;- tibble(\n  version = rep(c(\"v1\", \"v2\"), each = 60),\n  ms = c(rlnorm(60, log(220), 0.25), rlnorm(60, log(220), 0.65))\n)\nlatency |&gt; summarise(median = median(ms), iqr = IQR(ms), max = max(ms), .by = version)\n\n# A tibble: 2 × 4\n  version median   iqr   max\n  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 v1        227.  63.5  361.\n2 v2        225. 180.  1048."
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#הערכת-קונטרסטים-עם-חציונים",
-    "href": "lectures/01-nonparametric-slides.html#הערכת-קונטרסטים-עם-חציונים",
+    "objectID": "lectures/01-nonparametric-slides.html#שתי-פונקציות-התפלגות-מצטברות",
+    "href": "lectures/01-nonparametric-slides.html#שתי-פונקציות-התפלגות-מצטברות",
     "title": "1. שיטות א-פרמטריות",
-    "section": "הערכת קונטרסטים עם חציונים",
-    "text": "הערכת קונטרסטים עם חציונים\nתזכורת: \\(C = \\sum_i c_i \\tau_i\\) הוא קונטרסט אם \\(\\sum_i c_i = 0\\).\n\nלפי ממוצעים: \\(\\hat{\\tau}_i = \\bar{y}_i - \\bar{y}\\)\nהניסיון הטבעי לעבור לחציונים, \\(\\hat{\\tau}_i = \\text{median}_j\\{y_{ij}\\} - \\text{median}_{k,j}\\{y_{kj}\\}\\), מפר את התנאי \\(\\sum_i \\hat{\\tau}_i = 0\\)\n\nהחלופה:\n\\[\n\\hat{\\tau}_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik},\n\\qquad\nZ_{ik} = \\underset{j,m}{\\text{median}}\\{y_{ij} - y_{km}\\}\n\\]\nמכיוון ש-\\(Z_{ik} = -Z_{ki}\\), מתקיים \\(\\sum_i \\hat{\\tau}_i = 0\\)."
+    "section": "שתי פונקציות התפלגות מצטברות",
+    "text": "שתי פונקציות התפלגות מצטברות\n\ngrid &lt;- tibble(ms = sort(latency$ms)) |&gt;\n  mutate(v1 = ecdf(latency$ms[latency$version == \"v1\"])(ms),\n         v2 = ecdf(latency$ms[latency$version == \"v2\"])(ms),\n         gap = abs(v1 - v2))\nmax_gap &lt;- slice_max(grid, gap, n = 1, with_ties = FALSE)\n\nggplot(latency, aes(ms, colour = version)) +\n  stat_ecdf(linewidth = 0.9) +\n  geom_segment(aes(x = ms, xend = ms, y = v1, yend = v2), data = max_gap,\n               colour = \"grey20\", linewidth = 1, inherit.aes = FALSE) +\n  annotate(\"label\", x = max_gap$ms, y = (max_gap$v1 + max_gap$v2) / 2,\n           label = paste0(\"D = \", round(max_gap$gap, 2)), hjust = 1.1,\n           fill = \"white\", label.size = 0) +\n  scale_x_log10() +\n  scale_colour_manual(values = c(v1 = nanas_pal[[\"primary\"]], v2 = nanas_pal[[\"accent\"]])) +\n  labs(title = \"אותו חציון, פיזור שונה לגמרי\",\n       subtitle = \"הקו השחור: המרחק הגדול ביותר בין שתי הפונקציות\",\n       x = \"Response time (ms, log scale)\", y = \"F(x)\", colour = NULL)"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#קונטרסט-בדוגמת-הכותנה",
-    "href": "lectures/01-nonparametric-slides.html#קונטרסט-בדוגמת-הכותנה",
+    "objectID": "lectures/01-nonparametric-slides.html#שתי-פונקציות-התפלגות-מצטברות-output",
+    "href": "lectures/01-nonparametric-slides.html#שתי-פונקציות-התפלגות-מצטברות-output",
     "title": "1. שיטות א-פרמטריות",
-    "section": "קונטרסט בדוגמת הכותנה",
-    "text": "קונטרסט בדוגמת הכותנה\n\\(C = \\tfrac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\): הקצוות (15% ו-35%) מול 30%.\n\nlevels_y &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(levels_y), seq_along(levels_y),\n           Vectorize(\\(i, k) median(outer(levels_y[[i]], levels_y[[k]], \"-\"))))\ntau_hat &lt;- rowMeans(Z)\nround(tau_hat, 2)\n\n[1] -1.86 -1.26  1.73  3.22 -1.83\n\n0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]\n\n[1] -5.065\n\n\n\\[\n\\hat{C} = \\tfrac{1}{2}(-1.86 - 1.83) - 3.22 = -5.07\n\\]"
+    "section": "שתי פונקציות התפלגות מצטברות",
+    "text": "שתי פונקציות התפלגות מצטברות"
   },
   {
-    "objectID": "lectures/01-nonparametric-slides.html#friedman-טיפולים-בתוך-בלוקים",
-    "href": "lectures/01-nonparametric-slides.html#friedman-טיפולים-בתוך-בלוקים",
+    "objectID": "lectures/01-nonparametric-slides.html#ks-מול-סכום-הדירוגים",
+    "href": "lectures/01-nonparametric-slides.html#ks-מול-סכום-הדירוגים",
     "title": "1. שיטות א-פרמטריות",
-    "section": "Friedman: טיפולים בתוך בלוקים",
-    "text": "Friedman: טיפולים בתוך בלוקים\nכשכל “יחידה” (בלוק) מקבלת את כל הטיפולים, למשל אותו עובד שעובד בשלוש שיטות או אותה משימה שנבדקת בשלושה מודלים, ההשוואה צריכה להיות בתוך כל בלוק.\n\n\\(b\\) בלוקים ו-\\(k\\) טיפולים\nמדרגים את הטיפולים בתוך כל בלוק בנפרד, מ-1 עד \\(k\\)\n\\(R_j\\) הוא סכום הדרגות של טיפול \\(j\\) על פני כל הבלוקים\n\n\\[\nQ = \\frac{12}{b\\,k\\,(k+1)} \\sum_{j=1}^{k} R_j^2 \\;-\\; 3\\,b\\,(k+1) \\;\\sim\\; \\chi^2_{k-1}\n\\]"
-  },
-  {
-    "objectID": "lectures/01-nonparametric-slides.html#דוגמה-הערכת-פרומפטים-למודל-שפה",
-    "href": "lectures/01-nonparametric-slides.html#דוגמה-הערכת-פרומפטים-למודל-שפה",
-    "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: הערכת פרומפטים למודל שפה",
-    "text": "דוגמה: הערכת פרומפטים למודל שפה\nצוות בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (eval set). כל תשובה מקבלת ציון 0–100. המשימות שונות מאוד בקושי שלהן, ולכן המשימה היא הבלוק.\n\nllm &lt;- read_csv(file.path(data_dir, \"llm_prompt_eval.csv\"), show_col_types = FALSE) |&gt;\n  mutate(prompt = factor(prompt, levels = c(\"baseline\", \"few_shot\", \"reasoning\")))\n\nggplot(llm, aes(prompt, score, group = task)) +\n  geom_line(colour = \"grey70\") +\n  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +\n  labs(title = \"בכל משימה, איזה פרומפט טוב יותר?\",\n       subtitle = \"כל קו הוא משימה אחת. ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים\",\n       x = NULL, y = \"Score\")"
-  },
-  {
-    "objectID": "lectures/01-nonparametric-slides.html#דוגמה-הערכת-פרומפטים-למודל-שפה-output",
-    "href": "lectures/01-nonparametric-slides.html#דוגמה-הערכת-פרומפטים-למודל-שפה-output",
-    "title": "1. שיטות א-פרמטריות",
-    "section": "דוגמה: הערכת פרומפטים למודל שפה",
-    "text": "דוגמה: הערכת פרומפטים למודל שפה"
-  },
-  {
-    "objectID": "lectures/01-nonparametric-slides.html#friedman-חישוב",
-    "href": "lectures/01-nonparametric-slides.html#friedman-חישוב",
-    "title": "1. שיטות א-פרמטריות",
-    "section": "Friedman: חישוב",
-    "text": "Friedman: חישוב\n\nllm |&gt;\n  group_by(task) |&gt; mutate(rank = rank(score)) |&gt;\n  group_by(prompt) |&gt; summarise(R = sum(rank))\n\n# A tibble: 3 × 2\n  prompt        R\n  &lt;fct&gt;     &lt;dbl&gt;\n1 baseline     10\n2 few_shot     16\n3 reasoning    22\n\nfriedman.test(score ~ prompt | task, data = llm)\n\n\n    Friedman rank sum test\n\ndata:  score and prompt and task\nFriedman chi-squared = 9, df = 2, p-value = 0.01\n\n\n\\[\nQ = \\frac{12}{8 \\cdot 3 \\cdot 4}(10^2 + 16^2 + 22^2) - 3 \\cdot 8 \\cdot 4 = 105 - 96 = 9 &gt; \\chi^2_{0.05,2} = 5.99\n\\]"
+    "section": "KS מול סכום הדירוגים",
+    "text": "KS מול סכום הדירוגים\n\nv1 &lt;- latency$ms[latency$version == \"v1\"]\nv2 &lt;- latency$ms[latency$version == \"v2\"]\nc(rank_sum = wilcox.test(v1, v2)$p.value,\n  ks       = ks.test(v1, v2)$p.value)\n\nrank_sum       ks \n 0.95187  0.02763 \n\n\n\nסכום הדירוגים רגיש בעיקר להזזה של המיקום. החציונים כמעט שווים, ולכן הוא לא מוצא כלום\nKS רגיש לכל הבדל בין ההתפלגויות: מיקום, פיזור או צורה. כאן הוא דוחה ב-\\(\\alpha = 0.05\\)\nבשירות אמיתי, הזנב (האחוזון ה-95 או ה-99) הוא מה שהמשתמשים מרגישים. לכן כדאי לבדוק יותר מהחציון\n\n\nשאלה לכיתה: למה סכום הדירוגים “עיוור” כאן? כי ב-v2 יש גם ערכים קטנים מאוד וגם גדולים מאוד, והדרגות שלהם מתקזזות בסכום."
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#למה-לא-פירסון",
@@ -809,21 +865,21 @@
     "href": "lectures/01-nonparametric-slides.html#דוגמה-קשר-מונוטוני-וערך-חריג-אחד",
     "title": "1. שיטות א-פרמטריות",
     "section": "דוגמה: קשר מונוטוני וערך חריג אחד",
-    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\ncorr_data &lt;- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |&gt;\n  add_row(x = 2, y = 160)   # one data-entry error\n\nstats &lt;- c(\n  pearson  = cor(corr_data$x, corr_data$y),\n  spearman = cor(corr_data$x, corr_data$y, method = \"spearman\"),\n  kendall  = cor(corr_data$x, corr_data$y, method = \"kendall\")\n)\nround(stats, 2)"
+    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\nset.seed(2026)   # own seed, so edits elsewhere in the lecture don't change this example\ncorr_data &lt;- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |&gt;\n  add_row(x = 2, y = 160)   # one data-entry error\n\nstats &lt;- c(\n  pearson  = cor(corr_data$x, corr_data$y),\n  spearman = cor(corr_data$x, corr_data$y, method = \"spearman\"),\n  kendall  = cor(corr_data$x, corr_data$y, method = \"kendall\")\n)\nround(stats, 2)"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#דוגמה-קשר-מונוטוני-וערך-חריג-אחד-output",
     "href": "lectures/01-nonparametric-slides.html#דוגמה-קשר-מונוטוני-וערך-חריג-אחד-output",
     "title": "1. שיטות א-פרמטריות",
     "section": "דוגמה: קשר מונוטוני וערך חריג אחד",
-    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\n pearson spearman  kendall \n    0.58     0.81     0.81 \n\nggplot(corr_data, aes(x, y)) +\n  geom_point(size = 2.5) +\n  annotate(\"label\", x = 3.5, y = 160, label = \"שגיאת הקלדה\", hjust = 0) +\n  labs(title = sprintf(\"Pearson = %.2f · Spearman = %.2f · Kendall = %.2f\",\n                       stats[\"pearson\"], stats[\"spearman\"], stats[\"kendall\"]),\n       subtitle = \"קשר מונוטוני ברור, עם תצפית חריגה אחת\",\n       x = \"x\", y = \"y\")"
+    "text": "דוגמה: קשר מונוטוני וערך חריג אחד\n\n pearson spearman  kendall \n    0.59     0.82     0.81 \n\nggplot(corr_data, aes(x, y)) +\n  geom_point(size = 2.5) +\n  annotate(\"label\", x = 3.5, y = 160, label = \"שגיאת הקלדה\", hjust = 0) +\n  labs(title = sprintf(\"Pearson = %.2f · Spearman = %.2f · Kendall = %.2f\",\n                       stats[\"pearson\"], stats[\"spearman\"], stats[\"kendall\"]),\n       subtitle = \"קשר מונוטוני ברור, עם תצפית חריגה אחת\",\n       x = \"x\", y = \"y\")"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#מה-לקחת-מההרצאה",
     "href": "lectures/01-nonparametric-slides.html#מה-לקחת-מההרצאה",
     "title": "1. שיטות א-פרמטריות",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\n\nהשאלה\nפרמטרי\nא-פרמטרי\nב-R\n\n\n\n\nמרכז ההתפלגות\nt / Z\nסימן, דירוגים מסומנים\nbinom.test, wilcox.test\n\n\nמזווג\nt מזווג\nאותו מבחן על ההפרשים\nwilcox.test(paired = TRUE)\n\n\nשני מדגמים ב״ת\nt לשני מדגמים\nסכום הדירוגים\nwilcox.test(x, y)\n\n\nפקטור אחד\nANOVA\nKruskal–Wallis\nkruskal.test\n\n\nטיפולים × בלוקים\nANOVA עם בלוקים\nFriedman\nfriedman.test\n\n\nמתאם\nPearson\nSpearman, Kendall\ncor(method = )\n\n\n\n\nשיטות א-פרמטריות לא “חינמיות”: כשההנחות הפרמטריות כן מתקיימות, הן חלשות יותר\nגם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן"
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\n\nהשאלה\nפרמטרי\nא-פרמטרי\nב-R\n\n\n\n\nמרכז ההתפלגות\nt / Z\nסימן, דירוגים מסומנים\nbinom.test, wilcox.test\n\n\nמזווג\nt מזווג\nאותו מבחן על ההפרשים\nwilcox.test(paired = TRUE)\n\n\nשני מדגמים ב״ת\nt לשני מדגמים\nסכום הדירוגים\nwilcox.test(x, y)\n\n\nהתאמה להתפלגות\n\nחי-בריבוע, KS\nchisq.test, ks.test\n\n\nשתי התפלגויות\n\nKS לשני מדגמים\nks.test(x, y)\n\n\nמתאם\nPearson\nSpearman, Kendall\ncor(method = )\n\n\n\n\nשיטות א-פרמטריות לא “חינמיות”: כשההנחות הפרמטריות כן מתקיימות, הן חלשות יותר\nגם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן"
   },
   {
     "objectID": "lectures/01-nonparametric-slides.html#הנתונים",

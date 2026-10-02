@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-10-01">
+  <meta name="dcterms.date" content="2026-10-02">
   <title>ניתוח נתונים סטטיסטי – 1. שיטות א-פרמטריות</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -102,7 +102,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-761a883f0f124667a09a92fec355342f.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-007a223cdbbcc2a11797b02960617da6.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -194,6 +194,14 @@
       margin-right: 0; 
     }
   </style>
+  <!-- Slides use MathJax 2. Left alone it picks the STIX fonts installed on macOS,
+       whose metrics misplace accents (the tilde in \tilde{\mu} drifts right).
+       Force MathJax's own TeX web fonts so math looks the same on every machine. -->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: [], preferredFont: null, webFont: "TeX" }
+  });
+  </script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -211,20 +219,126 @@
 </div>
 </div>
 
-  <p class="date">2026-10-01</p>
+  <p class="date">2026-10-02</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
 <ul>
-<li>מתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה</li>
+<li>תזכורת קצרה: מהי בדיקת השערות</li>
+<li>מתי ההנחות של מבחן פרמטרי לא מתקיימות, ולמה זה משנה</li>
 <li><strong>מבחן הסימן</strong>: השערות על החציון, גם למדגמים מזווגים</li>
 <li><strong>מבחן הדירוגים המסומנים</strong> (<span class="en">Wilcoxon signed-rank</span>)</li>
 <li><strong>מבחן סכום הדירוגים</strong> (<span class="en">Wilcoxon rank-sum / Mann–Whitney</span>)</li>
-<li><strong>ניתוח שונות א-פרמטרי</strong>: <span class="en">Kruskal–Wallis</span> ו-<span class="en">Friedman</span></li>
+<li><strong>טיב התאמה</strong>: מבחן חי-בריבוע ומבחן <span class="en">Kolmogorov–Smirnov</span></li>
 <li><strong>מתאם על דירוגים</strong>: <span class="en">Spearman</span> ו-<span class="en">Kendall</span></li>
 </ul>
+</section>
+<section>
+<section id="תזכורת-בדיקת-השערות" class="title-slide slide level1 center">
+<h1>תזכורת: בדיקת השערות</h1>
+
+</section>
+<section id="השאלה-האם-הזכרים-כבדים-יותר" class="slide level2">
+<h2>השאלה: האם הזכרים כבדים יותר?</h2>
+<ul>
+<li>נתוני <span class="en">Palmer Penguins</span>: מדידות של פינגווינים בתחנת המחקר פאלמר באנטארקטיקה</li>
+<li>נתמקד במין אחד, <span class="en">Gentoo</span>, ובמשתנה אחד: <strong>משקל הגוף</strong> (גרם)</li>
+<li><strong>השאלה:</strong> האם יש הבדל במשקל הממוצע בין זכרים לנקבות?</li>
+<li>הנתונים מגיעים עם R (מגרסה 4.5), בלי חבילה נוספת</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a>gentoo <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Gentoo"</span>, <span class="sc">!</span><span class="fu">is.na</span>(sex))</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>gentoo <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">mean =</span> <span class="fu">mean</span>(body_mass), <span class="at">sd =</span> <span class="fu">sd</span>(body_mass), <span class="at">.by =</span> sex)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     sex  n mean    sd
+1 female 58 4680 281.6
+2   male 61 5485 313.2</code></pre>
+</div>
+</div>
+</section>
+<section id="התפלגות-המשקל" class="slide level2">
+<h2>התפלגות המשקל</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gentoo, <span class="fu">aes</span>(body_mass)) <span class="sc">+</span></span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">fill =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"משקל הגוף של פינגווינים מסוג Gentoo"</span>,</span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"119 פרטים, זכרים ונקבות יחד"</span>,</span>
+<span id="cb3-5"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Body mass (g)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="התפלגות-המשקל-output" class="slide level2 output-location-slide"><h2>התפלגות המשקל</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-nonparametric_files/figure-html/penguins-hist-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="המשקל-לפי-מין" class="slide level2">
+<h2>המשקל לפי מין</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a>sex_means <span class="ot">&lt;-</span> gentoo <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(body_mass), <span class="at">.by =</span> sex)</span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gentoo, <span class="fu">aes</span>(body_mass, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">100</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">position =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> mean, <span class="at">colour =</span> sex), <span class="at">data =</span> sex_means,</span>
+<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">linewidth =</span> <span class="fl">0.9</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">female =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">male =</span> nanas_pal[[<span class="st">"primary"</span>]])) <span class="sc">+</span></span>
+<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">female =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">male =</span> nanas_pal[[<span class="st">"primary"</span>]])) <span class="sc">+</span></span>
+<span id="cb4-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"הזכרים כבדים בכ-800 גרם בממוצע"</span>,</span>
+<span id="cb4-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקווים המקווקווים: הממוצע בכל קבוצה"</span>,</span>
+<span id="cb4-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Body mass (g)"</span>, <span class="at">y =</span> <span class="st">"Count"</span>, <span class="at">fill =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="המשקל-לפי-מין-output" class="slide level2 output-location-slide"><h2>המשקל לפי מין</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-nonparametric_files/figure-html/penguins-hist-sex-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="מבחן-t-לשני-מדגמים" class="slide level2 smaller">
+<h2>מבחן t לשני מדגמים</h2>
+<p><span class="math display">\[
+H_0: \mu_F = \mu_M \qquad H_1: \mu_F \neq \mu_M
+\]</span></p>
+<p><span class="math display">\[
+t = \frac{\bar{x}_F - \bar{x}_M}{\sqrt{\dfrac{s_F^2}{n_F} + \dfrac{s_M^2}{n_M}}}
+= \frac{4679.7 - 5484.8}{\sqrt{\dfrac{281.6^2}{58} + \dfrac{313.2^2}{61}}}
+= \frac{-805.1}{54.5} \approx -14.76
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(body_mass <span class="sc">~</span> sex, <span class="at">data =</span> gentoo) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)  <span class="co"># a little more precision than the course default</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  body_mass by sex
+t = -14.76, df = 116.6, p-value &lt;2e-16
+alternative hypothesis: true difference in means between group female and group male is not equal to 0
+95 percent confidence interval:
+ -913.113 -697.076
+sample estimates:
+mean in group female   mean in group male 
+             4679.74              5484.84 </code></pre>
+</div>
+</div>
+</section>
+<section id="איך-קוראים-את-הפלט" class="slide level2">
+<h2>איך קוראים את הפלט</h2>
+<ul>
+<li><strong><code>t = -14.76</code></strong>: ההפרש בין הממוצעים הוא כ-15 שגיאות תקן. הסימן שלילי כי R מחסר זכרים מנקבות</li>
+<li><strong><code>df = 116.6</code></strong>: <span class="en">Welch</span> לא מניח שוויון שונויות, ולכן דרגות החופש לא שלמות</li>
+<li><strong><code>p-value &lt; 2e-16</code></strong>: אם <span class="math inline">\(H_0\)</span> נכונה, הסיכוי לראות הפרש קיצוני כזה כמעט אפס. <strong>דוחים</strong> את <span class="math inline">\(H_0\)</span></li>
+<li><strong>רווח הסמך (95%)</strong>: הנקבות קלות מהזכרים ב-697 עד 913 גרם. הערך 0 לא נמצא ברווח</li>
+<li><strong>ההנחות:</strong> תצפיות בלתי תלויות, והתפלגות נורמלית בכל קבוצה (או מדגם גדול)</li>
+</ul>
 <aside class="notes">
-<p>ההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R.</p>
+<p>להזכיר: p-value איננו ההסתברות ש-H0 נכונה. זו ההסתברות לנתונים קיצוניים כאלה או יותר, בהינתן ש-H0 נכונה.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -236,7 +350,7 @@
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</section>
+</section></section>
 <section>
 <section id="למה-צריך-שיטות-א-פרמטריות" class="title-slide slide level1 center">
 <h1>למה צריך שיטות א-פרמטריות?</h1>
@@ -253,7 +367,10 @@
 </section>
 <section id="כשהתוחלת-בכלל-לא-קיימת" class="slide level2">
 <h2>כשהתוחלת בכלל לא קיימת</h2>
-<p>דוגמה: <span class="math inline">\(f(x) = \dfrac{1}{(1+x)^2}, \quad x \in [0, \infty)\)</span></p>
+<p>דוגמה:</p>
+<p><span class="math display">\[
+f(x) = \dfrac{1}{(1+x)^2}, \quad x \in [0, \infty)
+\]</span></p>
 <p><span class="math display">\[
 \mu = \int_0^\infty \frac{x}{(1+x)^2}\,dx = \infty
 \]</span></p>
@@ -268,27 +385,27 @@ F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
 <section id="סימולציה-ממוצע-מול-חציון" class="slide level2">
 <h2>סימולציה: ממוצע מול חציון</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># F(x) = 1 - 1/(1+x)  =&gt;  x = 1/(1-u) - 1</span></span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20000</span></span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a>heavy <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
-<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">runif</span>(n)) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb1-6"><a aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb1-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb1-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">ממוצע מצטבר</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">cummean</span>(x),</span>
-<span id="cb1-9"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">חציון מצטבר</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">map_dbl</span>(i, \(k) <span class="fu">median</span>(x[<span class="fu">seq_len</span>(k)]))</span>
-<span id="cb1-10"><a aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb1-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(i <span class="sc">%%</span> <span class="dv">20</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">ממוצע מצטבר</span><span class="st">`</span>, <span class="st">`</span><span class="at">חציון מצטבר</span><span class="st">`</span>), <span class="at">names_to =</span> <span class="st">"stat"</span>)</span>
-<span id="cb1-13"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heavy, <span class="fu">aes</span>(i, value, <span class="at">colour =</span> stat)) <span class="sc">+</span></span>
-<span id="cb1-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
-<span id="cb1-16"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb1-17"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">labels =</span> <span class="fu">label_comma</span>()) <span class="sc">+</span></span>
-<span id="cb1-18"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(nanas_pal[[<span class="st">"accent"</span>]], nanas_pal[[<span class="st">"primary"</span>]])) <span class="sc">+</span></span>
-<span id="cb1-19"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"החציון מתכנס ל-1, הממוצע ממשיך לטפס"</span>,</span>
-<span id="cb1-20"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דגימות מהתפלגות שבה התוחלת אינסופית"</span>,</span>
-<span id="cb1-21"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Sample size (log scale)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># F(x) = 1 - 1/(1+x)  =&gt;  x = 1/(1-u) - 1</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20000</span></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>heavy <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb7-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">runif</span>(n)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb7-6"><a aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">ממוצע מצטבר</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">cummean</span>(x),</span>
+<span id="cb7-9"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">חציון מצטבר</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">map_dbl</span>(i, \(k) <span class="fu">median</span>(x[<span class="fu">seq_len</span>(k)]))</span>
+<span id="cb7-10"><a aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(i <span class="sc">%%</span> <span class="dv">20</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">ממוצע מצטבר</span><span class="st">`</span>, <span class="st">`</span><span class="at">חציון מצטבר</span><span class="st">`</span>), <span class="at">names_to =</span> <span class="st">"stat"</span>)</span>
+<span id="cb7-13"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heavy, <span class="fu">aes</span>(i, value, <span class="at">colour =</span> stat)) <span class="sc">+</span></span>
+<span id="cb7-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb7-17"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">labels =</span> <span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb7-18"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(nanas_pal[[<span class="st">"accent"</span>]], nanas_pal[[<span class="st">"primary"</span>]])) <span class="sc">+</span></span>
+<span id="cb7-19"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"החציון מתכנס ל-1, הממוצע ממשיך לטפס"</span>,</span>
+<span id="cb7-20"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דגימות מהתפלגות שבה התוחלת אינסופית"</span>,</span>
+<span id="cb7-21"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Sample size (log scale)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -296,7 +413,7 @@ F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/running-mean-median-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/running-mean-median-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -304,9 +421,9 @@ F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
 <h2>מפת דרכים</h2>
 <table class="caption-top">
 <colgroup>
-<col style="width: 34%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 27%">
+<col style="width: 28%">
+<col style="width: 45%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -319,27 +436,27 @@ F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
 <tr class="odd">
 <td>מרכז ההתפלגות</td>
 <td>מבחן t / Z על התוחלת</td>
-<td>מבחן הסימן, מבחן הדירוגים המסומנים</td>
+<td>מבחן הסימן (<span class="en">Sign test</span>), מבחן הדירוגים המסומנים (<span class="en">Wilcoxon signed-rank</span>)</td>
 </tr>
 <tr class="even">
 <td>שני מדגמים מזווגים</td>
 <td>מבחן t מזווג</td>
-<td>מבחן הסימן / דירוגים מסומנים על ההפרשים</td>
+<td>מבחן הסימן / <span class="en">Wilcoxon signed-rank</span> על ההפרשים</td>
 </tr>
 <tr class="odd">
 <td>שתי אוכלוסיות בלתי תלויות</td>
 <td>מבחן t לשני מדגמים</td>
-<td>מבחן סכום הדירוגים</td>
+<td>מבחן סכום הדירוגים (<span class="en">Mann–Whitney</span>)</td>
 </tr>
 <tr class="even">
-<td>השפעה של משתנה קטגוריאלי</td>
-<td>ANOVA חד-כיווני</td>
-<td><span class="en">Kruskal–Wallis</span></td>
+<td>התאמה להתפלגות נתונה</td>
+<td>מבחן חי-בריבוע לטיב התאמה (<span class="en">Goodness-of-fit</span>)</td>
+<td>מבחן <span class="en">Kolmogorov–Smirnov</span></td>
 </tr>
 <tr class="odd">
-<td>טיפולים בתוך בלוקים</td>
-<td>ANOVA עם בלוקים</td>
-<td><span class="en">Friedman</span></td>
+<td>השוואה בין שתי התפלגויות</td>
+<td></td>
+<td><span class="en">Kolmogorov–Smirnov</span> לשני מדגמים</td>
 </tr>
 <tr class="even">
 <td>מתאם בין שני משתנים</td>
@@ -361,6 +478,7 @@ H_0: \tilde{\mu} = z \qquad H_1: \tilde{\mu} \neq z
 \]</span></p>
 <ul>
 <li>תחת <span class="math inline">\(H_0\)</span>, כל הפרש <span class="math inline">\(x_i - z\)</span> חיובי או שלילי בהסתברות <span class="math inline">\(0.5\)</span></li>
+<li>תצפיות ששוות בדיוק ל-<span class="math inline">\(z\)</span> (הפרש <span class="math inline">\(0\)</span>) <strong>משמיטים</strong>, ו-<span class="math inline">\(n\)</span> הוא מספר התצפיות שנשארו</li>
 <li><span class="math inline">\(r^+\)</span>: מספר ההפרשים החיוביים</li>
 <li>סטטיסטי המבחן: <span class="math inline">\(r = \min(r^+,\; n - r^+)\)</span></li>
 <li>תחת <span class="math inline">\(H_0\)</span> נצפה ש-<span class="math inline">\(r\)</span> יהיה קרוב ל-<span class="math inline">\(n/2\)</span>, וערך קטן מעיד נגד <span class="math inline">\(H_0\)</span></li>
@@ -379,11 +497,11 @@ P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\ri
 \]</span></p>
 <p><strong>כלל ההכרעה:</strong> אם <span class="math inline">\(r_0 \le R^*_\alpha\)</span>, דוחים את <span class="math inline">\(H_0\)</span>.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Critical value of the sign test: largest r with 2 * P(Bin(n, 0.5) &lt;= r) &lt;= alpha</span></span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>sign_critical <span class="ot">&lt;-</span> <span class="cf">function</span>(n, alpha) {</span>
-<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>(<span class="fu">which</span>(<span class="dv">2</span> <span class="sc">*</span> <span class="fu">pbinom</span>(<span class="dv">0</span><span class="sc">:</span>n, n, <span class="fl">0.5</span>) <span class="sc">&lt;=</span> alpha)) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">0.01</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.01</span>, <span class="st">`</span><span class="at">0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.05</span>, <span class="st">`</span><span class="at">0.10</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.10</span>), \(a) <span class="fu">sign_critical</span>(<span class="dv">20</span>, a))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Critical value of the sign test: largest r with 2 * P(Bin(n, 0.5) &lt;= r) &lt;= alpha</span></span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>sign_critical <span class="ot">&lt;-</span> <span class="cf">function</span>(n, alpha) {</span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>(<span class="fu">which</span>(<span class="dv">2</span> <span class="sc">*</span> <span class="fu">pbinom</span>(<span class="dv">0</span><span class="sc">:</span>n, n, <span class="fl">0.5</span>) <span class="sc">&lt;=</span> alpha)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">0.01</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.01</span>, <span class="st">`</span><span class="at">0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.05</span>, <span class="st">`</span><span class="at">0.10</span><span class="st">`</span> <span class="ot">=</span> <span class="fl">0.10</span>), \(a) <span class="fu">sign_critical</span>(<span class="dv">20</span>, a))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0.01 0.05 0.10 
    3    5    5 </code></pre>
@@ -394,9 +512,9 @@ P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\ri
 <h2>דוגמה: זמני תגובה של API</h2>
 <p>ה-SLA של שירות קובע שהחציון של זמן התגובה הוא <strong>200 ms</strong>. נדגמו 20 בקשות:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a>api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"api_latency.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>api <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">diff =</span> latency_ms <span class="sc">-</span> <span class="dv">200</span>, <span class="at">sign =</span> <span class="fu">if_else</span>(diff <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"+"</span>, <span class="st">"-"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sign)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a>api <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"api_latency.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a>api <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">diff =</span> latency_ms <span class="sc">-</span> <span class="dv">200</span>, <span class="at">sign =</span> <span class="fu">if_else</span>(diff <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"+"</span>, <span class="st">"-"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(sign)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   sign      n
@@ -406,13 +524,13 @@ P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\ri
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(api, <span class="fu">aes</span>(latency_ms, <span class="dv">0</span>, <span class="at">colour =</span> latency_ms <span class="sc">&gt;</span> <span class="dv">200</span>)) <span class="sc">+</span></span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">200</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
-<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>, <span class="at">seed =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"primary"</span>]]),</span>
-<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"מתחת ל-200"</span>, <span class="st">"מעל 200"</span>)) <span class="sc">+</span></span>
-<span id="cb6-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">breaks =</span> <span class="cn">NULL</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span>)) <span class="sc">+</span></span>
-<span id="cb6-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"15 מתוך 20 בקשות מעל 200 ms"</span>, <span class="at">x =</span> <span class="st">"Latency (ms)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(api, <span class="fu">aes</span>(latency_ms, <span class="dv">0</span>, <span class="at">colour =</span> latency_ms <span class="sc">&gt;</span> <span class="dv">200</span>)) <span class="sc">+</span></span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">200</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.02</span>, <span class="at">seed =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"primary"</span>]]),</span>
+<span id="cb12-5"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"מתחת ל-200"</span>, <span class="st">"מעל 200"</span>)) <span class="sc">+</span></span>
+<span id="cb12-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">breaks =</span> <span class="cn">NULL</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb12-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"15 מתוך 20 בקשות מעל 200 ms"</span>, <span class="at">x =</span> <span class="st">"Latency (ms)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -420,7 +538,7 @@ P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\ri
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/api-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/api-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -432,7 +550,7 @@ P(r \le R^*_\alpha) = 2 \sum_{y=0}^{R^*_\alpha} \binom{n}{y}\left(\frac{1}{2}\ri
 <li>ב-<span class="math inline">\(\alpha = 0.05\)</span>: <span class="math inline">\(R^*_{0.05} = 5\)</span>, ו-<span class="math inline">\(5 \le 5\)</span>, ולכן <strong>דוחים</strong></li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="fu">sum</span>(api<span class="sc">$</span>latency_ms <span class="sc">&gt;</span> <span class="dv">200</span>), <span class="at">n =</span> <span class="fu">nrow</span>(api), <span class="at">p =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="fu">sum</span>(api<span class="sc">$</span>latency_ms <span class="sc">&gt;</span> <span class="dv">200</span>), <span class="at">n =</span> <span class="fu">nrow</span>(api), <span class="at">p =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Exact binomial test
@@ -452,124 +570,155 @@ probability of success
 <h2>דוגמה: חציון הציונים במועד ב׳</h2>
 <p>מרצה טוען שחציון הציונים במועד ב׳ שלו הוא 80. ניגשו 11 סטודנטים. האם הטענה נכונה ב-<span class="math inline">\(\alpha = 0.1\)</span>?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>grades <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"exam_grades.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a>grades<span class="sc">$</span>grade</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a>grades <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"exam_grades.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>grades<span class="sc">$</span>grade</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] 79 75 85 95 70 60 65 75 74 89 72</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="fu">sum</span>(grades<span class="sc">$</span>grade <span class="sc">&gt;</span> <span class="dv">80</span>), <span class="at">n =</span> <span class="fu">nrow</span>(grades))<span class="sc">$</span>p.value  <span class="co"># sign test</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="fu">sum</span>(grades<span class="sc">$</span>grade <span class="sc">&gt;</span> <span class="dv">80</span>), <span class="at">n =</span> <span class="fu">nrow</span>(grades))<span class="sc">$</span>p.value  <span class="co"># sign test</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2266</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(grades<span class="sc">$</span>grade, <span class="at">mu =</span> <span class="dv">80</span>)<span class="sc">$</span>p.value                          <span class="co"># assuming normality</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.2563</code></pre>
-</div>
 </div>
 <ul>
-<li><span class="math inline">\(r^+ = 3\)</span>, <span class="math inline">\(r_0 = 3 &gt; R^*_{0.1,11} = 2\)</span>, ולכן טענת המרצה <strong>מתקבלת</strong></li>
-<li>גם מבחן t (בהנחת נורמליות) לא דוחה את <span class="math inline">\(H_0\)</span></li>
+<li><span class="math inline">\(r^+ = 3\)</span>, <span class="math inline">\(r_0 = 3 &gt; R^*_{0.1,11} = 2\)</span>, ולכן טענת המרצה <strong>אינה נדחית</strong></li>
+<li>גם מבחן t לתוחלת (בהנחת נורמליות) לא דוחה את <span class="math inline">\(H_0\)</span></li>
 </ul>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(grades<span class="sc">$</span>grade, <span class="at">mu =</span> <span class="dv">80</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  grades$grade
+t = -1.204, df = 10, p-value = 0.256
+alternative hypothesis: true mean is not equal to 80
+95 percent confidence interval:
+ 69.3750 83.1704
+sample estimates:
+mean of x 
+  76.2727 </code></pre>
+</div>
+</div>
+</div>
 </section>
-<section id="מבחן-הסימן-למדגמים-מזווגים" class="slide level2">
+<section id="מבחן-הסימן-למדגמים-מזווגים" class="slide level2 smaller">
 <h2>מבחן הסימן למדגמים מזווגים</h2>
 <p>כשהתצפיות <strong>מזווגות</strong>, מריצים את מבחן הסימן על ההפרשים <span class="math inline">\(d_i = x_i - y_i\)</span>, עם <span class="math inline">\(H_0: \tilde{\mu}_d = 0\)</span>.</p>
-<p><strong>דוגמה:</strong> 11 מופעים של בעיית הסוכן הנוסע (<span class="en">TSP</span>) נפתרו בשתי היוריסטיקות. בטבלה: הפער (%) מהפתרון האופטימלי של מודל תכנות בשלמים.</p>
+<p><strong>דוגמה:</strong> צוות מוצר שוקל להחליף את <span class="en">Sonnet 5.5</span> ב-<span class="en">Opus 5.5</span>, היקר יותר, למשימות תיוג. שני המודלים תייגו את אותן 11 משימות. <strong>האם Opus טועה פחות?</strong> בטבלה: שיעור השגיאות (%) בכל משימה. <span class="math inline">\(d_i\)</span> = Opus פחות Sonnet. (נתונים מדומים)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a>tsp <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"tsp_heuristics.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>tsp <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sign =</span> <span class="fu">if_else</span>(heuristic_1 <span class="sc">&gt;</span> heuristic_2, <span class="st">"+"</span>, <span class="st">"-"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb15-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="sc">-</span>instance, <span class="at">values_transform =</span> as.character) <span class="sc">|&gt;</span></span>
-<span id="cb15-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> instance) <span class="sc">|&gt;</span></span>
-<span id="cb15-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a>llm_err <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"llm_labelling_errors.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a>llm_err <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sign =</span> <span class="fu">if_else</span>(opus <span class="sc">&gt;</span> sonnet, <span class="st">"+"</span>, <span class="st">"-"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">task =</span> task_he, sonnet, opus, sign) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>()</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="מבחן-הסימן-למדגמים-מזווגים-output" class="slide level2 smaller output-location-slide"><h2>מבחן הסימן למדגמים מזווגים</h2><div class="cell output-location-slide" data-layout-align="center">
 <div class="cell-output-display">
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: left;">name</th>
-<th style="text-align: left;">1</th>
-<th style="text-align: left;">2</th>
-<th style="text-align: left;">3</th>
-<th style="text-align: left;">4</th>
-<th style="text-align: left;">5</th>
-<th style="text-align: left;">6</th>
-<th style="text-align: left;">7</th>
-<th style="text-align: left;">8</th>
-<th style="text-align: left;">9</th>
-<th style="text-align: left;">10</th>
-<th style="text-align: left;">11</th>
+<th style="text-align: left;">task</th>
+<th style="text-align: right;">sonnet</th>
+<th style="text-align: right;">opus</th>
+<th style="text-align: left;">sign</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">heuristic_1</td>
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">5</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">5</td>
+<td style="text-align: left;">ניתוב פניות שירות</td>
+<td style="text-align: right;">8.4</td>
+<td style="text-align: right;">6.9</td>
+<td style="text-align: left;">-</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">heuristic_2</td>
-<td style="text-align: left;">12</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">18</td>
-<td style="text-align: left;">18</td>
-<td style="text-align: left;">13</td>
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">10</td>
+<td style="text-align: left;">סנטימנט בביקורות</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: left;">-</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">sign</td>
+<td style="text-align: left;">זיהוי ספאם</td>
+<td style="text-align: right;">2.3</td>
+<td style="text-align: right;">2.1</td>
 <td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">זיהוי כוונה בצ׳אט</td>
+<td style="text-align: right;">11.2</td>
+<td style="text-align: right;">9.0</td>
 <td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">זיהוי תוכן פוגעני</td>
+<td style="text-align: right;">6.5</td>
+<td style="text-align: right;">12.4</td>
 <td style="text-align: left;">+</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">שדות בחשבוניות</td>
+<td style="text-align: right;">9.8</td>
+<td style="text-align: right;">8.1</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">זיהוי שפה</td>
+<td style="text-align: right;">1.4</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">תעדוף פניות רפואיות</td>
+<td style="text-align: right;">14.7</td>
+<td style="text-align: right;">11.6</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">סיווג סעיפים בחוזים</td>
+<td style="text-align: right;">13.0</td>
+<td style="text-align: right;">10.4</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">קטגוריית מוצר</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">זיהוי סרקזם</td>
+<td style="text-align: right;">15.3</td>
+<td style="text-align: right;">22.1</td>
 <td style="text-align: left;">+</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
-<td style="text-align: left;">-</td>
 </tr>
 </tbody>
 </table>
 </div>
-</div>
-</section>
-<section id="tsp-התוצאה" class="slide level2">
-<h2>TSP: התוצאה</h2>
+</div></section><section id="sonnet-מול-opus-התוצאה" class="slide level2">
+<h2>Sonnet מול Opus: התוצאה</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a>n_plus <span class="ot">&lt;-</span> <span class="fu">sum</span>(tsp<span class="sc">$</span>heuristic_1 <span class="sc">&gt;</span> tsp<span class="sc">$</span>heuristic_2)</span>
-<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(n_plus, <span class="at">n =</span> <span class="fu">nrow</span>(tsp))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a>n_plus <span class="ot">&lt;-</span> <span class="fu">sum</span>(llm_err<span class="sc">$</span>opus <span class="sc">&gt;</span> llm_err<span class="sc">$</span>sonnet)</span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(n_plus, <span class="at">n =</span> <span class="fu">nrow</span>(llm_err)) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Exact binomial test
 
-data:  n_plus and nrow(tsp)
-number of successes = 2, number of trials = 11, p-value = 0.07
+data:  n_plus and nrow(llm_err)
+number of successes = 2, number of trials = 11, p-value = 0.0654
 alternative hypothesis: true probability of success is not equal to 0.5
 95 percent confidence interval:
- 0.02283 0.51776
+ 0.0228312 0.5177559
 sample estimates:
 probability of success 
-                0.1818 </code></pre>
+              0.181818 </code></pre>
 </div>
 </div>
 <ul>
 <li><span class="math inline">\(r^+ = 2\)</span>, ו-<span class="math inline">\(p = 0.065 &lt; 0.1\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: חציון ההפרשים אינו 0</li>
-<li>להיוריסטיקה 1 יש פער קטן יותר מהאופטימום ברוב המופעים</li>
+<li>Opus טועה פחות ב-9 מתוך 11 המשימות</li>
 </ul>
 </section></section>
 <section>
@@ -589,7 +738,7 @@ probability of success
 <section id="שלבי-המבחן" class="slide level2 smaller">
 <h2>שלבי המבחן</h2>
 <ol type="1">
-<li>מדרגים את <span class="math inline">\(|x_i - z|\)</span> בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות</li>
+<li>משמיטים הפרשים ששווים ל-<span class="math inline">\(0\)</span> ומעדכנים את <span class="math inline">\(n\)</span>. מדרגים את <span class="math inline">\(|x_i - z|\)</span> בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות</li>
 <li>מצמידים לכל דרגה את הסימן של ההפרש שלה</li>
 <li><span class="math inline">\(R^+\)</span> הוא סכום הדרגות החיוביות ו-<span class="math inline">\(R^-\)</span> סכום הדרגות השליליות, וסטטיסטי המבחן הוא <span class="math inline">\(R = \min(R^+, R^-)\)</span></li>
 <li>דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(R \le R^*_{\alpha,n}\)</span> (טבלה), או לפי קירוב נורמלי:</li>
@@ -601,14 +750,14 @@ E(R^+) = \frac{n(n+1)}{4} \qquad V(R^+) = \frac{n(n+1)(2n+1)}{24}
 <section id="חזרה-לזמני-התגובה" class="slide level2">
 <h2>חזרה לזמני התגובה</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>signed <span class="ot">&lt;-</span> api <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff =</span> latency_ms <span class="sc">-</span> <span class="dv">200</span>,</span>
-<span id="cb18-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">rank =</span> <span class="fu">rank</span>(<span class="fu">abs</span>(diff)),</span>
-<span id="cb18-4"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">signed_rank =</span> <span class="fu">sign</span>(diff) <span class="sc">*</span> rank) <span class="sc">|&gt;</span></span>
-<span id="cb18-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(rank)</span>
-<span id="cb18-6"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-7"><a aria-hidden="true" tabindex="-1"></a>signed <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">R_plus  =</span> <span class="fu">sum</span>(rank[diff <span class="sc">&gt;</span> <span class="dv">0</span>]),</span>
-<span id="cb18-8"><a aria-hidden="true" tabindex="-1"></a>                    <span class="at">R_minus =</span> <span class="fu">sum</span>(rank[diff <span class="sc">&lt;</span> <span class="dv">0</span>]))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a>signed <span class="ot">&lt;-</span> api <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff =</span> latency_ms <span class="sc">-</span> <span class="dv">200</span>,</span>
+<span id="cb24-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">rank =</span> <span class="fu">rank</span>(<span class="fu">abs</span>(diff)),</span>
+<span id="cb24-4"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">signed_rank =</span> <span class="fu">sign</span>(diff) <span class="sc">*</span> rank) <span class="sc">|&gt;</span></span>
+<span id="cb24-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(rank)</span>
+<span id="cb24-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a aria-hidden="true" tabindex="-1"></a>signed <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">R_plus  =</span> <span class="fu">sum</span>(rank[diff <span class="sc">&gt;</span> <span class="dv">0</span>]),</span>
+<span id="cb24-8"><a aria-hidden="true" tabindex="-1"></a>                    <span class="at">R_minus =</span> <span class="fu">sum</span>(rank[diff <span class="sc">&lt;</span> <span class="dv">0</span>]))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 2
   R_plus R_minus
@@ -624,7 +773,7 @@ R = \min(156.5,\; 53.5) = 53.5 &lt; 60 = R^*_{0.1,\,20}
 <section id="בדיקה-ב-r" class="slide level2">
 <h2>בדיקה ב-R</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(api<span class="sc">$</span>latency_ms, <span class="at">mu =</span> <span class="dv">200</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(api<span class="sc">$</span>latency_ms, <span class="at">mu =</span> <span class="dv">200</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Wilcoxon signed rank test with continuity correction
@@ -641,14 +790,13 @@ alternative hypothesis: true location is not equal to 200</code></pre>
 </section>
 <section id="כשהמבחנים-לא-מסכימים" class="slide level2">
 <h2>כשהמבחנים לא מסכימים</h2>
-<p>נחזור ל-TSP:</p>
+<p>נחזור ל-Sonnet מול Opus:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sign        =</span> <span class="fu">binom.test</span>(n_plus, <span class="fu">nrow</span>(tsp))<span class="sc">$</span>p.value,</span>
-<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">signed_rank =</span> <span class="fu">wilcox.test</span>(tsp<span class="sc">$</span>heuristic_1, tsp<span class="sc">$</span>heuristic_2,</span>
-<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>                            <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sign        =</span> <span class="fu">binom.test</span>(n_plus, <span class="fu">nrow</span>(llm_err))<span class="sc">$</span>p.value,</span>
+<span id="cb28-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">signed_rank =</span> <span class="fu">wilcox.test</span>(llm_err<span class="sc">$</span>opus, llm_err<span class="sc">$</span>sonnet, <span class="at">paired =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>p.value)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       sign signed_rank 
-    0.06543     0.18080 </code></pre>
+    0.06543     0.32031 </code></pre>
 </div>
 </div>
 <ul>
@@ -679,8 +827,8 @@ E(T) = \frac{m(n+m+1)}{2} \qquad V(T) = \frac{mn(n+m+1)}{12}
 <h2>דוגמה: שיפור בתהליך ייצור</h2>
 <p>שיפור טכנולוגי בתהליך הייצור לא שינה את <strong>צורת</strong> ההתפלגות של התפוקה היומית, אבל הזיז אותה כלפי מעלה. <strong>האם התפוקה עלתה ב-3 יחידות ביום?</strong> (<span class="math inline">\(\alpha = 0.05\)</span>)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a>prod <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"production_output.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb24-2"><a aria-hidden="true" tabindex="-1"></a>prod <span class="sc">|&gt;</span> <span class="fu">group_by</span>(period) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">units =</span> <span class="fu">paste</span>(units, <span class="at">collapse =</span> <span class="st">", "</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>prod <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"production_output.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb30-2"><a aria-hidden="true" tabindex="-1"></a>prod <span class="sc">|&gt;</span> <span class="fu">group_by</span>(period) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">units =</span> <span class="fu">paste</span>(units, <span class="at">collapse =</span> <span class="st">", "</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   period units                       
@@ -694,17 +842,17 @@ E(T) = \frac{m(n+m+1)}{2} \qquad V(T) = \frac{mn(n+m+1)}{12}
 <section id="דירוג-הרשימה-המאוחדת" class="slide level2">
 <h2>דירוג הרשימה המאוחדת</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a>prod_shift <span class="ot">&lt;-</span> prod <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">adj =</span> <span class="fu">if_else</span>(period <span class="sc">==</span> <span class="st">"after"</span>, units <span class="sc">-</span> <span class="dv">3</span>, units),</span>
-<span id="cb26-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">rank =</span> <span class="fu">rank</span>(adj))</span>
-<span id="cb26-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prod_shift, <span class="fu">aes</span>(adj, <span class="dv">0</span>, <span class="at">colour =</span> period, <span class="at">label =</span> rank)) <span class="sc">+</span></span>
-<span id="cb26-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb26-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb26-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">after =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">before =</span> nanas_pal[[<span class="st">"primary"</span>]]),</span>
-<span id="cb26-9"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="at">after =</span> <span class="st">"אחרי (פחות 3)"</span>, <span class="at">before =</span> <span class="st">"לפני"</span>)) <span class="sc">+</span></span>
-<span id="cb26-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb26-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"הדרגות של המדגם המאוחד"</span>, <span class="at">x =</span> <span class="st">"Daily output (units)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a>prod_shift <span class="ot">&lt;-</span> prod <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">adj =</span> <span class="fu">if_else</span>(period <span class="sc">==</span> <span class="st">"after"</span>, units <span class="sc">-</span> <span class="dv">3</span>, units),</span>
+<span id="cb32-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">rank =</span> <span class="fu">rank</span>(adj))</span>
+<span id="cb32-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prod_shift, <span class="fu">aes</span>(adj, <span class="dv">0</span>, <span class="at">colour =</span> period, <span class="at">label =</span> rank)) <span class="sc">+</span></span>
+<span id="cb32-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb32-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb32-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">after =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">before =</span> nanas_pal[[<span class="st">"primary"</span>]]),</span>
+<span id="cb32-9"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="at">after =</span> <span class="st">"אחרי (פחות 3)"</span>, <span class="at">before =</span> <span class="st">"לפני"</span>)) <span class="sc">+</span></span>
+<span id="cb32-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="cn">NULL</span>, <span class="at">breaks =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb32-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"הדרגות של המדגם המאוחד"</span>, <span class="at">x =</span> <span class="st">"Daily output (units)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 <p><span class="math display">\[
@@ -721,16 +869,16 @@ V(T) = \tfrac{5 \cdot 6 \cdot 12}{12} = 30
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/production-ranks-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/production-ranks-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
 </div></section><section id="אותו-מבחן-ב-r" class="slide level2">
 <h2>אותו מבחן ב-R</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-hidden="true" tabindex="-1"></a>after  <span class="ot">&lt;-</span> prod<span class="sc">$</span>units[prod<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"after"</span>]</span>
-<span id="cb27-2"><a aria-hidden="true" tabindex="-1"></a>before <span class="ot">&lt;-</span> prod<span class="sc">$</span>units[prod<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"before"</span>]</span>
-<span id="cb27-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(after, before, <span class="at">mu =</span> <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a>after  <span class="ot">&lt;-</span> prod<span class="sc">$</span>units[prod<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"after"</span>]</span>
+<span id="cb33-2"><a aria-hidden="true" tabindex="-1"></a>before <span class="ot">&lt;-</span> prod<span class="sc">$</span>units[prod<span class="sc">$</span>period <span class="sc">==</span> <span class="st">"before"</span>]</span>
+<span id="cb33-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(after, before, <span class="at">mu =</span> <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Wilcoxon rank sum exact test
@@ -747,194 +895,249 @@ alternative hypothesis: true location shift is not equal to 3</code></pre>
 </ul>
 </section></section>
 <section>
-<section id="ניתוח-שונות-א-פרמטרי" class="title-slide slide level1 center">
-<h1>ניתוח שונות א-פרמטרי</h1>
+<section id="טיב-התאמה" class="title-slide slide level1 center">
+<h1>טיב התאמה</h1>
 
 </section>
-<section id="kruskalwallis" class="slide level2">
-<h2><span class="en">Kruskal–Wallis</span></h2>
-<p><strong>השאלה:</strong> האם משתנה קטגוריאלי (פקטור עם <span class="math inline">\(a\)</span> רמות) מסביר את השונות בתגובת המערכת?</p>
+<section id="תזכורת-מבחן-חי-בריבוע-לטיב-התאמה" class="slide level2 smaller">
+<h2>תזכורת: מבחן חי-בריבוע לטיב התאמה</h2>
+<p><span class="math inline">\(H_0\)</span>: ההסתברויות של <span class="math inline">\(k\)</span> הקטגוריות הן <span class="math inline">\(p_1, \dots, p_k\)</span>. <span class="math inline">\(O_i\)</span> הוא המספר שנצפה, <span class="math inline">\(E_i = n p_i\)</span> המספר הצפוי:</p>
 <p><span class="math display">\[
-y_{ij} = \mu + \tau_i + \varepsilon_{ij}
+\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i} \;\sim\; \chi^2_{k-1-m}
 \]</span></p>
-<ul>
-<li>ב-ANOVA מניחים <span class="math inline">\(\varepsilon_{ij} \sim N(0, \sigma^2)\)</span>. כאן מניחים רק ש-<span class="math inline">\(\varepsilon_{ij}\)</span> באים מאותה התפלגות <strong>רציפה</strong></li>
-<li><span class="math inline">\(H_0: \tau_1 = \dots = \tau_a = 0\)</span> מול <span class="math inline">\(H_1: \tau_i \neq 0\)</span> עבור <span class="math inline">\(i\)</span> כלשהו</li>
-<li>מדרגים את כל <span class="math inline">\(N\)</span> התצפיות יחד. תחת <span class="math inline">\(H_0\)</span> הדרגות מתפזרות באופן אחיד בין הרמות:</li>
-</ul>
-<p><span class="math display">\[
-E(\bar{R}_i) = \frac{N+1}{2}
-\]</span></p>
-</section>
-<section id="הסטטיסטי-anova-על-הדרגות" class="slide level2 smaller">
-<h2>הסטטיסטי: ANOVA על הדרגות</h2>
-<p><strong>ב-ANOVA (בהנחת נורמליות):</strong></p>
-<p><span class="math display">\[
-\frac{SS_{\text{treatments}}}{\sigma^2} = \frac{\sum_{i=1}^{a} n_i(\bar{y}_i - \bar{y})^2}{\sigma^2} \sim \chi^2_{a-1}
-\]</span></p>
-<p><strong>ב-<span class="en">Kruskal–Wallis</span>:</strong> אותו רעיון, על הדרגות <span class="math inline">\(\bar{R}_i\)</span> במקום על הערכים</p>
-<p><span class="math display">\[
-K = \frac{12}{N(N+1)} \sum_{i=1}^{a} n_i\left(\bar{R}_i - \frac{N+1}{2}\right)^2
-\]</span></p>
-<ul>
-<li>כש-<span class="math inline">\(a &gt; 3\)</span> ו-<span class="math inline">\(n_i &gt; 4\)</span>: <span class="math inline">\(K \sim \chi^2_{a-1}\)</span> בקירוב</li>
-<li>דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(K &gt; \chi^2_{\alpha,\,a-1}\)</span></li>
-</ul>
-</section>
-<section id="דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה" class="slide level2">
-<h2>דוגמה: חוזק מתיחה של בד לפי אחוז כותנה</h2>
+<p><span class="math inline">\(m\)</span> הוא מספר הפרמטרים שאמדנו מהנתונים. <strong>למה זה מבחן פרמטרי?</strong> ההשערה היא על <strong>הפרמטרים</strong> <span class="math inline">\(p_i\)</span> של התפלגות מולטינומית, וההתפלגות <span class="math inline">\(\chi^2\)</span> של הסטטיסטי היא רק <strong>קירוב</strong> למדגם גדול, שנשען על קירוב נורמלי לספירות. לכן צריך <span class="math inline">\(E_i \ge 5\)</span> בכל קטגוריה. ב-KS, לעומת זאת, ההתפלגות של <span class="math inline">\(D\)</span> תחת <span class="math inline">\(H_0\)</span> מדויקת וזהה <strong>לכל</strong> <span class="math inline">\(F_0\)</span> רציפה.</p>
+<p><strong>דוגמה</strong> (נתונים מדומים): מודל שפה ענה על 400 שאלות אמריקאיות, והתשובה הנכונה מפוזרת שווה בשווה בין A–D. האם המודל מעדיף אותיות מסוימות (הטיית מיקום, <span class="en">position bias</span>)?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"cotton_strength.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb29-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cotton_pct =</span> <span class="fu">factor</span>(cotton_pct), <span class="at">rank =</span> <span class="fu">rank</span>(strength))</span>
-<span id="cb29-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(cotton, <span class="fu">aes</span>(cotton_pct, strength)) <span class="sc">+</span></span>
-<span id="cb29-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">"grey55"</span>) <span class="sc">+</span></span>
-<span id="cb29-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> cotton_pct), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>,</span>
-<span id="cb29-7"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.08</span>, <span class="at">seed =</span> <span class="dv">2</span>), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb29-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"חוזק המתיחה עולה עד 30% כותנה ואז צונח"</span>,</span>
-<span id="cb29-9"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"5 רמות, 6 דגימות בכל רמה"</span>,</span>
-<span id="cb29-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Cotton (%)"</span>, <span class="at">y =</span> <span class="st">"Tensile strength"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a>answers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">124</span>, <span class="at">B =</span> <span class="dv">102</span>, <span class="at">C =</span> <span class="dv">95</span>, <span class="at">D =</span> <span class="dv">79</span>)   <span class="co"># letters the model chose</span></span>
+<span id="cb35-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(answers, <span class="at">p =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Chi-squared test for given probabilities
+
+data:  answers
+X-squared = 10.46, df = 3, p-value = 0.015</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\chi^2 = 10.46 &gt; 7.81 = \chi^2_{0.95,\,3}\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: יש הטיית מיקום.</p>
+</section>
+<section id="מבחן-kolmogorovsmirnov" class="slide level2 smaller">
+<h2>מבחן <span class="en">Kolmogorov–Smirnov</span></h2>
+<p><strong>כשהנתונים רציפים</strong>, החלוקה לקטגוריות מאבדת מידע. מבחן KS משווה את פונקציית ההתפלגות <strong>המצטברת</strong>:</p>
+<ul>
+<li><span class="math inline">\(F_n(x)\)</span>: פונקציית ההתפלגות האמפירית, החלק מהתצפיות שקטנות או שוות ל-<span class="math inline">\(x\)</span></li>
+<li><span class="math inline">\(H_0: F(x) = F_0(x)\)</span> לכל <span class="math inline">\(x\)</span>, כש-<span class="math inline">\(F_0\)</span> רציפה ונתונה <strong>במלואה</strong></li>
+</ul>
+<p><span class="math display">\[
+D = \max_x \left| F_n(x) - F_0(x) \right|
+\]</span></p>
+<ul>
+<li>דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(D &gt; D_{\alpha,n}\)</span> (טבלה). למדגם גדול: <span class="math inline">\(D_{0.05,n} \approx 1.36/\sqrt{n}\)</span></li>
+<li><strong>בחישוב ידני:</strong> ממיינים את התצפיות, ובודקים בכל <span class="math inline">\(x_{(i)}\)</span> את שני הצדדים של המדרגה:</li>
+</ul>
+<p><span class="math display">\[
+D = \max_i \left\{ \frac{i}{n} - F_0(x_{(i)}),\;\; F_0(x_{(i)}) - \frac{i-1}{n} \right\}
+\]</span></p>
+</section>
+<section id="דוגמה-זמנים-בין-פניות-לצאט" class="slide level2 smaller">
+<h2>דוגמה: זמנים בין פניות לצ׳אט</h2>
+<p>מודל האיוש של מוקד שירות מניח שהזמן בין פניות לצ׳אט מתפלג <strong>מעריכית עם ממוצע 2 דקות</strong>. נמדדו 10 זמנים. האם הנתונים סותרים את ההנחה? <span class="math inline">\(\alpha = 0.05\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a>gaps <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.7</span>, <span class="fl">1.1</span>, <span class="fl">1.3</span>, <span class="fl">1.9</span>, <span class="fl">2.4</span>, <span class="fl">3.6</span>, <span class="fl">5.2</span>, <span class="fl">6.8</span>, <span class="fl">9.5</span>)   <span class="co"># minutes</span></span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(gaps)</span>
+<span id="cb37-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span>n, <span class="at">x =</span> gaps, <span class="at">F0 =</span> <span class="fu">pexp</span>(gaps, <span class="at">rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb37-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">i/n - F0</span><span class="st">`</span> <span class="ot">=</span> i<span class="sc">/</span>n <span class="sc">-</span> F0, <span class="st">`</span><span class="at">F0 - (i-1)/n</span><span class="st">`</span> <span class="ot">=</span> F0 <span class="sc">-</span> (i <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n) <span class="sc">|&gt;</span></span>
+<span id="cb37-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;">i</th>
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">F0</th>
+<th style="text-align: right;">i/n - F0</th>
+<th style="text-align: right;">F0 - (i-1)/n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.181</td>
+<td style="text-align: right;">-0.081</td>
+<td style="text-align: right;">0.181</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.295</td>
+<td style="text-align: right;">-0.095</td>
+<td style="text-align: right;">0.195</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.1</td>
+<td style="text-align: right;">0.423</td>
+<td style="text-align: right;">-0.123</td>
+<td style="text-align: right;">0.223</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1.3</td>
+<td style="text-align: right;">0.478</td>
+<td style="text-align: right;">-0.078</td>
+<td style="text-align: right;">0.178</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">0.613</td>
+<td style="text-align: right;">-0.113</td>
+<td style="text-align: right;">0.213</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2.4</td>
+<td style="text-align: right;">0.699</td>
+<td style="text-align: right;">-0.099</td>
+<td style="text-align: right;">0.199</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">0.835</td>
+<td style="text-align: right;">-0.135</td>
+<td style="text-align: right;">0.235</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5.2</td>
+<td style="text-align: right;">0.926</td>
+<td style="text-align: right;">-0.126</td>
+<td style="text-align: right;">0.226</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6.8</td>
+<td style="text-align: right;">0.967</td>
+<td style="text-align: right;">-0.067</td>
+<td style="text-align: right;">0.167</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">9.5</td>
+<td style="text-align: right;">0.991</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">0.091</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="התוצאה" class="slide level2">
+<h2>התוצאה</h2>
+<p><span class="math inline">\(D_0 = 0.235\)</span>, בתצפית <span class="math inline">\(x_{(7)} = 3.6\)</span>: <span class="math inline">\(F_0(3.6) - \frac{6}{10} = 0.835 - 0.6\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(gaps, <span class="st">"pexp"</span>, <span class="at">rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Exact one-sample Kolmogorov-Smirnov test
+
+data:  gaps
+D = 0.2347, p-value = 0.563
+alternative hypothesis: two-sided</code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(D_0 = 0.235 &lt; 0.409 = D_{0.05,10}\)</span>, ולכן <strong>לא דוחים</strong> את <span class="math inline">\(H_0\)</span></li>
+<li><strong>אבל:</strong> הממוצע במדגם הוא 3.29 דקות, לא 2. עם 10 תצפיות למבחן אין כמעט עוצמה. “לא דחינו” איננו “הוכחנו”</li>
+</ul>
+</section>
+<section id="ks-לשני-מדגמים" class="slide level2">
+<h2>KS לשני מדגמים</h2>
+<p>אותו רעיון, בלי <span class="math inline">\(F_0\)</span>: משווים בין שתי פונקציות התפלגות אמפיריות</p>
+<p><span class="math display">\[
+H_0: F_1(x) = F_2(x) \qquad D = \max_x \left| F_{1,n}(x) - F_{2,m}(x) \right|
+\]</span></p>
+<p><strong>דוגמה:</strong> גרסה חדשה של שירות <span class="en">inference</span> עלתה לאוויר. החציון של זמן התגובה כמעט לא השתנה, אבל משתמשים מתלוננים על “קפיצות”. נדגמו 60 בקשות מכל גרסה. (נתונים מדומים)</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb40-2"><a aria-hidden="true" tabindex="-1"></a>latency <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb40-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">version =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"v1"</span>, <span class="st">"v2"</span>), <span class="at">each =</span> <span class="dv">60</span>),</span>
+<span id="cb40-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">ms =</span> <span class="fu">c</span>(<span class="fu">rlnorm</span>(<span class="dv">60</span>, <span class="fu">log</span>(<span class="dv">220</span>), <span class="fl">0.25</span>), <span class="fu">rlnorm</span>(<span class="dv">60</span>, <span class="fu">log</span>(<span class="dv">220</span>), <span class="fl">0.65</span>))</span>
+<span id="cb40-5"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb40-6"><a aria-hidden="true" tabindex="-1"></a>latency <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">median =</span> <span class="fu">median</span>(ms), <span class="at">iqr =</span> <span class="fu">IQR</span>(ms), <span class="at">max =</span> <span class="fu">max</span>(ms), <span class="at">.by =</span> version)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  version median   iqr   max
+  &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 v1        227.  63.5  361.
+2 v2        225. 180.  1048.</code></pre>
+</div>
+</div>
+</section>
+<section id="שתי-פונקציות-התפלגות-מצטברות" class="slide level2">
+<h2>שתי פונקציות התפלגות מצטברות</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">ms =</span> <span class="fu">sort</span>(latency<span class="sc">$</span>ms)) <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">v1 =</span> <span class="fu">ecdf</span>(latency<span class="sc">$</span>ms[latency<span class="sc">$</span>version <span class="sc">==</span> <span class="st">"v1"</span>])(ms),</span>
+<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">v2 =</span> <span class="fu">ecdf</span>(latency<span class="sc">$</span>ms[latency<span class="sc">$</span>version <span class="sc">==</span> <span class="st">"v2"</span>])(ms),</span>
+<span id="cb42-4"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">gap =</span> <span class="fu">abs</span>(v1 <span class="sc">-</span> v2))</span>
+<span id="cb42-5"><a aria-hidden="true" tabindex="-1"></a>max_gap <span class="ot">&lt;-</span> <span class="fu">slice_max</span>(grid, gap, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb42-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(latency, <span class="fu">aes</span>(ms, <span class="at">colour =</span> version)) <span class="sc">+</span></span>
+<span id="cb42-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_ecdf</span>(<span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb42-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> ms, <span class="at">xend =</span> ms, <span class="at">y =</span> v1, <span class="at">yend =</span> v2), <span class="at">data =</span> max_gap,</span>
+<span id="cb42-10"><a aria-hidden="true" tabindex="-1"></a>               <span class="at">colour =</span> <span class="st">"grey20"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb42-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="at">x =</span> max_gap<span class="sc">$</span>ms, <span class="at">y =</span> (max_gap<span class="sc">$</span>v1 <span class="sc">+</span> max_gap<span class="sc">$</span>v2) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb42-12"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"D = "</span>, <span class="fu">round</span>(max_gap<span class="sc">$</span>gap, <span class="dv">2</span>)), <span class="at">hjust =</span> <span class="fl">1.1</span>,</span>
+<span id="cb42-13"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">label.size =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb42-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb42-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">v1 =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">v2 =</span> nanas_pal[[<span class="st">"accent"</span>]])) <span class="sc">+</span></span>
+<span id="cb42-16"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"אותו חציון, פיזור שונה לגמרי"</span>,</span>
+<span id="cb42-17"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקו השחור: המרחק הגדול ביותר בין שתי הפונקציות"</span>,</span>
+<span id="cb42-18"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Response time (ms, log scale)"</span>, <span class="at">y =</span> <span class="st">"F(x)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
-<section id="דוגמה-חוזק-מתיחה-של-בד-לפי-אחוז-כותנה-output" class="slide level2 output-location-slide"><h2>דוגמה: חוזק מתיחה של בד לפי אחוז כותנה</h2><div class="cell output-location-slide" data-layout-align="center">
+<section id="שתי-פונקציות-התפלגות-מצטברות-output" class="slide level2 output-location-slide"><h2>שתי פונקציות התפלגות מצטברות</h2><div class="cell output-location-slide" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/cotton-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/ks-ecdf-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
-</div></section><section id="kruskalwallis-מול-מבחן-f" class="slide level2 smaller">
-<h2><span class="en">Kruskal–Wallis</span> מול מבחן F</h2>
+</div></section><section id="ks-מול-סכום-הדירוגים" class="slide level2">
+<h2>KS מול סכום הדירוגים</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="sc">|&gt;</span> <span class="fu">group_by</span>(cotton_pct) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">mean_rank =</span> <span class="fu">mean</span>(rank))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> latency<span class="sc">$</span>ms[latency<span class="sc">$</span>version <span class="sc">==</span> <span class="st">"v1"</span>]</span>
+<span id="cb43-2"><a aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> latency<span class="sc">$</span>ms[latency<span class="sc">$</span>version <span class="sc">==</span> <span class="st">"v2"</span>]</span>
+<span id="cb43-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">rank_sum =</span> <span class="fu">wilcox.test</span>(v1, v2)<span class="sc">$</span>p.value,</span>
+<span id="cb43-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">ks       =</span> <span class="fu">ks.test</span>(v1, v2)<span class="sc">$</span>p.value)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 2
-  cotton_pct mean_rank
-  &lt;fct&gt;          &lt;dbl&gt;
-1 15              9.67
-2 20             11.1 
-3 25             20.5 
-4 30             27.2 
-5 35              9.08</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(strength <span class="sc">~</span> cotton_pct, <span class="at">data =</span> cotton)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Kruskal-Wallis rank sum test
-
-data:  strength by cotton_pct
-Kruskal-Wallis chi-squared = 20, df = 4, p-value = 5e-04</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(strength <span class="sc">~</span> cotton_pct, <span class="at">data =</span> cotton))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>            Df Sum Sq Mean Sq F value  Pr(&gt;F)    
-cotton_pct   4  111.1    27.8    13.9 4.3e-06 ***
-Residuals   25   50.1     2.0                    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<pre><code>rank_sum       ks 
+ 0.95187  0.02763 </code></pre>
 </div>
 </div>
-</section>
-<section id="הערכת-קונטרסטים-עם-חציונים" class="slide level2 smaller">
-<h2>הערכת קונטרסטים עם חציונים</h2>
-<p>תזכורת: <span class="math inline">\(C = \sum_i c_i \tau_i\)</span> הוא <strong>קונטרסט</strong> אם <span class="math inline">\(\sum_i c_i = 0\)</span>.</p>
 <ul>
-<li>לפי ממוצעים: <span class="math inline">\(\hat{\tau}_i = \bar{y}_i - \bar{y}\)</span></li>
-<li>הניסיון הטבעי לעבור לחציונים, <span class="math inline">\(\hat{\tau}_i = \text{median}_j\{y_{ij}\} - \text{median}_{k,j}\{y_{kj}\}\)</span>, <strong>מפר</strong> את התנאי <span class="math inline">\(\sum_i \hat{\tau}_i = 0\)</span></li>
+<li><strong>סכום הדירוגים</strong> רגיש בעיקר להזזה של המיקום. החציונים כמעט שווים, ולכן הוא לא מוצא כלום</li>
+<li><strong>KS</strong> רגיש לכל הבדל בין ההתפלגויות: מיקום, פיזור או צורה. כאן הוא <strong>דוחה</strong> ב-<span class="math inline">\(\alpha = 0.05\)</span></li>
+<li>בשירות אמיתי, הזנב (האחוזון ה-95 או ה-99) הוא מה שהמשתמשים מרגישים. לכן כדאי לבדוק יותר מהחציון</li>
 </ul>
-<p><strong>החלופה:</strong></p>
-<p><span class="math display">\[
-\hat{\tau}_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik},
-\qquad
-Z_{ik} = \underset{j,m}{\text{median}}\{y_{ij} - y_{km}\}
-\]</span></p>
-<p>מכיוון ש-<span class="math inline">\(Z_{ik} = -Z_{ki}\)</span>, מתקיים <span class="math inline">\(\sum_i \hat{\tau}_i = 0\)</span>.</p>
-</section>
-<section id="קונטרסט-בדוגמת-הכותנה" class="slide level2">
-<h2>קונטרסט בדוגמת הכותנה</h2>
-<p><span class="math inline">\(C = \tfrac{1}{2}(\tau_1 + \tau_5) - \tau_4\)</span>: הקצוות (15% ו-35%) מול 30%.</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a>levels_y <span class="ot">&lt;-</span> <span class="fu">split</span>(cotton<span class="sc">$</span>strength, cotton<span class="sc">$</span>cotton_pct)</span>
-<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="fu">seq_along</span>(levels_y), <span class="fu">seq_along</span>(levels_y),</span>
-<span id="cb36-3"><a aria-hidden="true" tabindex="-1"></a>           <span class="fu">Vectorize</span>(\(i, k) <span class="fu">median</span>(<span class="fu">outer</span>(levels_y[[i]], levels_y[[k]], <span class="st">"-"</span>))))</span>
-<span id="cb36-4"><a aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(Z)</span>
-<span id="cb36-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(tau_hat, <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -1.86 -1.26  1.73  3.22 -1.83</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a aria-hidden="true" tabindex="-1"></a><span class="fl">0.5</span> <span class="sc">*</span> (tau_hat[<span class="dv">1</span>] <span class="sc">+</span> tau_hat[<span class="dv">5</span>]) <span class="sc">-</span> tau_hat[<span class="dv">4</span>]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -5.065</code></pre>
-</div>
-</div>
-<p><span class="math display">\[
-\hat{C} = \tfrac{1}{2}(-1.86 - 1.83) - 3.22 = -5.07
-\]</span></p>
-</section>
-<section id="friedman-טיפולים-בתוך-בלוקים" class="slide level2">
-<h2><span class="en">Friedman</span>: טיפולים בתוך בלוקים</h2>
-<p>כשכל “יחידה” (בלוק) מקבלת <strong>את כל</strong> הטיפולים, למשל אותו עובד שעובד בשלוש שיטות או אותה משימה שנבדקת בשלושה מודלים, ההשוואה צריכה להיות <strong>בתוך</strong> כל בלוק.</p>
-<ul>
-<li><span class="math inline">\(b\)</span> בלוקים ו-<span class="math inline">\(k\)</span> טיפולים</li>
-<li>מדרגים את הטיפולים <strong>בתוך כל בלוק</strong> בנפרד, מ-1 עד <span class="math inline">\(k\)</span></li>
-<li><span class="math inline">\(R_j\)</span> הוא סכום הדרגות של טיפול <span class="math inline">\(j\)</span> על פני כל הבלוקים</li>
-</ul>
-<p><span class="math display">\[
-Q = \frac{12}{b\,k\,(k+1)} \sum_{j=1}^{k} R_j^2 \;-\; 3\,b\,(k+1) \;\sim\; \chi^2_{k-1}
-\]</span></p>
-</section>
-<section id="דוגמה-הערכת-פרומפטים-למודל-שפה" class="slide level2">
-<h2>דוגמה: הערכת פרומפטים למודל שפה</h2>
-<p>צוות בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (<span class="en">eval set</span>). כל תשובה מקבלת ציון 0–100. המשימות שונות מאוד בקושי שלהן, ולכן <strong>המשימה היא הבלוק</strong>.</p>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a>llm <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"llm_prompt_eval.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prompt =</span> <span class="fu">factor</span>(prompt, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"baseline"</span>, <span class="st">"few_shot"</span>, <span class="st">"reasoning"</span>)))</span>
-<span id="cb40-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(llm, <span class="fu">aes</span>(prompt, score, <span class="at">group =</span> task)) <span class="sc">+</span></span>
-<span id="cb40-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"grey70"</span>) <span class="sc">+</span></span>
-<span id="cb40-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> prompt), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb40-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"בכל משימה, איזה פרומפט טוב יותר?"</span>,</span>
-<span id="cb40-8"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"כל קו הוא משימה אחת. ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים"</span>,</span>
-<span id="cb40-9"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Score"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-
-</section>
-<section id="דוגמה-הערכת-פרומפטים-למודל-שפה-output" class="slide level2 output-location-slide"><h2>דוגמה: הערכת פרומפטים למודל שפה</h2><div class="cell output-location-slide" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/llm-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
-</figure>
-</div>
-</div>
-</div></section><section id="friedman-חישוב" class="slide level2">
-<h2><span class="en">Friedman</span>: חישוב</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a>llm <span class="sc">|&gt;</span></span>
-<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(task) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">rank</span>(score)) <span class="sc">|&gt;</span></span>
-<span id="cb41-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(prompt) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">R =</span> <span class="fu">sum</span>(rank))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 2
-  prompt        R
-  &lt;fct&gt;     &lt;dbl&gt;
-1 baseline     10
-2 few_shot     16
-3 reasoning    22</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">friedman.test</span>(score <span class="sc">~</span> prompt <span class="sc">|</span> task, <span class="at">data =</span> llm)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Friedman rank sum test
-
-data:  score and prompt and task
-Friedman chi-squared = 9, df = 2, p-value = 0.01</code></pre>
-</div>
-</div>
-<p><span class="math display">\[
-Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 &gt; \chi^2_{0.05,2} = 5.99
-\]</span></p>
+<aside class="notes">
+<p>שאלה לכיתה: למה סכום הדירוגים “עיוור” כאן? כי ב-v2 יש גם ערכים קטנים מאוד וגם גדולים מאוד, והדרגות שלהם מתקזזות בסכום.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
 <section id="מתאם-על-דירוגים" class="title-slide slide level1 center">
@@ -970,21 +1173,22 @@ Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 -
 <section id="דוגמה-קשר-מונוטוני-וערך-חריג-אחד" class="slide level2">
 <h2>דוגמה: קשר מונוטוני וערך חריג אחד</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a>corr_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>, <span class="at">y =</span> <span class="fu">exp</span>(x <span class="sc">/</span> <span class="dv">6</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">sd =</span> <span class="fl">1.5</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb45-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">160</span>)   <span class="co"># one data-entry error</span></span>
-<span id="cb45-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-4"><a aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb45-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">pearson  =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y),</span>
-<span id="cb45-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">spearman =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y, <span class="at">method =</span> <span class="st">"spearman"</span>),</span>
-<span id="cb45-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">kendall  =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y, <span class="at">method =</span> <span class="st">"kendall"</span>)</span>
-<span id="cb45-8"><a aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb45-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(stats, <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)   <span class="co"># own seed, so edits elsewhere in the lecture don't change this example</span></span>
+<span id="cb45-2"><a aria-hidden="true" tabindex="-1"></a>corr_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>, <span class="at">y =</span> <span class="fu">exp</span>(x <span class="sc">/</span> <span class="dv">6</span>) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">sd =</span> <span class="fl">1.5</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_row</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">160</span>)   <span class="co"># one data-entry error</span></span>
+<span id="cb45-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb45-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">pearson  =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y),</span>
+<span id="cb45-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">spearman =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y, <span class="at">method =</span> <span class="st">"spearman"</span>),</span>
+<span id="cb45-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">kendall  =</span> <span class="fu">cor</span>(corr_data<span class="sc">$</span>x, corr_data<span class="sc">$</span>y, <span class="at">method =</span> <span class="st">"kendall"</span>)</span>
+<span id="cb45-9"><a aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-10"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(stats, <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section><section id="דוגמה-קשר-מונוטוני-וערך-חריג-אחד-output" class="slide level2 output-location-slide"><h2>דוגמה: קשר מונוטוני וערך חריג אחד</h2><div class="cell output-location-slide" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
 <pre><code> pearson spearman  kendall 
-    0.58     0.81     0.81 </code></pre>
+    0.59     0.82     0.81 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(corr_data, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
 <span id="cb47-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
@@ -996,7 +1200,7 @@ Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 -
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/corr-sim-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/corr-sim-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -1043,16 +1247,16 @@ Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 -
 <td><code>wilcox.test(x, y)</code></td>
 </tr>
 <tr class="even">
-<td>פקטור אחד</td>
-<td>ANOVA</td>
-<td>Kruskal–Wallis</td>
-<td><code>kruskal.test</code></td>
+<td>התאמה להתפלגות</td>
+<td></td>
+<td>חי-בריבוע, KS</td>
+<td><code>chisq.test</code>, <code>ks.test</code></td>
 </tr>
 <tr class="odd">
-<td>טיפולים × בלוקים</td>
-<td>ANOVA עם בלוקים</td>
-<td>Friedman</td>
-<td><code>friedman.test</code></td>
+<td>שתי התפלגויות</td>
+<td></td>
+<td>KS לשני מדגמים</td>
+<td><code>ks.test(x, y)</code></td>
 </tr>
 <tr class="even">
 <td>מתאם</td>
@@ -1093,7 +1297,7 @@ Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 -
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="01-nonparametric_files/figure-revealjs/argentina-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+<p><img data-src="01-nonparametric_files/figure-html/argentina-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -1361,44 +1565,6 @@ Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 -
         ]
       });
     </script>
-    
-    <script>
-      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-      // slide changes (different for each slide format).
-      (function () {
-        // dispatch for htmlwidgets
-        function fireSlideEnter() {
-          const event = window.document.createEvent("Event");
-          event.initEvent("slideenter", true, true);
-          window.document.dispatchEvent(event);
-        }
-
-        function fireSlideChanged(previousSlide, currentSlide) {
-          fireSlideEnter();
-
-          // dispatch for shiny
-          if (window.jQuery) {
-            if (previousSlide) {
-              window.jQuery(previousSlide).trigger("hidden");
-            }
-            if (currentSlide) {
-              window.jQuery(currentSlide).trigger("shown");
-            }
-          }
-        }
-
-        // hookup for slidy
-        if (window.w3c_slidy) {
-          window.w3c_slidy.add_observer(function (slide_num) {
-            // slide_num starts at position 1
-            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-          });
-        }
-
-      })();
-    </script>
-
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")

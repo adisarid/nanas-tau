@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.10.18">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-10-01">
+  <meta name="dcterms.date" content="2026-10-02">
   <title>ניתוח נתונים סטטיסטי – 0. פתיחה: על הקורס</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -102,7 +102,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-761a883f0f124667a09a92fec355342f.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-007a223cdbbcc2a11797b02960617da6.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -194,6 +194,14 @@
       margin-right: 0; 
     }
   </style>
+  <!-- Slides use MathJax 2. Left alone it picks the STIX fonts installed on macOS,
+       whose metrics misplace accents (the tilde in \tilde{\mu} drifts right).
+       Force MathJax's own TeX web fonts so math looks the same on every machine. -->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: [], preferredFont: null, webFont: "TeX" }
+  });
+  </script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -211,7 +219,7 @@
 </div>
 </div>
 
-  <p class="date">2026-10-01</p>
+  <p class="date">2026-10-02</p>
 </section>
 <section id="ברוכים-הבאים" class="slide level2">
 <h2>ברוכים הבאים</h2>
@@ -242,7 +250,7 @@
 <h2>למה הקורס הזה?</h2>
 <ul>
 <li>כמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם</li>
-<li>הסטטיסטיקה שלמדתם עד עכשיו עסקה במדגם אחד או שניים. כאן נעבור ל<strong>מודלים</strong>: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים</li>
+<li>הסטטיסטיקה שלמדתם עד עכשיו היא הבסיס לכל מה שנלמד בקורס. כאן נעבור ל<strong>מודלים</strong>: הרבה משתנים, הרבה קבוצות וניסויים מתוכננים</li>
 <li>כלי AI כותבים היום קוד ניתוח בשניות. מה שנשאר בידיים שלכם הוא <strong>שיקול הדעת</strong>:
 <ul>
 <li>איזו שיטה מתאימה לשאלה ולנתונים</li>
@@ -281,7 +289,7 @@
 </tr>
 <tr class="even">
 <td>2</td>
-<td><strong>מבוטלת</strong>, ראו בשקף הבא</td>
+<td><strong>תידחה</strong>, ראו בשקף הבא</td>
 <td>חזרה על התפלגויות</td>
 </tr>
 <tr class="odd">
@@ -324,6 +332,16 @@
 <td>חזרה לבחינה</td>
 <td>בהתאם</td>
 </tr>
+<tr class="odd">
+<td>טרם נקבע</td>
+<td></td>
+<td>תרגול מעבדה: ויז׳ואליזציות</td>
+</tr>
+<tr class="even">
+<td>טרם נקבע</td>
+<td></td>
+<td>תרגול מעבדה: שימוש ב-GitHub</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -334,7 +352,7 @@
 <section id="הודעה-ההרצאה-השנייה-מבוטלת" class="slide level2">
 <h2>הודעה: ההרצאה השנייה מבוטלת</h2>
 <ul>
-<li>בשבוע השני אהיה בחו״ל בכנס, ולכן <strong>ההרצאה השנייה לא תתקיים</strong></li>
+<li>בשבוע השני אהיה בחו״ל, ולכן <strong>ההרצאה השנייה לא תתקיים</strong></li>
 <li><strong>התרגול באותו שבוע מתקיים כרגיל</strong> (חזרה על התפלגויות)</li>
 <li>תתקיים הרצאת השלמה. <strong>המועד יפורסם ב-Moodle</strong></li>
 </ul>
