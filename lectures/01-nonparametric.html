@@ -426,8 +426,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה" id="toc-תזכורת-מבחן-חי-בריבוע-לטיב-התאמה" class="nav-link" data-scroll-target="#תזכורת-מבחן-חי-בריבוע-לטיב-התאמה">תזכורת: מבחן חי-בריבוע לטיב התאמה</a></li>
   <li><a href="#מבחן-kolmogorovsmirnov" id="toc-מבחן-kolmogorovsmirnov" class="nav-link" data-scroll-target="#מבחן-kolmogorovsmirnov">מבחן <span class="en">Kolmogorov–Smirnov</span></a></li>
-  <li><a href="#דוגמה-זמנים-בין-פניות-לצאט" id="toc-דוגמה-זמנים-בין-פניות-לצאט" class="nav-link" data-scroll-target="#דוגמה-זמנים-בין-פניות-לצאט">דוגמה: זמנים בין פניות לצ׳אט</a></li>
-  <li><a href="#התוצאה" id="toc-התוצאה" class="nav-link" data-scroll-target="#התוצאה">התוצאה</a></li>
+  <li><a href="#דוגמה-אותם-משקלים-מבחן-ks" id="toc-דוגמה-אותם-משקלים-מבחן-ks" class="nav-link" data-scroll-target="#דוגמה-אותם-משקלים-מבחן-ks">דוגמה: אותם משקלים, מבחן KS</a></li>
+  <li><a href="#הפונקציה-האמפירית-מול-הנורמלית" id="toc-הפונקציה-האמפירית-מול-הנורמלית" class="nav-link" data-scroll-target="#הפונקציה-האמפירית-מול-הנורמלית">הפונקציה האמפירית מול הנורמלית</a></li>
   <li><a href="#ks-לשני-מדגמים" id="toc-ks-לשני-מדגמים" class="nav-link" data-scroll-target="#ks-לשני-מדגמים">KS לשני מדגמים</a></li>
   <li><a href="#שתי-פונקציות-התפלגות-מצטברות" id="toc-שתי-פונקציות-התפלגות-מצטברות" class="nav-link" data-scroll-target="#שתי-פונקציות-התפלגות-מצטברות">שתי פונקציות התפלגות מצטברות</a></li>
   <li><a href="#ks-מול-סכום-הדירוגים" id="toc-ks-מול-סכום-הדירוגים" class="nav-link" data-scroll-target="#ks-מול-סכום-הדירוגים">KS מול סכום הדירוגים</a></li>
@@ -1327,52 +1327,75 @@ alternative hypothesis: true location shift is not equal to 3</code></pre>
 \chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i} \;\sim\; \chi^2_{k-1-m}
 \]</span></p>
 <p><span class="math inline">\(m\)</span> הוא מספר הפרמטרים שאמדנו מהנתונים. <strong>למה זה מבחן פרמטרי?</strong> ההשערה היא על <strong>הפרמטרים</strong> <span class="math inline">\(p_i\)</span> של התפלגות מולטינומית, וההתפלגות <span class="math inline">\(\chi^2\)</span> של הסטטיסטי היא רק <strong>קירוב</strong> למדגם גדול, שנשען על קירוב נורמלי לספירות. לכן צריך <span class="math inline">\(E_i \ge 5\)</span> בכל קטגוריה. ב-KS, לעומת זאת, ההתפלגות של <span class="math inline">\(D\)</span> תחת <span class="math inline">\(H_0\)</span> מדויקת וזהה <strong>לכל</strong> <span class="math inline">\(F_0\)</span> רציפה.</p>
-<p><strong>דוגמה</strong> (נתונים מדומים): מודל שפה ענה על 400 שאלות אמריקאיות, והתשובה הנכונה מפוזרת שווה בשווה בין A–D. האם המודל מעדיף אותיות מסוימות (הטיית מיקום, <span class="en">position bias</span>)?</p>
+<p><strong>דוגמה:</strong> האם משקל הגוף של כל 342 הפינגווינים ב-<span class="en">Palmer Penguins</span> (שלושת המינים יחד) מתפלג נורמלית? מחלקים ל-8 קטגוריות ששוות בהסתברותן תחת הנורמלית המותאמת, כך ש-<span class="math inline">\(E_i = 342/8 = 42.75\)</span>. אמדנו <span class="math inline">\(\mu\)</span> ו-<span class="math inline">\(\sigma\)</span>, ולכן <span class="math inline">\(m = 2\)</span>.</p>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>answers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">124</span>, <span class="at">B =</span> <span class="dv">102</span>, <span class="at">C =</span> <span class="dv">95</span>, <span class="at">D =</span> <span class="dv">79</span>)   <span class="co"># letters the model chose</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(answers, <span class="at">p =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">4</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mass <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(penguins<span class="sc">$</span>body_mass)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>bins <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">8</span>), <span class="fu">mean</span>(mass), <span class="fu">sd</span>(mass))   <span class="co"># 8 equally likely bins under H0</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>observed <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">cut</span>(mass, bins))</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(observed)<span class="sc">$</span>statistic                              <span class="co"># df = 8 - 1 - 2 = 5, not 7</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-    Chi-squared test for given probabilities
-
-data:  answers
-X-squared = 10.46, df = 3, p-value = 0.015</code></pre>
+<pre><code>X-squared 
+    33.86 </code></pre>
 </div>
 </div>
-<p><span class="math inline">\(\chi^2 = 10.46 &gt; 7.81 = \chi^2_{0.95,\,3}\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: יש הטיית מיקום.</p>
-<p><strong>החישוב הידני:</strong> <span class="math inline">\(E_i = 400 \cdot \tfrac14 = 100\)</span> בכל קטגוריה.</p>
+<p><span class="math inline">\(\chi^2 = 33.86 &gt; 11.07 = \chi^2_{0.95,\,5}\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: המשקל אינו נורמלי. זה תערובת של שלושה מינים.</p>
+<p><strong>החישוב הידני:</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
-<th></th>
-<th>A</th>
-<th>B</th>
-<th>C</th>
-<th>D</th>
+<th>קטגוריה</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><span class="math inline">\(O_i\)</span></td>
-<td>124</td>
-<td>102</td>
-<td>95</td>
-<td>79</td>
+<td>34</td>
+<td>70</td>
+<td>50</td>
+<td>39</td>
+<td>30</td>
+<td>29</td>
+<td>35</td>
+<td>55</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\frac{(O_i - E_i)^2}{E_i}\)</span></td>
-<td>5.76</td>
-<td>0.04</td>
-<td>0.25</td>
-<td>4.41</td>
+<td>1.79</td>
+<td>17.37</td>
+<td>1.23</td>
+<td>0.33</td>
+<td>3.80</td>
+<td>4.42</td>
+<td>1.40</td>
+<td>3.51</td>
 </tr>
 </tbody>
 </table>
-<p><span class="math inline">\(\chi^2 = 5.76 + 0.04 + 0.25 + 4.41 = 10.46\)</span>, עם <span class="math inline">\(k - 1 = 3\)</span> דרגות חופש: לא אמדנו אף פרמטר. כשמשתמשים במודל כ”שופט” בין תשובות, מערבבים את סדר התשובות. הסטייה הגדולה ביותר היא ב-A (נבחרת יותר מדי) וב-D (פחות מדי). ב-R רואים את זה ב-<code>chisq.test(...)$residuals</code>.</p>
-<p><strong>כשאומדים פרמטרים.</strong> נניח שבודקים אם מספר הפניות לשעה מתפלג פואסונית, ואת <span class="math inline">\(\lambda\)</span> אומדים מהנתונים עצמם (<span class="math inline">\(\hat\lambda = \bar{x}\)</span>). אז <span class="math inline">\(m = 1\)</span> ודרגות החופש הן <span class="math inline">\(k - 2\)</span>. כל פרמטר שאומדים “מקרב” את ההתפלגות לנתונים, ולכן צריך להוריד דרגת חופש כדי לפצות.</p>
+<p>רוב הסטטיסטי מגיע מקטגוריה 2 (משקלים של 3,280 עד 3,660 גרם): יש שם הרבה יותר פינגווינים מהצפוי. אלה פינגווינים מסוג <span class="en">Adelie</span> ו-<span class="en">Chinstrap</span>. גם בקטגוריה העליונה יש עודף, של <span class="en">Gentoo</span> הכבדים.</p>
+<p><strong>זהירות בקריאת הפלט:</strong> אם מדפיסים את <code>chisq.test(observed)</code> כולו, R מדווח <code>df = 7</code>. הוא לא יודע שאמדנו שני פרמטרים מהנתונים. את ה-p-value הנכון מחשבים בעצמנו: <code>pchisq(33.86, df = 5, lower.tail = FALSE)</code>.</p>
+<p><strong>למה מורידים דרגות חופש?</strong> כל פרמטר שאומדים “מקרב” את ההתפלגות לנתונים ומקטין את <span class="math inline">\(\chi^2\)</span>. כדי לפצות, מורידים דרגת חופש אחת לכל פרמטר.</p>
 </section>
 <section id="מבחן-kolmogorovsmirnov" class="level2 smaller">
 <h2 class="smaller anchored" data-anchor-id="מבחן-kolmogorovsmirnov">מבחן <span class="en">Kolmogorov–Smirnov</span></h2>
@@ -1392,127 +1415,62 @@ D = \max_x \left| F_n(x) - F_0(x) \right|
 D = \max_i \left\{ \frac{i}{n} - F_0(x_{(i)}),\;\; F_0(x_{(i)}) - \frac{i-1}{n} \right\}
 \]</span></p>
 </section>
-<section id="דוגמה-זמנים-בין-פניות-לצאט" class="level2 smaller">
-<h2 class="smaller anchored" data-anchor-id="דוגמה-זמנים-בין-פניות-לצאט">דוגמה: זמנים בין פניות לצ׳אט</h2>
-<p>מודל האיוש של מוקד שירות מניח שהזמן בין פניות לצ׳אט מתפלג <strong>מעריכית עם ממוצע 2 דקות</strong>. נמדדו 10 זמנים. האם הנתונים סותרים את ההנחה? <span class="math inline">\(\alpha = 0.05\)</span></p>
+<section id="דוגמה-אותם-משקלים-מבחן-ks" class="level2">
+<h2 class="anchored" data-anchor-id="דוגמה-אותם-משקלים-מבחן-ks">דוגמה: אותם משקלים, מבחן KS</h2>
+<p>נחזור למשקלי הפינגווינים, הפעם בלי לחלק לקטגוריות:</p>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>gaps <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.7</span>, <span class="fl">1.1</span>, <span class="fl">1.3</span>, <span class="fl">1.9</span>, <span class="fl">2.4</span>, <span class="fl">3.6</span>, <span class="fl">5.2</span>, <span class="fl">6.8</span>, <span class="fl">9.5</span>)   <span class="co"># minutes</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(gaps)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span>n, <span class="at">x =</span> gaps, <span class="at">F0 =</span> <span class="fu">pexp</span>(gaps, <span class="at">rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">i/n - F0</span><span class="st">`</span> <span class="ot">=</span> i<span class="sc">/</span>n <span class="sc">-</span> F0, <span class="st">`</span><span class="at">F0 - (i-1)/n</span><span class="st">`</span> <span class="ot">=</span> F0 <span class="sc">-</span> (i <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">/</span>n) <span class="sc">|&gt;</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: right;">i</th>
-<th style="text-align: right;">x</th>
-<th style="text-align: right;">F0</th>
-<th style="text-align: right;">i/n - F0</th>
-<th style="text-align: right;">F0 - (i-1)/n</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">0.4</td>
-<td style="text-align: right;">0.181</td>
-<td style="text-align: right;">-0.081</td>
-<td style="text-align: right;">0.181</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.7</td>
-<td style="text-align: right;">0.295</td>
-<td style="text-align: right;">-0.095</td>
-<td style="text-align: right;">0.195</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">1.1</td>
-<td style="text-align: right;">0.423</td>
-<td style="text-align: right;">-0.123</td>
-<td style="text-align: right;">0.223</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">1.3</td>
-<td style="text-align: right;">0.478</td>
-<td style="text-align: right;">-0.078</td>
-<td style="text-align: right;">0.178</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">1.9</td>
-<td style="text-align: right;">0.613</td>
-<td style="text-align: right;">-0.113</td>
-<td style="text-align: right;">0.213</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">2.4</td>
-<td style="text-align: right;">0.699</td>
-<td style="text-align: right;">-0.099</td>
-<td style="text-align: right;">0.199</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">3.6</td>
-<td style="text-align: right;">0.835</td>
-<td style="text-align: right;">-0.135</td>
-<td style="text-align: right;">0.235</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">5.2</td>
-<td style="text-align: right;">0.926</td>
-<td style="text-align: right;">-0.126</td>
-<td style="text-align: right;">0.226</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">6.8</td>
-<td style="text-align: right;">0.967</td>
-<td style="text-align: right;">-0.067</td>
-<td style="text-align: right;">0.167</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">9.5</td>
-<td style="text-align: right;">0.991</td>
-<td style="text-align: right;">0.009</td>
-<td style="text-align: right;">0.091</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section id="התוצאה" class="level2">
-<h2 class="anchored" data-anchor-id="התוצאה">התוצאה</h2>
-<p><span class="math inline">\(D_0 = 0.235\)</span>, בתצפית <span class="math inline">\(x_{(7)} = 3.6\)</span>: <span class="math inline">\(F_0(3.6) - \frac{6}{10} = 0.835 - 0.6\)</span></p>
-<div class="cell" data-layout-align="center">
-<details open="" class="code-fold">
-<summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(gaps, <span class="st">"pexp"</span>, <span class="at">rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(mass, <span class="st">"pnorm"</span>, <span class="fu">mean</span>(mass), <span class="fu">sd</span>(mass)) <span class="sc">|&gt;</span> <span class="fu">print</span>(<span class="at">digits =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-    Exact one-sample Kolmogorov-Smirnov test
+    Asymptotic one-sample Kolmogorov-Smirnov test
 
-data:  gaps
-D = 0.2347, p-value = 0.563
+data:  mass
+D = 0.1041, p-value = 0.00121
 alternative hypothesis: two-sided</code></pre>
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(D_0 = 0.235 &lt; 0.409 = D_{0.05,10}\)</span>, ולכן <strong>לא דוחים</strong> את <span class="math inline">\(H_0\)</span></li>
-<li><strong>אבל:</strong> הממוצע במדגם הוא 3.29 דקות, לא 2. עם 10 תצפיות למבחן אין כמעט עוצמה. “לא דחינו” איננו “הוכחנו”</li>
+<li><span class="math inline">\(D = 0.104 &gt; 0.074 \approx 1.36/\sqrt{342}\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>, בהתאם למבחן חי-בריבוע</li>
+<li>המרחק הגדול ביותר הוא סביב 3,800 גרם: 41% מהפינגווינים קלים מזה, ולפי הנורמלית היו צריכים להיות רק 31%</li>
 </ul>
-<p><strong>זהירות עם פרמטרים אמודים.</strong> ה-p-value של KS נכון רק כש-<span class="math inline">\(F_0\)</span> נקבעה <strong>לפני</strong> שראינו את הנתונים. אם אומדים את הממוצע מהמדגם ואז בודקים מול מעריכית עם הממוצע הזה, ההתפלגות “מותאמת” לנתונים, <span class="math inline">\(D\)</span> יוצא קטן מדי, והמבחן כמעט לא ידחה. לבדיקת נורמליות עם פרמטרים אמודים יש מבחנים ייעודיים (למשל <span class="en">Lilliefors</span> או <span class="en">Shapiro–Wilk</span>).</p>
+<p><strong>שתי הסתייגויות.</strong> (1) ה-p-value של KS נכון רק כש-<span class="math inline">\(F_0\)</span> נקבעה <strong>לפני</strong> שראינו את הנתונים. כאן אמדנו את <span class="math inline">\(\mu\)</span> ו-<span class="math inline">\(\sigma\)</span> מאותם נתונים, ולכן הנורמלית “מותאמת” אליהם, <span class="math inline">\(D\)</span> יוצא קטן מדי, והמבחן <strong>שמרני</strong>: ה-p-value גדול מדי. כאן הוא דוחה בכל זאת, ולכן הדחייה רק מתחזקת. לבדיקת נורמליות עם פרמטרים אמודים יש מבחנים ייעודיים, למשל <span class="en">Lilliefors</span> או <span class="en">Shapiro–Wilk</span> (<code>shapiro.test</code>). (2) המשקל נמדד בקפיצות של 25 גרם, ולכן יש ערכים זהים, ו-R מזהיר על כך (<span class="en">ties</span>). KS מניח התפלגות רציפה, אבל עם 342 תצפיות ההשפעה כאן קטנה.</p>
+</section>
+<section id="הפונקציה-האמפירית-מול-הנורמלית" class="level2">
+<h2 class="anchored" data-anchor-id="הפונקציה-האמפירית-מול-הנורמלית">הפונקציה האמפירית מול הנורמלית</h2>
+<div class="cell" data-layout-align="center" data-output-location="slide">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ecdf_mass <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">g =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(mass))) <span class="sc">|&gt;</span>   <span class="co"># g: each distinct weight</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Fn =</span> <span class="fu">ecdf</span>(mass)(g), <span class="at">F0 =</span> <span class="fu">pnorm</span>(g, <span class="fu">mean</span>(mass), <span class="fu">sd</span>(mass)))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>worst <span class="ot">&lt;-</span> ecdf_mass <span class="sc">|&gt;</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Fn_left =</span> <span class="fu">lag</span>(Fn, <span class="at">default =</span> <span class="dv">0</span>),          <span class="co"># the step's value just before g</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">Fn_end  =</span> <span class="fu">if_else</span>(<span class="fu">abs</span>(Fn <span class="sc">-</span> F0) <span class="sc">&gt;=</span> <span class="fu">abs</span>(Fn_left <span class="sc">-</span> F0), Fn, Fn_left),</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">gap     =</span> <span class="fu">abs</span>(Fn_end <span class="sc">-</span> F0)) <span class="sc">|&gt;</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(gap, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ecdf_mass, <span class="fu">aes</span>(g)) <span class="sc">+</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> \(x) <span class="fu">pnorm</span>(x, <span class="fu">mean</span>(mass), <span class="fu">sd</span>(mass)),</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="fu">aes</span>(<span class="at">y =</span> Fn), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> g, <span class="at">xend =</span> g, <span class="at">y =</span> F0, <span class="at">yend =</span> Fn_end), <span class="at">data =</span> worst,</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="at">x =</span> worst<span class="sc">$</span>g, <span class="at">y =</span> (worst<span class="sc">$</span>F0 <span class="sc">+</span> worst<span class="sc">$</span>Fn_end) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"D = "</span>, <span class="fu">round</span>(worst<span class="sc">$</span>gap, <span class="dv">3</span>)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"יותר מדי פינגווינים קלים"</span>,</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"כחול: התפלגות אמפירית · מקווקו: נורמלית עם אותו ממוצע וסטיית תקן"</span>,</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Body mass (g)"</span>, <span class="at">y =</span> <span class="st">"F(x)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01-nonparametric_files/figure-html/ks-one-sample-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1200"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="ks-לשני-מדגמים" class="level2">
 <h2 class="anchored" data-anchor-id="ks-לשני-מדגמים">KS לשני מדגמים</h2>
