@@ -32,5 +32,6 @@ $presentation-font-size-root: 32px;
 
 // Display math is LTR and must not overflow to the left under RTL.
 .reveal .math.display, .reveal mjx-container[display="true"] { direction: ltr; text-align: center; display: block; }
-.reveal table { font-size: 0.8em; }
+.reveal table { font-size: 0.8em; direction: rtl; }
+.reveal table th, .reveal table td { text-align: right; unicode-bidi: plaintext; }  // plaintext: number-only cells (e.g. -0.081) stay LTR
 .reveal .smaller pre code { font-size: 1.25em; }

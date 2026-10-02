@@ -18,15 +18,101 @@ data_dir <- "../data/nonparametric"
 
 ## על מה נדבר היום
 
-- מתי ההנחות של מבחן t ו-ANOVA לא מתקיימות, ולמה זה משנה
+- תזכורת קצרה: מהי בדיקת השערות
+- מתי ההנחות של מבחן פרמטרי לא מתקיימות, ולמה זה משנה
 - **מבחן הסימן**: השערות על החציון, גם למדגמים מזווגים
 - **מבחן הדירוגים המסומנים** ([Wilcoxon signed-rank]{.en})
 - **מבחן סכום הדירוגים** ([Wilcoxon rank-sum / Mann–Whitney]{.en})
-- **ניתוח שונות א-פרמטרי**: [Kruskal–Wallis]{.en} ו-[Friedman]{.en}
+- **טיב התאמה**: מבחן חי-בריבוע ומבחן [Kolmogorov–Smirnov]{.en}
 - **מתאם על דירוגים**: [Spearman]{.en} ו-[Kendall]{.en}
 
+# תזכורת: בדיקת השערות
+
+## השאלה: האם הזכרים כבדים יותר?
+
+- נתוני [Palmer Penguins]{.en}: מדידות של פינגווינים בתחנת המחקר פאלמר באנטארקטיקה
+- נתמקד במין אחד, [Gentoo]{.en}, ובמשתנה אחד: **משקל הגוף** (גרם)
+- **השאלה:** האם יש הבדל במשקל הממוצע בין זכרים לנקבות?
+- הנתונים מגיעים עם R (מגרסה 4.5), בלי חבילה נוספת
+
+```{r}
+#| label: penguins-data
+gentoo <- penguins |> filter(species == "Gentoo", !is.na(sex))
+gentoo |> summarise(n = n(), mean = mean(body_mass), sd = sd(body_mass), .by = sex)
+```
+
+## התפלגות המשקל
+
+```{r}
+#| label: penguins-hist
+#| output-location: slide
+#| fig-height: 4
+ggplot(gentoo, aes(body_mass)) +
+  geom_histogram(binwidth = 100, fill = nanas_pal[["grey"]]) +
+  labs(title = "משקל הגוף של פינגווינים מסוג Gentoo",
+       subtitle = "119 פרטים, זכרים ונקבות יחד",
+       x = "Body mass (g)", y = "Count")
+```
+
+::: {.content-hidden when-format="revealjs"}
+ההתפלגות רחבה, ונראה שיש בה שתי "גבעות". זה רמז שמסתתר כאן משתנה נוסף.
+:::
+
+## המשקל לפי מין
+
+```{r}
+#| label: penguins-hist-sex
+#| output-location: slide
+#| fig-height: 4
+sex_means <- gentoo |> summarise(mean = mean(body_mass), .by = sex)
+
+ggplot(gentoo, aes(body_mass, fill = sex)) +
+  geom_histogram(binwidth = 100, alpha = 0.6, position = "identity") +
+  geom_vline(aes(xintercept = mean, colour = sex), data = sex_means,
+             linetype = "dashed", linewidth = 0.9, show.legend = FALSE) +
+  scale_fill_manual(values = c(female = nanas_pal[["accent"]], male = nanas_pal[["primary"]])) +
+  scale_colour_manual(values = c(female = nanas_pal[["accent"]], male = nanas_pal[["primary"]])) +
+  labs(title = "הזכרים כבדים בכ-800 גרם בממוצע",
+       subtitle = "הקווים המקווקווים: הממוצע בכל קבוצה",
+       x = "Body mass (g)", y = "Count", fill = NULL)
+```
+
+::: {.content-hidden when-format="revealjs"}
+שתי ה"גבעות" הן שתי הקבוצות. ההבדל נראה גדול, אבל ההיסטוגרמות חופפות בחלקן. השאלה הסטטיסטית היא האם הבדל כזה יכול לנבוע ממקריות הדגימה בלבד.
+:::
+
+## מבחן t לשני מדגמים {.smaller}
+
+$$
+H_0: \mu_F = \mu_M \qquad H_1: \mu_F \neq \mu_M
+$$
+
+$$
+t = \frac{\bar{x}_F - \bar{x}_M}{\sqrt{\dfrac{s_F^2}{n_F} + \dfrac{s_M^2}{n_M}}}
+= \frac{4679.7 - 5484.8}{\sqrt{\dfrac{281.6^2}{58} + \dfrac{313.2^2}{61}}}
+= \frac{-805.1}{54.5} \approx -14.76
+$$
+
+```{r}
+#| label: penguins-ttest
+t.test(body_mass ~ sex, data = gentoo) |>
+  print(digits = 6)  # a little more precision than the course default
+```
+
+## איך קוראים את הפלט
+
+- **`t = -14.76`**: ההפרש בין הממוצעים הוא כ-15 שגיאות תקן. הסימן שלילי כי R מחסר זכרים מנקבות
+- **`df = 116.6`**: [Welch]{.en} לא מניח שוויון שונויות, ולכן דרגות החופש לא שלמות
+- **`p-value < 2e-16`**: אם $H_0$ נכונה, הסיכוי לראות הפרש קיצוני כזה כמעט אפס. **דוחים** את $H_0$
+- **רווח הסמך (95%)**: הנקבות קלות מהזכרים ב-697 עד 913 גרם. הערך 0 לא נמצא ברווח
+- **ההנחות:** תצפיות בלתי תלויות, והתפלגות נורמלית בכל קבוצה (או מדגם גדול)
+
 ::: notes
-ההרצאה מבוססת על המצגת של ד״ר אוהד איזנהנדלר. הדוגמאות שלו נשמרו, והכלים והתרשימים עברו ל-R.
+להזכיר: p-value איננו ההסתברות ש-H0 נכונה. זו ההסתברות לנתונים קיצוניים כאלה או יותר, בהינתן ש-H0 נכונה.
+:::
+
+::: {.content-hidden when-format="revealjs"}
+כאן ההנחות סבירות: ההיסטוגרמות בכל קבוצה נראות פעמוניות, ויש כ-60 פרטים בכל קבוצה. בשאר ההרצאה נשאל מה עושים כשההנחה על ההתפלגות **לא** מתקיימת, למשל כשיש ערכים קיצוניים או כשהמדגם קטן.
 :::
 
 # למה צריך שיטות א-פרמטריות?
@@ -44,7 +130,11 @@ data_dir <- "../data/nonparametric"
 
 ## כשהתוחלת בכלל לא קיימת
 
-דוגמה: $f(x) = \dfrac{1}{(1+x)^2}, \quad x \in [0, \infty)$
+דוגמה:
+
+$$
+f(x) = \dfrac{1}{(1+x)^2}, \quad x \in [0, \infty)
+$$
 
 $$
 \mu = \int_0^\infty \frac{x}{(1+x)^2}\,dx = \infty
@@ -93,14 +183,14 @@ ggplot(heavy, aes(i, value, colour = stat)) +
 
 | השאלה | השיטה הפרמטרית | השיטה הא-פרמטרית |
 |---|---|---|
-| מרכז ההתפלגות | מבחן t / Z על התוחלת | מבחן הסימן, מבחן הדירוגים המסומנים |
-| שני מדגמים מזווגים | מבחן t מזווג | מבחן הסימן / דירוגים מסומנים על ההפרשים |
-| שתי אוכלוסיות בלתי תלויות | מבחן t לשני מדגמים | מבחן סכום הדירוגים |
-| השפעה של משתנה קטגוריאלי | ANOVA חד-כיווני | [Kruskal–Wallis]{.en} |
-| טיפולים בתוך בלוקים | ANOVA עם בלוקים | [Friedman]{.en} |
+| מרכז ההתפלגות | מבחן t / Z על התוחלת | מבחן הסימן ([Sign test]{.en}), מבחן הדירוגים המסומנים ([Wilcoxon signed-rank]{.en}) |
+| שני מדגמים מזווגים | מבחן t מזווג | מבחן הסימן / [Wilcoxon signed-rank]{.en} על ההפרשים |
+| שתי אוכלוסיות בלתי תלויות | מבחן t לשני מדגמים | מבחן סכום הדירוגים ([Mann–Whitney]{.en}) |
+| התאמה להתפלגות נתונה | מבחן חי-בריבוע לטיב התאמה ([Goodness-of-fit]{.en}) | מבחן [Kolmogorov–Smirnov]{.en} |
+| השוואה בין שתי התפלגויות | | [Kolmogorov–Smirnov]{.en} לשני מדגמים |
 | מתאם בין שני משתנים | מתאם פירסון | [Spearman's ρ]{.en}, [Kendall's τ]{.en} |
 
-: {tbl-colwidths="[34,33,33]"}
+: {tbl-colwidths="[27,28,45]"}
 
 # מבחן הסימן
 
@@ -111,6 +201,7 @@ H_0: \tilde{\mu} = z \qquad H_1: \tilde{\mu} \neq z
 $$
 
 - תחת $H_0$, כל הפרש $x_i - z$ חיובי או שלילי בהסתברות $0.5$
+- תצפיות ששוות בדיוק ל-$z$ (הפרש $0$) **משמיטים**, ו-$n$ הוא מספר התצפיות שנשארו
 - $r^+$: מספר ההפרשים החיוביים
 - סטטיסטי המבחן: $r = \min(r^+,\; n - r^+)$
 - תחת $H_0$ נצפה ש-$r$ יהיה קרוב ל-$n/2$, וערך קטן מעיד נגד $H_0$
@@ -192,38 +283,48 @@ binom.test(sum(api$latency_ms > 200), n = nrow(api), p = 0.5)
 grades <- read_csv(file.path(data_dir, "exam_grades.csv"), show_col_types = FALSE)
 grades$grade
 binom.test(sum(grades$grade > 80), n = nrow(grades))$p.value  # sign test
-t.test(grades$grade, mu = 80)$p.value                          # assuming normality
 ```
 
-- $r^+ = 3$, $r_0 = 3 > R^*_{0.1,11} = 2$, ולכן טענת המרצה **מתקבלת**
-- גם מבחן t (בהנחת נורמליות) לא דוחה את $H_0$
+- $r^+ = 3$, $r_0 = 3 > R^*_{0.1,11} = 2$, ולכן טענת המרצה **אינה נדחית**
+- גם מבחן t לתוחלת (בהנחת נורמליות) לא דוחה את $H_0$
 
-## מבחן הסימן למדגמים מזווגים
+::: {.fragment}
+```{r}
+#| label: grades-ttest
+t.test(grades$grade, mu = 80) |> print(digits = 6)
+```
+:::
+
+## מבחן הסימן למדגמים מזווגים {.smaller}
 
 כשהתצפיות **מזווגות**, מריצים את מבחן הסימן על ההפרשים $d_i = x_i - y_i$, עם $H_0: \tilde{\mu}_d = 0$.
 
-**דוגמה:** 11 מופעים של בעיית הסוכן הנוסע ([TSP]{.en}) נפתרו בשתי היוריסטיקות. בטבלה: הפער (%) מהפתרון האופטימלי של מודל תכנות בשלמים.
+**דוגמה:** צוות מוצר שוקל להחליף את [Sonnet 5.5]{.en} ב-[Opus 5.5]{.en}, היקר יותר, למשימות תיוג. שני המודלים תייגו את אותן 11 משימות. **האם Opus טועה פחות?** בטבלה: שיעור השגיאות (%) בכל משימה. $d_i$ = Opus פחות Sonnet. (נתונים מדומים)
 
 ```{r}
-#| label: tsp
-tsp <- read_csv(file.path(data_dir, "tsp_heuristics.csv"), show_col_types = FALSE)
-tsp |>
-  mutate(sign = if_else(heuristic_1 > heuristic_2, "+", "-")) |>
-  pivot_longer(-instance, values_transform = as.character) |>
-  pivot_wider(names_from = instance) |>
+#| label: llm-labelling
+#| output-location: slide
+llm_err <- read_csv(file.path(data_dir, "llm_labelling_errors.csv"), show_col_types = FALSE)
+llm_err |>
+  mutate(sign = if_else(opus > sonnet, "+", "-")) |>
+  select(task = task_he, sonnet, opus, sign) |>
   kable()
 ```
 
-## TSP: התוצאה
+::: {.content-hidden when-format="revealjs"}
+למה **מזווג**? יש משימות קשות לכל מודל (סרקזם, תעדוף רפואי) ויש קלות (זיהוי שפה, ספאם). ההבדל בין המשימות גדול בהרבה מההבדל בין המודלים, ולכן משווים את שני המודלים **בתוך** כל משימה.
+:::
+
+## Sonnet מול Opus: התוצאה
 
 ```{r}
-#| label: tsp-test
-n_plus <- sum(tsp$heuristic_1 > tsp$heuristic_2)
-binom.test(n_plus, n = nrow(tsp))
+#| label: llm-sign-test
+n_plus <- sum(llm_err$opus > llm_err$sonnet)
+binom.test(n_plus, n = nrow(llm_err)) |> print(digits = 6)
 ```
 
 - $r^+ = 2$, ו-$p = 0.065 < 0.1$, ולכן **דוחים** $H_0$: חציון ההפרשים אינו 0
-- להיוריסטיקה 1 יש פער קטן יותר מהאופטימום ברוב המופעים
+- Opus טועה פחות ב-9 מתוך 11 המשימות
 
 # מבחן הדירוגים המסומנים
 
@@ -237,7 +338,7 @@ binom.test(n_plus, n = nrow(tsp))
 ## שלבי המבחן {.smaller}
 
 
-1. מדרגים את $|x_i - z|$ בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות
+1. משמיטים הפרשים ששווים ל-$0$ ומעדכנים את $n$. מדרגים את $|x_i - z|$ בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות
 2. מצמידים לכל דרגה את הסימן של ההפרש שלה
 3. $R^+$ הוא סכום הדרגות החיוביות ו-$R^-$ סכום הדרגות השליליות, וסטטיסטי המבחן הוא $R = \min(R^+, R^-)$
 4. דוחים את $H_0$ אם $R \le R^*_{\alpha,n}$ (טבלה), או לפי קירוב נורמלי:
@@ -285,13 +386,12 @@ wilcox.test(api$latency_ms, mu = 200, exact = FALSE)
 
 ## כשהמבחנים לא מסכימים
 
-נחזור ל-TSP:
+נחזור ל-Sonnet מול Opus:
 
 ```{r}
-#| label: tsp-disagree
-c(sign        = binom.test(n_plus, nrow(tsp))$p.value,
-  signed_rank = wilcox.test(tsp$heuristic_1, tsp$heuristic_2,
-                            paired = TRUE, exact = FALSE)$p.value)
+#| label: llm-disagree
+c(sign        = binom.test(n_plus, nrow(llm_err))$p.value,
+  signed_rank = wilcox.test(llm_err$opus, llm_err$sonnet, paired = TRUE)$p.value)
 ```
 
 - ב-$\alpha = 0.1$ מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא
@@ -299,7 +399,7 @@ c(sign        = binom.test(n_plus, nrow(tsp))$p.value,
 - **אם אי אפשר להניח סימטריה**, מבחן הסימן קובע
 
 ::: {.content-hidden when-format="revealjs"}
-כדאי לשים לב ממה נובע הפער. בשני המופעים שבהם היוריסטיקה 2 עדיפה (מופעים 3 ו-4) הפערים גדולים מאוד: 11 ו-4 נקודות אחוז. מבחן הסימן סופר רק כמה פעמים כל שיטה ניצחה, ומבחן הדירוגים המסומנים מתחשב גם בגודל הניצחון. השאלה איזה מבחן לבחור היא שאלה על ההנחות, ולא על איזה מבחן נותן את התשובה שרצינו. ואת ההחלטה מקבלים **לפני** שמסתכלים על התוצאה.
+כדאי לשים לב ממה נובע הפער. Opus מנצח ב-9 משימות, אבל בהפרשים קטנים (0.2 עד 3.1 נקודות אחוז). בשתי המשימות שבהן Sonnet עדיף, זיהוי תוכן פוגעני וזיהוי סרקזם, הפערים גדולים: 5.9 ו-6.8 נקודות אחוז. ההפרשים רחוקים מסימטריה, ולכן כאן מבחן הסימן הוא המתאים. ובכל זאת, למוצר יש מסקנה מעשית: לפני שמחליפים מודל, בודקים איפה הוא **נכשל**, ולא רק כמה פעמים הוא ניצח. ממוצע ההפרשים כאן הוא 0.1 בלבד, ומבחן t מזווג לא היה מוצא שום הבדל. מבחן הסימן סופר רק כמה פעמים כל שיטה ניצחה, ומבחן הדירוגים המסומנים מתחשב גם בגודל הניצחון. השאלה איזה מבחן לבחור היא שאלה על ההנחות, ולא על איזה מבחן נותן את התשובה שרצינו. ואת ההחלטה מקבלים **לפני** שמסתכלים על התוצאה.
 :::
 
 # מבחן סכום הדירוגים
@@ -377,159 +477,150 @@ wilcox.test(after, before, mu = 3)
 - `mu = 3` בודק הזזה של 3 יחידות, בלי לחסר ידנית
 - R מחשב p-value **מדויק** (0.082) ולא את הקירוב הנורמלי, אבל המסקנה זהה
 
-# ניתוח שונות א-פרמטרי
+# טיב התאמה
 
-## [Kruskal–Wallis]{.en}
+## תזכורת: מבחן חי-בריבוע לטיב התאמה {.smaller}
 
-**השאלה:** האם משתנה קטגוריאלי (פקטור עם $a$ רמות) מסביר את השונות בתגובת המערכת?
-
-$$
-y_{ij} = \mu + \tau_i + \varepsilon_{ij}
-$$
-
-- ב-ANOVA מניחים $\varepsilon_{ij} \sim N(0, \sigma^2)$. כאן מניחים רק ש-$\varepsilon_{ij}$ באים מאותה התפלגות **רציפה**
-- $H_0: \tau_1 = \dots = \tau_a = 0$ מול $H_1: \tau_i \neq 0$ עבור $i$ כלשהו
-- מדרגים את כל $N$ התצפיות יחד. תחת $H_0$ הדרגות מתפזרות באופן אחיד בין הרמות:
+$H_0$: ההסתברויות של $k$ הקטגוריות הן $p_1, \dots, p_k$. $O_i$ הוא המספר שנצפה, $E_i = n p_i$ המספר הצפוי:
 
 $$
-E(\bar{R}_i) = \frac{N+1}{2}
+\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i} \;\sim\; \chi^2_{k-1-m}
 $$
 
-## הסטטיסטי: ANOVA על הדרגות {.smaller}
+$m$ הוא מספר הפרמטרים שאמדנו מהנתונים. **למה זה מבחן פרמטרי?** ההשערה היא על **הפרמטרים** $p_i$ של התפלגות מולטינומית, וההתפלגות $\chi^2$ של הסטטיסטי היא רק **קירוב** למדגם גדול, שנשען על קירוב נורמלי לספירות. לכן צריך $E_i \ge 5$ בכל קטגוריה. ב-KS, לעומת זאת, ההתפלגות של $D$ תחת $H_0$ מדויקת וזהה **לכל** $F_0$ רציפה.
 
-**ב-ANOVA (בהנחת נורמליות):**
-
-$$
-\frac{SS_{\text{treatments}}}{\sigma^2} = \frac{\sum_{i=1}^{a} n_i(\bar{y}_i - \bar{y})^2}{\sigma^2} \sim \chi^2_{a-1}
-$$
-
-**ב-[Kruskal–Wallis]{.en}:** אותו רעיון, על הדרגות $\bar{R}_i$ במקום על הערכים
-
-$$
-K = \frac{12}{N(N+1)} \sum_{i=1}^{a} n_i\left(\bar{R}_i - \frac{N+1}{2}\right)^2
-$$
-
-- כש-$a > 3$ ו-$n_i > 4$: $K \sim \chi^2_{a-1}$ בקירוב
-- דוחים את $H_0$ אם $K > \chi^2_{\alpha,\,a-1}$
-
-## דוגמה: חוזק מתיחה של בד לפי אחוז כותנה
+**דוגמה** (נתונים מדומים): מודל שפה ענה על 400 שאלות אמריקאיות, והתשובה הנכונה מפוזרת שווה בשווה בין A–D. האם המודל מעדיף אותיות מסוימות (הטיית מיקום, [position bias]{.en})?
 
 ```{r}
-#| label: cotton-plot
-#| output-location: slide
-cotton <- read_csv(file.path(data_dir, "cotton_strength.csv"), show_col_types = FALSE) |>
-  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))
-
-ggplot(cotton, aes(cotton_pct, strength)) +
-  geom_boxplot(width = 0.5, outlier.shape = NA, colour = "grey55") +
-  geom_point(aes(colour = cotton_pct), size = 3, alpha = 0.8,
-             position = position_jitter(width = 0.08, seed = 2), show.legend = FALSE) +
-  labs(title = "חוזק המתיחה עולה עד 30% כותנה ואז צונח",
-       subtitle = "5 רמות, 6 דגימות בכל רמה",
-       x = "Cotton (%)", y = "Tensile strength")
+#| label: gof-r
+answers <- c(A = 124, B = 102, C = 95, D = 79)   # letters the model chose
+chisq.test(answers, p = rep(1/4, 4)) |> print(digits = 6)
 ```
 
-## [Kruskal–Wallis]{.en} מול מבחן F {.smaller}
-
-```{r}
-#| label: cotton-tests
-cotton |> group_by(cotton_pct) |> summarise(mean_rank = mean(rank))
-
-kruskal.test(strength ~ cotton_pct, data = cotton)
-summary(aov(strength ~ cotton_pct, data = cotton))
-```
+$\chi^2 = 10.46 > 7.81 = \chi^2_{0.95,\,3}$, ולכן **דוחים** $H_0$: יש הטיית מיקום.
 
 ::: {.content-hidden when-format="revealjs"}
-שני המבחנים דוחים את $H_0$ בבירור: $K = 19.8$ ($p = 5.4 \times 10^{-4}$) מול $F = 13.9$ ($p = 4.3 \times 10^{-6}$). ה-p-value של המבחן הא-פרמטרי גדול יותר. זה המחיר שמשלמים על ויתור על הנחת הנורמליות: כשההנחה **מתקיימת**, המבחן הפרמטרי חזק יותר. הערך ש-R מדווח (19.814) כולל תיקון קטן לדרגות זהות.
+**החישוב הידני:** $E_i = 400 \cdot \tfrac14 = 100$ בכל קטגוריה.
+
+| | A | B | C | D |
+|---|---|---|---|---|
+| $O_i$ | 124 | 102 | 95 | 79 |
+| $\frac{(O_i - E_i)^2}{E_i}$ | 5.76 | 0.04 | 0.25 | 4.41 |
+
+$\chi^2 = 5.76 + 0.04 + 0.25 + 4.41 = 10.46$, עם $k - 1 = 3$ דרגות חופש: לא אמדנו אף פרמטר. כשמשתמשים במודל כ"שופט" בין תשובות, מערבבים את סדר התשובות. הסטייה הגדולה ביותר היא ב-A (נבחרת יותר מדי) וב-D (פחות מדי). ב-R רואים את זה ב-`chisq.test(...)$residuals`.
+
+**כשאומדים פרמטרים.** נניח שבודקים אם מספר הפניות לשעה מתפלג פואסונית, ואת $\lambda$ אומדים מהנתונים עצמם ($\hat\lambda = \bar{x}$). אז $m = 1$ ודרגות החופש הן $k - 2$. כל פרמטר שאומדים "מקרב" את ההתפלגות לנתונים, ולכן צריך להוריד דרגת חופש כדי לפצות.
 :::
 
-## הערכת קונטרסטים עם חציונים {.smaller}
+## מבחן [Kolmogorov–Smirnov]{.en} {.smaller}
 
-תזכורת: $C = \sum_i c_i \tau_i$ הוא **קונטרסט** אם $\sum_i c_i = 0$.
+**כשהנתונים רציפים**, החלוקה לקטגוריות מאבדת מידע. מבחן KS משווה את פונקציית ההתפלגות **המצטברת**:
 
-- לפי ממוצעים: $\hat{\tau}_i = \bar{y}_i - \bar{y}$
-- הניסיון הטבעי לעבור לחציונים, $\hat{\tau}_i = \text{median}_j\{y_{ij}\} - \text{median}_{k,j}\{y_{kj}\}$, **מפר** את התנאי $\sum_i \hat{\tau}_i = 0$
-
-**החלופה:**
+- $F_n(x)$: פונקציית ההתפלגות האמפירית, החלק מהתצפיות שקטנות או שוות ל-$x$
+- $H_0: F(x) = F_0(x)$ לכל $x$, כש-$F_0$ רציפה ונתונה **במלואה**
 
 $$
-\hat{\tau}_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik},
-\qquad
-Z_{ik} = \underset{j,m}{\text{median}}\{y_{ij} - y_{km}\}
+D = \max_x \left| F_n(x) - F_0(x) \right|
 $$
 
-מכיוון ש-$Z_{ik} = -Z_{ki}$, מתקיים $\sum_i \hat{\tau}_i = 0$.
+- דוחים את $H_0$ אם $D > D_{\alpha,n}$ (טבלה). למדגם גדול: $D_{0.05,n} \approx 1.36/\sqrt{n}$
+- **בחישוב ידני:** ממיינים את התצפיות, ובודקים בכל $x_{(i)}$ את שני הצדדים של המדרגה:
+
+$$
+D = \max_i \left\{ \frac{i}{n} - F_0(x_{(i)}),\;\; F_0(x_{(i)}) - \frac{i-1}{n} \right\}
+$$
+
+## דוגמה: זמנים בין פניות לצ׳אט {.smaller}
+
+מודל האיוש של מוקד שירות מניח שהזמן בין פניות לצ׳אט מתפלג **מעריכית עם ממוצע 2 דקות**. נמדדו 10 זמנים. האם הנתונים סותרים את ההנחה? $\alpha = 0.05$
+
+```{r}
+#| label: ks-one-sample
+gaps <- c(0.4, 0.7, 1.1, 1.3, 1.9, 2.4, 3.6, 5.2, 6.8, 9.5)   # minutes
+n <- length(gaps)
+tibble(i = 1:n, x = gaps, F0 = pexp(gaps, rate = 1/2)) |>
+  mutate(`i/n - F0` = i/n - F0, `F0 - (i-1)/n` = F0 - (i - 1)/n) |>
+  kable(digits = 3)
+```
+
+## התוצאה
+
+$D_0 = 0.235$, בתצפית $x_{(7)} = 3.6$: $F_0(3.6) - \frac{6}{10} = 0.835 - 0.6$
+
+```{r}
+#| label: ks-one-sample-r
+ks.test(gaps, "pexp", rate = 1/2) |> print(digits = 6)
+```
+
+- $D_0 = 0.235 < 0.409 = D_{0.05,10}$, ולכן **לא דוחים** את $H_0$
+- **אבל:** הממוצע במדגם הוא `r round(mean(gaps), 2)` דקות, לא 2. עם 10 תצפיות למבחן אין כמעט עוצמה. "לא דחינו" איננו "הוכחנו"
 
 ::: {.content-hidden when-format="revealjs"}
-**דוגמה קטנה:** $y_{1j} = \{3,7,8\}$ ו-$y_{2j} = \{0,1,2\}$. החציון הכללי הוא 2.5, וחציוני הקבוצות הם 7 ו-1. בגישה הנאיבית $\hat\tau_1 = 4.5$, $\hat\tau_2 = -1.5$, וסכומם אינו 0. בגישה החלופית $Z_{12} = \text{median}\{3,7,8,2,6,7,1,5,6\} = 6$ ו-$Z_{21} = -6$, ולכן $\hat\tau_1 = 3$, $\hat\tau_2 = -3$.
+**זהירות עם פרמטרים אמודים.** ה-p-value של KS נכון רק כש-$F_0$ נקבעה **לפני** שראינו את הנתונים. אם אומדים את הממוצע מהמדגם ואז בודקים מול מעריכית עם הממוצע הזה, ההתפלגות "מותאמת" לנתונים, $D$ יוצא קטן מדי, והמבחן כמעט לא ידחה. לבדיקת נורמליות עם פרמטרים אמודים יש מבחנים ייעודיים (למשל [Lilliefors]{.en} או [Shapiro–Wilk]{.en}).
 :::
 
-## קונטרסט בדוגמת הכותנה
+## KS לשני מדגמים
 
-$C = \tfrac{1}{2}(\tau_1 + \tau_5) - \tau_4$: הקצוות (15% ו-35%) מול 30%.
+אותו רעיון, בלי $F_0$: משווים בין שתי פונקציות התפלגות אמפיריות
+
+$$
+H_0: F_1(x) = F_2(x) \qquad D = \max_x \left| F_{1,n}(x) - F_{2,m}(x) \right|
+$$
+
+**דוגמה:** גרסה חדשה של שירות [inference]{.en} עלתה לאוויר. החציון של זמן התגובה כמעט לא השתנה, אבל משתמשים מתלוננים על "קפיצות". נדגמו 60 בקשות מכל גרסה. (נתונים מדומים)
 
 ```{r}
-#| label: cotton-contrast
-levels_y <- split(cotton$strength, cotton$cotton_pct)
-Z <- outer(seq_along(levels_y), seq_along(levels_y),
-           Vectorize(\(i, k) median(outer(levels_y[[i]], levels_y[[k]], "-"))))
-tau_hat <- rowMeans(Z)
-round(tau_hat, 2)
-0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]
+#| label: ks-two-sample-data
+set.seed(1)
+latency <- tibble(
+  version = rep(c("v1", "v2"), each = 60),
+  ms = c(rlnorm(60, log(220), 0.25), rlnorm(60, log(220), 0.65))
+)
+latency |> summarise(median = median(ms), iqr = IQR(ms), max = max(ms), .by = version)
 ```
 
-$$
-\hat{C} = \tfrac{1}{2}(-1.86 - 1.83) - 3.22 = -5.07
-$$
-
-## [Friedman]{.en}: טיפולים בתוך בלוקים
-
-כשכל "יחידה" (בלוק) מקבלת **את כל** הטיפולים, למשל אותו עובד שעובד בשלוש שיטות או אותה משימה שנבדקת בשלושה מודלים, ההשוואה צריכה להיות **בתוך** כל בלוק.
-
-- $b$ בלוקים ו-$k$ טיפולים
-- מדרגים את הטיפולים **בתוך כל בלוק** בנפרד, מ-1 עד $k$
-- $R_j$ הוא סכום הדרגות של טיפול $j$ על פני כל הבלוקים
-
-$$
-Q = \frac{12}{b\,k\,(k+1)} \sum_{j=1}^{k} R_j^2 \;-\; 3\,b\,(k+1) \;\sim\; \chi^2_{k-1}
-$$
-
-## דוגמה: הערכת פרומפטים למודל שפה
-
-צוות בודק שלוש גרסאות של פרומפט על 8 משימות מבחן ([eval set]{.en}). כל תשובה מקבלת ציון 0–100. המשימות שונות מאוד בקושי שלהן, ולכן **המשימה היא הבלוק**.
+## שתי פונקציות התפלגות מצטברות
 
 ```{r}
-#| label: llm-plot
+#| label: ks-ecdf-plot
 #| output-location: slide
-#| fig-height: 4
-llm <- read_csv(file.path(data_dir, "llm_prompt_eval.csv"), show_col_types = FALSE) |>
-  mutate(prompt = factor(prompt, levels = c("baseline", "few_shot", "reasoning")))
+#| fig-height: 4.2
+grid <- tibble(ms = sort(latency$ms)) |>
+  mutate(v1 = ecdf(latency$ms[latency$version == "v1"])(ms),
+         v2 = ecdf(latency$ms[latency$version == "v2"])(ms),
+         gap = abs(v1 - v2))
+max_gap <- slice_max(grid, gap, n = 1, with_ties = FALSE)
 
-ggplot(llm, aes(prompt, score, group = task)) +
-  geom_line(colour = "grey70") +
-  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +
-  labs(title = "בכל משימה, איזה פרומפט טוב יותר?",
-       subtitle = "כל קו הוא משימה אחת. ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים",
-       x = NULL, y = "Score")
+ggplot(latency, aes(ms, colour = version)) +
+  stat_ecdf(linewidth = 0.9) +
+  geom_segment(aes(x = ms, xend = ms, y = v1, yend = v2), data = max_gap,
+               colour = "grey20", linewidth = 1, inherit.aes = FALSE) +
+  annotate("label", x = max_gap$ms, y = (max_gap$v1 + max_gap$v2) / 2,
+           label = paste0("D = ", round(max_gap$gap, 2)), hjust = 1.1,
+           fill = "white", label.size = 0) +
+  scale_x_log10() +
+  scale_colour_manual(values = c(v1 = nanas_pal[["primary"]], v2 = nanas_pal[["accent"]])) +
+  labs(title = "אותו חציון, פיזור שונה לגמרי",
+       subtitle = "הקו השחור: המרחק הגדול ביותר בין שתי הפונקציות",
+       x = "Response time (ms, log scale)", y = "F(x)", colour = NULL)
 ```
 
-## [Friedman]{.en}: חישוב
+## KS מול סכום הדירוגים
 
 ```{r}
-#| label: llm-friedman
-llm |>
-  group_by(task) |> mutate(rank = rank(score)) |>
-  group_by(prompt) |> summarise(R = sum(rank))
-
-friedman.test(score ~ prompt | task, data = llm)
+#| label: ks-vs-ranksum
+v1 <- latency$ms[latency$version == "v1"]
+v2 <- latency$ms[latency$version == "v2"]
+c(rank_sum = wilcox.test(v1, v2)$p.value,
+  ks       = ks.test(v1, v2)$p.value)
 ```
 
-$$
-Q = \frac{12}{8 \cdot 3 \cdot 4}(10^2 + 16^2 + 22^2) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 > \chi^2_{0.05,2} = 5.99
-$$
+- **סכום הדירוגים** רגיש בעיקר להזזה של המיקום. החציונים כמעט שווים, ולכן הוא לא מוצא כלום
+- **KS** רגיש לכל הבדל בין ההתפלגויות: מיקום, פיזור או צורה. כאן הוא **דוחה** ב-$\alpha = 0.05$
+- בשירות אמיתי, הזנב (האחוזון ה-95 או ה-99) הוא מה שהמשתמשים מרגישים. לכן כדאי לבדוק יותר מהחציון
 
-::: {.content-hidden when-format="revealjs"}
-אם היינו מתעלמים מהבלוקים ומריצים [Kruskal–Wallis]{.en} רגיל, השונות הגדולה **בין המשימות** הייתה "מטביעה" את ההבדל בין הפרומפטים. נסו בעצמכם: `kruskal.test(score ~ prompt, data = llm)`. אותו עיקרון יחזור כשנגיע לתכנון ניסויים: בלוקים מנטרלים מקור שונות שלא מעניין אותנו.
+::: notes
+שאלה לכיתה: למה סכום הדירוגים "עיוור" כאן? כי ב-v2 יש גם ערכים קטנים מאוד וגם גדולים מאוד, והדרגות שלהם מתקזזות בסכום.
 :::
 
 # מתאם על דירוגים
@@ -565,6 +656,7 @@ $$
 #| label: corr-sim
 #| output-location: slide
 #| fig-height: 4
+set.seed(2026)   # own seed, so edits elsewhere in the lecture don't change this example
 corr_data <- tibble(x = 1:30, y = exp(x / 6) + rnorm(30, sd = 1.5)) |>
   add_row(x = 2, y = 160)   # one data-entry error
 
@@ -597,8 +689,8 @@ ggplot(corr_data, aes(x, y)) +
 | מרכז ההתפלגות | t / Z | סימן, דירוגים מסומנים | `binom.test`, `wilcox.test` |
 | מזווג | t מזווג | אותו מבחן על ההפרשים | `wilcox.test(paired = TRUE)` |
 | שני מדגמים ב״ת | t לשני מדגמים | סכום הדירוגים | `wilcox.test(x, y)` |
-| פקטור אחד | ANOVA | Kruskal–Wallis | `kruskal.test` |
-| טיפולים × בלוקים | ANOVA עם בלוקים | Friedman | `friedman.test` |
+| התאמה להתפלגות | | חי-בריבוע, KS | `chisq.test`, `ks.test` |
+| שתי התפלגויות | | KS לשני מדגמים | `ks.test(x, y)` |
 | מתאם | Pearson | Spearman, Kendall | `cor(method = )` |
 
 - שיטות א-פרמטריות לא "חינמיות": כשההנחות הפרמטריות **כן** מתקיימות, הן חלשות יותר

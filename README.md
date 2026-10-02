@@ -88,7 +88,7 @@ This repo is **public**. Never commit:
 - student work, names, grades or any student data
 - project rubrics and grading notes before they are published to students
 
-Reference material from the previous iteration (Ohad's decks, past exams and solutions, project guidelines) lives **only locally**, outside the repo, in `~/Documents/statistical_analysis_course_old_materials/`. The main subfolder is `ננס/`, which has decks 1–8: one-way ANOVA, two-way ANOVA, DOE, PCA, logistic regression, non-parametric methods, time series, summary questions. Agents may read it for topic coverage but must not copy it into the repo. Put anything private in `_private/` (gitignored).
+Reference material from the previous iteration (Previous decks, past exams and solutions, project guidelines) lives **only locally**, outside the repo, in `~/Documents/statistical_analysis_course_old_materials/`. The main subfolder is `ננס/`, which has decks 1–8: one-way ANOVA, two-way ANOVA, DOE, PCA, logistic regression, non-parametric methods, time series, summary questions. Agents may read it for topic coverage but must not copy it into the repo. Put anything private in `_private/` (gitignored).
 
 ---
 
@@ -108,6 +108,8 @@ This order was agreed with Avital and differs from the official syllabus order.
 | 10–11 | Time series & forecasting | accordingly |
 | 12 | Buffer | |
 | 13 | Exam review | accordingly |
+| TBD | | Lab: data visualization (content and date still under discussion) |
+| TBD | | Lab: working with GitHub (content and date still under discussion) |
 
 ### Open design questions
 

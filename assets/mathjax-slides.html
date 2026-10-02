@@ -1,0 +1,8 @@
+<!-- Slides use MathJax 2. Left alone it picks the STIX fonts installed on macOS,
+     whose metrics misplace accents (the tilde in \tilde{\mu} drifts right).
+     Force MathJax's own TeX web fonts so math looks the same on every machine. -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  "HTML-CSS": { availableFonts: [], preferredFont: null, webFont: "TeX" }
+});
+</script>

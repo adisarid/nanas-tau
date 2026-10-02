@@ -15,5 +15,6 @@ format:
     footer: "ניתוח נתונים סטטיסטי · תשפ״ז"
     fig-width: 9
     fig-height: 5
+    include-in-header: ../assets/mathjax-slides.html
 execute:
   echo: true   # revealjs defaults to false; we want code on the slides

@@ -43,6 +43,6 @@ toc: false
 
 **סביבת עבודה (IDE), אחת מאלה:**
 
-- [VS Code](https://code.visualstudio.com/): המועדפת עליי. עובדת עם R ועם Python דרך הרחבות.
-- [Positron](https://positron.posit.co/): סביבה חדשה של Posit, תומכת ב-R וב-Python.
-- [RStudio](https://posit.co/download/rstudio-desktop/): הסביבה הקלאסית ל-R.
+- [VS Code](https://code.visualstudio.com/): המועדפת עליי. עובדת עם R ועם Python. תומכת ב-AI בצורה טובה (GH Copilot, Claude, Codex)
+- [Positron](https://positron.posit.co/): סביבה של Posit, תומכת ב-R וב-Python (מבוססת על vscode וכל ה-extensions עובדים גם).
+- [RStudio](https://posit.co/download/rstudio-desktop/): הסביבה הקלאסית ל-R (עובדת פחות טוב עם AI, לא ממליץ).
