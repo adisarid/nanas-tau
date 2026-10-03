@@ -35,3 +35,10 @@ $presentation-font-size-root: 32px;
 .reveal table { font-size: 0.8em; direction: rtl; }
 .reveal table th, .reveal table td { text-align: right; unicode-bidi: plaintext; }  // plaintext: number-only cells (e.g. -0.081) stay LTR
 .reveal .smaller pre code { font-size: 1.25em; }
+
+// Keep an English term in a section title on one line, so it doesn't split around the bidi boundary.
+.reveal h1 .en { white-space: nowrap; }
+
+// Output-only slides (output-location: slide) have the whole slide to themselves,
+// so let a long model summary use it instead of scrolling inside reveal's 400px code box.
+.reveal .output-location-slide pre code { max-height: 560px; }

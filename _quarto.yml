@@ -41,6 +41,8 @@ website:
             text: "0. פתיחה: על הקורס"
           - href: lectures/01-nonparametric.qmd
             text: "1. שיטות א-פרמטריות"
+          - href: lectures/03-multiple-regression.qmd
+            text: "3. רגרסיה לינארית מרובה"
       - href: syllabus.qmd
         text: סילבוס
       - href: https://moodle.tau.ac.il/course/view.php?id=571313701

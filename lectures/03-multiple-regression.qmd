@@ -1,0 +1,736 @@
+---
+title: "3. רגרסיה לינארית מרובה"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה 3"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: 03-multiple-regression-slides.html
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+library(broom)
+model_cols <- c(small = nanas_pal[["primary"]], medium = nanas_pal[["green"]],
+                large = nanas_pal[["accent"]])
+```
+
+## על מה נדבר היום
+
+- **תזכורת:** רגרסיה לינארית פשוטה, שיטת הריבועים הפחותים, ואיך קוראים את הפלט
+- **רגרסיה מרובה:** כמה משתנים מסבירים, רישום מטריציוני, ופרשנות של "כל השאר קבוע"
+- **מבחני השערות:** מבחן t לכל מקדם, מבחן F לכל המודל, ומבחן F חלקי
+- **$R^2$ ו-$R^2$ מתוקן**
+- **משתנים קטגוריים ואינטראקציות**
+- **בדיקת ההנחות:** שאריות ומולטיקולינאריות
+- **בחירת משתנים, רווחי סמך ורווחי חיזוי**
+
+# תזכורת: רגרסיה לינארית פשוטה ([Simple linear regression]{.en})
+
+## השאלה: כמה מעבד צורכת כל אלף בקשות?
+
+צוות התשתיות מתכנן קיבולת ([capacity planning]{.en}) לשירות חדש. בעשרה חלונות זמן נמדדו העומס (אלפי בקשות בדקה) וניצולת המעבד (CPU, באחוזים).
+
+**השאלות:** בכמה עולה ניצולת המעבד עם כל אלף בקשות נוספות בדקה? והאם הקשר הזה "אמיתי", או שהוא יכול להיות מקרי?
+
+```{r}
+#| label: cpu-data
+cpu <- tibble(
+  load = c(10, 11.5, 14.5, 12, 15, 16.6, 12.5, 13, 14, 17),       # k requests / min
+  util = c(15, 16.6, 20.2, 16.3, 19.4, 24.4, 17, 17.1, 17.7, 24.4)  # CPU %
+)
+```
+
+## הנתונים
+
+```{r}
+#| label: cpu-plot
+#| fig-height: 4
+ggplot(cpu, aes(load, util)) +
+  geom_smooth(method = "lm", se = FALSE, colour = nanas_pal[["grey"]], linewidth = 0.8) +
+  geom_point(size = 3) +
+  labs(title = "ככל שהעומס עולה, המעבד עובד קשה יותר",
+       subtitle = "עשרה חלונות זמן · הקו: קו הריבועים הפחותים",
+       x = "Load (k requests / min)", y = "CPU utilisation (%)")
+```
+
+## המודל {.smaller}
+
+$$
+Y_i = \beta_0 + \beta_1 x_i + \varepsilon_i \qquad i = 1, \dots, n
+$$
+
+- $\beta_0$ הוא **החותך** ([intercept]{.en}) ו-$\beta_1$ הוא **השיפוע** ([slope]{.en}): בכמה משתנה התוחלת של $Y$ כש-$x$ עולה ביחידה אחת
+- $E(Y \mid x) = \beta_0 + \beta_1 x$ ו-$V(Y \mid x) = \sigma^2$
+
+**ההנחות על השגיאות** $\varepsilon_i$:
+
+1. **לינאריות:** התוחלת של $Y$ היא פונקציה לינארית של $x$
+2. **אי-תלות:** השגיאות בלתי תלויות זו בזו
+3. **שונות קבועה** ([homoscedasticity]{.en}): אותה $\sigma^2$ לכל ערך של $x$
+4. **נורמליות:** $\varepsilon_i \sim N(0, \sigma^2)$. נדרשת למבחנים ולרווחי הסמך, לא לאמידה עצמה
+
+## שיטת הריבועים הפחותים ([Least squares]{.en}) {.smaller}
+
+מחפשים את הקו שממזער את סכום ריבועי הסטיות האנכיות:
+
+$$
+L(\beta_0, \beta_1) = \sum_{i=1}^{n} \left(y_i - \beta_0 - \beta_1 x_i\right)^2
+$$
+
+גוזרים לפי $\beta_0$ ולפי $\beta_1$ ומשווים לאפס (**משוואות נורמליות**), ומקבלים:
+
+$$
+\hat\beta_1 = \frac{S_{xy}}{S_{xx}} \qquad \hat\beta_0 = \bar y - \hat\beta_1 \bar x
+$$
+
+$$
+S_{xx} = \sum_{i=1}^{n} (x_i - \bar x)^2 = \sum x_i^2 - n\bar x^2 \qquad
+S_{xy} = \sum_{i=1}^{n} (x_i - \bar x)(y_i - \bar y) = \sum x_i y_i - n \bar x \bar y
+$$
+
+::: {.content-hidden when-format="revealjs"}
+**למה דווקא ריבועים?** יש קריטריונים אחרים. אפשר למזער את הסטייה **המרבית** ([minimax]{.en}), או את סכום הסטיות **בערך מוחלט** ([least absolute deviations]{.en}, שעמיד יותר לערכים חריגים). לריבועים הפחותים יש שלושה יתרונות. יש להם פתרון סגור. לפי משפט [Gauss–Markov]{.en} הם האומד הלינארי חסר ההטיה בעל השונות הקטנה ביותר, גם בלי הנחת נורמליות. וכשהשגיאות נורמליות, הם גם אומד הנראות המרבית.
+:::
+
+## חישוב ידני {.smaller}
+
+```{r}
+#| label: cpu-sums
+cpu |> summarise(n = n(), x_bar = mean(load), y_bar = mean(util),
+                 Sxx = sum((load - x_bar)^2),
+                 Sxy = sum((load - x_bar) * (util - y_bar)),
+                 Syy = sum((util - y_bar)^2))
+```
+
+$$
+\hat\beta_1 = \frac{62.80}{44.99} = 1.396 \qquad
+\hat\beta_0 = 18.81 - 1.396 \cdot 13.61 = -0.188
+$$
+
+$$
+SS_R = \hat\beta_1 S_{xy} = 87.66 \qquad SS_E = S_{yy} - SS_R = 97.91 - 87.66 = 10.25 \qquad
+\hat\sigma^2 = \frac{SS_E}{n-2} = 1.281
+$$
+
+$$
+se(\hat\beta_1) = \sqrt{\frac{\hat\sigma^2}{S_{xx}}} = \sqrt{\frac{1.281}{44.99}} = 0.169 \qquad
+t = \frac{1.396}{0.169} = 8.27 \qquad R^2 = \frac{SS_R}{S_{yy}} = 0.895
+$$
+
+## אותו חישוב ב-R {.smaller}
+
+```{r}
+#| label: cpu-lm
+fit_cpu <- lm(util ~ load, data = cpu)
+summary(fit_cpu)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+- **`Estimate`**: המקדמים. כל אלף בקשות נוספות בדקה מעלות את ניצולת המעבד ב-1.4 נקודות אחוז בממוצע
+- **`Std. Error`**: שגיאת התקן של כל מקדם, $se(\hat\beta_j)$
+- **`t value`** ו-**`Pr(>|t|)`**: מבחן $H_0: \beta_j = 0$, עם $t = \hat\beta_j / se(\hat\beta_j)$ ו-$n - 2 = 8$ דרגות חופש. לשיפוע $p = 0.00003$, ולכן **דוחים**: הקשר לא מקרי
+- **`Residual standard error`**: $\hat\sigma = \sqrt{MS_E} = 1.13$. זו הסטייה הטיפוסית של תצפית מהקו, ביחידות של $Y$
+- **`Multiple R-squared`**: 89.5% מהשונות בניצולת המעבד מוסברים על ידי העומס
+- **`F-statistic`**: מבחן לכל המודל. ברגרסיה פשוטה $F = t^2$: $8.27^2 = 68.4$
+
+::: notes
+לשאול את הכיתה: למה החותך לא מובהק, ולמה שגיאת התקן שלו כל כך גדולה (2.3)? זה מוביל לשקף הבא.
+:::
+
+## מה עושים עם החותך? מירכוז ([Centering]{.en}) {.smaller}
+
+החותך הוא הניצולת הצפויה כש-$x = 0$, הרחק מטווח הנתונים (10 עד 17). לכן השונות שלו גדולה:
+
+$$
+V(\hat\beta_0) = \sigma^2 \left[\frac{1}{n} + \frac{\bar x^2}{S_{xx}}\right]
+$$
+
+אם מחסירים מ-$x$ את הממוצע שלו, $\bar x = 0$, והחותך הופך ל-$\bar y$: הניצולת הצפויה **בעומס הממוצע**.
+
+```{r}
+#| label: cpu-centered
+lm(util ~ I(load - mean(load)), data = cpu) |> summary() |> coef()
+```
+
+- השיפוע לא השתנה, ושגיאת התקן של החותך ירדה מ-2.32 ל-$\hat\sigma / \sqrt{n} = 1.132 / \sqrt{10} = 0.358$
+- הקו הוא אותו קו. השתנתה רק השאלה שהחותך עונה עליה
+
+## פירוק השונות וטבלת ANOVA {.smaller}
+
+$$
+\underbrace{\sum_{i}(y_i - \bar y)^2}_{SS_T} = \underbrace{\sum_{i}(\hat y_i - \bar y)^2}_{SS_R} + \underbrace{\sum_{i}(y_i - \hat y_i)^2}_{SS_E}
+$$
+
+| מקור | סכום ריבועים | דרגות חופש | ממוצע ריבועים | $F$ |
+|---|---|---|---|---|
+| רגרסיה | $SS_R$ | $1$ | $MS_R = SS_R / 1$ | $MS_R / MS_E$ |
+| שגיאה | $SS_E$ | $n - 2$ | $MS_E = SS_E / (n-2)$ | |
+| סך הכול | $SS_T$ | $n - 1$ | | |
+
+```{r}
+#| label: cpu-anova
+anova(fit_cpu)
+```
+
+**מקדם המתאם המרובה:** $R^2 = SS_R / SS_T = 87.66 / 97.91 = 0.895$
+
+שני הרכיבים אי-שליליים, ולכן תמיד $0 \le R^2 \le 1$.
+
+# רגרסיה לינארית מרובה ([Multiple linear regression]{.en})
+
+## השאלה: מה קובע את זמן התגובה של מודל שפה?
+
+חברה משתמשת ב-API של מודל שפה, בשלושה גדלים: `small`, `medium` ו-`large`. המשתמשים מתלוננים על המתנה ארוכה.
+
+**השאלות:**
+
+- כמה זמן מוסיף כל טוקן ([token]{.en}) בתשובה? וכל אלף טוקנים בקלט?
+- האם מודל השפה הגדול **עצמו** איטי יותר, או שהוא פשוט כותב תשובות ארוכות יותר?
+- כמה זמן תיקח קריאה עם 2,000 טוקנים בקלט ו-500 בפלט למודל השפה הגדול?
+
+**הנתונים:** 250 קריאות מהלוגים (נתונים מדומים). לכל קריאה: גודל מודל השפה, מספר הטוקנים בקלט ובפלט, מספר המסמכים שצורפו לפרומפט ([RAG]{.en}), השעה ביום, וזמן התגובה בשניות.
+
+## הנתונים
+
+```{r}
+#| label: llm-data
+set.seed(303)   # own seed, so edits elsewhere in the lecture don't change this example
+n_calls <- 250
+sizes <- c("small", "medium", "large")
+median_output <- c(small = 250,   medium = 350,   large = 500)    # tokens
+sec_per_token <- c(small = 0.010, medium = 0.018, large = 0.030)
+
+llm <- tibble(
+  model    = factor(sample(sizes, n_calls, replace = TRUE, prob = c(0.5, 0.3, 0.2)), sizes),
+  rag_docs = rpois(n_calls, 3),                         # documents added to the prompt
+  input_tokens  = round(300 + 550 * rag_docs + rlnorm(n_calls, log(400), 0.6)),
+  output_tokens = round(rlnorm(n_calls, log(median_output[as.character(model)]), 0.5)),
+  hour     = sample(0:23, n_calls, replace = TRUE)
+) |>
+  mutate(latency = 0.8 + 0.25 * input_tokens / 1000 +
+           sec_per_token[as.character(model)] * output_tokens + rnorm(n_calls, 0, 1),
+         latency = round(latency, 2),
+         input_k = input_tokens / 1000)
+
+llm |> select(model, input_tokens, output_tokens, rag_docs, hour, latency) |> head(4)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**איך נבנו הנתונים.** זמן התגובה מורכב מקבוע של 0.8 שניות (רשת ותור), מ-0.25 שניות לכל אלף טוקנים בקלט (קריאת הפרומפט, [prefill]{.en}), ומזמן לכל טוקן בפלט שתלוי בגודל מודל השפה: 10, 18 ו-30 מילישניות. למודל השפה הגדול יש גם תשובות ארוכות יותר. מספר המסמכים משפיע על זמן התגובה **רק** דרך מספר הטוקנים בקלט, והשעה ביום לא משפיעה בכלל. כשקוראים את התוצאות, כדאי לבדוק כמה מהם הרגרסיה מצליחה לשחזר.
+:::
+
+## זמן התגובה מול אורך התשובה
+
+```{r}
+#| label: llm-plot
+#| output-location: slide
+#| fig-height: 4.2
+ggplot(llm, aes(output_tokens, latency, colour = model)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = model_cols) +
+  labs(title = "תשובה ארוכה יותר, המתנה ארוכה יותר",
+       subtitle = "וכל מודל שפה עם שיפוע משלו",
+       x = "Output tokens", y = "Latency (s)", colour = NULL)
+```
+
+## המודל {.smaller}
+
+$$
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \dots + \beta_k x_{ik} + \varepsilon_i \qquad \varepsilon_i \sim N(0, \sigma^2)
+$$
+
+- אותן הנחות כמו ברגרסיה פשוטה, עם $k$ משתנים מסבירים ([predictors]{.en})
+- **הפרשנות של $\beta_j$:** השינוי בתוחלת של $Y$ כש-$x_j$ עולה ביחידה אחת, **וכל שאר המשתנים במודל נשארים קבועים**
+- "לינארי" פירושו לינארי **בפרמטרים** $\beta$. אפשר להכניס $x^2$, $\log x$ או מכפלה $x_1 x_2$, והמודל עדיין לינארי
+
+נתחיל משני משתנים מסבירים: הטוקנים בקלט (באלפים) והטוקנים בפלט.
+
+```{r}
+#| label: llm-fit2
+fit2 <- lm(latency ~ input_k + output_tokens, data = llm)
+coef(fit2)
+```
+
+## רישום מטריציוני ([Matrix form]{.en}) {.smaller}
+
+$$
+\mathbf{y} = X\boldsymbol\beta + \boldsymbol\varepsilon \qquad
+X = \begin{pmatrix} 1 & x_{11} & \cdots & x_{1k} \\ \vdots & \vdots & & \vdots \\ 1 & x_{n1} & \cdots & x_{nk} \end{pmatrix}_{n \times (k+1)}
+$$
+
+ממזערים את $L(\boldsymbol\beta) = (\mathbf{y} - X\boldsymbol\beta)'(\mathbf{y} - X\boldsymbol\beta)$. הנגזרת היא $-2X'\mathbf{y} + 2X'X\boldsymbol\beta$, ומשווים אותה לאפס:
+
+$$
+X'X\hat{\boldsymbol\beta} = X'\mathbf{y} \quad\Longrightarrow\quad \hat{\boldsymbol\beta} = (X'X)^{-1}X'\mathbf{y}
+$$
+
+- העמודה של אחדות ב-$X$ היא החותך
+- צריך ש-$X'X$ תהיה הפיכה: אף משתנה לא יכול להיות צירוף לינארי מדויק של האחרים
+
+```{r}
+#| label: llm-matrix
+X <- model.matrix(~ input_k + output_tokens, data = llm)   # adds the column of ones
+y <- llm$latency
+solve(t(X) %*% X) %*% t(X) %*% y                            # same as coef(fit2)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**הקשר לרגרסיה פשוטה.** כש-$k = 1$, המטריצה $X'X$ היא $\begin{pmatrix} n & \sum x_i \\ \sum x_i & \sum x_i^2 \end{pmatrix}$, ו-$X'\mathbf{y} = \begin{pmatrix} \sum y_i \\ \sum x_i y_i \end{pmatrix}$. אלה בדיוק שתי המשוואות הנורמליות מקודם, ופתרונן נותן את $\hat\beta_1 = S_{xy}/S_{xx}$.
+:::
+
+## תכונות האומדים {.smaller}
+
+- **חסרי הטיה:** $E(\hat{\boldsymbol\beta}) = \boldsymbol\beta$
+- **מטריצת השונויות:** $V(\hat{\boldsymbol\beta}) = \sigma^2 (X'X)^{-1}$. נסמן $C = (X'X)^{-1}$
+- **אומד ל-$\sigma^2$:** $\hat\sigma^2 = MS_E = \dfrac{SS_E}{n - k - 1}$. מאבדים דרגת חופש על כל מקדם, כולל החותך
+
+$$
+se(\hat\beta_j) = \sqrt{\hat\sigma^2 C_{jj}} \qquad
+t = \frac{\hat\beta_j}{se(\hat\beta_j)} \sim t_{n-k-1} \qquad
+\hat\beta_j \pm t_{1-\alpha/2,\, n-k-1} \cdot se(\hat\beta_j)
+$$
+
+```{r}
+#| label: llm-se
+sigma2_hat <- sum(resid(fit2)^2) / (nrow(X) - ncol(X))     # SSE / (n - k - 1)
+sqrt(diag(sigma2_hat * solve(t(X) %*% X)))                  # = "Std. Error" in summary()
+```
+
+## הפלט המלא {.smaller}
+
+```{r}
+#| label: llm-fit2-summary
+summary(fit2)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+- **`output_tokens = 0.0263`**: כל טוקן נוסף בתשובה מוסיף כ-26 מילישניות, **כשמספר הטוקנים בקלט קבוע**. $t = 28$, מובהק מאוד
+- **`input_k`**: לא מובהק ($p = 0.75$). האם הקלט באמת לא משפיע? נחזור לזה
+- **`F-statistic: 396 on 2 and 247 DF`**: מבחן לכל המודל. $k = 2$ ו-$n - k - 1 = 247$
+- **`R-squared = 0.762`**: שני המשתנים יחד מסבירים 76% מהשונות בזמן התגובה
+- **`Residual standard error = 3.56`**: קריאה טיפוסית רחוקה 3.6 שניות מהחיזוי. זה הרבה, כשהחציון הוא 6 שניות
+
+::: notes
+input_k יוצא לא מובהק כי המודל עדיין שגוי: הוא מתעלם מגודל מודל השפה, וכל הרעש הזה נכנס לשגיאה ומסתיר את האפקט. אל תגלו להם עדיין, זה יתגלה בהמשך.
+:::
+
+# מבחני השערות במודל המרובה
+
+## מבחן F לכל המודל {.smaller}
+
+$$
+H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0 \qquad H_1: \text{לפחות מקדם אחד שונה מאפס}
+$$
+
+| מקור | סכום ריבועים | דרגות חופש | ממוצע ריבועים | $F$ |
+|---|---|---|---|---|
+| רגרסיה | $SS_R$ | $k$ | $MS_R = SS_R / k$ | $MS_R / MS_E$ |
+| שגיאה | $SS_E$ | $n - k - 1$ | $MS_E = SS_E / (n-k-1)$ | |
+| סך הכול | $SS_T$ | $n - 1$ | | |
+
+דוחים את $H_0$ אם $F > F_{1-\alpha;\, k,\, n-k-1}$.
+
+- דחייה אומרת רק שלפחות משתנה **אחד** עוזר. היא לא אומרת איזה
+- מבחני ה-t בודקים כל מקדם **בנוכחות כל השאר**. משתנה יכול להיות לא מובהק לבד, ובכל זאת חשוב
+
+## $R^2$ ו-$R^2$ מתוקן ([Adjusted R²]{.en}) {.smaller}
+
+$$
+R^2 = \frac{SS_R}{SS_T} = 1 - \frac{SS_E}{SS_T} \qquad
+R^2_{adj} = 1 - \frac{SS_E / (n - k - 1)}{SS_T / (n - 1)} = 1 - (1 - R^2)\frac{n - 1}{n - k - 1}
+$$
+
+- **הבעיה של $R^2$:** הוא **אף פעם לא יורד** כשמוסיפים משתנה, גם אם המשתנה הוא רעש טהור
+- **$R^2$ המתוקן** "מעניש" על כל משתנה נוסף. הוא עולה רק אם המשתנה מקטין את $MS_E$. למקסם אותו זה כמו למזער את $MS_E$
+
+```{r}
+#| label: adj-r2-noise
+set.seed(8)
+llm_noise <- llm |> mutate(noise1 = rnorm(n()), noise2 = rnorm(n()), noise3 = rnorm(n()))
+fit_noise <- lm(latency ~ input_k + output_tokens + noise1 + noise2 + noise3, data = llm_noise)
+rbind(fit2      = c(R2 = summary(fit2)$r.squared,      adj = summary(fit2)$adj.r.squared),
+      fit_noise = c(R2 = summary(fit_noise)$r.squared, adj = summary(fit_noise)$adj.r.squared))
+```
+
+::: {.content-hidden when-format="revealjs"}
+שלושה משתני רעש העלו את $R^2$, ו-$R^2_{adj}$ ירד. אבל גם $R^2_{adj}$ לא חסין: הוא עולה בכל פעם שמוסיפים משתנה שערך ה-$|t|$ שלו גדול מ-1. למשתנה רעש זה קורה בערך בשליש מהמקרים. לכן $R^2_{adj}$ מתאים להשוואה גסה בין מודלים, ולא כהוכחה שמשתנה שייך למודל.
+:::
+
+## תרגיל: השלימו את הפלט {.smaller}
+
+פלט של רגרסיה עם $n = 30$ תצפיות ו-$k = 3$ משתנים מסבירים. חלק מהערכים נמחקו:
+
+| מקור | סכום ריבועים | דרגות חופש | ממוצע ריבועים | $F$ |
+|---|---|---|---|---|
+| רגרסיה | 600 | (א) | (ב) | (ג) |
+| שגיאה | (ד) | (ה) | (ו) | |
+| סך הכול | 860 | 29 | | |
+
+השלימו את הטבלה, וחשבו את $R^2$, את $R^2_{adj}$ ואת $\hat\sigma$. האם המודל מובהק ב-$\alpha = 0.05$? ($F_{0.95;\,3,\,26} = 2.98$)
+
+::: {.content-hidden when-format="revealjs"}
+**פתרון.** (א) $k = 3$. (ב) $MS_R = 600/3 = 200$. (ד) $SS_E = 860 - 600 = 260$. (ה) $n - k - 1 = 26$. (ו) $MS_E = 260/26 = 10$. (ג) $F = 200/10 = 20 > 2.98$, ולכן המודל מובהק. $R^2 = 600/860 = 0.698$, $R^2_{adj} = 1 - \frac{10}{860/29} = 1 - \frac{10}{29.66} = 0.663$, ו-$\hat\sigma = \sqrt{10} = 3.16$.
+:::
+
+# משתנים קטגוריים ([Categorical variables]{.en})
+
+## משתני דמה ([Dummy variables]{.en}) {.smaller}
+
+למשתנה קטגורי עם $m$ רמות מוסיפים $m - 1$ **משתני דמה** (אינדיקטורים). רמה אחת היא **רמת הבסיס** ([reference level]{.en}), ולה אין משתנה משלה.
+
+$$
+D_{medium} = \begin{cases} 1 & \text{medium} \\ 0 & \text{אחרת} \end{cases} \qquad
+D_{large} = \begin{cases} 1 & \text{large} \\ 0 & \text{אחרת} \end{cases}
+$$
+
+$$
+Y = \beta_0 + \beta_1 x_{input} + \beta_2 x_{output} + \beta_3 D_{medium} + \beta_4 D_{large} + \varepsilon
+$$
+
+- $\beta_4$: בכמה קריאה למודל השפה הגדול איטית יותר מקריאה למודל השפה הקטן, **באותו מספר טוקנים**
+- למה לא $m$ משתנים? כי אז $D_{small} + D_{medium} + D_{large} = 1$, בדיוק כמו עמודת החותך, ו-$X'X$ לא הפיכה
+- R יוצר את משתני הדמה בעצמו מכל `factor`. רמת הבסיס היא הרמה הראשונה (`levels`)
+
+```{r}
+#| label: dummies
+model.matrix(~ model, data = llm) |> head(3)
+```
+
+## האם מודל השפה הגדול איטי יותר? {.smaller}
+
+```{r}
+#| label: confounding
+fit_raw <- lm(latency ~ model, data = llm)                            # model only
+fit3    <- lm(latency ~ input_k + output_tokens + model, data = llm)  # same length of answer
+rbind(raw = coef(fit_raw)[c("modelmedium", "modellarge")],
+      adjusted = coef(fit3)[c("modelmedium", "modellarge")])
+```
+
+- **בלי לשלוט באורך התשובה:** קריאה למודל השפה הגדול איטית ב-`r round(coef(fit_raw)["modellarge"], 1)` שניות מקריאה למודל השפה הקטן
+- **באותו מספר טוקנים:** הפער יורד ל-`r round(coef(fit3)["modellarge"], 1)` שניות
+- חלק מהפער נובע מכך שמודל השפה הגדול כותב תשובות ארוכות יותר. זה **משתנה מערבב** ([confounder]{.en})
+- "שליטה" במשתנה ([controlling for]{.en}) פירושה להשוות קריאות עם אותו ערך שלו
+
+## מבחן F חלקי ([Partial F test]{.en}) {.smaller}
+
+**השאלה:** האם גודל מודל השפה משפיע בכלל? זו השערה על **שני** מקדמים יחד, $H_0: \beta_3 = \beta_4 = 0$. אי אפשר לענות עליה עם שני מבחני t נפרדים.
+
+משווים בין **המודל המלא** ([full]{.en}) לבין **המודל המצומצם** ([reduced]{.en}), שבו $H_0$ נכונה:
+
+$$
+F = \frac{(SS_E^{R} - SS_E^{F}) / q}{SS_E^{F} / (n - k - 1)} \sim F_{q,\; n-k-1}
+$$
+
+$q$ הוא מספר המקדמים שנבדקים, ו-$k$ הוא מספר המשתנים במודל **המלא**.
+
+```{r}
+#| label: partial-f
+anova(fit2, fit3)
+```
+
+## איך קוראים את הפלט
+
+- **`RSS`**: סכום ריבועי השגיאות ($SS_E$) של כל מודל. משתני הדמה הורידו אותו מ-`r round(deviance(fit2))` ל-`r round(deviance(fit3))`
+- **`Df = 2`**: הוספנו $q = 2$ מקדמים
+- **בחישוב ידני** (דוחים את $H_0$: גודל מודל השפה משפיע):
+
+$$
+F = \frac{(`r round(deviance(fit2))` - `r round(deviance(fit3))`) / 2}{`r round(deviance(fit3))` / 245} = `r round(anova(fit2, fit3)$F[2])`
+$$
+
+- כש-$q = 1$, מבחן F החלקי שקול למבחן t של אותו מקדם: $F = t^2$
+- מבחן F לכל המודל הוא מקרה פרטי: המודל המצומצם הוא מודל עם חותך בלבד
+
+# אינטראקציות ([Interactions]{.en})
+
+## האם הקווים מקבילים?
+
+ברגרסיה `fit3` לכל מודל שפה יש חותך משלו, אבל **אותו שיפוע**: אותו זמן לכל טוקן בתשובה. זה סביר?
+
+```{r}
+#| label: parallel-lines
+#| output-location: slide
+#| fig-height: 4.2
+ggplot(augment(fit3), aes(output_tokens, colour = model)) +
+  geom_point(aes(y = latency), alpha = 0.5) +
+  geom_smooth(aes(y = .fitted), method = "lm", se = FALSE, linewidth = 1) +
+  scale_colour_manual(values = model_cols) +
+  labs(title = "קווים מקבילים לא מתאימים לנתונים",
+       subtitle = "הקווים: החיזוי של רגרסיה בלי אינטראקציה (בממוצע הקלט)",
+       x = "Output tokens", y = "Latency (s)", colour = NULL)
+```
+
+## מודל עם אינטראקציה {.smaller}
+
+**אינטראקציה** פירושה שההשפעה של משתנה אחד תלויה בערך של משתנה אחר. כאן: הזמן לכל טוקן תלוי בגודל מודל השפה.
+
+$$
+Y = \beta_0 + \beta_1 x_{in} + \beta_2 x_{out} + \beta_3 D_{med} + \beta_4 D_{lrg} + \beta_5\, x_{out} D_{med} + \beta_6\, x_{out} D_{lrg} + \varepsilon
+$$
+
+| מודל שפה | השיפוע של $x_{out}$ |
+|---|---|
+| small | $\beta_2$ |
+| medium | $\beta_2 + \beta_5$ |
+| large | $\beta_2 + \beta_6$ |
+
+ב-R, `output_tokens * model` הוא קיצור של `output_tokens + model + output_tokens:model`.
+
+```{r}
+#| label: fit4
+#| output-location: slide
+fit4 <- lm(latency ~ input_k + output_tokens * model, data = llm)
+summary(fit4)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+```{r}
+#| label: ms-per-token
+#| include: false
+b <- coef(fit4)
+ms_tok <- round(1000 * c(small  = b[["output_tokens"]],
+                         medium = b[["output_tokens"]] + b[["output_tokens:modelmedium"]],
+                         large  = b[["output_tokens"]] + b[["output_tokens:modellarge"]]), 1)
+```
+
+- **זמן לכל טוקן בתשובה:** `r ms_tok[["small"]]` מילישניות במודל השפה הקטן, `r ms_tok[["medium"]]` בבינוני ו-`r ms_tok[["large"]]` בגדול (האמת בסימולציה: 10, 18 ו-30)
+- **`input_k`** מובהק עכשיו: `r round(b[["input_k"]], 2)` שניות לכל אלף טוקנים בקלט. במודלים הקודמים הוא "הוסתר" בגלל שגיאה גדולה ($\hat\sigma = 3.6$). עכשיו $\hat\sigma = `r round(sigma(fit4), 2)`$
+- **`modelmedium`, `modellarge`** לא מובהקים, אבל **לא מוחקים אותם**. כשיש אינטראקציה, הם ההפרש בין מודלי השפה כשאורך התשובה **אפס**, ולא "ההשפעה של גודל מודל השפה"
+- **כלל ההיררכיה:** אם אינטראקציה נמצאת במודל, משאירים בו גם את המשתנים שמרכיבים אותה
+
+```{r}
+#| label: partial-f-interaction
+anova(fit3, fit4)
+```
+
+# בדיקת ההנחות ([Diagnostics]{.en})
+
+## שאריות מול ערכים חזויים
+
+```{r}
+#| label: resid-plot
+#| output-location: slide
+#| fig-height: 4.2
+bind_rows(`בלי אינטראקציה (fit3)` = augment(fit3),
+          `עם אינטראקציה (fit4)`  = augment(fit4), .id = "fit") |>
+  ggplot(aes(.fitted, .resid, colour = model)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_point(alpha = 0.6) +
+  facet_wrap(~ fit, scales = "free_y") +
+  scale_colour_manual(values = model_cols) +
+  labs(title = "השאריות חושפות את מה שהרגרסיה פספסה",
+       subtitle = "משמאל: דפוס ברור לפי גודל מודל השפה · מימין: ענן אקראי סביב אפס",
+       x = "Fitted value (s)", y = "Residual (s)", colour = NULL)
+```
+
+## מה מחפשים בגרף השאריות {.smaller}
+
+| מה רואים | מה זה אומר | מה עושים |
+|---|---|---|
+| ענן אקראי סביב אפס | ההנחות סבירות | |
+| עקומה (קשת) | הקשר לא לינארי | מוסיפים $x^2$, טרנספורמציה ל-$x$ |
+| משפך: הפיזור גדל עם $\hat y$ | השונות לא קבועה | טרנספורמציה ל-$Y$ (למשל $\log Y$) |
+| קבוצות עם דפוסים שונים | חסר משתנה או אינטראקציה | מוסיפים אותם למודל |
+| נקודה בודדת רחוקה | ערך חריג | בודקים אותו. לא מוחקים אוטומטית |
+
+**ועוד שתי בדיקות:**
+
+- **נורמליות:** גרף [Q-Q]{.en} של השאריות (`stat_qq()`). עם מדגם גדול, סטיות קטנות לא מזיקות למבחנים
+- **אי-תלות:** אם הנתונים נאספו לאורך זמן, משרטטים את השאריות לפי סדר האיסוף
+
+## שאריות מול התפלגות נורמלית
+
+```{r}
+#| label: qq-plot
+#| fig-height: 3.6
+ggplot(augment(fit4), aes(sample = .std.resid)) +
+  geom_abline(colour = nanas_pal[["grey"]], linetype = "dashed") +
+  stat_qq(colour = nanas_pal[["primary"]]) +
+  labs(title = "השאריות קרובות לנורמליות",
+       subtitle = "שאריות מתוקננות של fit4 מול הכמויות של N(0,1)",
+       x = "Theoretical quantile", y = "Standardised residual")
+```
+
+## מבחן [Kolmogorov–Smirnov]{.en} לשאריות {.smaller}
+
+גרף Q-Q הוא בדיקה בעין. אפשר גם לבדוק את הנורמליות במבחן, עם מבחן KS מההרצאה על שיטות א-פרמטריות:
+
+$$
+H_0: \text{השאריות המתוקננות מתפלגות } N(0, 1) \qquad D = \max_x \left| F_n(x) - \Phi(x) \right|
+$$
+
+```{r}
+#| label: ks-resid
+ks.test(rstandard(fit4), "pnorm")
+```
+
+- $D = `r round(ks.test(rstandard(fit4), "pnorm")$statistic, 3)` < `r round(1.36 / sqrt(nrow(llm)), 3)` \approx 1.36/\sqrt{`r nrow(llm)`}$, ולכן **לא דוחים** את $H_0$. אין עדות לסטייה מנורמליות
+- **הסתייגות:** השאריות מחושבות מהמקדמים שאמדנו, ולכן ה-p-value רק בקירוב (כמו ב-KS עם פרמטרים אמודים). מבחן ייעודי לנורמליות הוא `shapiro.test()`
+- עם מדגם גדול מאוד, KS ידחה גם סטייה זניחה. עם מדגם קטן, הוא לא יזהה גם סטייה גדולה. לכן מסתכלים **גם** על הגרף
+
+## מולטיקולינאריות ([Multicollinearity]{.en}) {.smaller}
+
+מספר המסמכים מ-RAG קובע כמעט לגמרי את מספר הטוקנים בקלט: המתאם ביניהם הוא `r round(cor(llm$rag_docs, llm$input_k), 2)`. מה קורה כשמכניסים את שניהם?
+
+```{r}
+#| label: collinearity
+fit5 <- lm(latency ~ input_k + rag_docs + output_tokens * model, data = llm)
+rbind(fit4 = coef(summary(fit4))["input_k", 1:2],
+      fit5 = coef(summary(fit5))["input_k", 1:2])
+```
+
+- שגיאת התקן של `input_k` גדלה פי `r round(coef(summary(fit5))["input_k", 2] / coef(summary(fit4))["input_k", 2], 1)`. הרגרסיה לא יכולה להפריד בין שני משתנים שזזים יחד
+- המקדמים "לא יציבים": שינוי קטן בנתונים מזיז אותם הרבה. **החיזוי** כמעט לא נפגע. **הפרשנות** נפגעת
+
+**מדד VIF** ([Variance Inflation Factor]{.en}): $R_j^2$ הוא ה-$R^2$ של רגרסיה של $x_j$ על כל שאר המשתנים המסבירים.
+
+$$
+VIF_j = \frac{1}{1 - R_j^2}
+$$
+
+```{r}
+#| label: vif
+r2_input <- summary(lm(input_k ~ rag_docs + output_tokens * model, data = llm))$r.squared
+1 / (1 - r2_input)    # VIF of input_k. Rule of thumb: above 5-10 is a problem
+```
+
+::: {.content-hidden when-format="revealjs"}
+ה-VIF הוא בדיוק הפקטור שבו השונות של $\hat\beta_j$ גדלה, לעומת מצב שבו $x_j$ לא מתואם עם שאר המשתנים. החבילה `car` מחשבת אותו לכל המשתנים בבת אחת (`car::vif()`). כאן חישבנו אותו ידנית כדי לראות מאיפה הוא מגיע. **מה עושים?** משאירים רק אחד מהמשתנים המתואמים, זה שקרוב יותר למנגנון. כאן הטוקנים בקלט הם מה שהשרת מעבד בפועל, והמסמכים משפיעים רק דרכם.
+:::
+
+# בחירת משתנים ([Variable selection]{.en})
+
+## שלוש גישות {.smaller}
+
+- **קדימה ([Forward]{.en}):** מתחילים ממודל בלי משתנים. בכל צעד מוסיפים את המשתנה שמשפר את הקריטריון הכי הרבה. עוצרים כשאף הוספה לא משפרת
+- **אחורה ([Backward]{.en}):** מתחילים מכל המשתנים. בכל צעד מוציאים את המשתנה שתורם הכי מעט, כל עוד ההוצאה לא פוגעת בקריטריון
+- **בצעדים ([Stepwise]{.en}):** כמו קדימה, אבל אחרי כל הוספה בודקים אם כדאי להוציא משתנה שכבר נכנס
+
+**קריטריונים נפוצים:** $R^2_{adj}$, ה-p-value של מבחן F חלקי, או [AIC]{.en} (מדד שמאזן בין טיב ההתאמה למספר הפרמטרים. קטן יותר = טוב יותר)
+
+```{r}
+#| label: step
+fit_all  <- lm(latency ~ input_k + rag_docs + hour + output_tokens * model, data = llm)
+fit_step <- step(fit_all, direction = "both", trace = 0)   # stepwise by AIC
+formula(fit_step)
+```
+
+## מה יכול להשתבש בבחירה אוטומטית {.smaller}
+
+```{r}
+#| label: step-hour
+coef(summary(fit_step))["hour", ]
+```
+
+- `hour` **נשאר** במודל, אף שבסימולציה לשעה אין שום השפעה על זמן התגובה. ה-p-value שלו אפילו קרוב ל-0.05
+- כשבודקים הרבה משתנים, חלקם ייראו מועילים במקרה. האלגוריתם בוחר בדיוק אותם
+- **ה-p-values אחרי בחירה אופטימיים מדי.** המודל נבחר על סמך אותם נתונים שעליהם הוא נבדק
+- **עדיף:** לבנות את המודל מתוך הבנה של המנגנון, ולבדוק אותו על נתונים שלא השתתפו בבנייתו. בפועל מחלקים את הנתונים לשני חלקים: **סט אימון** ([train]{.en}) שעליו בוחרים ואומדים את המודל, ו**סט בדיקה** ([test]{.en}) שעליו בודקים את החיזוי. בקורס בלמידת מכונה תלמדו על כך יותר
+
+# חיזוי ([Prediction]{.en})
+
+## רווח סמך מול רווח חיזוי {.smaller}
+
+לנקודה חדשה $\mathbf{x}_0 = (1, x_{01}, \dots, x_{0k})'$, החיזוי הוא $\hat y_0 = \mathbf{x}_0'\hat{\boldsymbol\beta}$. יש שתי שאלות שונות:
+
+- **רווח סמך** ([confidence interval]{.en}): איפה **התוחלת** $E(Y \mid \mathbf{x}_0)$, זמן התגובה הממוצע של כל הקריאות האלה?
+- **רווח חיזוי** ([prediction interval]{.en}): איפה תיפול **קריאה בודדת** חדשה?
+
+$$
+\text{CI:}\;\; \hat y_0 \pm t_{1-\alpha/2,\, n-k-1}\sqrt{\hat\sigma^2\, \mathbf{x}_0'(X'X)^{-1}\mathbf{x}_0}
+\qquad
+\text{PI:}\;\; \hat y_0 \pm t_{1-\alpha/2,\, n-k-1}\sqrt{\hat\sigma^2 \left(1 + \mathbf{x}_0'(X'X)^{-1}\mathbf{x}_0\right)}
+$$
+
+ה-1 הנוסף ברווח החיזוי הוא השונות של התצפית החדשה עצמה. גם עם אינסוף נתונים הוא לא נעלם.
+
+ברגרסיה פשוטה, $\mathbf{x}_0'(X'X)^{-1}\mathbf{x}_0 = \dfrac{1}{n} + \dfrac{(x_0 - \bar x)^2}{S_{xx}}$: הרווחים צרים ביותר ב-$\bar x$ ומתרחבים ככל שמתרחקים ממנו.
+
+## חזרה לשאלה: כמה זמן תיקח הקריאה?
+
+2,000 טוקנים בקלט, 500 בפלט, מודל השפה הגדול:
+
+```{r}
+#| label: predict
+new_call <- tibble(input_k = 2, output_tokens = 500, model = "large")
+rbind(confidence = predict(fit4, new_call, interval = "confidence")[1, ],
+      prediction = predict(fit4, new_call, interval = "prediction")[1, ])
+```
+
+- **בממוצע**, קריאות כאלה לוקחות בין `r round(predict(fit4, new_call, interval = "confidence")[2], 1)` ל-`r round(predict(fit4, new_call, interval = "confidence")[3], 1)` שניות
+- **קריאה בודדת** תיקח, ב-95% מהמקרים, בין `r round(predict(fit4, new_call, interval = "prediction")[2], 1)` ל-`r round(predict(fit4, new_call, interval = "prediction")[3], 1)` שניות. זה המספר שרלוונטי להתחייבות לזמן תגובה ([SLA]{.en})
+
+::: {.content-hidden when-format="revealjs"}
+**החישוב הידני** של רווח הסמך, עם המטריצה $X$ של `fit4`:
+
+```{r}
+#| label: predict-by-hand
+X4 <- model.matrix(fit4)
+x0 <- model.matrix(~ input_k + output_tokens * model,
+                   data = mutate(new_call, model = factor(model, levels(llm$model))))[1, ]
+h0 <- drop(t(x0) %*% solve(t(X4) %*% X4) %*% x0)        # x0' (X'X)^-1 x0
+y0 <- sum(x0 * coef(fit4))
+t_crit <- qt(0.975, df = fit4$df.residual)
+c(fit = y0, h0 = h0,
+  ci_half = t_crit * sigma(fit4) * sqrt(h0),
+  pi_half = t_crit * sigma(fit4) * sqrt(1 + h0))
+```
+
+$h_0$ קטן מאוד (יש 250 תצפיות, והנקודה לא רחוקה מהן), ולכן רווח החיזוי נקבע כמעט כולו על ידי $\hat\sigma$.
+:::
+
+## איך זה נראה
+
+```{r}
+#| label: ci-pi-plot
+#| output-location: slide
+#| fig-height: 4.2
+grid_cpu <- tibble(load = seq(8, 19, by = 0.1))
+bands <- bind_cols(grid_cpu,
+                   predict(fit_cpu, grid_cpu, interval = "confidence") |> as_tibble(),
+                   predict(fit_cpu, grid_cpu, interval = "prediction") |> as_tibble() |>
+                     select(pi_lwr = lwr, pi_upr = upr))
+
+ggplot(bands, aes(load)) +
+  geom_ribbon(aes(ymin = pi_lwr, ymax = pi_upr), fill = nanas_pal[["sky"]], alpha = 0.25) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), fill = nanas_pal[["primary"]], alpha = 0.35) +
+  geom_line(aes(y = fit), colour = nanas_pal[["primary"]], linewidth = 1) +
+  geom_point(aes(load, util), data = cpu, size = 2.5) +
+  labs(title = "רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות",
+       subtitle = "דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת",
+       x = "Load (k requests / min)", y = "CPU utilisation (%)")
+```
+
+# מה יכול להשתבש
+
+## חמש מלכודות {.smaller}
+
+1. **אקסטרפולציה:** לפי מודל המעבד, ניצולת של 80% תגיע בעומס של כ-`r round((80 - coef(fit_cpu)[1]) / coef(fit_cpu)[2])` אלף בקשות בדקה. אבל מדדנו רק בין 10 ל-17. מעבדים בעומס גבוה מתנהגים אחרת (תורים, [throttling]{.en}), והמודל לא יודע על זה כלום
+2. **מתאם אינו סיבתיות:** נתוני הלוגים הם תצפיתיים. אם משתמשים בוחרים במודל השפה הגדול למשימות קשות, ייתכן שגם משהו אחר במשימות האלה מאט אותן. כדי לדעת בוודאות, צריך ניסוי (על כך בהרצאה על תכנון ניסויים)
+3. **$R^2$ גבוה אינו הוכחה:** הוא תמיד עולה כשמוסיפים משתנים. משווים מודלים לפי $R^2_{adj}$, מבחן F חלקי, או ביצועים על נתונים חדשים
+4. **מולטיקולינאריות:** מקדמים לא יציבים ושגיאות תקן גדולות, אף שהחיזוי בסדר
+5. **מודל שגוי מסתיר אפקטים:** `input_k` נראה חסר השפעה עד שהוספנו את גודל מודל השפה והאינטראקציה. **תמיד** מסתכלים על השאריות
+
+# סיכום
+
+## מה לקחת מההרצאה {.smaller}
+
+| השאלה | הכלי | ב-R |
+|---|---|---|
+| מה הקשר בין $Y$ לכל משתנה, כשהשאר קבועים? | $\hat{\boldsymbol\beta} = (X'X)^{-1}X'\mathbf{y}$ | `lm(y ~ x1 + x2)`, `summary()` |
+| האם משתנה בודד תורם? | מבחן t, $t_{n-k-1}$ | `summary()` |
+| האם המודל כולו מסביר משהו? | מבחן F, $F_{k,\,n-k-1}$ | שורה אחרונה ב-`summary()` |
+| האם קבוצת משתנים תורמת? | מבחן F חלקי, $F_{q,\,n-k-1}$ | `anova(reduced, full)` |
+| משתנה קטגורי עם $m$ רמות | $m - 1$ משתני דמה | `factor` |
+| האם השיפוע תלוי בקבוצה? | אינטראקציה | `x * group` |
+| האם ההנחות מתקיימות? | שאריות, Q-Q, VIF | `augment()`, `stat_qq()` |
+| מה צפוי לתצפית חדשה? | רווח סמך / חיזוי | `predict(interval = )` |
+
+- כל מקדם מתפרש **בהינתן שאר המשתנים במודל**. כשמשנים את המודל, משתנה גם הפרשנות
+- את המודל בונים מתוך הבנה של המנגנון. אלגוריתם בחירה הוא כלי עזר, לא תחליף
