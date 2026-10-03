@@ -30,7 +30,7 @@ Read this section before you edit anything.
 ### Repo map
 
 ```
-_quarto.yml               site config, navbar (lecture menu lives here)
+_quarto.yml               site config, navbar (lecture menu lives here), footer (last-updated date)
 index.qmd                 home page (course info, staff, times)
 lectures.qmd              lecture schedule table, links to notes + slides
 syllabus.qmd              syllabus summary
@@ -53,6 +53,10 @@ renv/, renv.lock          R package environment
 3. Add it to the `הרצאות` menu in `_quarto.yml` and fill in its row in `lectures.qmd` (links to both `.qmd` and `-slides.html`).
 4. Render locally: `quarto render lectures/NN-slug.qmd`, or `quarto preview` while writing.
 5. Commit the `.qmd` **and** the matching `_freeze/lectures/NN-slug/` folder.
+
+### Before every push to `main`
+
+Update the last-updated date in the site footer: `website.page-footer.right` in `_quarto.yml` (`עודכן לאחרונה: DD.MM.YYYY`). Set it to the push date and commit it with the rest of the change.
 
 ### Authoring conventions
 
@@ -137,7 +141,7 @@ quarto render                    # full render to _site/
 
 If you add a package, run `renv::snapshot()` and commit `renv.lock`.
 
-**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails.
+**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails. Before pushing, also update the last-updated date in the footer (`website.page-footer.right` in `_quarto.yml`).
 
 ## Licence
 
