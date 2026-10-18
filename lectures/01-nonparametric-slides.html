@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.10.19">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-10-16">
+  <meta name="dcterms.date" content="2026-10-18">
   <title>ניתוח נתונים סטטיסטי – 1. שיטות א-פרמטריות</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -219,7 +219,7 @@
 </div>
 </div>
 
-  <p class="date">2026-10-16</p>
+  <p class="date">2026-10-18</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
@@ -747,6 +747,25 @@ probability of success
 E(R^+) = \frac{n(n+1)}{4} \qquad V(R^+) = \frac{n(n+1)(2n+1)}{24}
 \]</span></p>
 </section>
+<section id="מאיפה-מגיעות-er-ו-vr" class="slide level2 smaller">
+<h2>מאיפה מגיעות <span class="math inline">\(E(R^+)\)</span> ו-<span class="math inline">\(V(R^+)\)</span>?</h2>
+<p><strong>תחת <span class="math inline">\(H_0\)</span></strong> ההתפלגות סימטרית סביב <span class="math inline">\(z\)</span>, ולכן לכל הפרש יש סיכוי <span class="math inline">\(\frac{1}{2}\)</span> להיות חיובי, בלי קשר לגודלו. אפשר לחשוב על זה כך: הדרגות <span class="math inline">\(1, 2, \dots, n\)</span> קבועות, ולכל דרגה מטילים מטבע הוגן שקובע את הסימן שלה.</p>
+<p><span class="math display">\[
+R^+ = \sum_{k=1}^{n} k \cdot I_k, \qquad I_k \sim \text{Bernoulli}\left(\tfrac{1}{2}\right) \text{ בלתי תלויים}
+\]</span></p>
+<ul>
+<li><strong>תוחלת:</strong> סכום כל הדרגות הוא <span class="math inline">\(\frac{n(n+1)}{2}\)</span>, ובממוצע חצי ממנו נופל בצד החיובי:</li>
+</ul>
+<p><span class="math display">\[
+E(R^+) = \sum_{k=1}^{n} k \cdot \tfrac{1}{2} = \frac{1}{2} \cdot \frac{n(n+1)}{2} = \frac{n(n+1)}{4}
+\]</span></p>
+<ul>
+<li><strong>שונות:</strong> <span class="math inline">\(V(I_k) = \frac{1}{4}\)</span>, והמטבעות <strong>בלתי תלויים</strong>, ולכן אין שונויות משותפות:</li>
+</ul>
+<p><span class="math display">\[
+V(R^+) = \sum_{k=1}^{n} k^2 \cdot \tfrac{1}{4} = \frac{1}{4} \cdot \frac{n(n+1)(2n+1)}{6} = \frac{n(n+1)(2n+1)}{24}
+\]</span></p>
+</section>
 <section id="חזרה-לזמני-התגובה" class="slide level2">
 <h2>חזרה לזמני התגובה</h2>
 <div class="cell" data-layout-align="center">
@@ -801,8 +820,8 @@ alternative hypothesis: true location is not equal to 200</code></pre>
 </div>
 <ul>
 <li>ב-<span class="math inline">\(\alpha = 0.1\)</span> מבחן הסימן דוחה ומבחן הדירוגים המסומנים לא</li>
-<li><strong>אם ההתפלגות סימטרית</strong>, מבחן הדירוגים המסומנים מדויק יותר והוא שקובע</li>
-<li><strong>אם אי אפשר להניח סימטריה</strong>, מבחן הסימן קובע</li>
+<li><strong>אם אפשר להניח סימטריה</strong>, שני המבחנים תקפים. מבחן הדירוגים המסומנים מנצל גם את גודל ההפרשים, ולכן בדרך כלל חזק יותר</li>
+<li><strong>אם אי אפשר להניח סימטריה</strong>, רק מבחן הסימן בודק את החציון, והוא שקובע</li>
 </ul>
 </section></section>
 <section>
@@ -1304,83 +1323,6 @@ X-squared = 31, df = 4, p-value = 3e-06</code></pre>
 <ul>
 <li>שיטות א-פרמטריות לא “חינמיות”: כשההנחות הפרמטריות <strong>כן</strong> מתקיימות, הן חלשות יותר</li>
 <li>גם להן יש הנחות (רציפות, סימטריה, אותה צורת התפלגות). צריך לבדוק אותן</li>
-</ul>
-</section></section>
-<section>
-<section id="שאלת-סיכום-ארגנטינה-במונדיאל" class="title-slide slide level1 center">
-<h1>שאלת סיכום: ארגנטינה במונדיאל</h1>
-
-</section>
-<section id="הנתונים" class="slide level2">
-<h2>הנתונים</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a>arg <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"argentina_world_cup.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(arg, <span class="fu">aes</span>(year, rank, <span class="at">colour =</span> host_in_europe)) <span class="sc">+</span></span>
-<span id="cb50-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
-<span id="cb50-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(arg, <span class="fu">is.na</span>(rank)), <span class="fu">aes</span>(<span class="at">y =</span> <span class="dv">18</span>), <span class="at">shape =</span> <span class="dv">4</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey50"</span>) <span class="sc">+</span></span>
-<span id="cb50-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>)) <span class="sc">+</span></span>
-<span id="cb50-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"accent"</span>]]),</span>
-<span id="cb50-8"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"באירופה"</span>, <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"מחוץ לאירופה"</span>)) <span class="sc">+</span></span>
-<span id="cb50-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"הדירוג של ארגנטינה במונדיאלים, 1930–2022"</span>,</span>
-<span id="cb50-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"×: לא השתתפה או לא הגיעה ל-16 הגדולות"</span>,</span>
-<span id="cb50-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Final rank"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-
-</section>
-<section id="הנתונים-output" class="slide level2 output-location-slide"><h2>הנתונים</h2><div class="cell output-location-slide" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="01-nonparametric_files/figure-html/argentina-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
-</figure>
-</div>
-</div>
-</div></section><section id="השאלות" class="slide level2 smaller">
-<h2>השאלות</h2>
-<p>א. תנו לפחות שתי סיבות לכך שאי אפשר להניח שהדירוג של ארגנטינה מתפלג נורמלית.</p>
-<p>ב. על סמך המונדיאלים <strong>עד 2018</strong>: האם אפשר לקבוע ב-<span class="math inline">\(\alpha = 0.05\)</span> שבמחצית מהמונדיאלים העתידיים ארגנטינה תעבור את רבע הגמר (כלומר תגיע לדירוג 1–4)?</p>
-<p>ג. מה ההסתברות לטעות מסוג ראשון במבחן שביצעתם בסעיף ב׳?</p>
-<p>ד. האם ארגנטינה מצליחה יותר במונדיאלים שנערכים <strong>מחוץ</strong> לאירופה? (<span class="math inline">\(\alpha = 0.05\)</span>)</p>
-<p>ה. <strong>עדכון:</strong> הוסיפו את מונדיאל 2022 (קטאר, ארגנטינה זכתה). האם המסקנה בסעיף ב׳ משתנה? מה זה מלמד אתכם?</p>
-<p>ו. <strong>ביקורת:</strong> איך טיפלנו בשנים המסומנות ב-×? האם זה הוגן?</p>
-</section>
-<section id="פתרון-סעיפים-אג" class="slide level2">
-<h2>פתרון (סעיפים א–ג)</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a>arg18 <span class="ot">&lt;-</span> arg <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">&lt;=</span> <span class="dv">2018</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rank_filled =</span> <span class="fu">coalesce</span>(rank, <span class="dv">17</span>))</span>
-<span id="cb51-2"><a aria-hidden="true" tabindex="-1"></a>n_top4 <span class="ot">&lt;-</span> <span class="fu">sum</span>(arg18<span class="sc">$</span>rank_filled <span class="sc">&lt;</span> <span class="fl">4.5</span>)</span>
-<span id="cb51-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">n =</span> <span class="fu">nrow</span>(arg18), <span class="at">r0 =</span> n_top4, <span class="at">R_crit =</span> <span class="fu">sign_critical</span>(<span class="fu">nrow</span>(arg18), <span class="fl">0.05</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     n     r0 R_crit 
-    21      5      5 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(n_top4, <span class="fu">nrow</span>(arg18))<span class="sc">$</span>p.value     <span class="co"># = alpha in (c): 2 * P(r &lt;= 5)</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0266</code></pre>
-</div>
-</div>
-<p><span class="math inline">\(r_0 = 5 \le 5 = R^*_{0.05,21}\)</span>, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: אי אפשר לקבוע שהחציון הוא 4.5. התשובה לשאלה היא <strong>לא</strong>.</p>
-<p><strong>ג.</strong> <span class="math inline">\(\alpha = 2\left(\tfrac{1}{2}\right)^{21}\sum_{i=0}^{5}\binom{21}{i} = 0.027\)</span></p>
-</section>
-<section id="פתרון-סעיפים-דו" class="slide level2 smaller">
-<h2>פתרון (סעיפים ד–ו)</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">with</span>(arg18, <span class="fu">wilcox.test</span>(rank_filled[<span class="sc">!</span>host_in_europe], rank_filled[host_in_europe],</span>
-<span id="cb55-2"><a aria-hidden="true" tabindex="-1"></a>                        <span class="at">exact =</span> <span class="cn">FALSE</span>))<span class="sc">$</span>p.value</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4773</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a aria-hidden="true" tabindex="-1"></a>arg22 <span class="ot">&lt;-</span> arg <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rank_filled =</span> <span class="fu">coalesce</span>(rank, <span class="dv">17</span>))</span>
-<span id="cb57-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="fu">sum</span>(arg22<span class="sc">$</span>rank_filled <span class="sc">&lt;</span> <span class="fl">4.5</span>), <span class="fu">nrow</span>(arg22))<span class="sc">$</span>p.value</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.05248</code></pre>
-</div>
-</div>
-<ul>
-<li><strong>ד.</strong> <span class="math inline">\(p \approx 0.48\)</span>: <strong>לא דוחים</strong>. אין ראיה לכך שארגנטינה מצליחה יותר מחוץ לאירופה</li>
-<li><strong>ה.</strong> עם 2022: <span class="math inline">\(r_0 = 6 &gt; 5 = R^*_{0.05,22}\)</span> ו-<span class="math inline">\(p = 0.052\)</span>, ולכן <strong>כבר לא דוחים</strong>. טורניר אחד הפך את המסקנה. במדגם קטן, תוצאה שנמצאת על סף המובהקות היא שבירה</li>
-<li><strong>ו.</strong> 1938, 1950 ו-1954 הן שנים שבהן ארגנטינה <strong>לא השתתפה בכלל</strong>. אם מתייחסים אליהן כאל “דירוג גרוע”, מערבבים שתי שאלות שונות. איך המסקנות משתנות אם משמיטים אותן?</li>
 </ul>
 
 
