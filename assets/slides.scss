@@ -42,3 +42,14 @@ $presentation-font-size-root: 32px;
 // Output-only slides (output-location: slide) have the whole slide to themselves,
 // so let a long model summary use it instead of scrolling inside reveal's 400px code box.
 .reveal .output-location-slide pre code { max-height: 560px; }
+
+// Boxed worked example next to the method steps: ::: {.column .example-box}
+.reveal .example-box {
+  border: 2px solid #2B59C3;
+  border-radius: 10px;
+  padding: 0.4em 0.7em;
+  margin-inline-start: 4%;
+  box-sizing: border-box;
+  background: rgba(43, 89, 195, 0.04);
+}
+.reveal .example-box table { margin-inline: auto; }
