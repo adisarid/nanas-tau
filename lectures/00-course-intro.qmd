@@ -20,6 +20,12 @@ format:
 | **אתר הקורס** | <https://adisarid.github.io/nanas-tau/> |
 | **Moodle** | [הודעות, תרגילי בית והגשות](https://moodle.tau.ac.il/course/view.php?id=571313701) |
 
+:::: {.content-visible when-format="revealjs"}
+::: notes
+**תזכורת לעצמי: לא לשכוח להפעיל את הזום.**
+:::
+::::
+
 ## למה הקורס הזה?
 
 - כמעט כל החלטה בתעשייה ובשירותים נשענת היום על נתונים, ואתם תהיו אלה שמנתחים אותם
