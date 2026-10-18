@@ -54,7 +54,7 @@ website:
         aria-label: GitHub
   page-footer:
     center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
-    right: "עודכן לאחרונה: 03.10.2026"   # update on every push to main (see README)
+    right: "עודכן לאחרונה: 18.10.2026"   # update on every push to main (see README)
 
 format:
   html:
