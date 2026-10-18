@@ -102,7 +102,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-a7be01fb2db81efab316b33e5033add4.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-99ebd0278b0d5be90c6a40018b054bfa.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -417,7 +417,30 @@ F(a) = 1 - \frac{1}{1+a} = 0.5 \;\Rightarrow\; \tilde{\mu} = 1
 </figure>
 </div>
 </div>
-</div></section><section id="מפת-דרכים" class="slide level2 smaller">
+</div></section><section id="כשהנתונים-סדורים-שאלת-סקר-בסולם-ליקרט" class="slide level2 smaller">
+<h2>כשהנתונים סדורים: שאלת סקר בסולם ליקרט</h2>
+<p>“באיזו מידה את/ה אוהב/ת סטטיסטיקה?” (150 משיבים)</p>
+<div class="columns">
+<div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-nonparametric_files/figure-html/likert-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<ul>
+<li>הסולם <strong>סדור</strong> (<span class="en">ordinal</span>): הסדר ידוע, המרחקים בין התשובות לא</li>
+<li>קידוד 1–5 וחישוב ממוצע מניחים שכל הפערים שווים</li>
+<li>הממוצע (3.2) נופל ליד “במידה בינונית”, התשובה שהכי מעט אנשים בחרו</li>
+<li>ההתפלגות בדידה, חסומה ורחוקה מנורמלית. מבחנים על החציון ועל דירוגים מתאימים כאן יותר</li>
+</ul>
+</div></div>
+</section>
+<section id="מפת-דרכים" class="slide level2 smaller">
 <h2>מפת דרכים</h2>
 <table class="caption-top">
 <colgroup>
@@ -728,15 +751,20 @@ probability of success
 </section>
 <section id="הרחבה-של-מבחן-הסימן" class="slide level2">
 <h2>הרחבה של מבחן הסימן</h2>
+<p><span class="math display">\[
+H_0: \tilde{\mu} = z \qquad H_1: \tilde{\mu} \neq z
+\]</span></p>
 <ul>
+<li><strong>הנחה:</strong> ההתפלגות רציפה וסימטרית סביב החציון <span class="math inline">\(\tilde{\mu}\)</span>. לכן ההשערות הן על מרכז הסימטריה, שהוא החציון (וגם התוחלת, אם היא קיימת)</li>
 <li>מתבסס לא רק על <strong>הסימן</strong> של ההפרשים אלא גם על <strong>גודלם</strong></li>
-<li>מתאים להתפלגויות <strong>רציפות וסימטריות</strong>, שבהן התוחלת והחציון שווים</li>
 <li>לרוב חזק יותר ממבחן הסימן</li>
 <li>אפשר להפעיל גם על הפרשים של מדגמים מזווגים</li>
 </ul>
 </section>
 <section id="שלבי-המבחן" class="slide level2 smaller">
 <h2>שלבי המבחן</h2>
+<div class="columns">
+<div class="column" style="width:54%;">
 <ol type="1">
 <li>משמיטים הפרשים ששווים ל-<span class="math inline">\(0\)</span> ומעדכנים את <span class="math inline">\(n\)</span>. מדרגים את <span class="math inline">\(|x_i - z|\)</span> בסדר עולה. במקרה של שוויון, כל אחד מקבל את ממוצע הדרגות</li>
 <li>מצמידים לכל דרגה את הסימן של ההפרש שלה</li>
@@ -746,6 +774,66 @@ probability of success
 <p><span class="math display">\[
 E(R^+) = \frac{n(n+1)}{4} \qquad V(R^+) = \frac{n(n+1)(2n+1)}{24}
 \]</span></p>
+</div><div class="column example-box" style="width:42%;">
+<p><strong>דוגמה:</strong> <span class="math inline">\(z = 200\)</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(x_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(x_i - z\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\lvert x_i - z \rvert\)</span></th>
+<th style="text-align: center;">דרגה מסומנת</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">205</td>
+<td style="text-align: center;"><span class="math inline">\(+5\)</span></td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="math inline">\(+2\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">188</td>
+<td style="text-align: center;"><span class="math inline">\(-12\)</span></td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;"><span class="math inline">\(-4.5\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">200</td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;">נשמט</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">212</td>
+<td style="text-align: center;"><span class="math inline">\(+12\)</span></td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;"><span class="math inline">\(+4.5\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">196</td>
+<td style="text-align: center;"><span class="math inline">\(-4\)</span></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span class="math inline">\(-1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">230</td>
+<td style="text-align: center;"><span class="math inline">\(+30\)</span></td>
+<td style="text-align: center;">30</td>
+<td style="text-align: center;"><span class="math inline">\(+6\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">191</td>
+<td style="text-align: center;"><span class="math inline">\(-9\)</span></td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;"><span class="math inline">\(-3\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(n = 6,\;\; R^+ = 12.5,\;\; R^- = 8.5\)</span></p>
+<p><span class="math inline">\(R = \min(R^+, R^-) = 8.5\)</span></p>
+<p>בדיקה: <span class="math inline">\(R^+ + R^- = \frac{6 \cdot 7}{2} = 21\)</span></p>
+</div></div>
 </section>
 <section id="מאיפה-מגיעות-er-ו-vr" class="slide level2 smaller">
 <h2>מאיפה מגיעות <span class="math inline">\(E(R^+)\)</span> ו-<span class="math inline">\(V(R^+)\)</span>?</h2>
@@ -841,6 +929,19 @@ alternative hypothesis: true location is not equal to 200</code></pre>
 E(T) = \frac{m(n+m+1)}{2} \qquad V(T) = \frac{mn(n+m+1)}{12}
 \]</span></p>
 <p>דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(\left|\frac{T - E(T)}{\sigma_T}\right| &gt; Z_{1-\alpha/2}\)</span></p>
+<aside class="notes">
+<p><strong>הנחת הזזה:</strong> אם ההתפלגויות זהות בצורתן ונבדלות רק בהזזה, <span class="math inline">\(F_1(x) = F_2(x - \Delta)\)</span>, ההשערות הן על הפרש החציונים: <span class="math inline">\(H_0: \Delta = 0\)</span> מול <span class="math inline">\(H_1: \Delta \neq 0\)</span>. בלי ההנחה הזו, המבחן לא בודק חציונים.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="מאיפה-מגיעה-et" class="slide level2 smaller">
 <h2>מאיפה מגיעה <span class="math inline">\(E(T)\)</span>?</h2>
@@ -1108,12 +1209,12 @@ H_0: F_1(x) = F_2(x) \qquad D = \max_x \left| F_{1,n}(x) - F_{2,m}(x) \right|
 </div>
 </div>
 <ul>
-<li><strong>סכום הדירוגים</strong> רגיש בעיקר להזזה של המיקום. החציונים כמעט שווים, ולכן הוא לא מוצא כלום</li>
+<li><strong>סכום הדירוגים</strong> שואל אם תצפית מגרסה אחת נוטה להיות <strong>גדולה</strong> מתצפית מהגרסה השנייה. ב-v2 יש גם זמנים קצרים מאוד וגם ארוכים מאוד: הדרגות שלו מתפזרות לשני הקצוות, מתקזזות, וסכום הדרגות נשאר קרוב לתוחלת שלו</li>
 <li><strong>KS</strong> רגיש לכל הבדל בין ההתפלגויות: מיקום, פיזור או צורה. כאן הוא <strong>דוחה</strong> ב-<span class="math inline">\(\alpha = 0.05\)</span></li>
 <li>בשירות אמיתי, הזנב (האחוזון ה-95 או ה-99) הוא מה שהמשתמשים מרגישים. לכן כדאי לבדוק יותר מהחציון</li>
 </ul>
 <aside class="notes">
-<p>שאלה לכיתה: למה סכום הדירוגים “עיוור” כאן? כי ב-v2 יש גם ערכים קטנים מאוד וגם גדולים מאוד, והדרגות שלהם מתקזזות בסכום.</p>
+<p>לפני שמראים את הבולט הראשון, אפשר לשאול את הכיתה: למה סכום הדירוגים “עיוור” כאן?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1202,9 +1303,26 @@ X-squared = 31, df = 4, p-value = 3e-06</code></pre>
 <h1>מתאם על דירוגים (<span class="en">Rank correlation</span>)</h1>
 
 </section>
+<section id="תזכורת-מתאם-פירסון-pearson-correlation" class="slide level2 smaller">
+<h2>תזכורת: מתאם פירסון (<span class="en">Pearson correlation</span>)</h2>
+<p><span class="math display">\[
+r = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2 \, \sum_{i=1}^{n} (y_i - \bar{y})^2}}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(-1 \le r \le 1\)</span>. <strong>הסימן</strong> הוא כיוון הקשר, ו<strong>הגודל</strong> הוא עד כמה הנקודות קרובות ל<strong>קו ישר</strong></li>
+<li><span class="math inline">\(r = 0\)</span> פירושו “אין קשר <strong>לינארי</strong>”, לא “אין קשר”. ומתאם אינו סיבתיות</li>
+<li><strong>למה זה חשוב:</strong> זו הדרך המהירה ביותר לכמת קשר בין שני משתנים, והיא הבסיס לרגרסיה (ברגרסיה פשוטה, <span class="math inline">\(R^2 = r^2\)</span>)</li>
+<li><strong>שימוש יומיומי:</strong>
+<ul>
+<li>האם ציון אוטומטי של מודל שפה (<span class="en">LLM-as-judge</span>) מסכים עם הציונים של בודקים אנושיים?</li>
+<li>האם זמן הטעינה של אתר קשור לשיעור הנטישה?</li>
+<li>מטריצת מתאמים כצעד ראשון בכל ניתוח: אילו משתנים “זזים יחד”?</li>
+</ul></li>
+</ul>
+</section>
 <section id="למה-לא-פירסון" class="slide level2">
 <h2>למה לא פירסון?</h2>
-<p>מתאם פירסון (<span class="math inline">\(r\)</span>) מודד את חוזק הקשר <strong>הלינארי</strong> בין שני משתנים, אבל:</p>
+<p>כפי שראינו, פירסון מודד את חוזק הקשר <strong>הלינארי</strong>, אבל:</p>
 <ul>
 <li>הוא רגיש מאוד לערכים חריגים</li>
 <li>הוא לא מתאים למשתנים <strong>אורדינליים</strong> (סולמות סדר, כמו “מרוצה מאוד” עד “לא מרוצה”)</li>
@@ -1228,6 +1346,203 @@ X-squared = 31, df = 4, p-value = 3e-06</code></pre>
 <li>יש כמה גרסאות לטיפול בשוויון (ב-R: <code>tau-b</code>)</li>
 </ul>
 </section>
+<section id="דוגמה-מתאם-ספירמן-ביד" class="slide level2 smaller">
+<h2>דוגמה: מתאם ספירמן ביד</h2>
+<p>שש תשובות של צ’אטבוט קיבלו ציון מבודק אנושי (<span class="math inline">\(X\)</span>) ומשופט אוטומטי (<span class="en">LLM-as-judge</span>, <span class="math inline">\(Y\)</span>). <strong>האם השופט מדרג את התשובות באותו סדר כמו הבודק?</strong></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;">תשובה</th>
+<th style="text-align: center;"><span class="math inline">\(X\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(R_X\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(R_Y\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(d_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(d_i^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">3.1</td>
+<td style="text-align: center;">52</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><span class="math inline">\(-1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">47</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><span class="math inline">\(+1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">5.2</td>
+<td style="text-align: center;">61</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><span class="math inline">\(-1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">6.8</td>
+<td style="text-align: center;">58</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><span class="math inline">\(+1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">E</td>
+<td style="text-align: center;">7.4</td>
+<td style="text-align: center;">74</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;"><span class="math inline">\(-1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">8.9</td>
+<td style="text-align: center;">70</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><span class="math inline">\(+1\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>סה״כ</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><strong>6</strong></td>
+</tr>
+</tbody>
+</table>
+</div><div class="column example-box" style="width:46%;">
+<ol type="1">
+<li>מדרגים את <span class="math inline">\(X\)</span> לחוד ואת <span class="math inline">\(Y\)</span> לחוד</li>
+<li>לכל תשובה מחשבים את הפער בין שתי הדרגות: <span class="math inline">\(d_i = R_{X,i} - R_{Y,i}\)</span></li>
+<li>מציבים בנוסחה (כשאין שוויונות):</li>
+</ol>
+<p><span class="math display">\[
+\rho_S = 1 - \frac{6 \sum d_i^2}{n(n^2 - 1)}
+\]</span></p>
+<p><span class="math display">\[
+\rho_S = 1 - \frac{6 \cdot 6}{6 \cdot 35} = 0.83
+\]</span></p>
+<p>אם השופט והבודק מדרגים בדיוק באותו סדר, כל <span class="math inline">\(d_i = 0\)</span> ו-<span class="math inline">\(\rho_S = 1\)</span></p>
+</div></div>
+</section>
+<section id="דוגמה-קנדל-ביד" class="slide level2 smaller">
+<h2>דוגמה: קנדל ביד</h2>
+<p>אותן שש תשובות. עוברים על כל <span class="math inline">\(\binom{6}{2} = 15\)</span> הזוגות. בכל זוג בודקים: האם השופט מסכים עם הבודק <strong>איזו מהשתיים טובה יותר</strong>?</p>
+<div class="columns">
+<div class="column" style="width:52%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">C</th>
+<th style="text-align: center;">D</th>
+<th style="text-align: center;">E</th>
+<th style="text-align: center;">F</th>
+<th style="text-align: center;"><span class="math inline">\(+\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(-\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>A</strong></td>
+<td style="text-align: center;"><span class="math inline">\(-\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>B</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>C</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(-\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>D</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(+\)</span></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>E</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(-\)</span></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>סה״כ</strong></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><strong>12</strong></td>
+<td style="text-align: center;"><strong>3</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>למשל, A מול B:</strong> הבודק העדיף את B, אבל השופט העדיף את A. הם לא מסכימים, ולכן הזוג <strong>בחוסר התאמה</strong>:</p>
+<p><span class="math display">\[
+X_B = 4.5 &gt; 3.1 = X_A \qquad Y_A = 52 &gt; 47 = Y_B
+\]</span></p>
+</div><div class="column example-box" style="width:44%;">
+<ul>
+<li><span class="math inline">\(+\)</span>: זוג <strong>בהתאמה</strong>, השופט והבודק מסכימים</li>
+<li><span class="math inline">\(-\)</span>: זוג <strong>בחוסר התאמה</strong>, השופט הפך את הסדר</li>
+</ul>
+<p><span class="math display">\[
+n_c = 12, \qquad n_d = 3
+\]</span></p>
+<p><span class="math display">\[
+\tau = \frac{n_c - n_d}{n_0} = \frac{12 - 3}{15} = 0.6
+\]</span></p>
+<p>פרשנות: <span class="math inline">\(\frac{1 + \tau}{2} = 0.8\)</span>, כלומר השופט והבודק מסכימים על הסדר ב-80% מהזוגות</p>
+</div></div>
+</section>
 <section id="דוגמה-קשר-מונוטוני-וערך-חריג-אחד" class="slide level2">
 <h2>דוגמה: קשר מונוטוני וערך חריג אחד</h2>
 <div class="cell" data-layout-align="center">
@@ -1250,7 +1565,8 @@ X-squared = 31, df = 4, p-value = 3e-06</code></pre>
 <span id="cb49-17"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"x"</span>, <span class="at">y =</span> <span class="st">"y"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
-</section><section id="דוגמה-קשר-מונוטוני-וערך-חריג-אחד-output" class="slide level2 output-location-slide"><h2>דוגמה: קשר מונוטוני וערך חריג אחד</h2><div class="cell output-location-slide" data-layout-align="center">
+</section>
+<section id="דוגמה-קשר-מונוטוני-וערך-חריג-אחד-output" class="slide level2 output-location-slide"><h2>דוגמה: קשר מונוטוני וערך חריג אחד</h2><div class="cell output-location-slide" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1258,7 +1574,67 @@ X-squared = 31, df = 4, p-value = 3e-06</code></pre>
 </figure>
 </div>
 </div>
-</div></section></section>
+</div></section><section id="דוגמה-סטטיסטיקה-מול-ספרות" class="slide level2 smaller">
+<h2>דוגמה: סטטיסטיקה מול ספרות</h2>
+<p>אותם 150 משיבים מסקר הליקרט נשאלו גם <strong>“באיזו מידה את/ה אוהב/ת ספרות?”</strong>. <strong>האם מי שאוהב סטטיסטיקה נוטה לאהוב ספרות פחות?</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed cross-tab (no RNG). Rows: liking statistics (same margins as the earlier Likert slide)</span></span>
+<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>( <span class="dv">2</span>,  <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">16</span>,</span>
+<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span>,  <span class="dv">3</span>, <span class="dv">6</span>,  <span class="dv">8</span>,  <span class="dv">6</span>,</span>
+<span id="cb50-4"><a aria-hidden="true" tabindex="-1"></a>                    <span class="dv">2</span>,  <span class="dv">3</span>, <span class="dv">3</span>,  <span class="dv">2</span>,  <span class="dv">2</span>,</span>
+<span id="cb50-5"><a aria-hidden="true" tabindex="-1"></a>                    <span class="dv">7</span>,  <span class="dv">8</span>, <span class="dv">7</span>,  <span class="dv">5</span>,  <span class="dv">3</span>,</span>
+<span id="cb50-6"><a aria-hidden="true" tabindex="-1"></a>                   <span class="dv">18</span>, <span class="dv">13</span>, <span class="dv">8</span>,  <span class="dv">5</span>,  <span class="dv">3</span>), <span class="at">nrow =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb50-7"><a aria-hidden="true" tabindex="-1"></a>survey <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">stats =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">literature =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb50-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">as.vector</span>(<span class="fu">t</span>(counts))) <span class="sc">|&gt;</span></span>
+<span id="cb50-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">uncount</span>(n)</span>
+<span id="cb50-10"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a aria-hidden="true" tabindex="-1"></a>survey <span class="sc">|&gt;</span></span>
+<span id="cb50-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(stats, literature) <span class="sc">|&gt;</span></span>
+<span id="cb50-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(stats, literature, <span class="at">fill =</span> n)) <span class="sc">+</span></span>
+<span id="cb50-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb50-15"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> n)) <span class="sc">+</span></span>
+<span id="cb50-16"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">labels =</span> likert_levels) <span class="sc">+</span></span>
+<span id="cb50-17"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">labels =</span> likert_levels) <span class="sc">+</span></span>
+<span id="cb50-18"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb50-19"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"מי שאוהב סטטיסטיקה נוטה לאהוב ספרות פחות"</span>,</span>
+<span id="cb50-20"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"מספר המשיבים בכל צירוף תשובות"</span>,</span>
+<span id="cb50-21"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Liking statistics"</span>, <span class="at">y =</span> <span class="st">"Liking literature"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="דוגמה-סטטיסטיקה-מול-ספרות-output" class="slide level2 smaller output-location-slide"><h2>דוגמה: סטטיסטיקה מול ספרות</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="01-nonparametric_files/figure-html/likert-corr-data-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="סטטיסטיקה-מול-ספרות-המבחן-ב-r" class="slide level2 smaller">
+<h2>סטטיסטיקה מול ספרות: המבחן ב-R</h2>
+<p><span class="math display">\[
+H_0: \tau = 0 \qquad H_1: \tau \neq 0
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(survey<span class="sc">$</span>stats, survey<span class="sc">$</span>literature, <span class="at">method =</span> <span class="st">"kendall"</span>, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kendall's rank correlation tau
+
+data:  survey$stats and survey$literature
+z = -6.2, p-value = 6e-10
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+    tau 
+-0.4102 </code></pre>
+</div>
+</div>
+<ul>
+<li><code>tau</code> שלילי: בזוג אקראי של משיבים, מי שאוהב סטטיסטיקה יותר נוטה לאהוב ספרות <strong>פחות</strong></li>
+<li><code>p-value</code> קטן מאוד, ולכן <strong>דוחים</strong> <span class="math inline">\(H_0\)</span>: יש קשר מונוטוני שלילי</li>
+<li><code>exact = FALSE</code>: יש הרבה מאוד שוויונות (רק 5 ערכים לכל משתנה), ולכן R משתמש בקירוב הנורמלי עם תיקון לתיקו (<code>tau-b</code>)</li>
+</ul>
+</section></section>
 <section>
 <section id="סיכום" class="title-slide slide level1 center">
 <h1>סיכום</h1>
