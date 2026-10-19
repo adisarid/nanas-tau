@@ -13,6 +13,7 @@ Copy to lectures/NN-slug.qmd, then:
   1. set title / subtitle / output-file (NN-slug-slides.html)
   2. add the lecture to the navbar menu in _quarto.yml and to lectures.qmd
   3. quarto render lectures/NN-slug.qmd  (locally — CI never runs R)
+  4. scripts/slides-pdf.sh lectures/NN-slug.qmd  (printable PDF; add its link in lectures.qmd)
 Conventions (see README):
   - every `##` is a slide; it is also a section on the notes page
   - long explanations go in .content-hidden when-format="revealjs" blocks

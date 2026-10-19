@@ -4,6 +4,8 @@ project:
   render:
     - "*.qmd"
     - "lectures/*.qmd"
+  resources:
+    - "lectures/pdf/*.pdf"   # printable slide PDFs, made locally by scripts/slides-pdf.sh
 
 execute:
   freeze: auto        # code runs locally only; CI reuses _freeze/
@@ -54,7 +56,7 @@ website:
         aria-label: GitHub
   page-footer:
     center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
-    right: "עודכן לאחרונה: 18.10.2026"   # update on every push to main (see README)
+    right: "עודכן לאחרונה: 19.10.2026"   # update on every push to main (see README)
 
 format:
   html:

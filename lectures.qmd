@@ -3,14 +3,14 @@ title: "הרצאות"
 toc: false
 ---
 
-לכל הרצאה יש **דף סיכום** לקריאה ו**מצגת** להצגה בכיתה. הקישור למצגת מופיע בצד הדף, תחת "פורמטים נוספים". לוח הזמנים עדיין עשוי להשתנות.
+לכל הרצאה יש **דף סיכום** לקריאה ו**מצגת** להצגה בכיתה. הקישור למצגת מופיע גם בצד הדף, תחת "פורמטים נוספים". לכל מצגת יש גם **גרסת PDF** להדפסה, שקף בכל עמוד. לוח הזמנים עדיין עשוי להשתנות.
 
 | # | נושא | חומרים |
 |---|---|---|
-| 0 | פתיחה: על הקורס | [סיכום](lectures/00-course-intro.qmd) · [מצגת](lectures/00-course-intro-slides.html) |
-| 1 | שיטות א-פרמטריות | [סיכום](lectures/01-nonparametric.qmd) · [מצגת](lectures/01-nonparametric-slides.html) |
+| 0 | פתיחה: על הקורס | [סיכום](lectures/00-course-intro.qmd) · [מצגת](lectures/00-course-intro-slides.html) · [PDF](lectures/pdf/00-course-intro-slides.pdf) |
+| 1 | שיטות א-פרמטריות | [סיכום](lectures/01-nonparametric.qmd) · [מצגת](lectures/01-nonparametric-slides.html) · [PDF](lectures/pdf/01-nonparametric-slides.pdf) |
 | 2 | **מבוטלת** (כנס בחו״ל). מועד ההשלמה יפורסם ב-Moodle | |
-| 3 | רגרסיה לינארית מרובה | [סיכום](lectures/03-multiple-regression.qmd) · [מצגת](lectures/03-multiple-regression-slides.html) |
+| 3 | רגרסיה לינארית מרובה | [סיכום](lectures/03-multiple-regression.qmd) · [מצגת](lectures/03-multiple-regression-slides.html) · [PDF](lectures/pdf/03-multiple-regression-slides.pdf) |
 | 4 | ניתוח שונות חד-כיווני (One-way ANOVA) | |
 | 5 | ניגודים והשוואות מרובות | |
 | 6 | ניתוח שונות רב-כיווני (Two-way ANOVA) | |

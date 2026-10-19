@@ -37,10 +37,12 @@ syllabus.qmd              syllabus summary
 lectures/
   _metadata.yml           shared html + revealjs formats for every lecture
   NN-slug.qmd             one lecture → NN-slug.html + NN-slug-slides.html
+  pdf/NN-slug-slides.pdf  printable slide PDF. COMMITTED, made by scripts/slides-pdf.sh
 R/setup.R                 shared ggplot theme (theme_nanas), palette (nanas_pal), seed
 assets/styles.scss        site theme (Heebo font, RTL fixes for code/figures)
 assets/slides.scss        slide theme (RTL, title slide)
 _templates/               lecture-template.qmd. Not rendered (leading underscore)
+scripts/slides-pdf.sh     exports rendered decks to lectures/pdf/ (decktape + local Chrome)
 data/                     course datasets + data/README.md (source & licence per file)
 _freeze/                  COMMITTED computation cache. CI depends on it
 renv/, renv.lock          R package environment
@@ -50,9 +52,10 @@ renv/, renv.lock          R package environment
 
 1. `cp _templates/lecture-template.qmd lectures/NN-slug.qmd` (two-digit NN, English kebab-case slug).
 2. Set `title`, `subtitle` and `format.revealjs.output-file: NN-slug-slides.html`.
-3. Add it to the `הרצאות` menu in `_quarto.yml` and fill in its row in `lectures.qmd` (links to both `.qmd` and `-slides.html`).
+3. Add it to the `הרצאות` menu in `_quarto.yml` and fill in its row in `lectures.qmd` (links to the `.qmd`, the `-slides.html` and `pdf/NN-slug-slides.pdf`).
 4. Render locally: `quarto render lectures/NN-slug.qmd`, or `quarto preview` while writing.
-5. Commit the `.qmd` **and** the matching `_freeze/lectures/NN-slug/` folder.
+5. Export the printable PDF: `scripts/slides-pdf.sh lectures/NN-slug.qmd` (needs Chrome and Node; it reads `_site/`, so render first). Re-run it whenever the slides change.
+6. Commit the `.qmd`, the matching `_freeze/lectures/NN-slug/` folder **and** `lectures/pdf/NN-slug-slides.pdf`.
 
 ### Before every push to `main`
 
@@ -141,7 +144,7 @@ quarto render                    # full render to _site/
 
 If you add a package, run `renv::snapshot()` and commit `renv.lock`.
 
-**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails. Before pushing, also update the last-updated date in the footer (`website.page-footer.right` in `_quarto.yml`).
+**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails. CI also has no browser, so the slide PDFs in `lectures/pdf/` are regenerated locally (`scripts/slides-pdf.sh`) and committed; if you forget, the site serves a stale PDF without any error. Before pushing, also update the last-updated date in the footer (`website.page-footer.right` in `_quarto.yml`).
 
 ## Licence
 

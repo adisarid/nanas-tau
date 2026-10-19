@@ -18,6 +18,11 @@ pre, code, .sourceCode, .cell-output, .cell-output pre {
   unicode-bidi: isolate;
 }
 
+// MathJax lays glyphs out as inline boxes, so under the RTL page they come out reversed
+// (E(R^+) reads as (+R)E). Force math LTR; isolate keeps inline math a single bidi run.
+mjx-container, .math { direction: ltr; unicode-bidi: isolate; }
+mjx-container[display="true"] { display: block; text-align: center; }
+
 // Charts always run left-to-right (x axis 0 → right), see README "Charts".
 .cell-output-display, figure { direction: ltr; }
 figcaption { direction: rtl; text-align: center; }
