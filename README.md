@@ -59,7 +59,15 @@ renv/, renv.lock          R package environment
 
 ### Before every push to `main`
 
-Update the last-updated date in the site footer: `website.page-footer.right` in `_quarto.yml` (`עודכן לאחרונה: DD.MM.YYYY`). Set it to the push date and commit it with the rest of the change.
+Go through this checklist every time. CI only republishes what is committed: it doesn't run R and has no browser.
+
+1. **Render** what changed: `quarto render lectures/NN-slug.qmd`, or `quarto render` for everything.
+2. **Regenerate the slide PDFs** for every lecture whose slides changed: `scripts/slides-pdf.sh lectures/NN-slug.qmd`.
+   - Lectures changed since the last push: `git diff --name-only origin/main -- 'lectures/*.qmd'`.
+   - If shared slide styling or setup changed (`assets/slides.scss`, `assets/mathjax-slides.html`, `lectures/_metadata.yml`, `R/setup.R`), regenerate **all** of them: `quarto render && scripts/slides-pdf.sh`.
+   - A forgotten PDF fails silently: the site keeps serving the old one. Don't skip this step.
+3. **Update the last-updated date** in the site footer: `website.page-footer.right` in `_quarto.yml` (`עודכן לאחרונה: DD.MM.YYYY`). Set it to the push date.
+4. **Commit together:** the `.qmd`, its `_freeze/lectures/NN-slug/` folder, `lectures/pdf/NN-slug-slides.pdf` and `_quarto.yml`.
 
 ### Authoring conventions
 
@@ -144,7 +152,7 @@ quarto render                    # full render to _site/
 
 If you add a package, run `renv::snapshot()` and commit `renv.lock`.
 
-**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails. CI also has no browser, so the slide PDFs in `lectures/pdf/` are regenerated locally (`scripts/slides-pdf.sh`) and committed; if you forget, the site serves a stale PDF without any error. Before pushing, also update the last-updated date in the footer (`website.page-footer.right` in `_quarto.yml`).
+**Publishing.** Pushing to `main` triggers the GitHub Action, which republishes the site. CI does not run R, so always render locally and commit `_freeze/` together with your `.qmd` changes. If you forget, the CI render fails. CI also has no browser, so the slide PDFs in `lectures/pdf/` are regenerated locally (`scripts/slides-pdf.sh`) and committed; if you forget, the site serves a stale PDF without any error. Follow the checklist in [Before every push to `main`](#before-every-push-to-main) above.
 
 ## Licence
 
