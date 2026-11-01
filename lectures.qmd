@@ -10,6 +10,7 @@ toc: false
 | 0 | פתיחה: על הקורס | [סיכום](lectures/00-course-intro.qmd) · [מצגת](lectures/00-course-intro-slides.html) · [PDF](lectures/pdf/00-course-intro-slides.pdf) |
 | 1 | שיטות א-פרמטריות | [סיכום](lectures/01-nonparametric.qmd) · [מצגת](lectures/01-nonparametric-slides.html) · [PDF](lectures/pdf/01-nonparametric-slides.pdf) |
 | 2 | **מבוטלת** (כנס בחו״ל). מועד ההשלמה יפורסם ב-Moodle | |
+| בונוס | למה טעו מדגמי היציאה? (חצי שעה, בפתיחת הרצאה 3) | [סיכום](lectures/02-exit-polls.qmd) · [מצגת](lectures/02-exit-polls-slides.html) · [PDF](lectures/pdf/02-exit-polls-slides.pdf) |
 | 3 | רגרסיה לינארית מרובה | [סיכום](lectures/03-multiple-regression.qmd) · [מצגת](lectures/03-multiple-regression-slides.html) · [PDF](lectures/pdf/03-multiple-regression-slides.pdf) |
 | 4 | ניתוח שונות חד-כיווני (One-way ANOVA) | |
 | 5 | ניגודים והשוואות מרובות | |
