@@ -6,11 +6,11 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.10.19">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-17888a1159294d3eb470f19f6f52f5a5.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.10.20">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-10-19">
+  <meta name="dcterms.date" content="2026-11-01">
   <title>ניתוח נתונים סטטיסטי – 3. רגרסיה לינארית מרובה</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -219,7 +219,7 @@
 </div>
 </div>
 
-  <p class="date">2026-10-19</p>
+  <p class="date">2026-11-01</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
@@ -682,6 +682,63 @@ H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0 \qquad H_1: \text{לפחות מקד
 <li>מבחני ה-t בודקים כל מקדם <strong>בנוכחות כל השאר</strong>. משתנה יכול להיות לא מובהק לבד, ובכל זאת חשוב</li>
 </ul>
 </section>
+<section id="למה-דווקא-התפלגות-f-יחס-בין-שני-chi2" class="slide level2 smaller">
+<h2>למה דווקא התפלגות F? יחס בין שני <span class="math inline">\(\chi^2\)</span></h2>
+<p><strong>ההגדרה:</strong> אם <span class="math inline">\(U \sim \chi^2_{d_1}\)</span> ו-<span class="math inline">\(V \sim \chi^2_{d_2}\)</span> בלתי תלויים, אז</p>
+<p><span class="math display">\[
+F = \frac{U / d_1}{V / d_2} \sim F_{d_1,\, d_2}
+\]</span></p>
+<ul>
+<li><strong>תזכורת:</strong> <span class="math inline">\(\chi^2_d\)</span> הוא סכום של <span class="math inline">\(d\)</span> ריבועים של משתנים <span class="math inline">\(N(0,1)\)</span> בלתי תלויים. התוחלת שלו <span class="math inline">\(d\)</span>, ולכן <span class="math inline">\(U/d_1\)</span> ו-<span class="math inline">\(V/d_2\)</span> הם “ממוצעי ריבועים” שהתוחלת של כל אחד מהם 1</li>
+<li><strong>ברגרסיה:</strong> <span class="math inline">\(SS_E / \sigma^2 \sim \chi^2_{n-k-1}\)</span> תמיד. תחת <span class="math inline">\(H_0\)</span> גם <span class="math inline">\(SS_R / \sigma^2 \sim \chi^2_k\)</span>, והשניים בלתי תלויים:</li>
+</ul>
+<p><span class="math display">\[
+F = \frac{MS_R}{MS_E} = \frac{\left(SS_R / \sigma^2\right) / k}{\left(SS_E / \sigma^2\right) / (n - k - 1)} \sim F_{k,\; n-k-1}
+\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(\sigma^2\)</span> מצטמצם.</strong> הוא לא ידוע, ובזכות היחס לא צריך לדעת אותו. זו הסיבה שבודקים <strong>יחס</strong>, ולא את <span class="math inline">\(SS_R\)</span> לבד</li>
+<li><strong>תחת <span class="math inline">\(H_0\)</span></strong> המונה והמכנה אומדים שניהם את <span class="math inline">\(\sigma^2\)</span>, ולכן <span class="math inline">\(F \approx 1\)</span>. <strong>תחת <span class="math inline">\(H_1\)</span></strong> <span class="math inline">\(MS_R\)</span> גדל, ולכן דוחים רק כש-<span class="math inline">\(F\)</span> <strong>גדול</strong>: המבחן חד-צדדי מימין</li>
+</ul>
+</section>
+<section id="איך-נראית-התפלגות-f" class="slide level2 smaller">
+<h2>איך נראית התפלגות F</h2>
+<p>נגריל שני משתני <span class="math inline">\(\chi^2\)</span> בלתי תלויים, נחלק כל אחד בדרגות החופש שלו, ונחשב את היחס:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a>f_sim <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">U =</span> <span class="fu">rchisq</span>(<span class="fl">1e5</span>, <span class="at">df =</span> <span class="dv">3</span>), <span class="at">V =</span> <span class="fu">rchisq</span>(<span class="fl">1e5</span>, <span class="at">df =</span> <span class="dv">26</span>),</span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">ratio =</span> (U <span class="sc">/</span> <span class="dv">3</span>) <span class="sc">/</span> (V <span class="sc">/</span> <span class="dv">26</span>))</span>
+<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>f_crit <span class="ot">&lt;-</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>)                 <span class="co"># 2.98</span></span>
+<span id="cb22-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(f_sim, <span class="fu">aes</span>(ratio)) <span class="sc">+</span></span>
+<span id="cb22-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), <span class="at">binwidth =</span> <span class="fl">0.1</span>, <span class="at">boundary =</span> <span class="dv">0</span>,</span>
+<span id="cb22-7"><a aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> df, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>),</span>
+<span id="cb22-9"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> f_crit, <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb22-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> f_crit <span class="sc">+</span> <span class="fl">0.1</span>, <span class="at">y =</span> <span class="fl">0.6</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]],</span>
+<span id="cb22-12"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"F(0.95; 3, 26) = 2.98</span><span class="sc">\n</span><span class="st">5% rejection region"</span>) <span class="sc">+</span></span>
+<span id="cb22-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb22-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"היחס בין שני ממוצעי ריבועים מתפלג F"</span>,</span>
+<span id="cb22-15"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"היסטוגרמה: 100,000 הגרלות של (U/3)/(V/26) · הקו: הצפיפות של F(3, 26)"</span>,</span>
+<span id="cb22-16"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"F"</span>, <span class="at">y =</span> <span class="st">"Density"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="איך-נראית-התפלגות-f-output" class="slide level2 smaller output-location-slide"><h2>איך נראית התפלגות F</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-multiple-regression_files/figure-html/f-sim-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="ערך-קריטי-ו-p-value" class="slide level2">
+<h2>ערך קריטי ו-p-value</h2>
+<ul>
+<li>רוב המסה סביב 1, וזנב ארוך ימינה. <span class="math inline">\(F\)</span> לא יכול להיות שלילי: יש בו רק ריבועים</li>
+<li><strong>הערך הקריטי</strong> <span class="math inline">\(F_{0.95;\,3,\,26}\)</span> חותך 5% מהזנב הימני: <code>qf(0.95, 3, 26)</code></li>
+<li><strong>ה-p-value</strong> שמופיע ב-<code>summary()</code> הוא השטח מימין ל-<span class="math inline">\(F\)</span> שהתקבל: <code>pf(F, k, n - k - 1, lower.tail = FALSE)</code></li>
+</ul>
+</section>
 <section id="r2-ו-r2-מתוקן-adjusted-r²" class="slide level2 smaller">
 <h2><span class="math inline">\(R^2\)</span> ו-<span class="math inline">\(R^2\)</span> מתוקן (<span class="en">Adjusted R²</span>)</h2>
 <p><span class="math display">\[
@@ -693,11 +750,11 @@ R^2_{adj} = 1 - \frac{SS_E / (n - k - 1)}{SS_T / (n - 1)} = 1 - (1 - R^2)\frac{n
 <li><strong><span class="math inline">\(R^2\)</span> המתוקן</strong> “מעניש” על כל משתנה נוסף. הוא עולה רק אם המשתנה מקטין את <span class="math inline">\(MS_E\)</span>. למקסם אותו זה כמו למזער את <span class="math inline">\(MS_E\)</span></li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8</span>)</span>
-<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a>llm_noise <span class="ot">&lt;-</span> llm <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">noise1 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise2 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise3 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()))</span>
-<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>fit_noise <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> noise1 <span class="sc">+</span> noise2 <span class="sc">+</span> noise3, <span class="at">data =</span> llm_noise)</span>
-<span id="cb22-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit2      =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>r.squared,      <span class="at">adj =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>adj.r.squared),</span>
-<span id="cb22-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_noise =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>r.squared, <span class="at">adj =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>adj.r.squared))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8</span>)</span>
+<span id="cb23-2"><a aria-hidden="true" tabindex="-1"></a>llm_noise <span class="ot">&lt;-</span> llm <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">noise1 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise2 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise3 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()))</span>
+<span id="cb23-3"><a aria-hidden="true" tabindex="-1"></a>fit_noise <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> noise1 <span class="sc">+</span> noise2 <span class="sc">+</span> noise3, <span class="at">data =</span> llm_noise)</span>
+<span id="cb23-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit2      =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>r.squared,      <span class="at">adj =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>adj.r.squared),</span>
+<span id="cb23-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_noise =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>r.squared, <span class="at">adj =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>adj.r.squared))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              R2    adj
 fit2      0.7622 0.7603
@@ -743,6 +800,106 @@ fit_noise 0.7628 0.7580</code></pre>
 </tbody>
 </table>
 <p>השלימו את הטבלה, וחשבו את <span class="math inline">\(R^2\)</span>, את <span class="math inline">\(R^2_{adj}\)</span> ואת <span class="math inline">\(\hat\sigma\)</span>. האם המודל מובהק ב-<span class="math inline">\(\alpha = 0.05\)</span>? (<span class="math inline">\(F_{0.95;\,3,\,26} = 2.98\)</span>)</p>
+<div class="fragment small">
+<p><strong>רמז:</strong> טבלת ANOVA של רגרסיה מרובה</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>סכום ריבועים</th>
+<th>דרגות חופש</th>
+<th>ממוצע ריבועים</th>
+<th><span class="math inline">\(F\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>רגרסיה</td>
+<td><span class="math inline">\(SS_R\)</span></td>
+<td><span class="math inline">\(k\)</span></td>
+<td><span class="math inline">\(MS_R = SS_R / k\)</span></td>
+<td><span class="math inline">\(MS_R / MS_E\)</span></td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td><span class="math inline">\(SS_E = SS_T - SS_R\)</span></td>
+<td><span class="math inline">\(n - k - 1\)</span></td>
+<td><span class="math inline">\(MS_E = SS_E / (n-k-1)\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>סך הכול</td>
+<td><span class="math inline">\(SS_T\)</span></td>
+<td><span class="math inline">\(n - 1\)</span></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="פתרון-התרגיל" class="slide level2 smaller">
+<h2>פתרון התרגיל</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>סכום ריבועים</th>
+<th>דרגות חופש</th>
+<th>ממוצע ריבועים</th>
+<th><span class="math inline">\(F\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>רגרסיה</td>
+<td>600</td>
+<td><strong>(א) 3</strong></td>
+<td><strong>(ב) 200</strong></td>
+<td><strong>(ג) 20</strong></td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td><strong>(ד) 260</strong></td>
+<td><strong>(ה) 26</strong></td>
+<td><strong>(ו) 10</strong></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>סך הכול</td>
+<td>860</td>
+<td>29</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>(א) <span class="math inline">\(k = 3\)</span> · (ב) <span class="math inline">\(MS_R = 600 / 3 = 200\)</span> · (ד) <span class="math inline">\(SS_E = 860 - 600 = 260\)</span> · (ה) <span class="math inline">\(n - k - 1 = 30 - 3 - 1 = 26\)</span> · (ו) <span class="math inline">\(MS_E = 260 / 26 = 10\)</span></li>
+<li>(ג) <span class="math inline">\(F = 200 / 10 = 20 &gt; 2.98\)</span>, ולכן <strong>דוחים</strong> את <span class="math inline">\(H_0\)</span>: המודל מובהק</li>
+</ul>
+<div class="fragment">
+<p><span class="math display">\[
+R^2 = \frac{600}{860} = 0.698 \qquad
+R^2_{adj} = 1 - \frac{10}{860 / 29} = 1 - \frac{10}{29.66} = 0.663 \qquad
+\hat\sigma = \sqrt{MS_E} = \sqrt{10} = 3.16
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">F_crit =</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>),</span>
+<span id="cb25-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value =</span> <span class="fu">pf</span>(<span class="dv">20</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   F_crit   p_value 
+2.975e+00 6.255e-07 </code></pre>
+</div>
+</div>
+</div>
 </section></section>
 <section>
 <section id="משתנים-קטגוריים-categorical-variables" class="title-slide slide level1 center">
@@ -765,7 +922,7 @@ Y = \beta_0 + \beta_1 x_{input} + \beta_2 x_{output} + \beta_3 D_{medium} + \bet
 <li>R יוצר את משתני הדמה בעצמו מכל <code>factor</code>. רמת הבסיס היא הרמה הראשונה (<code>levels</code>)</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">model.matrix</span>(<span class="sc">~</span> model, <span class="at">data =</span> llm) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">model.matrix</span>(<span class="sc">~</span> model, <span class="at">data =</span> llm) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  (Intercept) modelmedium modellarge
 1           1           0          0
@@ -777,10 +934,10 @@ Y = \beta_0 + \beta_1 x_{input} + \beta_2 x_{output} + \beta_3 D_{medium} + \bet
 <section id="האם-מודל-השפה-הגדול-איטי-יותר" class="slide level2 smaller">
 <h2>האם מודל השפה הגדול איטי יותר?</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a>fit_raw <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> model, <span class="at">data =</span> llm)                            <span class="co"># model only</span></span>
-<span id="cb26-2"><a aria-hidden="true" tabindex="-1"></a>fit3    <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> model, <span class="at">data =</span> llm)  <span class="co"># same length of answer</span></span>
-<span id="cb26-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">raw =</span> <span class="fu">coef</span>(fit_raw)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)],</span>
-<span id="cb26-4"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">adjusted =</span> <span class="fu">coef</span>(fit3)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a aria-hidden="true" tabindex="-1"></a>fit_raw <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> model, <span class="at">data =</span> llm)                            <span class="co"># model only</span></span>
+<span id="cb29-2"><a aria-hidden="true" tabindex="-1"></a>fit3    <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> model, <span class="at">data =</span> llm)  <span class="co"># same length of answer</span></span>
+<span id="cb29-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">raw =</span> <span class="fu">coef</span>(fit_raw)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)],</span>
+<span id="cb29-4"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">adjusted =</span> <span class="fu">coef</span>(fit3)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         modelmedium modellarge
 raw            4.930     15.182
@@ -803,7 +960,7 @@ F = \frac{(SS_E^{R} - SS_E^{F}) / q}{SS_E^{F} / (n - k - 1)} \sim F_{q,\; n-k-1}
 \]</span></p>
 <p><span class="math inline">\(q\)</span> הוא מספר המקדמים שנבדקים, ו-<span class="math inline">\(k\)</span> הוא מספר המשתנים במודל <strong>המלא</strong>.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -841,13 +998,13 @@ F = \frac{(3125 - 911) / 2}{911 / 245} = 297
 <h2>האם הקווים מקבילים?</h2>
 <p>ברגרסיה <code>fit3</code> לכל מודל שפה יש חותך משלו, אבל <strong>אותו שיפוע</strong>: אותו זמן לכל טוקן בתשובה. זה סביר?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit3), <span class="fu">aes</span>(output_tokens, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
-<span id="cb30-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> latency), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb30-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb30-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
-<span id="cb30-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"קווים מקבילים לא מתאימים לנתונים"</span>,</span>
-<span id="cb30-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקווים: החיזוי של רגרסיה בלי אינטראקציה (בממוצע הקלט)"</span>,</span>
-<span id="cb30-7"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Output tokens"</span>, <span class="at">y =</span> <span class="st">"Latency (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit3), <span class="fu">aes</span>(output_tokens, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
+<span id="cb33-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> latency), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb33-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb33-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
+<span id="cb33-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"קווים מקבילים לא מתאימים לנתונים"</span>,</span>
+<span id="cb33-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקווים: החיזוי של רגרסיה בלי אינטראקציה (בממוצע הקלט)"</span>,</span>
+<span id="cb33-7"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Output tokens"</span>, <span class="at">y =</span> <span class="st">"Latency (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -889,8 +1046,8 @@ Y = \beta_0 + \beta_1 x_{in} + \beta_2 x_{out} + \beta_3 D_{med} + \beta_4 D_{lr
 </table>
 <p>ב-R, <code>output_tokens * model</code> הוא קיצור של <code>output_tokens + model + output_tokens:model</code>.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb31-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb34-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -929,7 +1086,7 @@ F-statistic: 2.49e+03 on 6 and 243 DF,  p-value: &lt;2e-16</code></pre>
 <li><strong>כלל ההיררכיה:</strong> אם אינטראקציה נמצאת במודל, משאירים בו גם את המשתנים שמרכיבים אותה</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit3, fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit3, fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -951,16 +1108,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="שאריות-מול-ערכים-חזויים" class="slide level2">
 <h2>שאריות מול ערכים חזויים</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">בלי אינטראקציה (fit3)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">augment</span>(fit3),</span>
-<span id="cb35-2"><a aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">עם אינטראקציה (fit4)</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">augment</span>(fit4), <span class="at">.id =</span> <span class="st">"fit"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb35-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(.fitted, .resid, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
-<span id="cb35-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
-<span id="cb35-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb35-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> fit, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb35-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
-<span id="cb35-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות חושפות את מה שהרגרסיה פספסה"</span>,</span>
-<span id="cb35-9"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"משמאל: דפוס ברור לפי גודל מודל השפה · מימין: ענן אקראי סביב אפס"</span>,</span>
-<span id="cb35-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Fitted value (s)"</span>, <span class="at">y =</span> <span class="st">"Residual (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">בלי אינטראקציה (fit3)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">augment</span>(fit3),</span>
+<span id="cb38-2"><a aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">עם אינטראקציה (fit4)</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">augment</span>(fit4), <span class="at">.id =</span> <span class="st">"fit"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(.fitted, .resid, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
+<span id="cb38-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
+<span id="cb38-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb38-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> fit, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb38-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
+<span id="cb38-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות חושפות את מה שהרגרסיה פספסה"</span>,</span>
+<span id="cb38-9"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"משמאל: דפוס ברור לפי גודל מודל השפה · מימין: ענן אקראי סביב אפס"</span>,</span>
+<span id="cb38-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Fitted value (s)"</span>, <span class="at">y =</span> <span class="st">"Residual (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -1024,12 +1181,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="שאריות-מול-התפלגות-נורמלית" class="slide level2">
 <h2>שאריות מול התפלגות נורמלית</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit4), <span class="fu">aes</span>(<span class="at">sample =</span> .std.resid)) <span class="sc">+</span></span>
-<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb36-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
-<span id="cb36-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות קרובות לנורמליות"</span>,</span>
-<span id="cb36-5"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות של fit4 מול הכמויות של N(0,1)"</span>,</span>
-<span id="cb36-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit4), <span class="fu">aes</span>(<span class="at">sample =</span> .std.resid)) <span class="sc">+</span></span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb39-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
+<span id="cb39-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות קרובות לנורמליות"</span>,</span>
+<span id="cb39-5"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות של fit4 מול הכמויות של N(0,1)"</span>,</span>
+<span id="cb39-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="03-multiple-regression_files/figure-html/qq-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
@@ -1040,7 +1197,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 H_0: \text{השאריות המתוקננות מתפלגות } N(0, 1) \qquad D = \max_x \left| F_n(x) - \Phi(x) \right|
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit4), <span class="st">"pnorm"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit4), <span class="st">"pnorm"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Asymptotic one-sample Kolmogorov-Smirnov test
@@ -1060,9 +1217,9 @@ alternative hypothesis: two-sided</code></pre>
 <h2>מולטיקולינאריות (<span class="en">Multicollinearity</span>)</h2>
 <p>מספר המסמכים מ-RAG קובע כמעט לגמרי את מספר הטוקנים בקלט: המתאם ביניהם הוא 0.94. מה קורה כשמכניסים את שניהם?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
-<span id="cb39-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
+<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Estimate Std. Error
 fit4   0.2205    0.06423
@@ -1073,17 +1230,53 @@ fit5   0.4372    0.18807</code></pre>
 <li>שגיאת התקן של <code>input_k</code> גדלה פי 2.9. הרגרסיה לא יכולה להפריד בין שני משתנים שזזים יחד</li>
 <li>המקדמים “לא יציבים”: שינוי קטן בנתונים מזיז אותם הרבה. <strong>החיזוי</strong> כמעט לא נפגע. <strong>הפרשנות</strong> נפגעת</li>
 </ul>
-<p><strong>מדד VIF</strong> (<span class="en">Variance Inflation Factor</span>): <span class="math inline">\(R_j^2\)</span> הוא ה-<span class="math inline">\(R^2\)</span> של רגרסיה של <span class="math inline">\(x_j\)</span> על כל שאר המשתנים המסבירים.</p>
+</section>
+<section id="מדד-vif-variance-inflation-factor" class="slide level2 smaller">
+<h2>מדד VIF (<span class="en">Variance Inflation Factor</span>)</h2>
+<p><span class="math inline">\(R_j^2\)</span> הוא ה-<span class="math inline">\(R^2\)</span> של רגרסיה של <span class="math inline">\(x_j\)</span> על כל שאר המשתנים המסבירים:</p>
 <p><span class="math display">\[
-VIF_j = \frac{1}{1 - R_j^2}
+VIF_j = \frac{1}{1 - R_j^2} \qquad\qquad V(\hat\beta_j) = \frac{\sigma^2}{S_{x_j x_j}} \cdot VIF_j
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
-<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k. Rule of thumb: above 5-10 is a problem</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
+<span id="cb44-2"><a aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.672</code></pre>
 </div>
 </div>
+<p><strong>כלל אצבע:</strong></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>VIF</th>
+<th><span class="math inline">\(R_j^2\)</span></th>
+<th>מה זה אומר</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td><span class="math inline">\(x_j\)</span> לא מתואם עם שאר המשתנים</td>
+</tr>
+<tr class="even">
+<td>מעל 5</td>
+<td>מעל 0.8</td>
+<td>סימן אזהרה: כדאי לבדוק</td>
+</tr>
+<tr class="odd">
+<td>מעל 10</td>
+<td>מעל 0.9</td>
+<td>מולטיקולינאריות חמורה: השונות של <span class="math inline">\(\hat\beta_j\)</span> גדלה פי 10 לפחות</td>
+</tr>
+</tbody>
+</table>
+<p>ה-VIF של <code>input_k</code> הוא 8.7: מעל סף האזהרה וקרוב ל-10. שגיאת התקן גדלה פי <span class="math inline">\(\sqrt{VIF} = 2.9\)</span>, כמו שראינו בשקף הקודם. <strong>מה עושים?</strong> משאירים <strong>אחד</strong> מהמשתנים המתואמים, זה שקרוב יותר למנגנון. לא מוחקים משתנה רק בגלל VIF גבוה</p>
 </section></section>
 <section>
 <section id="בחירת-משתנים-variable-selection" class="title-slide slide level1 center">
@@ -1099,9 +1292,9 @@ VIF_j = \frac{1}{1 - R_j^2}
 </ul>
 <p><strong>קריטריונים נפוצים:</strong> <span class="math inline">\(R^2_{adj}\)</span>, ה-p-value של מבחן F חלקי, או <span class="en">AIC</span> (מדד שמאזן בין טיב ההתאמה למספר הפרמטרים. קטן יותר = טוב יותר)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb43-2"><a aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
-<span id="cb43-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb46-2"><a aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
+<span id="cb46-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>latency ~ input_k + hour + output_tokens + model + output_tokens:model</code></pre>
 </div>
@@ -1110,7 +1303,7 @@ VIF_j = \frac{1}{1 - R_j^2}
 <section id="מה-יכול-להשתבש-בבחירה-אוטומטית" class="slide level2 smaller">
 <h2>מה יכול להשתבש בבחירה אוטומטית</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Estimate Std. Error    t value   Pr(&gt;|t|) 
  -0.014070   0.008184  -1.719055   0.086883 </code></pre>
@@ -1147,9 +1340,9 @@ VIF_j = \frac{1}{1 - R_j^2}
 <h2>חזרה לשאלה: כמה זמן תיקח הקריאה?</h2>
 <p>2,000 טוקנים בקלט, 500 בפלט, מודל השפה הגדול:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
-<span id="cb47-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
-<span id="cb47-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
+<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
+<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            fit   lwr   upr
 confidence 16.2 15.92 16.49
@@ -1164,20 +1357,20 @@ prediction 16.2 14.35 18.06</code></pre>
 <section id="איך-זה-נראה" class="slide level2">
 <h2>איך זה נראה</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
-<span id="cb49-2"><a aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
-<span id="cb49-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
-<span id="cb49-4"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb49-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
-<span id="cb49-6"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
-<span id="cb49-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb49-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
-<span id="cb49-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb49-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
-<span id="cb49-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
-<span id="cb49-13"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
-<span id="cb49-14"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
+<span id="cb52-2"><a aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
+<span id="cb52-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
+<span id="cb52-4"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb52-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
+<span id="cb52-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
+<span id="cb52-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb52-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
+<span id="cb52-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb52-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb52-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
+<span id="cb52-13"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
+<span id="cb52-14"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section><section id="איך-זה-נראה-output" class="slide level2 output-location-slide"><h2>איך זה נראה</h2><div class="cell output-location-slide" data-layout-align="center">

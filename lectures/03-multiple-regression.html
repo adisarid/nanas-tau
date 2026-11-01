@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="he" xml:lang="he" dir="rtl"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.19">
+<meta name="generator" content="quarto-1.10.20">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -78,14 +78,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0ae380b0d76ea21f7f587c312230f992.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8851aaa9ee3118d28e4214841ffd2006.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0ae380b0d76ea21f7f587c312230f992.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-571b2476d141daea436126470d0b9b80.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d77140d860aba7cf64350677e23ec166.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-571b2476d141daea436126470d0b9b80.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-c0ef23e09cfe82c64b84a0e71af161bc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-f88d046694ee02c79844a004e57a3b4a.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-c0ef23e09cfe82c64b84a0e71af161bc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-17e2608f9b34b6f9c180ba7f94fbbbcd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-c7580e1483b7954f02d40ff3660d5c68.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-17e2608f9b34b6f9c180ba7f94fbbbcd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -348,6 +348,10 @@ window.Quarto = {
  <span class="dropdown-text">1. שיטות א-פרמטריות</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../lectures/02-exit-polls.html">
+ <span class="dropdown-text">בונוס: למה טעו מדגמי היציאה?</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../lectures/03-multiple-regression.html">
  <span class="dropdown-text">3. רגרסיה לינארית מרובה</span></a>
   </li>  
@@ -412,8 +416,12 @@ window.Quarto = {
   <li><a href="#מבחני-השערות-במודל-המרובה" id="toc-מבחני-השערות-במודל-המרובה" class="nav-link" data-scroll-target="#מבחני-השערות-במודל-המרובה">מבחני השערות במודל המרובה</a>
   <ul class="collapse">
   <li><a href="#מבחן-f-לכל-המודל" id="toc-מבחן-f-לכל-המודל" class="nav-link" data-scroll-target="#מבחן-f-לכל-המודל">מבחן F לכל המודל</a></li>
+  <li><a href="#למה-דווקא-התפלגות-f-יחס-בין-שני-chi2" id="toc-למה-דווקא-התפלגות-f-יחס-בין-שני-chi2" class="nav-link" data-scroll-target="#למה-דווקא-התפלגות-f-יחס-בין-שני-chi2">למה דווקא התפלגות F? יחס בין שני <span class="math inline">\(\chi^2\)</span></a></li>
+  <li><a href="#איך-נראית-התפלגות-f" id="toc-איך-נראית-התפלגות-f" class="nav-link" data-scroll-target="#איך-נראית-התפלגות-f">איך נראית התפלגות F</a></li>
+  <li><a href="#ערך-קריטי-ו-p-value" id="toc-ערך-קריטי-ו-p-value" class="nav-link" data-scroll-target="#ערך-קריטי-ו-p-value">ערך קריטי ו-p-value</a></li>
   <li><a href="#r2-ו-r2-מתוקן-adjusted-r²" id="toc-r2-ו-r2-מתוקן-adjusted-r²" class="nav-link" data-scroll-target="#r2-ו-r2-מתוקן-adjusted-r²"><span class="math inline">\(R^2\)</span> ו-<span class="math inline">\(R^2\)</span> מתוקן (<span class="en">Adjusted R²</span>)</a></li>
   <li><a href="#תרגיל-השלימו-את-הפלט" id="toc-תרגיל-השלימו-את-הפלט" class="nav-link" data-scroll-target="#תרגיל-השלימו-את-הפלט">תרגיל: השלימו את הפלט</a></li>
+  <li><a href="#פתרון-התרגיל" id="toc-פתרון-התרגיל" class="nav-link" data-scroll-target="#פתרון-התרגיל">פתרון התרגיל</a></li>
   </ul></li>
   <li><a href="#משתנים-קטגוריים-categorical-variables" id="toc-משתנים-קטגוריים-categorical-variables" class="nav-link" data-scroll-target="#משתנים-קטגוריים-categorical-variables">משתנים קטגוריים (<span class="en">Categorical variables</span>)</a>
   <ul class="collapse">
@@ -435,6 +443,7 @@ window.Quarto = {
   <li><a href="#שאריות-מול-התפלגות-נורמלית" id="toc-שאריות-מול-התפלגות-נורמלית" class="nav-link" data-scroll-target="#שאריות-מול-התפלגות-נורמלית">שאריות מול התפלגות נורמלית</a></li>
   <li><a href="#מבחן-kolmogorovsmirnov-לשאריות" id="toc-מבחן-kolmogorovsmirnov-לשאריות" class="nav-link" data-scroll-target="#מבחן-kolmogorovsmirnov-לשאריות">מבחן <span class="en">Kolmogorov–Smirnov</span> לשאריות</a></li>
   <li><a href="#מולטיקולינאריות-multicollinearity" id="toc-מולטיקולינאריות-multicollinearity" class="nav-link" data-scroll-target="#מולטיקולינאריות-multicollinearity">מולטיקולינאריות (<span class="en">Multicollinearity</span>)</a></li>
+  <li><a href="#מדד-vif-variance-inflation-factor" id="toc-מדד-vif-variance-inflation-factor" class="nav-link" data-scroll-target="#מדד-vif-variance-inflation-factor">מדד VIF (<span class="en">Variance Inflation Factor</span>)</a></li>
   </ul></li>
   <li><a href="#בחירת-משתנים-variable-selection" id="toc-בחירת-משתנים-variable-selection" class="nav-link" data-scroll-target="#בחירת-משתנים-variable-selection">בחירת משתנים (<span class="en">Variable selection</span>)</a>
   <ul class="collapse">
@@ -482,7 +491,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">פורסם</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">19 באוקטובר 2026</p>
+      <p class="date">1 בנובמבר 2026</p>
     </div>
   </div>
   
@@ -971,6 +980,68 @@ H_0: \beta_1 = \beta_2 = \dots = \beta_k = 0 \qquad H_1: \text{לפחות מקד
 <li>מבחני ה-t בודקים כל מקדם <strong>בנוכחות כל השאר</strong>. משתנה יכול להיות לא מובהק לבד, ובכל זאת חשוב</li>
 </ul>
 </section>
+<section id="למה-דווקא-התפלגות-f-יחס-בין-שני-chi2" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="למה-דווקא-התפלגות-f-יחס-בין-שני-chi2">למה דווקא התפלגות F? יחס בין שני <span class="math inline">\(\chi^2\)</span></h2>
+<p><strong>ההגדרה:</strong> אם <span class="math inline">\(U \sim \chi^2_{d_1}\)</span> ו-<span class="math inline">\(V \sim \chi^2_{d_2}\)</span> בלתי תלויים, אז</p>
+<p><span class="math display">\[
+F = \frac{U / d_1}{V / d_2} \sim F_{d_1,\, d_2}
+\]</span></p>
+<ul>
+<li><strong>תזכורת:</strong> <span class="math inline">\(\chi^2_d\)</span> הוא סכום של <span class="math inline">\(d\)</span> ריבועים של משתנים <span class="math inline">\(N(0,1)\)</span> בלתי תלויים. התוחלת שלו <span class="math inline">\(d\)</span>, ולכן <span class="math inline">\(U/d_1\)</span> ו-<span class="math inline">\(V/d_2\)</span> הם “ממוצעי ריבועים” שהתוחלת של כל אחד מהם 1</li>
+<li><strong>ברגרסיה:</strong> <span class="math inline">\(SS_E / \sigma^2 \sim \chi^2_{n-k-1}\)</span> תמיד. תחת <span class="math inline">\(H_0\)</span> גם <span class="math inline">\(SS_R / \sigma^2 \sim \chi^2_k\)</span>, והשניים בלתי תלויים:</li>
+</ul>
+<p><span class="math display">\[
+F = \frac{MS_R}{MS_E} = \frac{\left(SS_R / \sigma^2\right) / k}{\left(SS_E / \sigma^2\right) / (n - k - 1)} \sim F_{k,\; n-k-1}
+\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(\sigma^2\)</span> מצטמצם.</strong> הוא לא ידוע, ובזכות היחס לא צריך לדעת אותו. זו הסיבה שבודקים <strong>יחס</strong>, ולא את <span class="math inline">\(SS_R\)</span> לבד</li>
+<li><strong>תחת <span class="math inline">\(H_0\)</span></strong> המונה והמכנה אומדים שניהם את <span class="math inline">\(\sigma^2\)</span>, ולכן <span class="math inline">\(F \approx 1\)</span>. <strong>תחת <span class="math inline">\(H_1\)</span></strong> <span class="math inline">\(MS_R\)</span> גדל, ולכן דוחים רק כש-<span class="math inline">\(F\)</span> <strong>גדול</strong>: המבחן חד-צדדי מימין</li>
+</ul>
+<p><strong>מאיפה דרגות החופש?</strong> <span class="math inline">\(SS_E\)</span> הוא סכום של <span class="math inline">\(n\)</span> שאריות בריבוע, אבל השאריות לא חופשיות: הן מקיימות <span class="math inline">\(k + 1\)</span> אילוצים לינאריים (<span class="math inline">\(X'\mathbf{e} = \mathbf{0}\)</span>, אחד לכל מקדם שאמדנו). לכן נשארות <span class="math inline">\(n - k - 1\)</span> דרגות חופש. באותו אופן, <span class="math inline">\(SS_R\)</span> “נע” רק ב-<span class="math inline">\(k\)</span> כיוונים, אחד לכל משתנה מסביר.</p>
+<p><strong>מה קורה תחת <span class="math inline">\(H_1\)</span>?</strong> אפשר להראות ש-<span class="math inline">\(E(MS_E) = \sigma^2\)</span> תמיד, ואילו <span class="math inline">\(E(MS_R) = \sigma^2 + \frac{1}{k}\,\boldsymbol\beta_1' X_c' X_c \boldsymbol\beta_1\)</span>, כאשר <span class="math inline">\(\boldsymbol\beta_1\)</span> הם המקדמים בלי החותך ו-<span class="math inline">\(X_c\)</span> היא מטריצת המשתנים המסבירים הממורכזים. האיבר השני אי-שלילי, ושווה לאפס רק כש-<span class="math inline">\(\boldsymbol\beta_1 = \mathbf{0}\)</span>. לכן <span class="math inline">\(F\)</span> גדול הוא עדות נגד <span class="math inline">\(H_0\)</span>, ו-<span class="math inline">\(F\)</span> קטן מ-1 אינו עדות לשום דבר מיוחד.</p>
+<p><strong>הקשר להתפלגות t.</strong> אם <span class="math inline">\(Z \sim N(0,1)\)</span> ו-<span class="math inline">\(V \sim \chi^2_d\)</span> בלתי תלויים, אז <span class="math inline">\(t = Z / \sqrt{V/d} \sim t_d\)</span>. בריבוע: <span class="math inline">\(t^2 = \frac{Z^2 / 1}{V / d}\)</span>, ו-<span class="math inline">\(Z^2 \sim \chi^2_1\)</span>. כלומר <span class="math inline">\(t_d^2 = F_{1,\,d}\)</span>. זו הסיבה שברגרסיה פשוטה <span class="math inline">\(F = t^2\)</span>, ושמבחן F חלקי עם <span class="math inline">\(q = 1\)</span> שקול למבחן t.</p>
+<p><strong>תוחלת:</strong> <span class="math inline">\(E(F_{d_1, d_2}) = \frac{d_2}{d_2 - 2}\)</span> (עבור <span class="math inline">\(d_2 &gt; 2\)</span>). היא לא תלויה ב-<span class="math inline">\(d_1\)</span>, וקרובה ל-1 כשיש הרבה תצפיות.</p>
+</section>
+<section id="איך-נראית-התפלגות-f" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="איך-נראית-התפלגות-f">איך נראית התפלגות F</h2>
+<p>נגריל שני משתני <span class="math inline">\(\chi^2\)</span> בלתי תלויים, נחלק כל אחד בדרגות החופש שלו, ונחשב את היחס:</p>
+<div class="cell" data-layout-align="center" data-output-location="slide">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>f_sim <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">U =</span> <span class="fu">rchisq</span>(<span class="fl">1e5</span>, <span class="at">df =</span> <span class="dv">3</span>), <span class="at">V =</span> <span class="fu">rchisq</span>(<span class="fl">1e5</span>, <span class="at">df =</span> <span class="dv">26</span>),</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">ratio =</span> (U <span class="sc">/</span> <span class="dv">3</span>) <span class="sc">/</span> (V <span class="sc">/</span> <span class="dv">26</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>f_crit <span class="ot">&lt;-</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>)                 <span class="co"># 2.98</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(f_sim, <span class="fu">aes</span>(ratio)) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), <span class="at">binwidth =</span> <span class="fl">0.1</span>, <span class="at">boundary =</span> <span class="dv">0</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> df, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>),</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> f_crit, <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> f_crit <span class="sc">+</span> <span class="fl">0.1</span>, <span class="at">y =</span> <span class="fl">0.6</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]],</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"F(0.95; 3, 26) = 2.98</span><span class="sc">\n</span><span class="st">5% rejection region"</span>) <span class="sc">+</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">6</span>)) <span class="sc">+</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"היחס בין שני ממוצעי ריבועים מתפלג F"</span>,</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"היסטוגרמה: 100,000 הגרלות של (U/3)/(V/26) · הקו: הצפיפות של F(3, 26)"</span>,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"F"</span>, <span class="at">y =</span> <span class="st">"Density"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03-multiple-regression_files/figure-html/f-sim-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1200"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ערך-קריטי-ו-p-value" class="level2">
+<h2 class="anchored" data-anchor-id="ערך-קריטי-ו-p-value">ערך קריטי ו-p-value</h2>
+<ul>
+<li>רוב המסה סביב 1, וזנב ארוך ימינה. <span class="math inline">\(F\)</span> לא יכול להיות שלילי: יש בו רק ריבועים</li>
+<li><strong>הערך הקריטי</strong> <span class="math inline">\(F_{0.95;\,3,\,26}\)</span> חותך 5% מהזנב הימני: <code>qf(0.95, 3, 26)</code></li>
+<li><strong>ה-p-value</strong> שמופיע ב-<code>summary()</code> הוא השטח מימין ל-<span class="math inline">\(F\)</span> שהתקבל: <code>pf(F, k, n - k - 1, lower.tail = FALSE)</code></li>
+</ul>
+</section>
 <section id="r2-ו-r2-מתוקן-adjusted-r²" class="level2 smaller">
 <h2 class="smaller anchored" data-anchor-id="r2-ו-r2-מתוקן-adjusted-r²"><span class="math inline">\(R^2\)</span> ו-<span class="math inline">\(R^2\)</span> מתוקן (<span class="en">Adjusted R²</span>)</h2>
 <p><span class="math display">\[
@@ -984,11 +1055,11 @@ R^2_{adj} = 1 - \frac{SS_E / (n - k - 1)}{SS_T / (n - 1)} = 1 - (1 - R^2)\frac{n
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>llm_noise <span class="ot">&lt;-</span> llm <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">noise1 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise2 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise3 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()))</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>fit_noise <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> noise1 <span class="sc">+</span> noise2 <span class="sc">+</span> noise3, <span class="at">data =</span> llm_noise)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit2      =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>r.squared,      <span class="at">adj =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>adj.r.squared),</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_noise =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>r.squared, <span class="at">adj =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>adj.r.squared))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>llm_noise <span class="ot">&lt;-</span> llm <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">noise1 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise2 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()), <span class="at">noise3 =</span> <span class="fu">rnorm</span>(<span class="fu">n</span>()))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>fit_noise <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> noise1 <span class="sc">+</span> noise2 <span class="sc">+</span> noise3, <span class="at">data =</span> llm_noise)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit2      =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>r.squared,      <span class="at">adj =</span> <span class="fu">summary</span>(fit2)<span class="sc">$</span>adj.r.squared),</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit_noise =</span> <span class="fu">c</span>(<span class="at">R2 =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>r.squared, <span class="at">adj =</span> <span class="fu">summary</span>(fit_noise)<span class="sc">$</span>adj.r.squared))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>              R2    adj
@@ -1036,7 +1107,65 @@ fit_noise 0.7628 0.7580</code></pre>
 </tbody>
 </table>
 <p>השלימו את הטבלה, וחשבו את <span class="math inline">\(R^2\)</span>, את <span class="math inline">\(R^2_{adj}\)</span> ואת <span class="math inline">\(\hat\sigma\)</span>. האם המודל מובהק ב-<span class="math inline">\(\alpha = 0.05\)</span>? (<span class="math inline">\(F_{0.95;\,3,\,26} = 2.98\)</span>)</p>
-<p><strong>פתרון.</strong> (א) <span class="math inline">\(k = 3\)</span>. (ב) <span class="math inline">\(MS_R = 600/3 = 200\)</span>. (ד) <span class="math inline">\(SS_E = 860 - 600 = 260\)</span>. (ה) <span class="math inline">\(n - k - 1 = 26\)</span>. (ו) <span class="math inline">\(MS_E = 260/26 = 10\)</span>. (ג) <span class="math inline">\(F = 200/10 = 20 &gt; 2.98\)</span>, ולכן המודל מובהק. <span class="math inline">\(R^2 = 600/860 = 0.698\)</span>, <span class="math inline">\(R^2_{adj} = 1 - \frac{10}{860/29} = 1 - \frac{10}{29.66} = 0.663\)</span>, ו-<span class="math inline">\(\hat\sigma = \sqrt{10} = 3.16\)</span>.</p>
+</section>
+<section id="פתרון-התרגיל" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="פתרון-התרגיל">פתרון התרגיל</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>סכום ריבועים</th>
+<th>דרגות חופש</th>
+<th>ממוצע ריבועים</th>
+<th><span class="math inline">\(F\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>רגרסיה</td>
+<td>600</td>
+<td><strong>(א) 3</strong></td>
+<td><strong>(ב) 200</strong></td>
+<td><strong>(ג) 20</strong></td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td><strong>(ד) 260</strong></td>
+<td><strong>(ה) 26</strong></td>
+<td><strong>(ו) 10</strong></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>סך הכול</td>
+<td>860</td>
+<td>29</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>(א) <span class="math inline">\(k = 3\)</span> · (ב) <span class="math inline">\(MS_R = 600 / 3 = 200\)</span> · (ד) <span class="math inline">\(SS_E = 860 - 600 = 260\)</span> · (ה) <span class="math inline">\(n - k - 1 = 30 - 3 - 1 = 26\)</span> · (ו) <span class="math inline">\(MS_E = 260 / 26 = 10\)</span></li>
+<li>(ג) <span class="math inline">\(F = 200 / 10 = 20 &gt; 2.98\)</span>, ולכן <strong>דוחים</strong> את <span class="math inline">\(H_0\)</span>: המודל מובהק</li>
+</ul>
+<div class="fragment">
+<p><span class="math display">\[
+R^2 = \frac{600}{860} = 0.698 \qquad
+R^2_{adj} = 1 - \frac{10}{860 / 29} = 1 - \frac{10}{29.66} = 0.663 \qquad
+\hat\sigma = \sqrt{MS_E} = \sqrt{10} = 3.16
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">F_crit =</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>),</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value =</span> <span class="fu">pf</span>(<span class="dv">20</span>, <span class="at">df1 =</span> <span class="dv">3</span>, <span class="at">df2 =</span> <span class="dv">26</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   F_crit   p_value 
+2.975e+00 6.255e-07 </code></pre>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="משתנים-קטגוריים-categorical-variables" class="level1">
@@ -1059,7 +1188,7 @@ Y = \beta_0 + \beta_1 x_{input} + \beta_2 x_{output} + \beta_3 D_{medium} + \bet
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model.matrix</span>(<span class="sc">~</span> model, <span class="at">data =</span> llm) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model.matrix</span>(<span class="sc">~</span> model, <span class="at">data =</span> llm) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  (Intercept) modelmedium modellarge
@@ -1074,10 +1203,10 @@ Y = \beta_0 + \beta_1 x_{input} + \beta_2 x_{output} + \beta_3 D_{medium} + \bet
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fit_raw <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> model, <span class="at">data =</span> llm)                            <span class="co"># model only</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fit3    <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> model, <span class="at">data =</span> llm)  <span class="co"># same length of answer</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">raw =</span> <span class="fu">coef</span>(fit_raw)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)],</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">adjusted =</span> <span class="fu">coef</span>(fit3)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_raw <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> model, <span class="at">data =</span> llm)                            <span class="co"># model only</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>fit3    <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">+</span> model, <span class="at">data =</span> llm)  <span class="co"># same length of answer</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">raw =</span> <span class="fu">coef</span>(fit_raw)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)],</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">adjusted =</span> <span class="fu">coef</span>(fit3)[<span class="fu">c</span>(<span class="st">"modelmedium"</span>, <span class="st">"modellarge"</span>)])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         modelmedium modellarge
@@ -1103,7 +1232,7 @@ F = \frac{(SS_E^{R} - SS_E^{F}) / q}{SS_E^{F} / (n - k - 1)} \sim F_{q,\; n-k-1}
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2, fit3)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
@@ -1142,13 +1271,13 @@ F = \frac{(3125 - 911) / 2}{911 / 245} = 297
 <div class="cell" data-layout-align="center" data-output-location="slide">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit3), <span class="fu">aes</span>(output_tokens, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> latency), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"קווים מקבילים לא מתאימים לנתונים"</span>,</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקווים: החיזוי של רגרסיה בלי אינטראקציה (בממוצע הקלט)"</span>,</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Output tokens"</span>, <span class="at">y =</span> <span class="st">"Latency (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit3), <span class="fu">aes</span>(output_tokens, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> latency), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"קווים מקבילים לא מתאימים לנתונים"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הקווים: החיזוי של רגרסיה בלי אינטראקציה (בממוצע הקלט)"</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Output tokens"</span>, <span class="at">y =</span> <span class="st">"Latency (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1191,8 +1320,8 @@ Y = \beta_0 + \beta_1 x_{in} + \beta_2 x_{out} + \beta_3 D_{med} + \beta_4 D_{lr
 <div class="cell" data-layout-align="center" data-output-location="slide">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1232,7 +1361,7 @@ F-statistic: 2.49e+03 on 6 and 243 DF,  p-value: &lt;2e-16</code></pre>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit3, fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit3, fit4)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
@@ -1255,16 +1384,16 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell" data-layout-align="center" data-output-location="slide">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">בלי אינטראקציה (fit3)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">augment</span>(fit3),</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">עם אינטראקציה (fit4)</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">augment</span>(fit4), <span class="at">.id =</span> <span class="st">"fit"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(.fitted, .resid, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> fit, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות חושפות את מה שהרגרסיה פספסה"</span>,</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"משמאל: דפוס ברור לפי גודל מודל השפה · מימין: ענן אקראי סביב אפס"</span>,</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Fitted value (s)"</span>, <span class="at">y =</span> <span class="st">"Residual (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="st">`</span><span class="at">בלי אינטראקציה (fit3)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">augment</span>(fit3),</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">עם אינטראקציה (fit4)</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">augment</span>(fit4), <span class="at">.id =</span> <span class="st">"fit"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(.fitted, .resid, <span class="at">colour =</span> model)) <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> fit, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> model_cols) <span class="sc">+</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות חושפות את מה שהרגרסיה פספסה"</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"משמאל: דפוס ברור לפי גודל מודל השפה · מימין: ענן אקראי סביב אפס"</span>,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Fitted value (s)"</span>, <span class="at">y =</span> <span class="st">"Residual (s)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1329,12 +1458,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit4), <span class="fu">aes</span>(<span class="at">sample =</span> .std.resid)) <span class="sc">+</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות קרובות לנורמליות"</span>,</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות של fit4 מול הכמויות של N(0,1)"</span>,</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">augment</span>(fit4), <span class="fu">aes</span>(<span class="at">sample =</span> .std.resid)) <span class="sc">+</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_qq</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות קרובות לנורמליות"</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות של fit4 מול הכמויות של N(0,1)"</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1354,7 +1483,7 @@ H_0: \text{השאריות המתוקננות מתפלגות } N(0, 1) \qquad D =
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit4), <span class="st">"pnorm"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit4), <span class="st">"pnorm"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1377,9 +1506,9 @@ alternative hypothesis: two-sided</code></pre>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Estimate Std. Error
@@ -1391,21 +1520,59 @@ fit5   0.4372    0.18807</code></pre>
 <li>שגיאת התקן של <code>input_k</code> גדלה פי 2.9. הרגרסיה לא יכולה להפריד בין שני משתנים שזזים יחד</li>
 <li>המקדמים “לא יציבים”: שינוי קטן בנתונים מזיז אותם הרבה. <strong>החיזוי</strong> כמעט לא נפגע. <strong>הפרשנות</strong> נפגעת</li>
 </ul>
-<p><strong>מדד VIF</strong> (<span class="en">Variance Inflation Factor</span>): <span class="math inline">\(R_j^2\)</span> הוא ה-<span class="math inline">\(R^2\)</span> של רגרסיה של <span class="math inline">\(x_j\)</span> על כל שאר המשתנים המסבירים.</p>
+</section>
+<section id="מדד-vif-variance-inflation-factor" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="מדד-vif-variance-inflation-factor">מדד VIF (<span class="en">Variance Inflation Factor</span>)</h2>
+<p><span class="math inline">\(R_j^2\)</span> הוא ה-<span class="math inline">\(R^2\)</span> של רגרסיה של <span class="math inline">\(x_j\)</span> על כל שאר המשתנים המסבירים:</p>
 <p><span class="math display">\[
-VIF_j = \frac{1}{1 - R_j^2}
+VIF_j = \frac{1}{1 - R_j^2} \qquad\qquad V(\hat\beta_j) = \frac{\sigma^2}{S_{x_j x_j}} \cdot VIF_j
 \]</span></p>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k. Rule of thumb: above 5-10 is a problem</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.672</code></pre>
 </div>
 </div>
-<p>ה-VIF הוא בדיוק הפקטור שבו השונות של <span class="math inline">\(\hat\beta_j\)</span> גדלה, לעומת מצב שבו <span class="math inline">\(x_j\)</span> לא מתואם עם שאר המשתנים. החבילה <code>car</code> מחשבת אותו לכל המשתנים בבת אחת (<code>car::vif()</code>). כאן חישבנו אותו ידנית כדי לראות מאיפה הוא מגיע. <strong>מה עושים?</strong> משאירים רק אחד מהמשתנים המתואמים, זה שקרוב יותר למנגנון. כאן הטוקנים בקלט הם מה שהשרת מעבד בפועל, והמסמכים משפיעים רק דרכם.</p>
+<p><strong>כלל אצבע:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>VIF</th>
+<th><span class="math inline">\(R_j^2\)</span></th>
+<th>מה זה אומר</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td><span class="math inline">\(x_j\)</span> לא מתואם עם שאר המשתנים</td>
+</tr>
+<tr class="even">
+<td>מעל 5</td>
+<td>מעל 0.8</td>
+<td>סימן אזהרה: כדאי לבדוק</td>
+</tr>
+<tr class="odd">
+<td>מעל 10</td>
+<td>מעל 0.9</td>
+<td>מולטיקולינאריות חמורה: השונות של <span class="math inline">\(\hat\beta_j\)</span> גדלה פי 10 לפחות</td>
+</tr>
+</tbody>
+</table>
+<p>ה-VIF של <code>input_k</code> הוא 8.7: מעל סף האזהרה וקרוב ל-10. שגיאת התקן גדלה פי <span class="math inline">\(\sqrt{VIF} = 2.9\)</span>, כמו שראינו בשקף הקודם. <strong>מה עושים?</strong> משאירים <strong>אחד</strong> מהמשתנים המתואמים, זה שקרוב יותר למנגנון. לא מוחקים משתנה רק בגלל VIF גבוה</p>
+<p>ה-VIF הוא בדיוק הפקטור שבו השונות של <span class="math inline">\(\hat\beta_j\)</span> גדלה, לעומת מצב שבו <span class="math inline">\(x_j\)</span> לא מתואם עם שאר המשתנים. החבילה <code>car</code> מחשבת אותו לכל המשתנים בבת אחת (<code>car::vif()</code>). כאן חישבנו אותו ידנית כדי לראות מאיפה הוא מגיע.</p>
+<p><strong>הספים 5 ו-10 הם מוסכמה, לא משפט.</strong> הסף המקובל בספרות ההנדסית (למשל אצל Montgomery) הוא 10. יש שמחמירים ומשתמשים ב-5. בכל מקרה, VIF גבוה לא אומר שהמודל “שגוי”. הוא אומר שאי אפשר לפרש את המקדמים של המשתנים המתואמים כל אחד לחוד. אם המטרה היא חיזוי בלבד, אפשר לחיות איתו. אם המטרה היא פרשנות, בוחרים משתנה אחד מהקבוצה. כאן הטוקנים בקלט הם מה שהשרת מעבד בפועל, והמסמכים משפיעים רק דרכם, ולכן משאירים את <code>input_k</code>.</p>
+<p><strong>שימו לב:</strong> במודל עם אינטראקציה, ה-VIF של המשתנים שמרכיבים אותה (כאן <code>output_tokens</code> ו-<code>model</code>) יוצא גבוה כמעט תמיד, כי הם מתואמים עם המכפלה שלהם. זה לא סיבה להוציא אותם (כלל ההיררכיה). מירכוז של <span class="math inline">\(x\)</span> לפני חישוב המכפלה מקטין את המתאם הזה.</p>
 </section>
 </section>
 <section id="בחירת-משתנים-variable-selection" class="level1">
@@ -1421,9 +1588,9 @@ VIF_j = \frac{1}{1 - R_j^2}
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>latency ~ input_k + hour + output_tokens + model + output_tokens:model</code></pre>
@@ -1435,7 +1602,7 @@ VIF_j = \frac{1}{1 - R_j^2}
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Estimate Std. Error    t value   Pr(&gt;|t|) 
@@ -1473,9 +1640,9 @@ VIF_j = \frac{1}{1 - R_j^2}
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>            fit   lwr   upr
@@ -1491,15 +1658,15 @@ prediction 16.2 14.35 18.06</code></pre>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>X4 <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(fit4)</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>x0 <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model,</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> <span class="fu">mutate</span>(new_call, <span class="at">model =</span> <span class="fu">factor</span>(model, <span class="fu">levels</span>(llm<span class="sc">$</span>model))))[<span class="dv">1</span>, ]</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>h0 <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(x0) <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X4) <span class="sc">%*%</span> X4) <span class="sc">%*%</span> x0)        <span class="co"># x0' (X'X)^-1 x0</span></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>y0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(x0 <span class="sc">*</span> <span class="fu">coef</span>(fit4))</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> fit4<span class="sc">$</span>df.residual)</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fit =</span> y0, <span class="at">h0 =</span> h0,</span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_half =</span> t_crit <span class="sc">*</span> <span class="fu">sigma</span>(fit4) <span class="sc">*</span> <span class="fu">sqrt</span>(h0),</span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">pi_half =</span> t_crit <span class="sc">*</span> <span class="fu">sigma</span>(fit4) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">+</span> h0))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>X4 <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(fit4)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>x0 <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> input_k <span class="sc">+</span> output_tokens <span class="sc">*</span> model,</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> <span class="fu">mutate</span>(new_call, <span class="at">model =</span> <span class="fu">factor</span>(model, <span class="fu">levels</span>(llm<span class="sc">$</span>model))))[<span class="dv">1</span>, ]</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>h0 <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(x0) <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X4) <span class="sc">%*%</span> X4) <span class="sc">%*%</span> x0)        <span class="co"># x0' (X'X)^-1 x0</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>y0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(x0 <span class="sc">*</span> <span class="fu">coef</span>(fit4))</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> fit4<span class="sc">$</span>df.residual)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">fit =</span> y0, <span class="at">h0 =</span> h0,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci_half =</span> t_crit <span class="sc">*</span> <span class="fu">sigma</span>(fit4) <span class="sc">*</span> <span class="fu">sqrt</span>(h0),</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">pi_half =</span> t_crit <span class="sc">*</span> <span class="fu">sigma</span>(fit4) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">+</span> h0))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     fit       h0  ci_half  pi_half 
@@ -1513,20 +1680,20 @@ prediction 16.2 14.35 18.06</code></pre>
 <div class="cell" data-layout-align="center" data-output-location="slide">
 <details open="" class="code-fold">
 <summary>קוד</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -2044,7 +2211,7 @@ prediction 16.2 14.35 18.06</code></pre>
 <p>ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז</p>
 <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/03-multiple-regression.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>עודכן לאחרונה: 19.10.2026</p>
+<p>עודכן לאחרונה: 01.11.2026</p>
 </div>
   </div>
 </footer>
