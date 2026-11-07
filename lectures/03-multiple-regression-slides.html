@@ -6,15 +6,15 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-17888a1159294d3eb470f19f6f52f5a5.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.10.20">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.11.9">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-11-01">
+  <meta name="dcterms.date" content="2026-11-07">
   <title>ניתוח נתונים סטטיסטי – 3. רגרסיה לינארית מרובה</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
   <style>
@@ -102,7 +102,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-99ebd0278b0d5be90c6a40018b054bfa.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-ce563808aa1ff32480591f73716ce5e3.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -219,7 +219,7 @@
 </div>
 </div>
 
-  <p class="date">2026-11-01</p>
+  <p class="date">2026-11-07</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
@@ -229,7 +229,8 @@
 <li><strong>מבחני השערות:</strong> מבחן t לכל מקדם, מבחן F לכל המודל, ומבחן F חלקי</li>
 <li><strong><span class="math inline">\(R^2\)</span> ו-<span class="math inline">\(R^2\)</span> מתוקן</strong></li>
 <li><strong>משתנים קטגוריים ואינטראקציות</strong></li>
-<li><strong>בדיקת ההנחות:</strong> שאריות ומולטיקולינאריות</li>
+<li><strong>בדיקת ההנחות:</strong> שאריות</li>
+<li><strong>משתנים מתואמים:</strong> פרדוקס סימפסון ומולטיקולינאריות</li>
 <li><strong>בחירת משתנים, רווחי סמך ורווחי חיזוי</strong></li>
 </ul>
 </section>
@@ -1212,14 +1213,89 @@ alternative hypothesis: two-sided</code></pre>
 <li><strong>הסתייגות:</strong> השאריות מחושבות מהמקדמים שאמדנו, ולכן ה-p-value רק בקירוב (כמו ב-KS עם פרמטרים אמודים). מבחן ייעודי לנורמליות הוא <code>shapiro.test()</code></li>
 <li>עם מדגם גדול מאוד, KS ידחה גם סטייה זניחה. עם מדגם קטן, הוא לא יזהה גם סטייה גדולה. לכן מסתכלים <strong>גם</strong> על הגרף</li>
 </ul>
+</section></section>
+<section>
+<section id="משתנים-מתואמים-correlated-predictors" class="title-slide slide level1 center">
+<h1>משתנים מתואמים (<span class="en">Correlated predictors</span>)</h1>
+
+</section>
+<section id="פרדוקס-סימפסון-simpsons-paradox" class="slide level2 smaller">
+<h2>פרדוקס סימפסון (<span class="en">Simpson’s paradox</span>)</h2>
+<p>מרכז תמיכה הטמיע עוזר AI (<span class="en">copilot</span>) לנציגים. <strong>השאלה:</strong> האם נציגים שנעזרים בו יותר מטפלים בפניות מהר יותר? לכל אחד מ-90 נציגים בשלושה צוותים יש לנו את אחוז הפניות שבהן נעזר בעוזר, ואת זמן הטיפול הממוצע שלו.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">304</span>)</span>
+<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a>support <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">team =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"billing"</span>, <span class="st">"technical"</span>, <span class="st">"enterprise"</span>), <span class="at">each =</span> <span class="dv">30</span>),</span>
+<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"billing"</span>, <span class="st">"technical"</span>, <span class="st">"enterprise"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb42-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">copilot_pct =</span> <span class="fu">pmin</span>(<span class="fu">pmax</span>(<span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">80</span>)[team], <span class="dv">10</span>), <span class="dv">0</span>), <span class="dv">100</span>),</span>
+<span id="cb42-5"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">aht =</span> <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">18</span>, <span class="dv">30</span>)[team] <span class="sc">-</span> <span class="fl">0.06</span> <span class="sc">*</span> copilot_pct <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="fl">1.5</span>))  <span class="co"># minutes</span></span>
+<span id="cb42-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(support, <span class="fu">aes</span>(copilot_pct, aht)) <span class="sc">+</span></span>
+<span id="cb42-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
+<span id="cb42-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb42-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"יותר עוזר, יותר זמן?"</span>,</span>
+<span id="cb42-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"רגרסיה על כל 90 הנציגים יחד"</span>,</span>
+<span id="cb42-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Copilot use (% of tickets)"</span>, <span class="at">y =</span> <span class="st">"Avg. handling time (min)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="פרדוקס-סימפסון-simpsons-paradox-output" class="slide level2 smaller output-location-slide"><h2>פרדוקס סימפסון (<span class="en">Simpson’s paradox</span>)</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-multiple-regression_files/figure-html/simpson-data-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="ומה-קורה-בתוך-כל-צוות" class="slide level2">
+<h2>ומה קורה בתוך כל צוות?</h2>
+<p>אותם נתונים, אבל צובעים כל נציג לפי הצוות שלו ומעבירים קו רגרסיה בכל צוות בנפרד:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(support, <span class="fu">aes</span>(copilot_pct, aht)) <span class="sc">+</span></span>
+<span id="cb43-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb43-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> team)) <span class="sc">+</span></span>
+<span id="cb43-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">colour =</span> team), <span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">unname</span>(nanas_pal[<span class="fu">c</span>(<span class="st">"primary"</span>, <span class="st">"green"</span>, <span class="st">"accent"</span>)])) <span class="sc">+</span></span>
+<span id="cb43-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"בתוך כל צוות: יותר עוזר, פחות זמן. בסך הכול: ההפך"</span>,</span>
+<span id="cb43-7"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"הצוות הארגוני: פניות קשות וגם הרבה שימוש בעוזר. המקווקו מערבב בין הצוותים"</span>,</span>
+<span id="cb43-8"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Copilot use (% of tickets)"</span>, <span class="at">y =</span> <span class="st">"Avg. handling time (min)"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="ומה-קורה-בתוך-כל-צוות-output" class="slide level2 output-location-slide"><h2>ומה קורה בתוך כל צוות?</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03-multiple-regression_files/figure-html/simpson-plot-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+</div></section><section id="מה-הרגרסיה-אומרת" class="slide level2 smaller">
+<h2>מה הרגרסיה אומרת</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a>fit_naive <span class="ot">&lt;-</span> <span class="fu">lm</span>(aht <span class="sc">~</span> copilot_pct, <span class="at">data =</span> support)          <span class="co"># all agents together</span></span>
+<span id="cb44-2"><a aria-hidden="true" tabindex="-1"></a>fit_team  <span class="ot">&lt;-</span> <span class="fu">lm</span>(aht <span class="sc">~</span> copilot_pct <span class="sc">+</span> team, <span class="at">data =</span> support)   <span class="co"># within the same team</span></span>
+<span id="cb44-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">naive =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit_naive))[<span class="st">"copilot_pct"</span>, ],</span>
+<span id="cb44-4"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">team  =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit_team))[<span class="st">"copilot_pct"</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Estimate Std. Error t value  Pr(&gt;|t|)
+naive  0.25424    0.01778  14.301 1.126e-24
+team  -0.07134    0.01335  -5.342 7.413e-07</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>בלי הצוות:</strong> כל 10 נקודות אחוז של שימוש בעוזר “מאריכות” את הטיפול ב-2.5 דקות</li>
+<li><strong>באותו צוות:</strong> הן <strong>מקצרות</strong> אותו ב-0.7 דקות. הסימן התהפך</li>
+<li><strong>למה?</strong> הצוות קשור לשני המשתנים: בצוות הארגוני הפניות קשות, <strong>וגם</strong> הנציגים נעזרים בעוזר יותר. בלי הצוות במודל, הרגרסיה מייחסת לעוזר את הקושי של הפניות</li>
+<li><strong>שני צדדים של אותו מתאם:</strong> כשמשמיטים משתנה שמתואם עם <span class="math inline">\(x_j\)</span>, המקדם של <span class="math inline">\(x_j\)</span> <strong>מוטה</strong>. כשמכניסים משתנה שמתואם עם <span class="math inline">\(x_j\)</span>, המקדם <strong>רועש</strong>. זה הנושא של השקף הבא</li>
+</ul>
 </section>
 <section id="מולטיקולינאריות-multicollinearity" class="slide level2 smaller">
 <h2>מולטיקולינאריות (<span class="en">Multicollinearity</span>)</h2>
 <p>מספר המסמכים מ-RAG קובע כמעט לגמרי את מספר הטוקנים בקלט: המתאם ביניהם הוא 0.94. מה קורה כשמכניסים את שניהם?</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb42-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
-<span id="cb42-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a>fit5 <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb46-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">fit4 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit4))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>],</span>
+<span id="cb46-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">fit5 =</span> <span class="fu">coef</span>(<span class="fu">summary</span>(fit5))[<span class="st">"input_k"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     Estimate Std. Error
 fit4   0.2205    0.06423
@@ -1238,8 +1314,8 @@ fit5   0.4372    0.18807</code></pre>
 VIF_j = \frac{1}{1 - R_j^2} \qquad\qquad V(\hat\beta_j) = \frac{\sigma^2}{S_{x_j x_j}} \cdot VIF_j
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
-<span id="cb44-2"><a aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a>r2_input <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>(input_k <span class="sc">~</span> rag_docs <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm))<span class="sc">$</span>r.squared</span>
+<span id="cb48-2"><a aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r2_input)    <span class="co"># VIF of input_k</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.672</code></pre>
 </div>
@@ -1292,18 +1368,63 @@ VIF_j = \frac{1}{1 - R_j^2} \qquad\qquad V(\hat\beta_j) = \frac{\sigma^2}{S_{x_j
 </ul>
 <p><strong>קריטריונים נפוצים:</strong> <span class="math inline">\(R^2_{adj}\)</span>, ה-p-value של מבחן F חלקי, או <span class="en">AIC</span> (מדד שמאזן בין טיב ההתאמה למספר הפרמטרים. קטן יותר = טוב יותר)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
-<span id="cb46-2"><a aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
-<span id="cb46-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a>fit_all  <span class="ot">&lt;-</span> <span class="fu">lm</span>(latency <span class="sc">~</span> input_k <span class="sc">+</span> rag_docs <span class="sc">+</span> hour <span class="sc">+</span> output_tokens <span class="sc">*</span> model, <span class="at">data =</span> llm)</span>
+<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">0</span>)   <span class="co"># stepwise by AIC</span></span>
+<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(fit_step)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>latency ~ input_k + hour + output_tokens + model + output_tokens:model</code></pre>
 </div>
 </div>
 </section>
+<section id="מה-step-עושה-צעד-אחר-צעד" class="slide level2 smaller">
+<h2>מה <code>step()</code> עושה, צעד אחר צעד</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a>fit_step <span class="ot">&lt;-</span> <span class="fu">step</span>(fit_all, <span class="at">direction =</span> <span class="st">"both"</span>, <span class="at">trace =</span> <span class="dv">1</span>)   <span class="co"># trace = 1 prints every step</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=-29.48
+latency ~ input_k + rag_docs + hour + output_tokens * model
+
+                      Df Sum of Sq   RSS   AIC
+- rag_docs             1       1.4 208.1 -29.8
+&lt;none&gt;                             206.8 -29.5
+- hour                 1       2.6 209.4 -28.3
+- input_k              1       5.2 211.9 -25.3
+- output_tokens:model  2     699.4 906.2 336.0
+
+Step:  AIC=-29.82
+latency ~ input_k + hour + output_tokens + model + output_tokens:model
+
+                      Df Sum of Sq   RSS   AIC
+&lt;none&gt;                             208.1 -29.8
++ rag_docs             1       1.4 206.8 -29.5
+- hour                 1       2.5 210.7 -28.8
+- input_k              1      11.6 219.8 -18.2
+- output_tokens:model  2     699.9 908.1 334.5</code></pre>
+</div>
+</div>
+</section>
+<section id="איך-קוראים-את-ה-trace" class="slide level2 smaller">
+<h2>איך קוראים את ה-trace</h2>
+<p><span class="math display">\[
+AIC = n\ln(SS_E/n) + 2p \qquad p = \text{number of coefficients, incl. the intercept}
+\]</span></p>
+<p>קטן יותר = טוב יותר. האיבר הראשון מתגמל התאמה טובה, והשני מעניש על כל פרמטר.</p>
+<ul>
+<li><strong>בכל צעד</strong> מחשבים את ה-AIC של כל מודל שרחוק שינוי אחד מהמודל הנוכחי:
+<ul>
+<li><code>-</code> מוציא משתנה, <code>+</code> מוסיף משתנה, <code>&lt;none&gt;</code> משאיר את המודל כמו שהוא</li>
+<li><code>Sum of Sq</code> הוא השינוי ב-<span class="math inline">\(SS_E\)</span>, ו-<code>RSS</code> הוא <span class="math inline">\(SS_E\)</span> של המודל שמתקבל</li>
+<li>השורות ממוינות מה-AIC הקטן לגדול, ונבחרת <strong>השורה העליונה</strong></li>
+</ul></li>
+<li><strong>צעד 1:</strong> הוצאת <code>rag_docs</code> מורידה את ה-AIC, <span class="math inline">\(-29.5 \to -29.8\)</span>. מוציאים אותו</li>
+<li><strong>צעד 2:</strong> <code>&lt;none&gt;</code> בראש הטבלה. אף שינוי לא משפר, והאלגוריתם <strong>עוצר</strong>. <code>+ rag_docs</code> נבדק שוב, כי זה כיוון “both”</li>
+<li><code>output_tokens</code> ו-<code>model</code> לא מופיעים כמועמדים להוצאה. כל עוד האינטראקציה ביניהם במודל, <code>step()</code> שומר על כלל ההיררכיה</li>
+</ul>
+</section>
 <section id="מה-יכול-להשתבש-בבחירה-אוטומטית" class="slide level2 smaller">
 <h2>מה יכול להשתבש בבחירה אוטומטית</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(fit_step))[<span class="st">"hour"</span>, ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Estimate Std. Error    t value   Pr(&gt;|t|) 
  -0.014070   0.008184  -1.719055   0.086883 </code></pre>
@@ -1340,9 +1461,9 @@ VIF_j = \frac{1}{1 - R_j^2} \qquad\qquad V(\hat\beta_j) = \frac{\sigma^2}{S_{x_j
 <h2>חזרה לשאלה: כמה זמן תיקח הקריאה?</h2>
 <p>2,000 טוקנים בקלט, 500 בפלט, מודל השפה הגדול:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
-<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
-<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a aria-hidden="true" tabindex="-1"></a>new_call <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">input_k =</span> <span class="dv">2</span>, <span class="at">output_tokens =</span> <span class="dv">500</span>, <span class="at">model =</span> <span class="st">"large"</span>)</span>
+<span id="cb56-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">confidence =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"confidence"</span>)[<span class="dv">1</span>, ],</span>
+<span id="cb56-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">prediction =</span> <span class="fu">predict</span>(fit4, new_call, <span class="at">interval =</span> <span class="st">"prediction"</span>)[<span class="dv">1</span>, ])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            fit   lwr   upr
 confidence 16.2 15.92 16.49
@@ -1357,20 +1478,20 @@ prediction 16.2 14.35 18.06</code></pre>
 <section id="איך-זה-נראה" class="slide level2">
 <h2>איך זה נראה</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
-<span id="cb52-2"><a aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
-<span id="cb52-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
-<span id="cb52-4"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb52-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
-<span id="cb52-6"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
-<span id="cb52-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
-<span id="cb52-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
-<span id="cb52-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb52-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
-<span id="cb52-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
-<span id="cb52-13"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
-<span id="cb52-14"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a aria-hidden="true" tabindex="-1"></a>grid_cpu <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">load =</span> <span class="fu">seq</span>(<span class="dv">8</span>, <span class="dv">19</span>, <span class="at">by =</span> <span class="fl">0.1</span>))</span>
+<span id="cb58-2"><a aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(grid_cpu,</span>
+<span id="cb58-3"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"confidence"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
+<span id="cb58-4"><a aria-hidden="true" tabindex="-1"></a>                   <span class="fu">predict</span>(fit_cpu, grid_cpu, <span class="at">interval =</span> <span class="st">"prediction"</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb58-5"><a aria-hidden="true" tabindex="-1"></a>                     <span class="fu">select</span>(<span class="at">pi_lwr =</span> lwr, <span class="at">pi_upr =</span> upr))</span>
+<span id="cb58-6"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bands, <span class="fu">aes</span>(load)) <span class="sc">+</span></span>
+<span id="cb58-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> pi_lwr, <span class="at">ymax =</span> pi_upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"sky"</span>]], <span class="at">alpha =</span> <span class="fl">0.25</span>) <span class="sc">+</span></span>
+<span id="cb58-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">alpha =</span> <span class="fl">0.35</span>) <span class="sc">+</span></span>
+<span id="cb58-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> fit), <span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb58-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(load, util), <span class="at">data =</span> cpu, <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb58-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"רווח החיזוי רחב יותר מרווח הסמך, ושניהם מתרחבים בקצוות"</span>,</span>
+<span id="cb58-13"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"דוגמת המעבד · כהה: רווח סמך 95% לתוחלת · בהיר: רווח חיזוי 95% לתצפית בודדת"</span>,</span>
+<span id="cb58-14"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Load (k requests / min)"</span>, <span class="at">y =</span> <span class="st">"CPU utilisation (%)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section><section id="איך-זה-נראה-output" class="slide level2 output-location-slide"><h2>איך זה נראה</h2><div class="cell output-location-slide" data-layout-align="center">
@@ -1502,7 +1623,7 @@ prediction 16.2 14.35 18.06</code></pre>
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,
 'jumpToSlide': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"\u003ci class=\"fas fa-gear\">\u003c/i>","content":"\u003cul class=\"slide-menu-items\">\n\u003cli class=\"slide-tool-item active\" data-item=\"0\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\">\u003ckbd>f\u003c/kbd> Fullscreen\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"1\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\">\u003ckbd>s\u003c/kbd> Speaker View\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"2\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\">\u003ckbd>o\u003c/kbd> Slide Overview\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"3\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\">\u003ckbd>e\u003c/kbd> PDF Export Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"4\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\">\u003ckbd>r\u003c/kbd> Scroll View Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"5\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\">\u003ckbd>?\u003c/kbd> Keyboard Help\u003c/a>\u003c/li>\n\u003c/ul>"}],"openButton":true,"openButtonLabel":"Slide menu"},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -1757,7 +1878,8 @@ prediction 16.2 14.35 18.06</code></pre>
               return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
           }
           // Inspect non-navigation links and adorn them if external
-         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          window.quartoDecorateExternalLinks = function (root) {
+         var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
           for (var i=0; i<links.length; i++) {
             const link = links[i];
             if (!isInternal(link.href)) {
@@ -1766,8 +1888,69 @@ prediction 16.2 14.35 18.06</code></pre>
               if (link.dataset.originalHref !== undefined) {
                 link.href = link.dataset.originalHref;
               }
+              if (!link.classList.contains('no-external-icon')) {
+              }
             }
           }
+          };
+          window.quartoDecorateExternalLinks(window.document);
+        // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+        // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+        const hideOnEscAndFocusOut = {
+          name: 'hideOnEscAndFocusOut',
+          defaultValue: true,
+          fn(instance) {
+            const dismiss = () => {
+              // A show scheduled by the trigger delay would otherwise reopen it
+              instance.clearDelayTimeouts();
+              instance.hide();
+            };
+            const onKeyDown = (event) => {
+              if (event.key !== 'Escape') {
+                return;
+              }
+              // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+              // except an open reveal.js slide menu, which Esc should close too.
+              // The menu handles keys only when its keyboard option is on.
+              const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+                window.Reveal.getConfig().menu?.keyboard !== false;
+              if (!menuHandlesEsc) {
+                event.stopPropagation();
+              }
+              if (instance.popper.contains(window.document.activeElement)) {
+                // Disabled while refocusing so the focus trigger does not reopen it
+                instance.disable();
+                instance.reference.focus();
+                instance.enable();
+              }
+              dismiss();
+            };
+            const onFocusOut = (event) => {
+              const target = event.relatedTarget;
+              if (target && !instance.reference.contains(target) &&
+                  !instance.popper.contains(target)) {
+                dismiss();
+              }
+            };
+            // On the trigger too: a click trigger (code-annotations: select) has no
+            // blur handling. Attached for the instance's lifetime so leaving the
+            // trigger also cancels a show still pending on the trigger delay.
+            instance.reference.addEventListener('focusout', onFocusOut);
+            return {
+              onShow() {
+                window.document.addEventListener('keydown', onKeyDown, true);
+                instance.popper.addEventListener('focusout', onFocusOut);
+              },
+              onHide() {
+                window.document.removeEventListener('keydown', onKeyDown, true);
+                instance.popper.removeEventListener('focusout', onFocusOut);
+              },
+              onDestroy() {
+                instance.reference.removeEventListener('focusout', onFocusOut);
+              },
+            };
+          },
+        };
         function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
           const config = {
             allowHTML: true,
@@ -1781,6 +1964,7 @@ prediction 16.2 14.35 18.06</code></pre>
             interactiveBorder: 10,
             theme: 'light-border',
             placement: 'bottom-start',
+            plugins: [hideOnEscAndFocusOut],
           };
           if (contentFn) {
             config.content = contentFn;
