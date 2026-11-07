@@ -38,6 +38,10 @@ lectures/
   _metadata.yml           shared html + revealjs formats for every lecture
   NN-slug.qmd             one lecture → NN-slug.html + NN-slug-slides.html
   pdf/NN-slug-slides.pdf  printable slide PDF. COMMITTED, made by scripts/slides-pdf.sh
+calculators/               online calculators ("מחשבונים אונליין" menu). Client-side JS, no R, no Shiny
+  slug.qmd                page: controls + chart in a raw-HTML block, then explanation and formulas
+  js/stats.js             shared helpers (seeded RNG, t quantile, simple regression), checked against R
+  js/slug.js              one calculator's logic + ECharts drawing
 R/setup.R                 shared ggplot theme (theme_nanas), palette (nanas_pal), seed
 assets/styles.scss        site theme (Heebo font, RTL fixes for code/figures)
 assets/slides.scss        slide theme (RTL, title slide)
@@ -56,6 +60,16 @@ renv/, renv.lock          R package environment
 4. Render locally: `quarto render lectures/NN-slug.qmd`, or `quarto preview` while writing.
 5. Export the printable PDF: `scripts/slides-pdf.sh lectures/NN-slug.qmd` (needs Chrome and Node; it reads `_site/`, so render first). Re-run it whenever the slides change.
 6. Commit the `.qmd`, the matching `_freeze/lectures/NN-slug/` folder **and** `lectures/pdf/NN-slug-slides.pdf`.
+
+### Adding an online calculator
+
+Calculators run entirely in the browser, because the site is static (GitHub Pages) and CI has no R. Don't use Shiny or webR.
+
+1. Add `calculators/slug.qmd` with the controls and chart container in a ```` ```{=html} ```` block. Put the `<script>` tags **at the end of the page**, after every element the script touches.
+2. Put the logic in `calculators/js/slug.js`. Reuse `js/stats.js` and extend it there if you need a new distribution. Load ECharts from jsDelivr with a pinned version (`echarts@5.5.1`).
+3. Verify the numbers against R before publishing: `compute()` can be `require`d in Node, so compare its output with `lm`/`predict` (or the matching R function) on the same data.
+4. Chart rules still apply: palette colours from `nanas_pal`, x axis left to right (range sliders are forced LTR in `assets/styles.scss`), keep Hebrew-plus-number strings out of the canvas (put them in HTML instead), and re-colour on the light/dark toggle.
+5. Add it to the `מחשבונים אונליין` menu in `_quarto.yml`. Give the page the R code that reproduces the calculation.
 
 ### Before every push to `main`
 
@@ -114,9 +128,11 @@ This order was agreed with Avital and differs from the official syllabus order.
 | # | Lecture | Recitation |
 |---|---|---|
 | 1 | Non-parametric methods | Non-parametric methods |
-| 2 | *Rescheduled. Make-up date and topic TBD* | Probability distributions review |
+| 2 | *Cancelled. Make-up on Sun 8.11: end of regression + lecture 4* | Probability distributions review |
 | 3 | Multiple linear regression | Simple + multiple regression |
-| 4–6 | ANOVA (one-way, contrasts & multiple comparisons, multi-way) | accordingly |
+| 4 | One-way ANOVA, incl. assumptions, Welch, power, one-way random effects (Sun 8.11 make-up) | accordingly |
+| 5 | Contrasts, multiple comparisons (Duncan, Tukey HSD), Kruskal–Wallis, median contrasts, Friedman (Mon 9.11, opens with a short recap of 4) | accordingly |
+| 6 | Multi-way ANOVA | accordingly |
 | 7 | Design of experiments | accordingly |
 | 8 | Logistic regression | accordingly |
 | 9 | PCA | accordingly |

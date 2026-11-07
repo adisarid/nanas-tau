@@ -4,8 +4,10 @@ project:
   render:
     - "*.qmd"
     - "lectures/*.qmd"
+    - "calculators/*.qmd"
   resources:
     - "lectures/pdf/*.pdf"   # printable slide PDFs, made locally by scripts/slides-pdf.sh
+    - "calculators/js/*.js"  # client-side code for the online calculators
 
 execute:
   freeze: auto        # code runs locally only; CI reuses _freeze/
@@ -47,6 +49,14 @@ website:
             text: "בונוס: למה טעו מדגמי היציאה?"
           - href: lectures/03-multiple-regression.qmd
             text: "3. רגרסיה לינארית מרובה"
+          - href: lectures/04-one-way-anova.qmd
+            text: "4. ניתוח שונות חד-כיווני"
+          - href: lectures/05-contrasts-multiple-comparisons.qmd
+            text: "5. ניגודים, השוואות מרובות וא-פרמטרי"
+      - text: מחשבונים אונליין
+        menu:
+          - href: calculators/prediction-intervals.qmd
+            text: "רווח סמך מול רווח חיזוי"
       - href: syllabus.qmd
         text: סילבוס
       - href: https://moodle.tau.ac.il/course/view.php?id=571313701
@@ -58,7 +68,7 @@ website:
         aria-label: GitHub
   page-footer:
     center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
-    right: "עודכן לאחרונה: 01.11.2026"   # update on every push to main (see README)
+    right: "עודכן לאחרונה: 08.11.2026"   # update on every push to main (see README)
 
 format:
   html:

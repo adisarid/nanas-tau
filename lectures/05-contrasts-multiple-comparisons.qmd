@@ -1,0 +1,900 @@
+---
+title: "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה 5"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: 05-contrasts-multiple-comparisons-slides.html
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+library(broom)
+data_dir    <- "../data/anova"
+np_data_dir <- "../data/nonparametric"
+model_cols <- setNames(unname(nanas_pal[c("primary", "sky", "green", "accent", "yellow")]),
+                        paste0("M", 1:5))
+calls <- read_csv(file.path(data_dir, "support_ai.csv"), show_col_types = FALSE) |>
+  mutate(model = factor(model))
+fit_ai <- aov(aht ~ model, data = calls)
+mse <- deviance(fit_ai) / fit_ai$df.residual   # 0.854, 40 df
+```
+
+## על מה נדבר היום
+
+- **חזרה קצרה** על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)
+- **ניגודים** ([contrasts]{.en}): שאלות ספציפיות שתכננו מראש
+- **השוואות מרובות:** למה 10 מבחני t הם בעיה
+  - שיטת [Duncan]{.en}
+  - שיטת [Tukey]{.en} ([HSD]{.en})
+- **ניתוח שונות א-פרמטרי:**
+  - [Kruskal–Wallis]{.en}: כמה מדגמים בלתי תלויים
+  - ניגודים עם חציונים
+  - [Friedman]{.en}: טיפולים בתוך בלוקים
+
+# חזרה: ניתוח שונות חד-כיווני
+
+## המודל וההשערות {.smaller}
+
+**$a$ רמות** של פקטור אחד, **$n$ תצפיות** בכל רמה, $N = an$:
+
+$$
+y_{ij} = \mu + \tau_i + \varepsilon_{ij} \qquad \sum_{i=1}^{a}\tau_i = 0 \qquad \varepsilon_{ij} \overset{iid}{\sim} N(0, \sigma^2)
+$$
+
+$$
+H_0: \tau_1 = \dots = \tau_a = 0 \quad (\mu_1 = \dots = \mu_a) \qquad H_1: \tau_i \neq 0 \text{ עבור } i \text{ כלשהו}
+$$
+
+**שלוש הנחות:** נורמליות, אי-תלות, שונות שווה בכל הרמות.
+
+**הדוגמה:** מוקד שירות בוחר את מודל השפה לעוזר AI. 5 מודלים (M1, M2 קטנים, M3 בינוני, M4, M5 גדולים), 9 ימים לכל מודל, והתגובה היא משך הטיפול הממוצע בפנייה (דקות). האם יש הבדל, ואיזה מודל להפעיל?
+
+```{r}
+#| label: calls-means
+calls |> group_by(model) |> summarise(total = sum(aht), mean = mean(aht))
+```
+
+## פירוק השונות וטבלת ANOVA {.smaller}
+
+$$
+\underbrace{\sum_{i,j}(y_{ij} - \bar y_{\cdot\cdot})^2}_{SS_T}
+= \underbrace{n\sum_{i}(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}_{SS_{Tr}\text{: בין הרמות}}
++ \underbrace{\sum_{i,j}(y_{ij} - \bar y_{i\cdot})^2}_{SS_E\text{: בתוך הרמות}}
+$$
+
+| מקור | סכום ריבועים | דרגות חופש | ממוצע ריבועים | $F_0$ |
+|---|---|---|---|---|
+| בין הרמות | $SS_{Tr}$ | $a - 1$ | $MS_{Tr}$ | $MS_{Tr}/MS_E$ |
+| שגיאה | $SS_E$ | $N - a$ | $MS_E = \hat\sigma^2$ | |
+| סך הכול | $SS_T$ | $N - 1$ | | |
+
+- $E(MS_E) = \sigma^2$ תמיד. $E(MS_{Tr}) = \sigma^2 + \frac{n\sum\tau_i^2}{a-1}$
+- דוחים את $H_0$ אם $F_0 > F_{1-\alpha;\,a-1,\,N-a}$
+
+## התוצאה למודלים
+
+```{r}
+#| label: calls-aov
+summary(fit_ai)
+```
+
+- $F_0 = 5.28 > F_{0.95;\,4,\,40} = 2.61$: **יש הבדל בין המודלים**
+- $MS_E = 0.854$, ולכן $\hat\sigma = 0.92$ דקות
+- **אבל** מבחן ה-F לא אומר **בין מי למי**. עם M1 ו-M2 הטיפול נראה ארוך, ועם M3, M4 ו-M5 קצר. האם זה אמיתי?
+
+**שתי דרכים לענות:**
+
+1. **ניגודים:** שאלות ספציפיות שניסחנו **לפני** שראינו את הנתונים
+2. **השוואות מרובות:** כל הזוגות, עם תיקון לכך שבודקים הרבה
+
+::: notes
+עוד דבר מיום ראשון: ראינו שבימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נחזור לזה בסוף, במבחן פרידמן.
+:::
+
+# ניגודים ([Contrasts]{.en})
+
+## שאלות ספציפיות {.smaller}
+
+לפני הניסוי, ראש צוות ה-AI במוקד שאל שתי שאלות:
+
+- **האם מודלים גדולים מקצרים את הטיפול?** M1 ו-M2 קטנים, M4 ו-M5 גדולים
+- **האם M3 שונה מ-M4?** שניהם מאותה משפחת מודלים: M3 הוא הגרסה הבינונית והזולה, M4 הגרסה הגדולה
+
+את השאלות אפשר לכתוב כהשערות על **צירוף לינארי** של התוחלות:
+
+$$
+H_0: \tfrac{1}{2}(\mu_1 + \mu_2) = \tfrac{1}{2}(\mu_4 + \mu_5)
+\quad\Longleftrightarrow\quad
+H_0: \mu_1 + \mu_2 - \mu_4 - \mu_5 = 0
+$$
+
+$$
+H_0: \mu_3 = \mu_4
+\quad\Longleftrightarrow\quad
+H_0: \mu_3 - \mu_4 = 0
+$$
+
+## הגדרה {.smaller}
+
+**ניגוד** ([contrast]{.en}) הוא צירוף לינארי של התוחלות
+
+$$
+\Gamma = \sum_{i=1}^{a} c_i \mu_i \qquad \text{כאשר} \qquad \sum_{i=1}^{a} c_i = 0
+$$
+
+| השאלה | $c_1$ | $c_2$ | $c_3$ | $c_4$ | $c_5$ |
+|---|---|---|---|---|---|
+| קטנים מול גדולים | 1 | 1 | 0 | −1 | −1 |
+| M3 מול M4 | 0 | 0 | 1 | −1 | 0 |
+
+- **למה $\sum c_i = 0$?** כי אז $\sum c_i \mu_i = \sum c_i(\mu + \tau_i) = \sum c_i \tau_i$. ה-$\mu$ מתבטל, והניגוד מודד רק **הבדלים** בין הרמות
+- כל השוואה בין שתי רמות היא ניגוד: $c = (1, -1, 0, \dots)$
+
+## האומד והשונות שלו {.smaller}
+
+**האומד:** מחליפים כל תוחלת בממוצע של הרמה:
+
+$$
+\hat\Gamma = \sum_{i=1}^{a} c_i \bar y_{i\cdot}
+$$
+
+**התוחלת:** $E(\hat\Gamma) = \sum c_i \mu_i = \Gamma$. תחת $H_0$ היא אפס.
+
+**השונות:** הממוצעים בלתי תלויים, וכל אחד עם שונות $\sigma^2/n$:
+
+$$
+V(\hat\Gamma) = \sum_{i=1}^{a} c_i^2 \, V(\bar y_{i\cdot}) = \frac{\sigma^2}{n}\sum_{i=1}^{a} c_i^2
+$$
+
+**מבחן t:** מציבים $MS_E$ במקום $\sigma^2$:
+
+$$
+t_0 = \frac{\sum c_i \bar y_{i\cdot}}{\sqrt{\frac{MS_E}{n}\sum c_i^2}} \sim t_{N-a} \quad \text{(תחת } H_0\text{)}
+$$
+
+## סכום הריבועים של ניגוד {.smaller}
+
+אפשר לכתוב את אותו מבחן כמבחן F, עם $t_0^2 = F_0$. בעזרת הסכומים $y_{i\cdot} = n\bar y_{i\cdot}$:
+
+$$
+SS_C = \frac{\left(\sum_{i=1}^{a} c_i y_{i\cdot}\right)^2}{n\sum_{i=1}^{a} c_i^2}
+\qquad\qquad
+F_0 = \frac{SS_C / 1}{MS_E} \sim F_{1,\; N-a}
+$$
+
+- לכל ניגוד **דרגת חופש אחת**
+- $SS_C$ הוא החלק של $SS_{Tr}$ ש"מוסבר" על ידי השאלה הספציפית הזו
+- דוחים את $H_0: \Gamma = 0$ אם $F_0 > F_{1-\alpha;\,1,\,N-a}$
+
+::: {.content-hidden when-format="revealjs"}
+**מאיפה הנוסחה?** $t_0^2 = \frac{(\sum c_i \bar y_{i\cdot})^2}{\frac{MS_E}{n}\sum c_i^2}$. נכפיל מונה ומכנה ב-$n^2$: המונה הופך ל-$(\sum c_i y_{i\cdot})^2$, והמכנה ל-$n \cdot MS_E \sum c_i^2$. מכאן $t_0^2 = \frac{SS_C}{MS_E}$.
+:::
+
+## המודלים: קטנים מול גדולים {.smaller}
+
+סכומי משכי הטיפול: $y_{1\cdot} = 45.02$, $y_{2\cdot} = 48.01$, $y_{3\cdot} = 35.95$, $y_{4\cdot} = 33.87$, $y_{5\cdot} = 35.60$.
+
+**קטנים מול גדולים,** $c = (1, 1, 0, -1, -1)$:
+
+$$
+\sum c_i y_{i\cdot} = 45.02 + 48.01 - 33.87 - 35.60 = 23.56
+\qquad
+SS_{C_1} = \frac{23.56^2}{9 \cdot 4} = 15.42
+$$
+
+$$
+F_0 = \frac{15.42}{0.854} = 18.06 > F_{0.95;\,1,\,40} = 4.08
+$$
+
+**דוחים:** עם המודלים הגדולים הטיפול קצר יותר. $\hat\Gamma/2 = (5.17 - 3.86) = 1.31$ דקות בממוצע.
+
+**M3 מול M4,** $c = (0, 0, 1, -1, 0)$:
+
+$$
+SS_{C_2} = \frac{(35.95 - 33.87)^2}{9 \cdot 2} = 0.24 \qquad F_0 = \frac{0.24}{0.854} = 0.28 < 4.08
+$$
+
+**לא דוחים:** אין עדות להבדל בין M3 ל-M4.
+
+## אותו חישוב ב-R
+
+```{r}
+#| label: contrast-fn
+contrast_test <- function(c, totals, n, mse, df_e) {
+  ss <- sum(c * totals)^2 / (n * sum(c^2))
+  c(estimate = sum(c * totals / n), SS = ss, F = ss / mse,
+    p = pf(ss / mse, 1, df_e, lower.tail = FALSE))
+}
+totals <- tapply(calls$aht, calls$model, sum)
+rbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),
+      M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))
+```
+
+## ניגודים אורתוגונליים ([Orthogonal contrasts]{.en}) {.smaller}
+
+שני ניגודים $c$ ו-$d$ הם **אורתוגונליים** אם
+
+$$
+\sum_{i=1}^{a} c_i d_i = 0
+$$
+
+- ניגודים אורתוגונליים שואלים שאלות **בלתי תלויות**: האומדים שלהם בלתי מתואמים
+- אפשר למצוא לכל היותר **$a - 1$** ניגודים שכל זוג מהם אורתוגונלי
+- **טענה:** לקבוצה של $a - 1$ ניגודים אורתוגונליים בזוגות,
+
+$$
+SS_{C_1} + SS_{C_2} + \dots + SS_{C_{a-1}} = SS_{Tr}
+$$
+
+**כלומר:** ניגודים אורתוגונליים **מפרקים** את $SS_{Tr}$ ל-$a - 1$ שאלות נפרדות, כל אחת עם דרגת חופש אחת.
+
+## דוגמה כללית: ניגודי [Helmert]{.en} {.smaller}
+
+כל רמה מול כל הרמות שאחריה:
+
+| | רמה 1 | רמה 2 | רמה 3 | $\cdots$ | רמה $a-1$ | רמה $a$ |
+|---|---|---|---|---|---|---|
+| $C_1$ | $-(a-1)$ | 1 | 1 | $\cdots$ | 1 | 1 |
+| $C_2$ | 0 | $-(a-2)$ | 1 | $\cdots$ | 1 | 1 |
+| $C_3$ | 0 | 0 | $-(a-3)$ | $\cdots$ | 1 | 1 |
+| $\vdots$ | | | | $\ddots$ | | |
+| $C_{a-1}$ | 0 | 0 | 0 | $\cdots$ | $-1$ | 1 |
+
+- $C_1$: הרמה הראשונה מול כל השאר
+- $C_2$: הרמה השנייה מול כל השאר, בלי הראשונה
+- וכן הלאה. נסו לבדוק: המכפלה של כל שתי שורות היא 0
+
+## המודלים: ארבעה ניגודים אורתוגונליים {.smaller}
+
+| השאלה | $c_1$ | $c_2$ | $c_3$ | $c_4$ | $c_5$ |
+|---|---|---|---|---|---|
+| $C_1$: קטנים מול גדולים | 1 | 1 | 0 | −1 | −1 |
+| $C_2$: M1 מול M2 | 1 | −1 | 0 | 0 | 0 |
+| $C_3$: M4 מול M5 | 0 | 0 | 0 | 1 | −1 |
+| $C_4$: M3 מול כל השאר | 1 | 1 | −4 | 1 | 1 |
+
+```{r}
+#| label: orthogonal
+C <- rbind(small_vs_large = c(1, 1, 0, -1, -1), M1_vs_M2 = c(1, -1, 0, 0, 0),
+           M4_vs_M5 = c(0, 0, 0, 1, -1),        M3_vs_rest = c(1, 1, -4, 1, 1))
+C %*% t(C)                                       # off-diagonal zeros: pairwise orthogonal
+ss_c <- apply(C, 1, contrast_test, totals = totals, n = 9, mse = mse, df_e = 40)
+round(ss_c, 3)
+c(sum_SS_C = sum(ss_c["SS", ]), SS_Tr = summary(fit_ai)[[1]][1, "Sum Sq"])
+```
+
+## איך קוראים את הפירוק
+
+```{r}
+#| label: orthogonal-plot
+#| fig-height: 3
+tibble(contrast = colnames(ss_c), SS = ss_c["SS", ]) |>
+  mutate(share = SS / sum(SS), contrast = fct_reorder(contrast, SS)) |>
+  ggplot(aes(share, contrast)) +
+  geom_col(fill = nanas_pal[["primary"]]) +
+  geom_text(aes(label = percent(share, 1)), hjust = -0.15) +
+  scale_x_continuous(labels = percent, limits = c(0, 1)) +
+  labs(title = "86% מההבדלים בין המודלים: קטנים מול גדולים",
+       subtitle = "החלק של כל ניגוד ב-SS_Tr = 18.02", x = "Share of SS_Tr", y = NULL)
+```
+
+- כמעט כל ההבדל בין המודלים הוא **גודל**. בתוך כל קבוצה, המודלים דומים
+- זו תשובה עסקית ברורה יותר מ"יש הבדל בין המודלים"
+
+## ניגודים בניסוי לא מאוזן {.smaller}
+
+כש-$n_i$ שונים, מגדירים את הניגוד על **הסכומים** $y_{i\cdot}$:
+
+$$
+C = \sum_{i=1}^{a} c_i y_{i\cdot} \qquad E(C) = \sum_{i=1}^{a} c_i n_i (\mu + \tau_i) = \mu\sum_{i=1}^{a} n_i c_i + \sum_{i=1}^{a} n_i c_i \tau_i
+$$
+
+כדי ש-$\mu$ יתבטל, התנאי הוא:
+
+$$
+\sum_{i=1}^{a} n_i c_i = 0 \qquad\qquad SS_C = \frac{\left(\sum c_i y_{i\cdot}\right)^2}{\sum n_i c_i^2}
+$$
+
+- **אורתוגונליות** בניסוי לא מאוזן: $\sum n_i c_i d_i = 0$
+- בניסוי מאוזן ($n_i = n$) חוזרים לתנאים הקודמים
+
+## דוגמה: מבחן בשלוש כיתות {.smaller}
+
+מבחן התקיים בשלוש כיתות: 40 סטודנטים בכיתה 1, ו-30 בכל אחת מכיתות 2 ו-3. **כיתה 3 סמוכה לאתר בנייה.** הסטודנטים שלה מבקשים פקטור. **האם הטענה מוצדקת?**
+
+```{r}
+#| label: rooms
+rooms <- read_csv(file.path(data_dir, "exam_rooms.csv"), show_col_types = FALSE)
+rooms |> group_by(room) |> summarise(n = n(), total = sum(grade), mean = mean(grade))
+fit_rooms <- aov(grade ~ room, data = rooms)
+summary(fit_rooms)
+```
+
+ה-ANOVA דוחה ($p = 0.02$). אבל השאלה ספציפית: **כיתה 3 מול שתי האחרות**.
+
+## הניגוד לכיתה 3 {.smaller}
+
+צריך $\sum n_i c_i = 0$ עם $n = (40, 30, 30)$. ננסה $c = (1, 1, c_3)$:
+
+$$
+40 + 30 + 30c_3 = 0 \;\Longrightarrow\; c_3 = -\tfrac{7}{3} \;\Longrightarrow\; c = (3, 3, -7)
+$$
+
+$$
+C = 3 \cdot 3014 + 3 \cdot 2258 - 7 \cdot 2015 = 1711
+\qquad
+\sum n_i c_i^2 = 40 \cdot 9 + 30 \cdot 9 + 30 \cdot 49 = 2100
+$$
+
+$$
+SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 > F_{0.95;\,1,\,97} = 3.94
+$$
+
+**דוחים:** בכיתה 3 הציונים נמוכים באופן מובהק משתי הכיתות האחרות, בכ-8 נקודות. **ו-$SS_C$ הוא כמעט כל $SS_{Tr} = 1394.2$:** בין כיתות 1 ו-2 כמעט אין הבדל.
+
+```{r}
+#| label: rooms-contrast
+rt <- tapply(rooms$grade, rooms$room, sum); rn <- table(rooms$room); cc <- c(3, 3, -7)
+ss_room3 <- sum(cc * rt)^2 / sum(rn * cc^2)
+c(sum_n_c = sum(rn * cc), SS_C = ss_room3, F = ss_room3 / 170.86,
+  p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))
+```
+
+::: notes
+שאלה לדיון: האם זה מוכיח שהרעש גרם לציונים נמוכים? רק אם הסטודנטים שובצו לכיתות באקראי. אם כיתה 3 הייתה, למשל, הכיתה של מי שנרשם אחרון למבחן, ייתכן שזו אוכלוסייה אחרת.
+:::
+
+## ניגודים מתוכננים מול "מה שנראה מעניין" {.smaller}
+
+- **ניגוד מתוכנן** ([planned, a priori]{.en}): השאלה נוסחה **לפני** שראינו את הנתונים. מבחן F עם $\alpha$ רגילה תקין
+- **ניגוד שנבחר אחרי שראינו את הנתונים** ([post hoc]{.en}): אם בוחרים להשוות את הממוצע הגבוה לנמוך **כי** הם הכי רחוקים, ההשוואה מוטה. הפער הגדול ביותר מבין הרבה פערים גדול מטבעו
+- כדי לבדוק השוואות שנבחרו אחרי שראינו את הנתונים, צריך **שיטות להשוואות מרובות** ← החלק הבא
+
+::: {.content-hidden when-format="revealjs"}
+לבדיקת ניגודים **כלליים** שנבחרו אחרי שראינו את הנתונים יש שיטה של [Scheffé]{.en}: דוחים את $H_0: \Gamma = 0$ אם $SS_C / MS_E > (a-1)F_{1-\alpha;\,a-1,\,N-a}$. היא שומרת על $\alpha$ גם אם בודקים את **כל** הניגודים האפשריים, ולכן היא שמרנית מאוד. לא נשתמש בה בקורס, אבל כדאי להכיר את השם.
+:::
+
+# השוואות מרובות ([Multiple comparisons]{.en})
+
+## הבעיה {.smaller}
+
+עם 5 מודלים יש 10 זוגות. אם בודקים כל זוג במבחן t ב-$\alpha = 0.05$, ו-$H_0$ נכונה בכל הזוגות:
+
+| מספר המבחנים $m$ | $P(\text{לפחות טעות אחת}) = 1 - 0.95^m$ |
+|---|---|
+| 1 | 0.05 |
+| 10 (5 רמות) | 0.40 |
+| 45 (10 רמות) | 0.90 |
+| 100 | 0.99 |
+
+- **שיעור הטעות לכל השוואה** ([per-comparison]{.en}): $\alpha$. זה מה שמבחן t רגיל שומר עליו
+- **שיעור הטעות למשפחה** ([familywise error rate, FWER]{.en}): ההסתברות לטעות **אחת לפחות** בכל קבוצת המבחנים
+
+::: {.content-hidden when-format="revealjs"}
+הנוסחה $1 - (1-\alpha)^m$ מניחה שהמבחנים בלתי תלויים. השוואות בין זוגות של אותן רמות **תלויות** (M1–M2 ו-M1–M3 חולקות את $\bar y_{1\cdot}$, וכולן משתמשות באותו $MS_E$), ולכן ה-FWER האמיתי קצת נמוך יותר. הסימולציה בשקף הבא מראה כמה.
+:::
+
+## סימולציה: 10 מבחני t כשאין שום הבדל
+
+```{r}
+#| label: fwer-sim
+set.seed(55)
+g <- factor(rep(paste0("M", 1:5), each = 9))
+any_reject <- replicate(4000, {
+  p <- pairwise.t.test(rnorm(45), g, p.adjust.method = "none")$p.value
+  any(p < 0.05, na.rm = TRUE)
+})
+mean(any_reject)
+```
+
+- ב-`r percent(mean(any_reject), 1)` מהניסויים "מצאנו" לפחות זוג מודלים שונים, אף שכולם זהים
+- פחות מ-40% בגלל התלות בין המבחנים, אבל הרבה יותר מ-5%
+
+## שלוש שיטות, שלוש משמעויות של "מובהק" {.smaller}
+
+כל השיטות משוות **הפרש בין ממוצעים** לסף. כולן משתמשות בשגיאת התקן של ממוצע, $s_{\bar y} = \sqrt{MS_E / n}$:
+
+| השיטה | הסף | שולטת ב- |
+|---|---|---|
+| [LSD]{.en} של [Fisher]{.en} | $t_{1-\alpha/2,\,N-a}\sqrt{2MS_E/n}$ | שיעור הטעות לכל השוואה. רק אחרי F מובהק |
+| [Duncan]{.en} | $r_\alpha(p, f)\, s_{\bar y}$, תלוי במרחק $p$ בין הממוצעים | ביניים |
+| [Tukey HSD]{.en} | $q_\alpha(a, f)\, s_{\bar y}$, סף אחד לכל הזוגות | שיעור הטעות למשפחה (FWER) |
+
+למודלים: $s_{\bar y} = \sqrt{0.854/9} = 0.308$, ו-$f = N - a = 40$.
+
+```{r}
+#| label: lsd
+c(s_ybar = sqrt(mse / 9), LSD = qt(0.975, 40) * sqrt(2 * mse / 9))
+```
+
+# שיטת [Duncan]{.en}
+
+## הרעיון {.smaller}
+
+**[Duncan's multiple range test]{.en}** משווה את כל הזוגות, אבל הסף תלוי **כמה ממוצעים** נמצאים בין שני הממוצעים שמשווים.
+
+1. ממיינים את ממוצעי הרמות בסדר יורד
+2. לזוג שמרוחק $p$ מקומות (כולל שניהם, $p = 2, \dots, a$) מחשבים את **הטווח המובהק הקטן ביותר**:
+
+$$
+R_p = r_\alpha(p, f)\cdot\sqrt{\frac{MS_E}{n}}
+$$
+
+3. אם $|\bar y_{i\cdot} - \bar y_{k\cdot}| > R_p$, ההפרש מובהק
+
+- $r_\alpha(p, f)$ הם **מקדמי [Duncan]{.en}**, מטבלה. $f = N - a$ הן דרגות החופש של $MS_E$
+- זוג רחוק ($p$ גדול) צריך הפרש גדול יותר כדי להיות מובהק
+- **כלל ההגנה:** אם טווח לא מובהק, לא בודקים זוגות **בתוכו**
+
+## מאיפה מגיעים המקדמים? {.smaller}
+
+המקדמים הם ערכים של **התפלגות הטווח המסוטנדרט** ([studentized range]{.en}), אותה התפלגות שבה משתמשת שיטת [Tukey]{.en}. ההבדל הוא ברמת המובהקות: לטווח של $p$ ממוצעים, [Duncan]{.en} משתמש ב-
+
+$$
+\alpha_p = 1 - (1 - \alpha)^{p - 1}
+$$
+
+ככל ש-$p$ גדל, $\alpha_p$ גדלה, והשיטה "סלחנית" יותר. ב-R אין צורך בטבלה:
+
+```{r}
+#| label: duncan-coefs
+p <- 2:5
+r_duncan <- qtukey((1 - 0.05)^(p - 1), nmeans = p, df = 40)   # Duncan's r_alpha(p, 40)
+rbind(p = p, alpha_p = 1 - 0.95^(p - 1), r = r_duncan, R_p = r_duncan * sqrt(mse / 9)) |> round(3)
+```
+
+::: {.content-hidden when-format="revealjs"}
+הערכים 2.86, 3.01, 3.10, 3.17 הם בדיוק הערכים בטבלאות של [Duncan]{.en} לדרגות חופש 40. בבחינה תקבלו טבלה. כאן רואים שהיא לא קסם: זו ההתפלגות של $(\bar y_{max} - \bar y_{min})/s_{\bar y}$ מתוך $p$ ממוצעים, ברמת מובהקות שתלויה ב-$p$.
+:::
+
+## המודלים: שיטת [Duncan]{.en} {.smaller}
+
+**מיון:** M2 (5.33) · M1 (5.00) · M3 (3.99) · M5 (3.96) · M4 (3.76)
+
+```{r}
+#| label: duncan-table
+#| output-location: slide
+means <- sort(tapply(calls$aht, calls$model, mean), decreasing = TRUE)
+R_p   <- setNames(r_duncan * sqrt(mse / 9), 2:5)
+
+duncan <- combn(names(means), 2, simplify = FALSE) |>
+  map(\(pair) {
+    pos <- match(pair, names(means))
+    tibble(high = pair[1], low = pair[2], p = diff(pos) + 1,
+           diff = means[pair[1]] - means[pair[2]], R_p = R_p[as.character(diff(pos) + 1)])
+  }) |>
+  list_rbind() |>
+  mutate(significant = diff > R_p) |>
+  arrange(desc(p))
+duncan
+```
+
+## התוצאה {.smaller}
+
+| | M2 | M1 | M3 | M5 | M4 |
+|---|---|---|---|---|---|
+| ממוצע | 5.33 | 5.00 | 3.99 | 3.96 | 3.76 |
+| קבוצה | **א** | **א** | **ב** | **ב** | **ב** |
+
+- **M2 ו-M1** לא שונים זה מזה (0.33 < 0.88), ושניהם שונים מכל השאר
+- **M3, M5 ו-M4** לא שונים זה מזה: הטווח של שלושתם הוא 0.23 < $R_3$ = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו
+- רמות עם אותה **אות** לא שונות זו מזו באופן מובהק
+
+**ההמלצה:** להפעיל את אחד מ-M3, M4 או M5. הנתונים לא מבדילים ביניהם, ולכן M3, הזול שבהם, הוא בחירה סבירה.
+
+## ביקורת על [Duncan]{.en}
+
+- $\alpha_p$ גדלה עם מספר הממוצעים: עם 5 רמות, $\alpha_5 = 1 - 0.95^4 = 0.185$
+- כלומר, ה-FWER של השיטה **גבוה מ-5%**, וגדל עם מספר הרמות. עם 10 רמות, $\alpha_{10} = 0.37$
+- השיטה "מוצאת" יותר הבדלים, וחלקם שגויים
+- [Duncan]{.en} נפוצה בספרות החקלאית וההנדסית הישנה, ותפגשו אותה בבחינה. בעבודה מעשית, מקובל היום להשתמש ב-[Tukey]{.en}
+
+# שיטת [Tukey]{.en} ([HSD]{.en})
+
+## הרעיון {.smaller}
+
+**[Tukey's Honest Significant Difference]{.en}:** סף **אחד** לכל הזוגות, שמבטיח FWER $= \alpha$ בדיוק (בניסוי מאוזן).
+
+$$
+HSD = q_\alpha(a, f)\cdot\sqrt{\frac{MS_E}{n}}
+$$
+
+- $q_\alpha(a, f)$: הערך הקריטי של **התפלגות הטווח המסוטנדרט** של $a$ ממוצעים, עם $f = N - a$ דרגות חופש
+- **ההיגיון:** אם הזוג **הרחוק ביותר** לא חוצה את הסף תחת $H_0$ בהסתברות $1 - \alpha$, אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא $\alpha$
+
+$$
+q = \frac{\bar y_{max} - \bar y_{min}}{\sqrt{MS_E/n}}
+$$
+
+**רווחי סמך משותפים** לכל ההפרשים: $(\bar y_{i\cdot} - \bar y_{k\cdot}) \pm HSD$. **בניסוי לא מאוזן** ([Tukey–Kramer]{.en}): $q_\alpha(a, f)\sqrt{\frac{MS_E}{2}\left(\frac{1}{n_i} + \frac{1}{n_k}\right)}$.
+
+## המודלים: חישוב ידני {.smaller}
+
+$$
+HSD = q_{0.05}(5, 40)\cdot 0.308 = 4.04 \cdot 0.308 = 1.244
+$$
+
+```{r}
+#| label: hsd
+c(q = qtukey(0.95, nmeans = 5, df = 40), HSD = qtukey(0.95, 5, 40) * sqrt(mse / 9))
+duncan |> mutate(tukey = diff > 1.244) |> select(high, low, diff, duncan = significant, tukey)
+```
+
+## [Tukey]{.en} ב-R
+
+```{r}
+#| label: tukey-r
+TukeyHSD(fit_ai)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+- **`diff`**: ההפרש בין הממוצעים (השורה $-$ העמודה). `M2-M1 = 0.33`: עם M2 הטיפול ארוך מאשר עם M1 ב-0.33 דקות
+- **`lwr`, `upr`**: רווח סמך **משותף** של 95%: $\text{diff} \pm 1.244$. ב-95% מהניסויים **כל** עשרת הרווחים יכילו את ההפרש האמיתי יחד
+- **`p adj`**: p-value מתוקן להשוואות מרובות. מובהק אם קטן מ-0.05, כלומר אם הרווח לא כולל את 0
+- **שימו לב ל-`M4-M1`:** ההפרש 1.239, וה-HSD הוא 1.244. `p adj = 0.051`. **לא** מובהק, בהפרש של חמש אלפיות דקה
+
+::: notes
+להדגיש כמה שרירותי הסף הזה. M4-M1 עם p = 0.051 ו-M2-M3 עם p = 0.02 הם לא "עולמות שונים". מדווחים את הרווח, לא רק כן/לא.
+:::
+
+## רווחי הסמך בתרשים
+
+```{r}
+#| label: tukey-plot
+#| output-location: slide
+#| fig-height: 4.2
+TukeyHSD(fit_ai)$model |>
+  as_tibble(rownames = "pair") |>
+  mutate(pair = fct_reorder(pair, diff), significant = `p adj` < 0.05) |>
+  ggplot(aes(diff, pair, colour = significant)) +
+  geom_vline(xintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_errorbar(aes(xmin = lwr, xmax = upr), width = 0.25, linewidth = 1, orientation = "y") +
+  geom_point(size = 3) +
+  scale_colour_manual(values = c(`TRUE` = nanas_pal[["accent"]], `FALSE` = nanas_pal[["grey"]]),
+                      labels = c(`TRUE` = "מובהק", `FALSE` = "לא מובהק")) +
+  labs(title = "שלושה זוגות מובהקים לפי Tukey: M2 מול M3, M4 ו-M5",
+       subtitle = "רווחי סמך משותפים 95% להפרשים · רווח שלא חוצה את 0 הוא מובהק",
+       x = "Difference in mean handle time (min)", y = NULL, colour = NULL)
+```
+
+## [Duncan]{.en} מול [Tukey]{.en} {.smaller}
+
+| זוג | הפרש | [LSD]{.en} (0.88) | [Duncan]{.en} ($R_p$) | [Tukey]{.en} (1.244) |
+|---|---|---|---|---|
+| M2–M4 | 1.57 | ✓ | ✓ (0.98) | ✓ |
+| M2–M5 | 1.38 | ✓ | ✓ (0.96) | ✓ |
+| M2–M3 | 1.34 | ✓ | ✓ (0.93) | ✓ |
+| M1–M4 | 1.24 | ✓ | ✓ (0.96) | ✗ |
+| M1–M5 | 1.05 | ✓ | ✓ (0.93) | ✗ |
+| M1–M3 | 1.01 | ✓ | ✓ (0.88) | ✗ |
+| M2–M1, M3–M4, M3–M5, M5–M4 | ≤ 0.33 | ✗ | ✗ | ✗ |
+
+- [LSD]{.en} ו-[Duncan]{.en} מוצאים 6 זוגות. [Tukey]{.en} מוצא 3
+- **אין כאן "נכון" ו"לא נכון".** זו בחירה בין שתי טעויות: [Tukey]{.en} שומר על הסיכוי לתגלית שגויה **אחת** מתחת ל-5%, במחיר של עוצמה
+
+## איזו שיטה מתי? {.smaller}
+
+| המצב | השיטה | ב-R |
+|---|---|---|
+| מעט שאלות, מתוכננות מראש | ניגודים, $\alpha$ רגילה | ידני, `pf()` |
+| כל הזוגות, אחרי F מובהק | [Tukey HSD]{.en} | `TukeyHSD()` |
+| כל הזוגות, כשהבחינה דורשת | [Duncan]{.en} | `qtukey()` + טבלה |
+
+**הכלל החשוב ביותר:** מחליטים על השיטה **לפני** שמסתכלים על התוצאות. אם בוחרים את השיטה שנותנת את התוצאה ה"נכונה", כל התיקון לא שווה כלום.
+
+# ניתוח שונות א-פרמטרי: [Kruskal–Wallis]{.en}
+
+## מתי צריך מבחן א-פרמטרי? {.smaller}
+
+**הדוגמה:** זמן התגובה של API בארבעה אזורי ענן ([regions]{.en}), 12 בקשות מכל אזור. זמני תגובה מוטים ימינה, עם ערכים חריגים.
+
+```{r}
+#| label: latency-data
+#| output-location: slide
+#| fig-height: 4
+set.seed(162)
+latency <- tibble(region = factor(rep(c("eu-west", "us-east", "il-central", "ap-south"), each = 12),
+                                  levels = c("eu-west", "us-east", "il-central", "ap-south")),
+                  ms = round(rlnorm(48, log(rep(c(150, 155, 210, 220), each = 12)), 0.8)))
+
+ggplot(latency, aes(ms, region)) +
+  geom_boxplot(width = 0.5, outlier.shape = NA, colour = "grey60") +
+  geom_point(colour = nanas_pal[["primary"]], size = 2.5, alpha = 0.7,
+             position = position_jitter(height = 0.1, seed = 3)) +
+  labs(title = "זמני תגובה מוטים, עם כמה בקשות איטיות מאוד",
+       subtitle = "12 בקשות מכל אזור",
+       x = "Latency (ms)", y = NULL)
+```
+
+## ANOVA על נתונים מוטים {.smaller}
+
+```{r}
+#| label: latency-aov
+fit_lat <- aov(ms ~ region, data = latency)
+summary(fit_lat)
+shapiro.test(resid(fit_lat))
+```
+
+- ה-ANOVA **לא דוחה** ($p = `r round(summary(fit_lat)[[1]][1, "Pr(>F)"], 3)`$)
+- אבל השאריות רחוקות מנורמליות. הבקשות האיטיות מנפחות את $MS_E$ ו"מסתירות" את ההבדלים
+- **שתי אפשרויות:** טרנספורמציה ($\log$), או מבחן שלא מניח נורמליות
+
+## [Kruskal–Wallis]{.en}: הרעיון {.smaller}
+
+**הכללה של מבחן סכום הדירוגים** (הרצאה 1) ליותר משני מדגמים.
+
+$$
+y_{ij} = \mu + \tau_i + \varepsilon_{ij}
+$$
+
+- **לא** מניחים $\varepsilon_{ij} \sim N(0, \sigma^2)$. מניחים רק שכל ה-$\varepsilon_{ij}$ מגיעים מאותה התפלגות **רציפה**
+- $H_0: \tau_1 = \dots = \tau_a = 0$ (כל הרמות מאותה התפלגות) מול $H_1$: לפחות רמה אחת מוזזת
+- **השיטה:** מדרגים את כל $N$ התצפיות יחד, מ-1 (הקטנה) עד $N$ (הגדולה), ומריצים "ANOVA על הדרגות"
+
+**תחת $H_0$** הדרגות מתפזרות באקראי בין הרמות. כמו במבחן סכום הדירוגים, כל דרגה מתפלגת אחיד על $\{1, \dots, N\}$:
+
+$$
+E(R_{ij}) = \frac{N+1}{2} \qquad V(R_{ij}) = \frac{N^2 - 1}{12}
+$$
+
+## הסטטיסטי {.smaller}
+
+**ב-ANOVA** (בהנחת נורמליות):
+
+$$
+\frac{SS_{Tr}}{\sigma^2} = \frac{\sum_{i=1}^{a} n_i(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}{\sigma^2} \sim \chi^2_{a-1}
+$$
+
+**ב-[Kruskal–Wallis]{.en}:** אותו ביטוי, על הדרגות. $\bar R_{i\cdot}$ הוא ממוצע הדרגות ברמה $i$, ו-$\sigma^2$ מוחלף בשונות הידועה של דרגה, $\frac{N(N+1)}{12}$ (בקירוב):
+
+$$
+K = \frac{12}{N(N+1)}\sum_{i=1}^{a} n_i\left(\bar R_{i\cdot} - \frac{N+1}{2}\right)^2
+= \frac{12}{N(N+1)}\sum_{i=1}^{a}\frac{R_{i\cdot}^2}{n_i} - 3(N+1)
+$$
+
+- $R_{i\cdot}$ הוא **סכום** הדרגות ברמה $i$
+- תחת $H_0$, $K \sim \chi^2_{a-1}$ בקירוב (טוב כש-$n_i \ge 5$)
+- דוחים את $H_0$ אם $K > \chi^2_{1-\alpha,\,a-1}$
+- **שימו לב:** אין כאן $\sigma^2$ לאמוד. השונות של הדרגות ידועה מראש
+
+::: {.content-hidden when-format="revealjs"}
+**מאיפה $\frac{N(N+1)}{12}$ ולא $\frac{N^2-1}{12}$?** ההבדל הוא גורם של $\frac{N-1}{N}$, שנובע מכך שהדרגות נדגמות "בלי החזרה" (אותו תיקון של אוכלוסייה סופית שראינו במבחן סכום הדירוגים). עם הגורם הזה, $K$ מתפלג בדיוק $\chi^2_{a-1}$ אסימפטוטית. כשיש **דרגות זהות** ([ties]{.en}) נותנים לכל התצפיות הזהות את ממוצע הדרגות שלהן, ומחלקים את $K$ בגורם תיקון $1 - \frac{\sum (t^3 - t)}{N^3 - N}$, כאשר $t$ הוא גודל כל קבוצת ערכים זהים. R עושה את זה אוטומטית.
+:::
+
+## דוגמה לחישוב ידני: חוזק בד לפי אחוז כותנה {.smaller}
+
+מפעל טקסטיל בודק 5 רמות של אחוז כותנה בבד (15%–35%), 6 דגימות בכל רמה. **האם אחוז הכותנה משפיע על חוזק המתיחה?**
+
+```{r}
+#| label: cotton
+cotton <- read_csv(file.path(np_data_dir, "cotton_strength.csv"), show_col_types = FALSE) |>
+  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))
+cotton |>
+  group_by(cotton_pct) |>
+  summarise(n = n(), strength = paste(sort(strength), collapse = ", "),
+            R = sum(rank), R_bar = mean(rank))
+```
+
+## חישוב $K$ {.smaller}
+
+```{r}
+#| label: cotton-K
+#| include: false
+Rs <- cotton |> group_by(cotton_pct) |> summarise(R = sum(rank)) |> pull(R)
+K_hand <- 12 / (30 * 31) * sum(Rs^2 / 6) - 3 * 31
+```
+
+$N = 30$, $a = 5$, $n_i = 6$. סכומי הדרגות: $R_{i\cdot} = `r paste(Rs, collapse = ",\\ ")`$.
+
+$$
+K = \frac{12}{30 \cdot 31}\cdot\frac{`r paste0(Rs, "^2", collapse = " + ")`}{6} - 3 \cdot 31 = `r round(K_hand, 2)`
+$$
+
+$$
+K = `r round(K_hand, 2)` > \chi^2_{0.95,\,4} = 9.49
+$$
+
+**דוחים** את $H_0$: אחוז הכותנה משפיע על חוזק הבד.
+
+```{r}
+#| label: cotton-tests
+kruskal.test(strength ~ cotton_pct, data = cotton)
+```
+
+::: {.content-hidden when-format="revealjs"}
+הערך ש-R מדווח (19.814) קצת גבוה מהחישוב הידני (19.805), כי יש בנתונים ערכים זהים, ו-R מחלק בגורם התיקון לדרגות זהות. ב-ANOVA על אותם נתונים מתקבל $F = 13.9$, עם $p = 4.3 \times 10^{-6}$. ה-p-value של [Kruskal–Wallis]{.en} ($5.4 \times 10^{-4}$) גדול יותר: כשהנחת הנורמליות **מתקיימת**, המבחן הפרמטרי חזק יותר. המבחן הא-פרמטרי מוותר על חלק מהמידע (הערכים עצמם) בתמורה לעמידות.
+:::
+
+## בחזרה לזמני התגובה {.smaller}
+
+```{r}
+#| label: latency-kw
+kruskal.test(ms ~ region, data = latency)
+summary(aov(log(ms) ~ region, data = latency))
+```
+
+- **[Kruskal–Wallis]{.en} דוחה** ($p = `r round(kruskal.test(ms ~ region, data = latency)$p.value, 4)`$), במקום שה-ANOVA על הנתונים הגולמיים לא דחה
+- גם ANOVA על $\log(\text{ms})$ דוחה. הלוגריתם "מכווץ" את הזנב הימני ומקרב לנורמליות
+- **הדרגות לא רגישות לערכים חריגים:** בקשה של 1,000 מילישניות היא פשוט "הדרגה הגבוהה ביותר", בדיוק כמו בקשה של 400
+
+## אילו אזורים שונים? השוואות מרובות על דרגות {.smaller}
+
+אחרי [Kruskal–Wallis]{.en} מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:
+
+```{r}
+#| label: latency-pairwise
+pairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = "bonferroni")
+```
+
+- כל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, **מתוקן** בשיטת [Bonferroni]{.en}: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05
+- **הסתייגות:** כמו בהרצאה 1, מבחן סכום הדירוגים בודק **חציונים** רק תחת הנחת הזזה. כאן, עם התפלגויות לוג-נורמליות עם אותה צורה, ההנחה סבירה בסקאלה הלוגריתמית
+
+## ניגודים עם חציונים {.smaller}
+
+אחרי [Kruskal–Wallis]{.en}, איך אומדים ניגוד $\Gamma = \sum c_i \tau_i$ בלי ממוצעים?
+
+- **הניסיון הטבעי:** $\hat\tau_i = \text{median}_j\{y_{ij}\} - \text{median}_{\text{all}}$
+- **הבעיה:** האומדים האלה **לא** מקיימים $\sum \hat\tau_i = 0$
+
+**דוגמה קטנה:** $y_{1j} = \{3, 7, 8\}$ ו-$y_{2j} = \{0, 1, 2\}$. החציון הכללי הוא 2.5, וחציוני הקבוצות הם 7 ו-1:
+
+$$
+\hat\tau_1 = 7 - 2.5 = 4.5 \qquad \hat\tau_2 = 1 - 2.5 = -1.5 \qquad \hat\tau_1 + \hat\tau_2 = 3 \neq 0
+$$
+
+## הפתרון: חציונים של הפרשים {.smaller}
+
+לכל זוג רמות $(i, k)$, מחשבים את החציון של **כל ההפרשים** בין תצפית מרמה $i$ לתצפית מרמה $k$:
+
+$$
+Z_{ik} = \underset{j,\,m}{\text{median}}\{y_{ij} - y_{km}\} \qquad Z_{ii} = 0
+\qquad\qquad
+\hat\tau_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik}
+$$
+
+מכיוון ש-$Z_{ik} = -Z_{ki}$, הסכום $\sum_i \hat\tau_i = \frac{1}{a}\sum_i\sum_k Z_{ik} = 0$.
+
+**בדוגמה הקטנה:** 9 ההפרשים $y_{1j} - y_{2m}$ הם $\{3, 2, 1, 7, 6, 5, 8, 7, 6\}$, והחציון שלהם $Z_{12} = 6$. לכן $Z_{21} = -6$, ו-
+
+$$
+\hat\tau_1 = \frac{0 + 6}{2} = 3 \qquad \hat\tau_2 = \frac{-6 + 0}{2} = -3 \qquad \hat\tau_1 + \hat\tau_2 = 0 \;\checkmark
+$$
+
+::: {.content-hidden when-format="revealjs"}
+$Z_{ik}$ הוא **אומד [Hodges–Lehmann]{.en}** להזזה בין שתי רמות: האומד שמתאים למבחן סכום הדירוגים, כמו שהפרש ממוצעים מתאים למבחן t. הוא עמיד לערכים חריגים, ומקיים אנטי-סימטריה. ממוצע של אומדי ההזזה מול כל הרמות נותן "אפקט" לכל רמה, ביחס לרמה ממוצעת.
+:::
+
+## ניגוד בדוגמת הכותנה {.smaller}
+
+**השאלה:** האם הקצוות (15% ו-35%) חלשים מ-30%? $\Gamma = \frac{1}{2}(\tau_1 + \tau_5) - \tau_4$.
+
+```{r}
+#| label: cotton-contrast
+y_by_level <- split(cotton$strength, cotton$cotton_pct)
+Z <- outer(seq_along(y_by_level), seq_along(y_by_level),
+           Vectorize(\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], "-"))))
+tau_hat <- rowMeans(Z)
+round(tau_hat, 2)
+sum(tau_hat)                                     # 0 by construction
+0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]
+```
+
+$$
+\hat\Gamma = \tfrac{1}{2}(`r round(tau_hat[1], 2)` + `r round(tau_hat[5], 2)`) - `r round(tau_hat[4], 2)` = `r round(0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4], 2)`
+$$
+
+בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה.
+
+# מבחן [Friedman]{.en}: טיפולים בתוך בלוקים
+
+## כשכל יחידה מקבלת את כל הטיפולים {.smaller}
+
+**דוגמה:** צוות AI בודק שלוש גרסאות של פרומפט על 8 משימות מבחן ([eval set]{.en}). כל תשובה מקבלת ציון 0–100.
+
+- **כל משימה נבדקת עם כל שלושת הפרומפטים.** המשימה היא **בלוק** ([block]{.en})
+- המשימות שונות מאוד בקושי. ההבדל בין משימה קלה לקשה גדול מההבדל בין פרומפטים
+- [Kruskal–Wallis]{.en} מניח מדגמים **בלתי תלויים**. כאן הם לא: אותה משימה מופיעה בכל הרמות
+- **הפתרון:** משווים את הפרומפטים **בתוך** כל משימה
+
+זה גם המצב של המודלים במוקד: כל המודלים עבדו באותם 9 ימים, והיום הוא בלוק.
+
+## הנתונים
+
+```{r}
+#| label: llm-data
+#| output-location: slide
+#| fig-height: 4
+llm <- read_csv(file.path(np_data_dir, "llm_prompt_eval.csv"), show_col_types = FALSE) |>
+  mutate(prompt = factor(prompt, levels = c("baseline", "few_shot", "reasoning")),
+         task = factor(task))
+
+ggplot(llm, aes(prompt, score, group = task)) +
+  geom_line(colour = "grey70") +
+  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +
+  labs(title = "ברוב המשימות, הפרומפט עם ההנמקה מנצח",
+       subtitle = "כל קו הוא משימה אחת · ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים",
+       x = NULL, y = "Score (0–100)")
+```
+
+## הסטטיסטי {.smaller}
+
+- $b$ בלוקים ו-$k$ טיפולים
+- מדרגים את הטיפולים **בתוך כל בלוק** בנפרד, מ-1 עד $k$
+- $R_j$ הוא **סכום הדרגות** של טיפול $j$ על פני כל הבלוקים
+
+**תחת $H_0$** (אין הבדל בין הטיפולים), בכל בלוק כל סידור של הדרגות סביר באותה מידה, ולכן $E(R_j) = \frac{b(k+1)}{2}$:
+
+$$
+Q = \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k}\left(R_j - \frac{b(k+1)}{2}\right)^2
+= \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k} R_j^2 - 3\,b\,(k+1)
+$$
+
+תחת $H_0$, $Q \sim \chi^2_{k-1}$ בקירוב. דוחים את $H_0$ אם $Q > \chi^2_{1-\alpha,\,k-1}$.
+
+## חישוב {.smaller}
+
+```{r}
+#| label: llm-ranks
+llm_ranked <- llm |> group_by(task) |> mutate(rank = rank(score)) |> ungroup()
+llm_ranked |> select(task, prompt, rank) |> pivot_wider(names_from = prompt, values_from = rank)
+llm_ranked |> group_by(prompt) |> summarise(R = sum(rank))
+```
+
+$$
+Q = \frac{12}{8 \cdot 3 \cdot 4}\left(10^2 + 16^2 + 22^2\right) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 > \chi^2_{0.95,\,2} = 5.99
+$$
+
+**דוחים:** יש הבדל בין הפרומפטים.
+
+## [Friedman]{.en} ב-R, ומה קורה בלי בלוקים {.smaller}
+
+```{r}
+#| label: llm-friedman
+friedman.test(score ~ prompt | task, data = llm)
+kruskal.test(score ~ prompt, data = llm)          # ignores the blocks
+```
+
+- [Friedman]{.en} **דוחה**. [Kruskal–Wallis]{.en}, שמתעלם מהבלוקים, **לא**
+- השונות הגדולה **בין המשימות** "מטביעה" את ההבדל בין הפרומפטים, כמו שאפקט היום ניפח את $MS_E$ במוקד
+- **אותו עיקרון במוקד:**
+
+```{r}
+#| label: calls-friedman
+friedman.test(aht ~ model | day, data = calls)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**המקבילה הפרמטרית** של [Friedman]{.en} היא ניתוח שונות דו-כיווני בלי אינטראקציה, עם הטיפול והבלוק כשני פקטורים: `aov(score ~ prompt + task)`. זה **תכנון בבלוקים אקראיים** ([randomised complete block design]{.en}), ונגיע אליו בהרצאה 6 ובהרצאה על תכנון ניסויים. לשני טיפולים בלבד ($k = 2$), [Friedman]{.en} שקול למבחן הסימן למדגמים מזווגים מהרצאה 1.
+:::
+
+# מה יכול להשתבש
+
+## חמש מלכודות {.smaller}
+
+1. **לבחור את ההשוואה אחרי שרואים את הנתונים**, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן
+2. **לבחור את שיטת התיקון לפי התוצאה:** "ב-[Tukey]{.en} זה לא יצא מובהק, אז ננסה [Duncan]{.en}". זו הגרסה המתוחכמת של [p-hacking]{.en}
+3. **לא לתקן בכלל:** להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק
+4. **להתעלם מבלוקים:** כשאותן יחידות (משימות, ימים, משתמשים) מופיעות בכל הרמות, מבחן למדגמים בלתי תלויים מאבד עוצמה ומפר את ההנחות
+5. **לפרש [Kruskal–Wallis]{.en} כמבחן על חציונים** בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר
+
+# סיכום
+
+## מה לקחת מההרצאה {.smaller}
+
+| השאלה | הכלי | ב-R |
+|---|---|---|
+| שאלה ספציפית, מתוכננת מראש | ניגוד, $SS_C$, $F_{1,\,N-a}$ | ידני, `pf()` |
+| לפרק את $SS_{Tr}$ לשאלות נפרדות | $a - 1$ ניגודים אורתוגונליים | |
+| כל הזוגות (גרסת הבחינה) | [Duncan]{.en}, $R_p = r_\alpha(p, f)\,s_{\bar y}$ | `qtukey((1-α)^(p-1), p, f)` |
+| כל הזוגות, FWER $= \alpha$ | [Tukey HSD]{.en}, $q_\alpha(a, f)\,s_{\bar y}$ | `TukeyHSD()` |
+| נתונים מוטים, חריגים, סדר | [Kruskal–Wallis]{.en}, $K \sim \chi^2_{a-1}$ | `kruskal.test()` |
+| זוגות אחרי [Kruskal–Wallis]{.en} | סכום דירוגים + תיקון | `pairwise.wilcox.test()` |
+| ניגוד עמיד לחריגים | חציונים של הפרשים, $Z_{ik}$ | |
+| טיפולים בתוך בלוקים | [Friedman]{.en}, $Q \sim \chi^2_{k-1}$ | `friedman.test()` |
+
+**בהרצאה הבאה:** ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל.

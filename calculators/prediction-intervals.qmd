@@ -1,0 +1,110 @@
+---
+title: "רווח סמך מול רווח חיזוי"
+subtitle: "מחשבון אינטראקטיבי: רגרסיה פשוטה, קו הרגרסיה והרווחים סביבו"
+toc: false
+page-layout: full
+---
+
+יש לנו מודל רגרסיה, ושואלים אותו שתי שאלות שנשמעות דומות. **מה הערך הממוצע** של $y$ בנקודה $x_0$? ו**איפה תיפול תצפית בודדת** חדשה באותה נקודה? על הראשונה עונה **רווח סמך** ([confidence interval]{.en}), ועל השנייה **רווח חיזוי** ([prediction interval]{.en}). המחשבון מגריל מדגם מקשר ידוע, מתאים לו רגרסיה, ומצייר את שני הרווחים. שנו את הפרמטרים וראו מה קורה לכל אחד מהם.
+
+```{=html}
+<div id="pici-calc" class="calc">
+  <div class="calc-controls">
+    <label for="pici-model">הקשר האמיתי</label>
+    <select id="pici-model" class="form-select form-select-sm">
+      <option value="linear">לינארי: y = a + b·x + ε</option>
+      <option value="log_linear">לוג-לינארי: log(y) = a + b·x + ε</option>
+      <option value="sine">סינוס: y = a + b·sin(x) + ε</option>
+    </select>
+
+    <div class="calc-pair">
+      <div><label for="pici-a">a</label><input id="pici-a" type="number" step="0.1" value="1" class="form-control form-control-sm"></div>
+      <div><label for="pici-b">b</label><input id="pici-b" type="number" step="0.1" value="0.5" class="form-control form-control-sm"></div>
+    </div>
+
+    <label for="pici-xmin">x מינימלי: <output id="pici-xmin-out"></output></label>
+    <input id="pici-xmin" type="range" min="0" max="10" step="0.1" value="0" class="form-range">
+    <label for="pici-xmax">x מקסימלי: <output id="pici-xmax-out"></output></label>
+    <input id="pici-xmax" type="range" min="0" max="10" step="0.1" value="5" class="form-range">
+
+    <label for="pici-n">גודל המדגם n: <output id="pici-n-out"></output></label>
+    <input id="pici-n" type="range" min="10" max="1000" step="10" value="30" class="form-range">
+
+    <label for="pici-sigma">סטיית התקן של הרעש σ: <output id="pici-sigma-out"></output></label>
+    <input id="pici-sigma" type="range" min="0" max="10" step="0.1" value="0.5" class="form-range">
+
+    <label for="pici-level">רמת סמך</label>
+    <select id="pici-level" class="form-select form-select-sm">
+      <option value="0.8">80%</option>
+      <option value="0.9">90%</option>
+      <option value="0.95" selected>95%</option>
+      <option value="0.99">99%</option>
+    </select>
+
+    <div class="form-check">
+      <input id="pici-extrap" type="checkbox" class="form-check-input">
+      <label for="pici-extrap" class="form-check-label">הצגת אקסטרפולציה (מחוץ לטווח הנתונים)</label>
+    </div>
+
+    <button id="pici-resample" type="button" class="btn btn-primary btn-sm">מדגם חדש</button>
+  </div>
+
+  <div class="calc-main">
+    <p class="calc-caption">לחיצה על פריט במקרא מסתירה אותו או מציגה אותו. רמת הסמך של שני הרווחים: <span id="pici-level-txt" class="en"></span></p>
+    <div id="pici-warn" class="alert alert-warning" hidden></div>
+    <div id="pici-chart" class="calc-chart"></div>
+    <div id="pici-stats"></div>
+  </div>
+</div>
+```
+
+## מה רואים בגרף
+
+- **קו מקווקו:** הקשר האמיתי שממנו הוגרל המדגם. במציאות אנחנו לא יודעים אותו
+- **קו כתום:** קו הרגרסיה שנאמד מהמדגם
+- **רצועה כהה:** רווח הסמך לתוחלת $E(Y \mid x_0)$
+- **רצועה בהירה:** רווח החיזוי לתצפית בודדת חדשה
+- **נקודות אפורות:** המדגם
+
+המדגם נשאר קבוע כשמזיזים את הפקדים: אותן הגרלות, רק בקנה מידה אחר. כך רואים את ההשפעה של כל פרמטר לבד. **מדגם חדש** מגריל מדגם אחר.
+
+## מה כדאי לנסות
+
+1. **הגדילו את $n$ עד 1000.** רווח הסמך מתכווץ כמעט לקו. רווח החיזוי כמעט לא משתנה: הוא לא יכול לרדת מתחת ל-$\pm z\,\sigma$, כי זו השונות של התצפית החדשה עצמה
+2. **הגדילו את $\sigma$.** שני הרווחים מתרחבים באותו יחס
+3. **הקטינו את $n$ ל-10.** הרווחים מתרחבים, גם כי $\hat\sigma$ רועש יותר וגם כי $t_{n-2}$ גדול יותר
+4. **סמנו "הצגת אקסטרפולציה".** שני הרווחים מתרחבים ככל שמתרחקים מ-$\bar x$. מחוץ לטווח הנתונים הם מניחים שהקשר נשאר אותו קשר, ואת זה הנתונים לא יכולים לבדוק
+5. **עברו למודל הלוג-לינארי והגדילו את $b$ או את $\sigma$.** הרווחים כבר לא סימטריים סביב הקו: אמדנו אותם על $\log y$ והחזרנו ב-$\exp$. שימו לב שהקו המוחזר אומד את **החציון** של $y$, לא את הממוצע שלו
+6. **עברו למודל הסינוס.** המודל $y = a + b\sin x$ לא לינארי ב-$x$, אבל הוא לינארי במקדמים, ולכן `lm(y ~ sin(x))` אומד אותו בלי בעיה. נסו טווח צר של $x$ סביב $\pi/2 \approx 1.57$: שם $\sin x$ כמעט קבוע, ואי אפשר לאמוד את $b$
+
+## הנוסחאות
+
+ברגרסיה פשוטה, עם $\hat y_0 = \hat\beta_0 + \hat\beta_1 x_0$ ו-$\hat\sigma^2 = SSE/(n-2)$:
+
+$$
+\text{CI:}\;\; \hat y_0 \pm t_{1-\alpha/2,\,n-2}\;\hat\sigma\sqrt{\frac1n + \frac{(x_0-\bar x)^2}{S_{xx}}}
+\qquad
+\text{PI:}\;\; \hat y_0 \pm t_{1-\alpha/2,\,n-2}\;\hat\sigma\sqrt{1 + \frac1n + \frac{(x_0-\bar x)^2}{S_{xx}}}
+$$
+
+ה-1 שמתחת לשורש ברווח החיזוי הוא השונות של התצפית החדשה. שני האיברים האחרים הם אי הוודאות באמידת הקו, והם שואפים לאפס כש-$n$ גדל. במודל הסינוס מחליפים את $x$ ב-$\sin x$, ובמודל הלוג-לינארי מחשבים את הרווח עבור $\log y$ ומפעילים $\exp$ על שני הקצוות. רגרסיה מרובה ראו ב[הרצאה 3](../lectures/03-multiple-regression.qmd).
+
+## אותו חישוב ב-R
+
+הקוד מתעדכן לפי הפקדים. המדגם ב-R יהיה שונה מזה שבגרף (מחולל מספרים אקראיים אחר), אבל התמונה תהיה דומה.
+
+```{=html}
+<div class="calc-code">
+  <button id="pici-copy" type="button" class="btn btn-outline-secondary btn-sm">העתקה</button>
+  <pre class="sourceCode r"><code id="pici-rcode"></code></pre>
+</div>
+
+<!-- Scripts go last: they wire up controls from both html blocks above. -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/prediction-intervals.js"></script>
+```
+
+---
+
+המחשבון מבוסס על [אפליקציית Shiny](https://github.com/adisarid/prediction_confidence_intervals_demo) של עדי שריד, שנכתבה מחדש כ-JavaScript שרץ בדפדפן. הגרף מצויר עם [Apache ECharts]{.en}. החישובים זהים לפלט של `lm` ו-`predict` ב-R.

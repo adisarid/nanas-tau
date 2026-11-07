@@ -9,11 +9,11 @@ toc: false
 |---|---|---|
 | 0 | פתיחה: על הקורס | [סיכום](lectures/00-course-intro.qmd) · [מצגת](lectures/00-course-intro-slides.html) · [PDF](lectures/pdf/00-course-intro-slides.pdf) |
 | 1 | שיטות א-פרמטריות | [סיכום](lectures/01-nonparametric.qmd) · [מצגת](lectures/01-nonparametric-slides.html) · [PDF](lectures/pdf/01-nonparametric-slides.pdf) |
-| 2 | **מבוטלת** (כנס בחו״ל). מועד ההשלמה יפורסם ב-Moodle | |
+| 2 | **מבוטלת** (כנס בחו״ל). שיעור ההשלמה: יום א׳ 8.11, סיום הרגרסיה והרצאה 4 | |
 | בונוס | למה טעו מדגמי היציאה? (חצי שעה, בפתיחת הרצאה 3) | [סיכום](lectures/02-exit-polls.qmd) · [מצגת](lectures/02-exit-polls-slides.html) · [PDF](lectures/pdf/02-exit-polls-slides.pdf) |
 | 3 | רגרסיה לינארית מרובה | [סיכום](lectures/03-multiple-regression.qmd) · [מצגת](lectures/03-multiple-regression-slides.html) · [PDF](lectures/pdf/03-multiple-regression-slides.pdf) |
-| 4 | ניתוח שונות חד-כיווני (One-way ANOVA) | |
-| 5 | ניגודים והשוואות מרובות | |
+| 4 | ניתוח שונות חד-כיווני (One-way ANOVA). יום א׳ 8.11, שיעור ההשלמה | [סיכום](lectures/04-one-way-anova.qmd) · [מצגת](lectures/04-one-way-anova-slides.html) · [PDF](lectures/pdf/04-one-way-anova-slides.pdf) |
+| 5 | ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי. יום ב׳ 9.11, נפתח בחזרה קצרה על הרצאה 4 | [סיכום](lectures/05-contrasts-multiple-comparisons.qmd) · [מצגת](lectures/05-contrasts-multiple-comparisons-slides.html) · [PDF](lectures/pdf/05-contrasts-multiple-comparisons-slides.pdf) |
 | 6 | ניתוח שונות רב-כיווני (Two-way ANOVA) | |
 | 7 | תכנון ניסויים (DOE) | |
 | 8 | רגרסיה לוגיסטית | |

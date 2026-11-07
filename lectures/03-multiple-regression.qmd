@@ -24,7 +24,8 @@ model_cols <- c(small = nanas_pal[["primary"]], medium = nanas_pal[["green"]],
 - **מבחני השערות:** מבחן t לכל מקדם, מבחן F לכל המודל, ומבחן F חלקי
 - **$R^2$ ו-$R^2$ מתוקן**
 - **משתנים קטגוריים ואינטראקציות**
-- **בדיקת ההנחות:** שאריות ומולטיקולינאריות
+- **בדיקת ההנחות:** שאריות
+- **משתנים מתואמים:** פרדוקס סימפסון ומולטיקולינאריות
 - **בחירת משתנים, רווחי סמך ורווחי חיזוי**
 
 # תזכורת: רגרסיה לינארית פשוטה ([Simple linear regression]{.en})
@@ -667,6 +668,75 @@ ks.test(rstandard(fit4), "pnorm")
 - **הסתייגות:** השאריות מחושבות מהמקדמים שאמדנו, ולכן ה-p-value רק בקירוב (כמו ב-KS עם פרמטרים אמודים). מבחן ייעודי לנורמליות הוא `shapiro.test()`
 - עם מדגם גדול מאוד, KS ידחה גם סטייה זניחה. עם מדגם קטן, הוא לא יזהה גם סטייה גדולה. לכן מסתכלים **גם** על הגרף
 
+# משתנים מתואמים ([Correlated predictors]{.en})
+
+## פרדוקס סימפסון ([Simpson's paradox]{.en}) {.smaller}
+
+מרכז תמיכה הטמיע עוזר AI ([copilot]{.en}) לנציגים. **השאלה:** האם נציגים שנעזרים בו יותר מטפלים בפניות מהר יותר? לכל אחד מ-90 נציגים בשלושה צוותים יש לנו את אחוז הפניות שבהן נעזר בעוזר, ואת זמן הטיפול הממוצע שלו.
+
+```{r}
+#| label: simpson-data
+#| output-location: slide
+#| fig-height: 4.2
+set.seed(304)
+support <- tibble(team = factor(rep(c("billing", "technical", "enterprise"), each = 30),
+                                levels = c("billing", "technical", "enterprise"))) |>
+  mutate(copilot_pct = pmin(pmax(rnorm(n(), c(20, 50, 80)[team], 10), 0), 100),
+         aht = c(8, 18, 30)[team] - 0.06 * copilot_pct + rnorm(n(), 0, 1.5))  # minutes
+
+ggplot(support, aes(copilot_pct, aht)) +
+  geom_point(colour = nanas_pal[["grey"]]) +
+  geom_smooth(method = "lm", se = FALSE, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  labs(title = "יותר עוזר, יותר זמן?",
+       subtitle = "רגרסיה על כל 90 הנציגים יחד",
+       x = "Copilot use (% of tickets)", y = "Avg. handling time (min)")
+```
+
+## ומה קורה בתוך כל צוות?
+
+אותם נתונים, אבל צובעים כל נציג לפי הצוות שלו ומעבירים קו רגרסיה בכל צוות בנפרד:
+
+```{r}
+#| label: simpson-plot
+#| output-location: slide
+#| fig-height: 4.2
+ggplot(support, aes(copilot_pct, aht)) +
+  geom_smooth(method = "lm", se = FALSE, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_point(aes(colour = team)) +
+  geom_smooth(aes(colour = team), method = "lm", se = FALSE) +
+  scale_colour_manual(values = unname(nanas_pal[c("primary", "green", "accent")])) +
+  labs(title = "בתוך כל צוות: יותר עוזר, פחות זמן. בסך הכול: ההפך",
+       subtitle = "הצוות הארגוני: פניות קשות וגם הרבה שימוש בעוזר. המקווקו מערבב בין הצוותים",
+       x = "Copilot use (% of tickets)", y = "Avg. handling time (min)", colour = NULL)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**איך נבנו הנתונים.** בכל צוות זמן הטיפול הבסיסי שונה: 8 דקות בחיובים ([billing]{.en}), 18 בתמיכה טכנית, ו-30 בלקוחות ארגוניים ([enterprise]{.en}), שם הפניות הכי מורכבות. העוזר חוסך 0.06 דקות לכל נקודת אחוז של שימוש, בכל הצוותים. אבל נציגי הצוותים הקשים נעזרים בו הרבה יותר: 20%, 50% ו-80% בממוצע.
+:::
+
+## מה הרגרסיה אומרת {.smaller}
+
+```{r}
+#| label: simpson-fit
+fit_naive <- lm(aht ~ copilot_pct, data = support)          # all agents together
+fit_team  <- lm(aht ~ copilot_pct + team, data = support)   # within the same team
+rbind(naive = coef(summary(fit_naive))["copilot_pct", ],
+      team  = coef(summary(fit_team))["copilot_pct", ])
+```
+
+- **בלי הצוות:** כל 10 נקודות אחוז של שימוש בעוזר "מאריכות" את הטיפול ב-`r round(10 * coef(fit_naive)["copilot_pct"], 1)` דקות
+- **באותו צוות:** הן **מקצרות** אותו ב-`r round(-10 * coef(fit_team)["copilot_pct"], 1)` דקות. הסימן התהפך
+- **למה?** הצוות קשור לשני המשתנים: בצוות הארגוני הפניות קשות, **וגם** הנציגים נעזרים בעוזר יותר. בלי הצוות במודל, הרגרסיה מייחסת לעוזר את הקושי של הפניות
+- **שני צדדים של אותו מתאם:** כשמשמיטים משתנה שמתואם עם $x_j$, המקדם של $x_j$ **מוטה**. כשמכניסים משתנה שמתואם עם $x_j$, המקדם **רועש**. זה הנושא של השקף הבא
+
+::: {.content-hidden when-format="revealjs"}
+**הטיית משתנה מושמט ([omitted variable bias]{.en}).** נניח שהמודל הנכון הוא $y = \beta_0 + \beta_1 x + \beta_2 z + \varepsilon$, ואמדנו רגרסיה של $y$ על $x$ בלבד. אז השיפוע שנקבל מתקרב ל-$\beta_1 + \beta_2 \gamma$, כש-$\gamma$ הוא השיפוע ברגרסיה של $z$ על $x$. ההטיה נעלמת רק אם $\beta_2 = 0$ ($z$ לא משפיע על $y$) או $\gamma = 0$ ($z$ לא מתואם עם $x$). כאן שני התנאים לא מתקיימים: הצוות משפיע מאוד על זמן הטיפול, והוא מתואם חזק עם השימוש בעוזר. ההטיה גדולה מספיק כדי להפוך את הסימן.
+
+**האם תמיד צריך להוסיף את המשתנה?** לא. כאן הצוות קיים **לפני** השימוש בעוזר ומשפיע עליו, ולכן הוא משתנה מערבב ([confounder]{.en}), ושולטים בו. אבל אם המשתנה הוא **תוצאה** של $x$, משתנה מתווך ([mediator]{.en}), השליטה בו מוחקת חלק מהאפקט שרוצים למדוד. למשל, אם העוזר מקצר את הטיפול כי הוא מקטין את מספר ההודעות בכל פנייה, אז רגרסיה שכוללת את מספר ההודעות תראה שלעוזר כמעט אין השפעה. גם בדוגמה של מודלי השפה, אורך התשובה נקבע בחלקו על ידי מודל השפה עצמו. לכן ה"פער המתוקנן" שם הוא האפקט הישיר בלבד, ולא כל האפקט. איזה משתנה להכניס נקבע מהבנה של המנגנון, לא מהנתונים לבדם.
+
+**דוגמאות אמיתיות.** הדוגמה הקלאסית היא נתוני הקבלה לתארים מתקדמים בברקלי (1973). בסך הכול נשים התקבלו בשיעור נמוך יותר, אבל ברוב המחלקות שיעור הקבלה שלהן היה דומה או גבוה יותר. הסיבה: נשים הגישו יותר למחלקות שקשה להתקבל אליהן.
+:::
+
 ## מולטיקולינאריות ([Multicollinearity]{.en}) {.smaller}
 
 מספר המסמכים מ-RAG קובע כמעט לגמרי את מספר הטוקנים בקלט: המתאם ביניהם הוא `r round(cor(llm$rag_docs, llm$input_k), 2)`. מה קורה כשמכניסים את שניהם?
@@ -729,6 +799,51 @@ fit_all  <- lm(latency ~ input_k + rag_docs + hour + output_tokens * model, data
 fit_step <- step(fit_all, direction = "both", trace = 0)   # stepwise by AIC
 formula(fit_step)
 ```
+
+## מה `step()` עושה, צעד אחר צעד {.smaller}
+
+```{r}
+#| label: step-trace-digits
+#| include: false
+op_digits <- options(digits = 6)   # the trace is unreadable with fewer digits
+```
+
+```{r}
+#| label: step-trace
+fit_step <- step(fit_all, direction = "both", trace = 1)   # trace = 1 prints every step
+```
+
+```{r}
+#| label: step-trace-reset
+#| include: false
+options(op_digits)
+```
+
+## איך קוראים את ה-trace {.smaller}
+
+$$
+AIC = n\ln(SS_E/n) + 2p \qquad p = \text{number of coefficients, incl. the intercept}
+$$
+
+קטן יותר = טוב יותר. האיבר הראשון מתגמל התאמה טובה, והשני מעניש על כל פרמטר.
+
+- **בכל צעד** מחשבים את ה-AIC של כל מודל שרחוק שינוי אחד מהמודל הנוכחי:
+  - `-` מוציא משתנה, `+` מוסיף משתנה, `<none>` משאיר את המודל כמו שהוא
+  - `Sum of Sq` הוא השינוי ב-$SS_E$, ו-`RSS` הוא $SS_E$ של המודל שמתקבל
+  - השורות ממוינות מה-AIC הקטן לגדול, ונבחרת **השורה העליונה**
+- **צעד 1:** הוצאת `rag_docs` מורידה את ה-AIC, $-29.5 \to -29.8$. מוציאים אותו
+- **צעד 2:** `<none>` בראש הטבלה. אף שינוי לא משפר, והאלגוריתם **עוצר**. `+ rag_docs` נבדק שוב, כי זה כיוון "both"
+- `output_tokens` ו-`model` לא מופיעים כמועמדים להוצאה. כל עוד האינטראקציה ביניהם במודל, `step()` שומר על כלל ההיררכיה
+
+::: {.content-hidden when-format="revealjs"}
+**מתי משתנה נשאר?** הוצאת משתנה עם דרגת חופש אחת חוסכת 2 בעונש, אבל מגדילה את $SS_E$ ולכן את $n\ln(SS_E/n)$. המשתנה נשאר אם הגידול גדול מ-2. למשל, הוצאת `hour` בצעד 2 מעלה את $SS_E$ מ-208.1 ל-210.7, והגידול הוא $250 \cdot \ln(210.7/208.1) \approx 3.1 > 2$. לכן `hour` נשאר. כש-$n$ גדול, הכלל הזה שקול בקירוב ל-$F$ חלקי גדול מ-2, כלומר $|t| > 1.41$ ו-p-value קטן מ-0.16 בערך. זה סף מקל בהרבה מ-0.05, ולכן AIC משאיר משתנים שמבחן ברמת מובהקות 5% היה מוציא. נחזור לזה בשקף הבא.
+
+**העמודה `Sum of Sq`** היא המונה של מבחן F חלקי עבור המשתנה.
+
+**שימו לב ל-`input_k`:** בצעד 1 הוצאתו מגדילה את $SS_E$ ב-5.2 בלבד, ובצעד 2 כבר ב-11.6. כל עוד `rag_docs` במודל, שני המשתנים חולקים את אותו מידע (ראו את שקף ה-VIF), וכל אחד מהם נראה פחות חשוב ממה שהוא באמת. אחרי ש-`rag_docs` יוצא, `input_k` נושא את המידע המשותף לבדו.
+
+**ערכי AIC שונים מ-`AIC()`.** הפונקציה `step()` משתמשת ב-`extractAIC()`, שמשמיטה קבוע שתלוי רק ב-$n$. ההפרשים בין מודלים זהים, וזה כל מה שהאלגוריתם צריך.
+:::
 
 ## מה יכול להשתבש בבחירה אוטומטית {.smaller}
 
