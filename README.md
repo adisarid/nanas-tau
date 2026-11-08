@@ -131,7 +131,7 @@ This order was agreed with Avital and differs from the official syllabus order.
 | 2 | *Cancelled. Make-up on Sun 8.11: end of regression + lecture 4* | Probability distributions review |
 | 3 | Multiple linear regression | Simple + multiple regression |
 | 4 | One-way ANOVA, incl. assumptions, Welch, power, one-way random effects (Sun 8.11 make-up) | accordingly |
-| 5 | Contrasts, multiple comparisons (Duncan, Tukey HSD), Kruskal–Wallis, median contrasts, Friedman (Mon 9.11, opens with a short recap of 4) | accordingly |
+| 5 | Contrasts, multiple comparisons (Duncan, Tukey HSD), Kruskal–Wallis, median contrasts (Mon 9.11, opens with a recap of 4 plus the parts of 4 not reached: assumption checks, unequal variances, random effects, effect size) | accordingly |
 | 6 | Multi-way ANOVA | accordingly |
 | 7 | Design of experiments | accordingly |
 | 8 | Logistic regression | accordingly |

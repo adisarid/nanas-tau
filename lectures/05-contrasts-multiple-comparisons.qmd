@@ -25,7 +25,7 @@ mse <- deviance(fit_ai) / fit_ai$df.residual   # 0.854, 40 df
 
 ## על מה נדבר היום
 
-- **חזרה קצרה** על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)
+- **חזרה והשלמה מהרצאה 4:** בדיקת ההנחות, שונויות לא שוות, אפקטים אקראיים, גודל אפקט
 - **ניגודים** ([contrasts]{.en}): שאלות ספציפיות שתכננו מראש
 - **השוואות מרובות:** למה 10 מבחני t הם בעיה
   - שיטת [Duncan]{.en}
@@ -33,7 +33,6 @@ mse <- deviance(fit_ai) / fit_ai$df.residual   # 0.854, 40 df
 - **ניתוח שונות א-פרמטרי:**
   - [Kruskal–Wallis]{.en}: כמה מדגמים בלתי תלויים
   - ניגודים עם חציונים
-  - [Friedman]{.en}: טיפולים בתוך בלוקים
 
 # חזרה: ניתוח שונות חד-כיווני
 
@@ -58,6 +57,28 @@ $$
 calls |> group_by(model) |> summarise(total = sum(aht), mean = mean(aht))
 ```
 
+## הרעיון: אות מול רעש
+
+```{r}
+#| label: recap-signal-noise
+#| echo: false
+#| fig-height: 4.2
+set.seed(41)
+demo <- expand_grid(scenario = c("פיזור קטן בתוך הקבוצות", "פיזור גדול בתוך הקבוצות"),
+                    group = c("A", "B", "C"), j = 1:8) |>
+  mutate(sd = if_else(scenario == "פיזור קטן בתוך הקבוצות", 0.4, 2.2),
+         y = c(A = 5, B = 6, C = 7)[group] + rnorm(n(), 0, sd),
+         scenario = fct_rev(scenario))
+
+ggplot(demo, aes(group, y, colour = group)) +
+  geom_point(position = position_jitter(width = 0.1, seed = 2), size = 2.5, show.legend = FALSE) +
+  stat_summary(fun = mean, geom = "crossbar", width = 0.4, colour = "black") +
+  facet_wrap(~ scenario) +
+  labs(title = "אותם הבדלים בין הממוצעים, מסקנה שונה",
+       subtitle = "השאלה היא לא אם הממוצעים שונים, אלא אם הם שונים יותר ממה שהרעש מסביר",
+       x = "Group", y = "y")
+```
+
 ## פירוק השונות וטבלת ANOVA {.smaller}
 
 $$
@@ -74,6 +95,408 @@ $$
 
 - $E(MS_E) = \sigma^2$ תמיד. $E(MS_{Tr}) = \sigma^2 + \frac{n\sum\tau_i^2}{a-1}$
 - דוחים את $H_0$ אם $F_0 > F_{1-\alpha;\,a-1,\,N-a}$
+
+## בדיקת ההנחות: השאריות {.smaller}
+
+$$
+e_{ij} = y_{ij} - \hat y_{ij} = y_{ij} - \bar y_{i\cdot}
+$$
+
+השאריות הן האומדים לשגיאות $\varepsilon_{ij}$. כל ההנחות נבדקות דרכן:
+
+| ההנחה | בדיקה גרפית | בדיקה במבחן |
+|---|---|---|
+| נורמליות | גרף [Q-Q]{.en} | [Shapiro–Wilk]{.en}, KS |
+| אי-תלות | שאריות לפי סדר האיסוף | |
+| שונות שווה | [boxplot]{.en}, שאריות מול ממוצעי הרמות | [Bartlett]{.en}, [Levene]{.en} |
+
+```{r}
+#| label: recap-resid
+calls_r <- calls |> mutate(fitted = fitted(fit_ai), resid = resid(fit_ai))
+calls_r |> select(day, model, aht, fitted, resid) |> head(3)
+```
+
+## גרף Q-Q: איך בונים אותו {.smaller}
+
+1. ממיינים את $N$ השאריות מהקטנה לגדולה: $e_{(1)} \le e_{(2)} \le \dots \le e_{(N)}$
+2. לשארית ה-$k$ בסדר מתאימים את **האחוזון** $p_k = \dfrac{k - 0.5}{N}$
+3. מחשבים את **הערך התיאורטי** של $N(0,1)$ באחוזון הזה: $z_k = \Phi^{-1}(p_k)$
+4. משרטטים את $e_{(k)}$ (ציר אנכי) מול $z_k$ (ציר אופקי)
+
+**אם השאריות נורמליות, הנקודות על קו ישר** (השיפוע הוא בערך $\hat\sigma$).
+
+```{r}
+#| label: recap-qq-by-hand
+qq <- calls_r |>
+  arrange(resid) |>
+  mutate(k = row_number(), p = (k - 0.5) / n(), z = qnorm(p))
+qq |> select(resid, k, p, z) |> slice(c(1, 2, 45))
+```
+
+## גרף Q-Q למודלים
+
+```{r}
+#| label: recap-qq-plot
+#| fig-height: 3.8
+ggplot(qq, aes(z, resid)) +
+  geom_abline(intercept = 0, slope = sqrt(mse), colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_point(size = 2.5) +
+  labs(title = "השאריות קרובות לקו, עם זנב שמאלי ארוך מעט",
+       subtitle = "קו מקווקו: שיפוע σ̂ = √MSE",
+       x = "Theoretical quantile (z)", y = "Residual (min)")
+```
+
+## אי-תלות: שאריות לפי היום {.smaller}
+
+```{r}
+#| label: recap-resid-by-day
+#| echo: false
+#| fig-height: 3.6
+ggplot(calls_r, aes(day, resid)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]]) +
+  stat_summary(fun = mean, geom = "line", colour = nanas_pal[["grey"]], linewidth = 1) +
+  geom_point(aes(colour = model), size = 2.5) +
+  scale_colour_manual(values = model_cols) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "בימים 6 ו-8 הטיפול היה קצר מהממוצע בכל המודלים",
+       subtitle = "השאריות לא בלתי תלויות: יש אפקט של היום (עומס, סוג התקלות)",
+       x = "Day", y = "Residual (min)", colour = NULL)
+```
+
+- אפקט היום "נכנס" ל-$SS_E$ ומנפח את $MS_E$. הפתרון: היום כ**בלוק** במודל. נגיע לזה בהרצאה 6 (ניתוח שונות רב-כיווני)
+
+## שונות שווה: שאריות מול ממוצעי הרמות {.smaller}
+
+```{r}
+#| label: recap-equal-var
+#| echo: false
+#| fig-height: 3.4
+ggplot(calls_r, aes(fitted, resid, colour = model)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_point(size = 2.5, position = position_jitter(width = 0.02, seed = 3)) +
+  scale_colour_manual(values = model_cols) +
+  labs(title = "הפיזור דומה בכל הרמות",
+       x = "Fitted value = model mean (min)", y = "Residual (min)", colour = NULL)
+```
+
+- כל עמודה היא רמה אחת. מחפשים **פיזור אנכי דומה** בכל העמודות
+- סימן אזהרה: "משפך", כשהפיזור גדל עם הממוצע. אצלנו M4 צפוף מעט יותר, אבל אין דפוס ברור
+
+## מבחן [Bartlett]{.en} {.smaller}
+
+$H_0: \sigma_1^2 = \dots = \sigma_a^2$ מול $H_1$: לפחות שונות אחת שונה.
+
+::: {.content-hidden when-format="revealjs"}
+$$
+K^2 = \frac{(N-a)\ln S_p^2 - \sum_{i}(n_i-1)\ln S_i^2}{C} \;\sim\; \chi^2_{a-1}
+\qquad S_p^2 = MS_E
+$$
+
+**הרעיון:** $S_p^2$ הוא ממוצע (חשבוני) של $S_i^2$, והאיבר השני הוא ממוצע של הלוגריתמים שלהן (ממוצע הנדסי). ממוצע חשבוני תמיד גדול מהנדסי או שווה לו, ו**שווה רק כשכל השונויות שוות**. ככל שהשונויות מפוזרות יותר, $K^2$ גדל. $C = 1 + \frac{1}{3(a-1)}\left(\sum_i \frac{1}{n_i-1} - \frac{1}{N-a}\right)$ הוא תיקון קטן, קרוב ל-1.
+:::
+
+- **זהירות:** המבחן רגיש מאוד לסטייה מנורמליות. כשהשאריות לא נורמליות, משתמשים במבחן [Levene]{.en}
+
+```{r}
+#| label: recap-bartlett
+round(tapply(calls$aht, calls$model, var), 2)
+bartlett.test(aht ~ model, data = calls)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**חישוב ידני.** השונויות בין 0.39 (M4) ל-1.31 (M2), $S_p^2 = MS_E = 0.854$, $n_i = 9$, $a = 5$, $N - a = 40$. המונה: $40 \ln 0.854 - 8\sum_i \ln S_i^2 = 3.12$. התיקון: $C = 1 + \frac{1}{12}\left(\frac{5}{8} - \frac{1}{40}\right) = 1.05$. לכן $K^2 = 2.97$, קטן בהרבה מ-$\chi^2_{0.95;\,4} = 9.49$. אין עדות לשונויות שונות, וזה מתיישב עם הגרף.
+:::
+
+## ANOVA של [Welch]{.en} {.smaller}
+
+מבחן F הקלאסי מאחד את כל $S_i^2$ ל-$MS_E$ אחד. כשהשונויות שונות, $MS_E$ אחד לא מתאים לאף קבוצה. [Welch]{.en} נותן לכל קבוצה את השונות שלה:
+
+$$
+w_i = \frac{n_i}{S_i^2}, \qquad \bar y_w = \frac{\sum_i w_i \bar y_{i\cdot}}{\sum_i w_i}, \qquad
+F_W \approx \frac{\frac{1}{a-1}\sum_i w_i(\bar y_{i\cdot} - \bar y_w)^2}{1 + \text{(small correction)}}
+$$
+
+- $w_i$ הוא אחד חלקי השונות של $\bar y_{i\cdot}$: ממוצע **מדויק** (קבוצה גדולה, פיזור קטן) מקבל משקל גבוה, ממוצע **רועש** מקבל משקל נמוך
+- $F_W \sim F_{a-1,\,\nu}$, עם פחות דרגות חופש במכנה מ-$N-a$ ($\nu$ מחושב מהנתונים). המחיר: קצת פחות עוצמה כשהשונויות באמת שוות
+- ב-R זו ברירת המחדל של `oneway.test()`. במודלים (שונויות דומות) המסקנה זהה ל-F הקלאסי:
+
+```{r}
+#| label: recap-welch
+oneway.test(aht ~ model, data = calls)
+```
+
+::: {.content-hidden when-format="revealjs"}
+**הנוסחה המלאה.** עם $W = \sum_i w_i$ ו-$\Lambda = \sum_i \frac{(1 - w_i/W)^2}{n_i - 1}$, המכנה הוא $1 + \frac{2(a-2)}{a^2-1}\Lambda$, ודרגות החופש במכנה הן $\nu = \frac{a^2-1}{3\Lambda}$. **הקשר ל-F הקלאסי:** אם כל השונויות שוות ל-$\sigma^2$ ו-$n_i = n$, אז $w_i = n/\sigma^2$ לכולם, $\bar y_w = \bar y_{\cdot\cdot}$, והמונה הוא $\frac{n\sum_i(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}{(a-1)\sigma^2} = MS_{Tr}/\sigma^2$, כלומר בדיוק סטטיסטי F הקלאסי (כש-$\sigma^2$ מוחלף ב-$MS_E$). ההבדל היחיד של [Welch]{.en} הוא שכל קבוצה נמדדת ברעש שלה. במודלים: $F_W = 4.5$ עם $(4, 20)$ דרגות חופש, $p = 0.009$, לעומת $F_0 = 5.3$ עם $(4, 40)$, $p = 0.002$. הסימולציה הבאה מראה מתי ההבדל בין השניים חשוב.
+:::
+
+## סימולציה: ארבעה תרחישים {.smaller}
+
+בכל התרחישים **התוחלת זהה בשלוש הקבוצות** ($H_0$ נכונה). משתנים רק גודל הקבוצות והפיזור בתוכן. כך נראה ניסוי אחד מכל תרחיש:
+
+```{r}
+#| label: recap-sim-scenarios
+#| echo: false
+#| fig-height: 3.6
+set.seed(78)
+scen <- tibble(design = c("balanced, equal sd", "balanced, unequal sd",
+                          "small group has large sd", "large group has large sd"),
+               n  = list(c(10, 10, 10), c(10, 10, 10), c(5, 10, 20), c(5, 10, 20)),
+               sd = list(c(1, 1, 1),    c(3, 1, 1),    c(3, 1, 1),    c(1, 1, 3))) |>
+  mutate(design = fct_inorder(str_replace(design, ", | has ", "\n")),
+         data = map2(n, sd, \(n, sd) tibble(
+           k = rep(seq_along(n), n),
+           label = rep(sprintf("n=%d\nsd=%d", n, sd), n),
+           y = rnorm(sum(n), 0, rep(sd, n))))) |>
+  select(design, data) |>
+  unnest(data) |>
+  mutate(key = fct_inorder(paste(design, k)))
+x_labels <- distinct(scen, key, label) |> deframe()
+
+ggplot(scen, aes(key, y)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_point(position = position_jitter(width = 0.12, seed = 1), size = 1.8, alpha = 0.7,
+             colour = nanas_pal[["primary"]]) +
+  stat_summary(fun = mean, geom = "crossbar", width = 0.45, colour = nanas_pal[["accent"]]) +
+  facet_wrap(~ design, nrow = 1, scales = "free_x") +
+  scale_x_discrete(labels = x_labels) +
+  labs(title = "אותה תוחלת בכל הקבוצות (קו מקווקו), ממוצעים מדגמיים שונים",
+       subtitle = "קו כתום: הממוצע של כל קבוצה בניסוי הזה",
+       x = NULL, y = "y")
+```
+
+## סימולציה: כשהשונויות לא שוות {.smaller}
+
+שלוש קבוצות עם **אותה תוחלת** ($H_0$ נכונה). בכמה מהניסויים מבחן F דוחה ב-$\alpha = 0.05$?
+
+```{r}
+#| label: recap-unequal-var-sim
+sim_reject <- function(n, sd, reps = 4000) {
+  g <- factor(rep(seq_along(n), n))
+  rejected <- replicate(reps, {
+    y <- rnorm(sum(n), 0, rep(sd, n))
+    c(oneway.test(y ~ g, var.equal = TRUE)$p.value, oneway.test(y ~ g)$p.value) < 0.05
+  })
+  rowMeans(rejected)   # rejection rate: classic F, Welch
+}
+set.seed(77)
+sim_res <- tibble(design = c("balanced, equal sd", "balanced, unequal sd",
+                             "small group has large sd", "large group has large sd"),
+                  n  = list(c(10, 10, 10), c(10, 10, 10), c(5, 10, 20), c(5, 10, 20)),
+                  sd = list(c(1, 1, 1),    c(3, 1, 1),    c(3, 1, 1),    c(1, 1, 3))) |>
+  mutate(rate = map2(n, sd, sim_reject),
+         F = map_dbl(rate, 1), Welch = map_dbl(rate, 2))
+sim_res |> select(design, F, Welch)
+```
+
+## התוצאה בתרשים {.smaller}
+
+```{r}
+#| label: recap-sim-rates
+#| echo: false
+#| fig-height: 3.6
+sim_res |>
+  mutate(design = fct_rev(fct_inorder(design))) |>
+  pivot_longer(c(F, Welch), names_to = "test", values_to = "reject") |>
+  ggplot(aes(reject, design, colour = test)) +
+  geom_vline(xintercept = 0.05, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_line(aes(group = design), colour = nanas_pal[["grey"]]) +
+  geom_point(size = 4) +
+  scale_colour_manual(values = c(F = nanas_pal[["accent"]], Welch = nanas_pal[["primary"]])) +
+  scale_x_continuous(labels = scales::percent, limits = c(0, NA)) +
+  labs(title = "כמה פעמים המבחן דוחה H0 נכונה?",
+       subtitle = "קו מקווקו: 5%, השיעור שהמבחן אמור לדחות",
+       x = "Rejection rate (4,000 simulated experiments)", y = NULL, colour = NULL)
+```
+
+- **ניסוי לא מאוזן + שונויות שונות = בעיה.** כשלקבוצה הקטנה יש שונות גדולה, F דוחה הרבה יותר מ-5%. [Welch]{.en} (`oneway.test()`) נשאר קרוב ל-5%
+
+::: {.content-hidden when-format="revealjs"}
+**איך קוראים את התוצאה.** כשהכול תקין, מבחן F דוחה ב-5% מהמקרים, כפי שצריך. בניסוי מאוזן עם שונויות שונות, הסטייה קטנה יחסית. בניסוי לא מאוזן, הכיוון תלוי במי שהשונות שלו גדולה: אם לקבוצה **הקטנה** יש שונות גדולה, $MS_E$ (שנשלט בעיקר על ידי הקבוצות הגדולות) קטן מדי, ומבחן F דוחה הרבה יותר מ-5%: הרבה "תגליות" שגויות. אם לקבוצה **הגדולה** יש שונות גדולה, $MS_E$ מנופח, והמבחן שמרני מדי ומאבד עוצמה. מבחן [Welch]{.en} לא מניח שונויות שוות: הוא משקלל כל קבוצה לפי $n_i / S_i^2$, ונשאר קרוב ל-5% בכל המקרים.
+:::
+
+# השלמה מהרצאה 4: אפקטים אקראיים ([Random effects]{.en})
+
+## השאלה: האם השרתים שונים זה מזה? {.smaller}
+
+לשירות יש **200 שרתים** זהים, לכאורה. צוות התשתיות חושד שיש שרתים "איטיים" (חומרה ישנה, שכן רועש באותו מחשב פיזי).
+
+- אי אפשר למדוד את כל 200 השרתים. **מגרילים 8 שרתים**, ושולחים לכל אחד 6 בקשות זהות
+- **השאלה לא** "האם שרת 17 איטי משרת 112". השרתים שנבחרו לא מעניינים כשלעצמם
+- **השאלה:** האם **באוכלוסיית השרתים** יש שונות בזמן התגובה? וכמה מהשונות הכוללת היא בין שרתים?
+
+```{r}
+#| label: servers-data
+set.seed(404)
+fleet <- tibble(server = sprintf("srv-%03d", 1:200), tau = rnorm(200, 0, 10))  # sd between servers: 10 ms
+servers <- fleet |>
+  slice_sample(n = 8) |>
+  expand_grid(rep = 1:6) |>
+  mutate(latency = round(120 + tau + rnorm(n(), 0, 15), 1),                     # sd within: 15 ms
+         server = factor(server))
+```
+
+## הנתונים
+
+```{r}
+#| label: servers-plot
+#| fig-height: 3.8
+ggplot(servers, aes(server, latency)) +
+  geom_point(colour = nanas_pal[["primary"]], size = 2.5, alpha = 0.8,
+             position = position_jitter(width = 0.08, seed = 4)) +
+  stat_summary(fun = mean, geom = "crossbar", width = 0.4, colour = nanas_pal[["accent"]]) +
+  labs(title = "8 שרתים שהוגרלו מתוך 200",
+       subtitle = "6 בקשות לכל שרת · קו כתום: הממוצע של השרת",
+       x = "Server", y = "Latency (ms)")
+```
+
+## המודל {.smaller}
+
+$$
+y_{ij} = \mu + \tau_i + \varepsilon_{ij} \qquad
+\tau_i \sim N(0, \sigma_\tau^2) \qquad
+\varepsilon_{ij} \sim N(0, \sigma^2)
+$$
+
+- אותה נוסחה, אבל עכשיו $\tau_i$ הוא **משתנה מקרי**: השרת הוגרל
+- $\tau_i$ ו-$\varepsilon_{ij}$ בלתי תלויים. **אין** אילוץ $\sum \tau_i = 0$
+- השונות של תצפית מתפרקת לשני **רכיבי שונות** ([variance components]{.en}):
+
+$$
+V(y_{ij}) = \sigma_\tau^2 + \sigma^2
+$$
+
+**ההשערות** הן על $\sigma_\tau^2$, ולא על ה-$\tau_i$ עצמם:
+
+$$
+H_0: \sigma_\tau^2 = 0 \qquad H_1: \sigma_\tau^2 > 0
+$$
+
+## המבחן והאומדים {.smaller}
+
+סכומי הריבועים, הטבלה ו-$F_0 = MS_{Tr}/MS_E$ **זהים** למודל הקבוע. משתנה הפרשנות של התוחלות:
+
+$$
+E(MS_E) = \sigma^2 \qquad E(MS_{Tr}) = \sigma^2 + n\sigma_\tau^2
+$$
+
+תחת $H_0$ ($\sigma_\tau^2 = 0$) שניהם אומדים את $\sigma^2$, ולכן שוב $F_0 \sim F_{a-1,\,N-a}$. מכאן גם **אומדים לרכיבי השונות**:
+
+$$
+\hat\sigma^2 = MS_E \qquad \hat\sigma_\tau^2 = \frac{MS_{Tr} - MS_E}{n}
+$$
+
+**מתאם תוך-קבוצתי** ([intraclass correlation, ICC]{.en}): איזה חלק מהשונות הכוללת הוא בין הרמות?
+
+$$
+\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}
+$$
+
+::: {.content-hidden when-format="revealjs"}
+**אם $MS_{Tr} < MS_E$,** האומד $\hat\sigma_\tau^2$ יוצא שלילי. שונות לא יכולה להיות שלילית, ולכן מדווחים $\hat\sigma_\tau^2 = 0$. זה קורה כש-$F_0 < 1$, ומתיישב עם $H_0$.
+
+**בניסוי לא מאוזן** מחליפים את $n$ ב-$n_0 = \frac{1}{a-1}\left(N - \frac{\sum n_i^2}{N}\right)$.
+
+**למה הבחירה בין קבוע לאקראי חשובה, אם המבחן זהה?** כי המסקנה שונה. במודל קבוע המסקנה חלה רק על הרמות שנבדקו ("יש הבדל בין חמשת המודלים שבדקנו"). במודל אקראי היא חלה על כל האוכלוסייה ("השרתים בצי שונים זה מזה, וזה תורם X% מהשונות"). בניתוח שונות דו-כיווני הבחירה תשנה גם את המבחנים עצמם: את המכנה של ה-F.
+:::
+
+## למה $E(MS_{Tr}) = \sigma^2 + n\sigma_\tau^2$? {.smaller}
+
+עובדה אחת: **שונות מדגמית היא אומד חסר הטיה לשונות.**
+
+1. הממוצע של רמה $i$, ו-$\tau_i$ משתנה מקרי בלתי תלוי בשגיאות:
+
+$$
+\bar y_{i\cdot} = \mu + \tau_i + \bar\varepsilon_{i\cdot} \quad\Rightarrow\quad V(\bar y_{i\cdot}) = \sigma_\tau^2 + \frac{\sigma^2}{n}
+$$
+
+2. הרמות הוגרלו, ולכן $\bar y_{1\cdot}, \dots, \bar y_{a\cdot}$ הם מדגם של $a$ ערכים בלתי תלויים מאותה התפלגות. השונות המדגמית שלהם, $S^2_{\bar y} = \frac{1}{a-1}\sum_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2$, חסרת הטיה: $E(S^2_{\bar y}) = \sigma_\tau^2 + \frac{\sigma^2}{n}$
+
+3. ב-$SS_{Tr}$ כל תצפית מוחלפת בממוצע הרמה שלה: $SS_{Tr} = \sum_i\sum_{j=1}^{n}(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2$. האיבר לא תלוי ב-$j$, ולכן הוא נספר $n$ פעמים:
+
+$$
+MS_{Tr} = \frac{SS_{Tr}}{a-1} = n \cdot \frac{\sum_i(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}{a-1} = n S^2_{\bar y}
+\quad\Rightarrow\quad E(MS_{Tr}) = n\sigma_\tau^2 + \sigma^2
+$$
+
+**במודל הקבוע** $\tau_i$ הם קבועים. בשלב 1 נשאר רק $\sigma^2/n$, ובמקום $\sigma_\tau^2$ מופיע $\frac{\sum\tau_i^2}{a-1}$: הפיזור של האפקטים שנבחרו, במקום השונות של אוכלוסיית האפקטים.
+
+## בחזרה לשרתים {.smaller}
+
+```{r}
+#| label: servers-aov
+fit_srv <- aov(latency ~ server, data = servers)
+summary(fit_srv)
+
+ms_srv <- summary(fit_srv)[[1]][["Mean Sq"]]
+c(sigma2_hat = ms_srv[2], sigma2_tau_hat = (ms_srv[1] - ms_srv[2]) / 6,
+  icc = ((ms_srv[1] - ms_srv[2]) / 6) / ((ms_srv[1] - ms_srv[2]) / 6 + ms_srv[2]))
+```
+
+- `r if (summary(fit_srv)[[1]][1, "Pr(>F)"] < 0.05) "דוחים" else "לא דוחים"` את $H_0$ ($p = `r signif(summary(fit_srv)[[1]][1, "Pr(>F)"], 2)`$)
+- סטיית התקן בין שרתים נאמדת ב-$\sqrt{\hat\sigma_\tau^2} = `r round(sqrt(max(0, (ms_srv[1] - ms_srv[2]) / 6)), 1)`$ מילישניות (האמת בסימולציה: 10), ובתוך שרת ב-$`r round(sqrt(ms_srv[2]), 1)`$ (האמת: 15)
+- כ-`r round(100 * max(0, (ms_srv[1] - ms_srv[2]) / 6) / (max(0, (ms_srv[1] - ms_srv[2]) / 6) + ms_srv[2]))`% מהשונות בזמן התגובה נובעת מהבדלים בין שרתים. **ההחלטה:** האם שווה לאתר ולהחליף שרתים איטיים, או שרוב הבעיה היא בתוך כל שרת?
+
+::: notes
+עם 8 שרתים בלבד, האומד ל-σ_τ² מאוד לא מדויק. זה המחיר של מודל אקראי: את רכיב השונות בין הרמות אומדים מ-a = 8 ממוצעים בלבד. כדי לאמוד אותו טוב, צריך יותר שרתים, לא יותר בקשות לכל שרת.
+:::
+
+## קבוע או אקראי? {.smaller}
+
+| | אפקטים קבועים | אפקטים אקראיים |
+|---|---|---|
+| **הרמות** | כל הרמות שמעניינות אותנו | מדגם מקרי מתוך הרבה רמות |
+| **דוגמאות** | 5 המודלים שהמוקד שקל, 3 גרסאות של מוצר, 4 נוסחים של פרומפט | שרתים מתוך צי, מוקדנים מתוך מוקד, אצוות של חומר גלם |
+| **$\tau_i$** | קבועים, $\sum \tau_i = 0$ | משתנים מקריים, $N(0, \sigma_\tau^2)$ |
+| **$H_0$** | $\tau_1 = \dots = \tau_a = 0$ | $\sigma_\tau^2 = 0$ |
+| **מה אומדים** | $\mu_i$ והפרשים ביניהן | רכיבי שונות $\sigma_\tau^2$, $\sigma^2$, ICC |
+| **המסקנה חלה על** | הרמות שנבדקו | כל אוכלוסיית הרמות |
+
+**שאלת מבחן:** "אם נחזור על הניסוי, האם נבדוק את אותן רמות?" אם כן: קבוע. אם נגריל רמות חדשות: אקראי.
+
+# השלמה מהרצאה 4: מה יכול להשתבש
+
+## חמש מלכודות בניתוח שונות {.smaller}
+
+1. **אין הגרלה:** אם M1 הופעל רק בימי ראשון העמוסים, ההבדל הוא של היום ולא של המודל. ניתוח שונות לא מתקן תכנון גרוע
+2. **חזרות מדומות** ([pseudo-replication]{.en}): 8 בקשות לאותו שרת **אינן** 8 שרתים. ב-$N$ סופרים את היחידות שהוגרלו, לא את המדידות
+3. **"לא מובהק" אינו "שווה":** אם לא דחינו, ייתכן שפשוט אין מספיק עוצמה. בודקים רווחי סמך וגודל מדגם
+4. **מובהק אינו חשוב:** עם מספיק נתונים, גם הבדל של שנייה אחת יהיה מובהק. מדווחים את גודל האפקט (שקף הבא)
+5. **מבחני t מרובים במקום F:** עם הרבה רמות, הבדל מקרי "יימצא" כמעט בוודאות
+
+## גודל אפקט ([Effect size]{.en}): $\eta^2$ {.smaller}
+
+$$
+\eta^2 = \frac{SS_{Tr}}{SS_T}
+$$
+
+- החלק מהשונות הכוללת שמוסבר על ידי הפקטור. זה בדיוק $R^2$ של הרגרסיה המקבילה
+- למודלים: $\eta^2 = 18.02 / 52.17 = 0.35$. המודל מסביר כשליש מהשונות במשך הטיפול
+
+```{r}
+#| label: recap-eta2
+aov_tab <- summary(fit_ai)[[1]]
+c(eta2 = aov_tab[1, "Sum Sq"] / sum(aov_tab[, "Sum Sq"]),
+  R2_lm = summary(lm(aht ~ model, data = calls))$r.squared)
+```
+
+::: {.content-hidden when-format="revealjs"}
+$\eta^2$ מוטה כלפי מעלה במדגמים קטנים (כמו $R^2$). גרסה מתוקנת היא $\omega^2 = \frac{SS_{Tr} - (a-1)MS_E}{SS_T + MS_E}$, שלמודלים יוצאת $\frac{18.02 - 4 \cdot 0.854}{52.17 + 0.854} = 0.28$. מעבר למדד היחסי, כדאי לדווח את ההבדלים עצמם ביחידות המקוריות: "עם M4 הטיפול קצר בדקה וחצי בממוצע מאשר עם M2" אומר למנהל יותר מ-$\eta^2 = 0.35$.
+:::
+
+## סיכום הרצאה 4 {.smaller}
+
+| השאלה | הכלי | ב-R |
+|---|---|---|
+| האם יש הבדל בין $a$ רמות של פקטור? | מבחן F, $F_{a-1,\,N-a}$ | `summary(aov(y ~ g))` |
+| מהי השונות של הרעש? | $\hat\sigma^2 = MS_E$ | `Mean Sq` של `Residuals` |
+| מהי התוחלת ברמה $i$? | $\bar y_{i\cdot} \pm t\sqrt{MS_E/n}$ | |
+| האם ההנחות מתקיימות? | Q-Q, שאריות לפי סדר, [Bartlett]{.en}/[Levene]{.en} | `resid()`, `bartlett.test()` |
+| שונויות לא שוות? | [Welch ANOVA]{.en} | `oneway.test()` |
+| כמה חזרות צריך? | ניתוח עוצמה | `power.anova.test()` |
+| הרמות הן מדגם מאוכלוסייה? | אפקטים אקראיים, $\hat\sigma_\tau^2$, ICC | אותו `aov()`, פרשנות אחרת |
+| כמה הפקטור מסביר? | $\eta^2 = SS_{Tr}/SS_T$ | |
+
+# מכאן: איפה ההבדל?
 
 ## התוצאה למודלים
 
@@ -92,7 +515,7 @@ summary(fit_ai)
 2. **השוואות מרובות:** כל הזוגות, עם תיקון לכך שבודקים הרבה
 
 ::: notes
-עוד דבר מיום ראשון: ראינו שבימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נחזור לזה בסוף, במבחן פרידמן.
+תזכורת: בימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נטפל בזה בהרצאה 6, עם בלוקים.
 :::
 
 # ניגודים ([Contrasts]{.en})
@@ -120,10 +543,10 @@ $$
 
 ## הגדרה {.smaller}
 
-**ניגוד** ([contrast]{.en}) הוא צירוף לינארי של התוחלות
+**ניגוד** ([contrast]{.en}) הוא צירוף לינארי של התוחלות, שסכום המקדמים שלו אפס:
 
 $$
-\Gamma = \sum_{i=1}^{a} c_i \mu_i \qquad \text{כאשר} \qquad \sum_{i=1}^{a} c_i = 0
+\Gamma = \sum_{i=1}^{a} c_i \mu_i, \qquad \sum_{i=1}^{a} c_i = 0
 $$
 
 | השאלה | $c_1$ | $c_2$ | $c_3$ | $c_4$ | $c_5$ |
@@ -156,23 +579,36 @@ $$
 t_0 = \frac{\sum c_i \bar y_{i\cdot}}{\sqrt{\frac{MS_E}{n}\sum c_i^2}} \sim t_{N-a} \quad \text{(תחת } H_0\text{)}
 $$
 
-## סכום הריבועים של ניגוד {.smaller}
+## מ-t ל-F: סכום הריבועים של ניגוד {.smaller}
 
-אפשר לכתוב את אותו מבחן כמבחן F, עם $t_0^2 = F_0$. בעזרת הסכומים $y_{i\cdot} = n\bar y_{i\cdot}$:
+**מעלים את $t_0$ בריבוע**, מונה ומכנה, ומציבים $\bar y_{i\cdot} = y_{i\cdot}/n$ (הסכומים במקום הממוצעים):
 
 $$
-SS_C = \frac{\left(\sum_{i=1}^{a} c_i y_{i\cdot}\right)^2}{n\sum_{i=1}^{a} c_i^2}
-\qquad\qquad
-F_0 = \frac{SS_C / 1}{MS_E} \sim F_{1,\; N-a}
+t_0^2 = \frac{\left(\sum c_i \bar y_{i\cdot}\right)^2}{\frac{MS_E}{n}\sum c_i^2}
+= \frac{\left(\sum c_i y_{i\cdot}\right)^2 / n^2}{\frac{MS_E}{n}\sum c_i^2}
+= \frac{1}{MS_E}\cdot\underbrace{\frac{\left(\sum c_i y_{i\cdot}\right)^2}{n\sum c_i^2}}_{SS_C}
 $$
 
-- לכל ניגוד **דרגת חופש אחת**
-- $SS_C$ הוא החלק של $SS_{Tr}$ ש"מוסבר" על ידי השאלה הספציפית הזו
+$$
+F_0 = t_0^2 = \frac{SS_C / 1}{MS_E} \sim F_{1,\; N-a}
+$$
+
+- המונה, $SS_C$, הוא **סכום ריבועים** עם **דרגת חופש אחת**. המכנה הוא אותו $MS_E$ כמו במבחן t
+- **זה אותו מבחן:** $t_{0.975,\,40}^2 = 2.021^2 = 4.08 = F_{0.95;\,1,\,40}$, ו-p-value זהה למבחן t דו-צדדי
 - דוחים את $H_0: \Gamma = 0$ אם $F_0 > F_{1-\alpha;\,1,\,N-a}$
 
-::: {.content-hidden when-format="revealjs"}
-**מאיפה הנוסחה?** $t_0^2 = \frac{(\sum c_i \bar y_{i\cdot})^2}{\frac{MS_E}{n}\sum c_i^2}$. נכפיל מונה ומכנה ב-$n^2$: המונה הופך ל-$(\sum c_i y_{i\cdot})^2$, והמכנה ל-$n \cdot MS_E \sum c_i^2$. מכאן $t_0^2 = \frac{SS_C}{MS_E}$.
-:::
+## אז למה לעבור ל-F? {.smaller}
+
+**כי $SS_C$ מדבר באותה שפה כמו טבלת ANOVA:**
+
+- $SS_C$ הוא **חלק מ-$SS_{Tr}$**: כמה מההבדלים בין הרמות השאלה הספציפית הזו מסבירה. ב-t אין לזה מקבילה
+- עם ניגודים **אורתוגונליים** (בעוד רגע), ה-$SS_C$ מחלקים בדיוק את $SS_{Tr}$. מבחן ה-F הכללי הוא בעצם **הממוצע** של $a - 1$ מבחני F של ניגודים: $MS_{Tr} = \frac{1}{a-1}\sum SS_{C_k}$
+- החישוב הידני מהסכומים $y_{i\cdot}$ נוח, וזה הפורמט של שאלות הבחינה
+
+**מתי להישאר עם t?**
+
+- **השערה חד-צדדית.** $t_0^2$ מאבד את הסימן. "האם המודלים הגדולים **מקצרים** את הטיפול?" היא בעצם שאלה חד-צדדית: $t_0 > t_{1-\alpha,\,N-a}$
+- **רווח סמך לניגוד:** $\hat\Gamma \pm t_{1-\alpha/2,\,N-a}\sqrt{\frac{MS_E}{n}\sum c_i^2}$. הוא אומר **כמה**, לא רק **אם**
 
 ## המודלים: קטנים מול גדולים {.smaller}
 
@@ -200,7 +636,9 @@ $$
 
 **לא דוחים:** אין עדות להבדל בין M3 ל-M4.
 
-## אותו חישוב ב-R
+## אותו חישוב ב-R {.smaller}
+
+**ידנית**, לפי הנוסחאות:
 
 ```{r}
 #| label: contrast-fn
@@ -213,6 +651,18 @@ totals <- tapply(calls$aht, calls$model, sum)
 rbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),
       M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))
 ```
+
+**בפקודה מוכנה**, חבילת [emmeans]{.en}:
+
+```{r}
+#| label: contrast-emmeans
+emm <- emmeans::emmeans(fit_ai, ~ model)   # the 5 level means
+emmeans::contrast(emm, list(small_vs_large = c(1, 1, 0, -1, -1) / 2,
+                            M3_vs_M4       = c(0, 0, 1, -1, 0)))
+```
+
+- [emmeans]{.en} מדווח $t$ ולא $F$, אבל $t^2 = F$: $4.25^2 = 18.06$, $0.53^2 = 0.28$. אותו $p$
+- חילקנו את הניגוד הראשון ב-2 כדי שהאומדן יהיה $\hat\Gamma = 1.31$ דקות. כפל של $c$ בקבוע לא משנה את $t$ ואת $p$
 
 ## ניגודים אורתוגונליים ([Orthogonal contrasts]{.en}) {.smaller}
 
@@ -290,10 +740,16 @@ tibble(contrast = colnames(ss_c), SS = ss_c["SS", ]) |>
 כש-$n_i$ שונים, מגדירים את הניגוד על **הסכומים** $y_{i\cdot}$:
 
 $$
-C = \sum_{i=1}^{a} c_i y_{i\cdot} \qquad E(C) = \sum_{i=1}^{a} c_i n_i (\mu + \tau_i) = \mu\sum_{i=1}^{a} n_i c_i + \sum_{i=1}^{a} n_i c_i \tau_i
+C = \sum_{i=1}^{a} c_i y_{i\cdot}
 $$
 
-כדי ש-$\mu$ יתבטל, התנאי הוא:
+$y_{i\cdot}$ הוא סכום של $n_i$ תצפיות, ולכל אחת תוחלת $\mu + \tau_i$. לכן $E(y_{i\cdot}) = n_i(\mu + \tau_i)$, ומליניאריות התוחלת:
+
+$$
+E(C) = \sum_{i=1}^{a} c_i\, E(y_{i\cdot}) = \sum_{i=1}^{a} c_i n_i (\mu + \tau_i) = \mu\sum_{i=1}^{a} n_i c_i + \sum_{i=1}^{a} n_i c_i \tau_i
+$$
+
+הניגוד צריך למדוד רק הבדלים בין האפקטים $\tau_i$, ולא את הרמה הכללית $\mu$. כדי ש-$\mu$ יתבטל, התנאי הוא:
 
 $$
 \sum_{i=1}^{a} n_i c_i = 0 \qquad\qquad SS_C = \frac{\left(\sum c_i y_{i\cdot}\right)^2}{\sum n_i c_i^2}
@@ -316,32 +772,52 @@ summary(fit_rooms)
 
 ה-ANOVA דוחה ($p = 0.02$). אבל השאלה ספציפית: **כיתה 3 מול שתי האחרות**.
 
-## הניגוד לכיתה 3 {.smaller}
+## הניגוד לכיתה 3: בחירת המקדמים {.smaller}
 
-צריך $\sum n_i c_i = 0$ עם $n = (40, 30, 30)$. ננסה $c = (1, 1, c_3)$:
+**השאלה:** האם הממוצע בכיתה 3 נמוך מהממוצע של כיתות 1 ו-2 יחד?
 
-$$
-40 + 30 + 30c_3 = 0 \;\Longrightarrow\; c_3 = -\tfrac{7}{3} \;\Longrightarrow\; c = (3, 3, -7)
-$$
-
-$$
-C = 3 \cdot 3014 + 3 \cdot 2258 - 7 \cdot 2015 = 1711
-\qquad
-\sum n_i c_i^2 = 40 \cdot 9 + 30 \cdot 9 + 30 \cdot 49 = 2100
-$$
+1. **כיתות 1 ו-2 באותו צד של השאלה**, ולכן מקבלות **אותו** מקדם. נבחר $c_1 = c_2 = 1$
+2. **את $c_3$ קובע התנאי לניסוי לא מאוזן,** $\sum n_i c_i = 0$, עם $n = (40, 30, 30)$:
 
 $$
-SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 > F_{0.95;\,1,\,97} = 3.94
+40 \cdot 1 + 30 \cdot 1 + 30\,c_3 = 0 \;\Longrightarrow\; c_3 = -\tfrac{7}{3}
 $$
 
-**דוחים:** בכיתה 3 הציונים נמוכים באופן מובהק משתי הכיתות האחרות, בכ-8 נקודות. **ו-$SS_C$ הוא כמעט כל $SS_{Tr} = 1394.2$:** בין כיתות 1 ו-2 כמעט אין הבדל.
+3. **כופלים ב-3** כדי לעבוד עם מספרים שלמים: $c = (3, 3, -7)$. כפל בקבוע לא משנה את $SS_C$: המונה והמכנה מוכפלים שניהם ב-$9$
+
+**מה הניגוד מודד?** כי $3 \cdot 70 = 7 \cdot 30 = 210$:
+
+$$
+C = 3(y_{1\cdot} + y_{2\cdot}) - 7\,y_{3\cdot} = 210\left(\underbrace{\frac{y_{1\cdot} + y_{2\cdot}}{70}}_{\bar y_{1,2}} - \underbrace{\frac{y_{3\cdot}}{30}}_{\bar y_{3\cdot}}\right)
+$$
+
+כלומר $C/210 = \bar y_{1,2} - \bar y_{3\cdot}$: ההפרש בין הממוצע של כל 70 הסטודנטים בכיתות 1 ו-2 לבין הממוצע בכיתה 3.
+
+## הניגוד לכיתה 3: החישוב {.smaller}
+
+מהשקף הקודם: $y_{1\cdot} = 3014$, $y_{2\cdot} = 2258$, $y_{3\cdot} = 2015$, ו-$MS_E = 170.9$ (ה-`Mean Sq` של `Residuals`).
+
+$$
+C = 3 \cdot 3014 + 3 \cdot 2258 - 7 \cdot 2015 = 1711 \qquad \frac{C}{210} = 8.15
+$$
+
+$$
+SS_C = \frac{C^2}{\sum n_i c_i^2} = \frac{1711^2}{40 \cdot 9 + 30 \cdot 9 + 30 \cdot 49} = \frac{1711^2}{2100} = 1394.1
+$$
+
+$$
+F_0 = \frac{SS_C}{MS_E} = \frac{1394.1}{170.9} = 8.16 > F_{0.95;\,1,\,97} = 3.94
+$$
+
+- **דוחים:** בכיתה 3 הציונים נמוכים בכ-8 נקודות מהממוצע בכיתות 1 ו-2, והפער מובהק
+- **$SS_C = 1394.1$ הוא כמעט כל $SS_{Tr} = 1394.2$.** כל ההבדל בין הכיתות הוא "כיתה 3 מול השאר". בין כיתות 1 ו-2 כמעט אין הבדל
 
 ```{r}
 #| label: rooms-contrast
 rt <- tapply(rooms$grade, rooms$room, sum); rn <- table(rooms$room); cc <- c(3, 3, -7)
 ss_room3 <- sum(cc * rt)^2 / sum(rn * cc^2)
-c(sum_n_c = sum(rn * cc), SS_C = ss_room3, F = ss_room3 / 170.86,
-  p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))
+c(sum_n_c = sum(rn * cc), C = sum(cc * rt), diff = sum(cc * rt) / 210, SS_C = ss_room3,
+  F = ss_room3 / 170.86, p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))
 ```
 
 ::: notes
@@ -378,61 +854,117 @@ c(sum_n_c = sum(rn * cc), SS_C = ss_room3, F = ss_room3 / 170.86,
 הנוסחה $1 - (1-\alpha)^m$ מניחה שהמבחנים בלתי תלויים. השוואות בין זוגות של אותן רמות **תלויות** (M1–M2 ו-M1–M3 חולקות את $\bar y_{1\cdot}$, וכולן משתמשות באותו $MS_E$), ולכן ה-FWER האמיתי קצת נמוך יותר. הסימולציה בשקף הבא מראה כמה.
 :::
 
-## סימולציה: 10 מבחני t כשאין שום הבדל
+## סימולציה: 10 מבחני t כשאין שום הבדל {.smaller}
+
+5 מודלים זהים, 9 תצפיות לכל אחד. משווים **כל זוג** במבחן t ב-$\alpha = 0.05$. מספר הזוגות: $\binom{5}{2} = \frac{5 \cdot 4}{2} = 10$ (כל אחד מ-5 המודלים מול 4 האחרים, וכל זוג נספר פעמיים). חוזרים על הניסוי 4,000 פעמים.
 
 ```{r}
 #| label: fwer-sim
 set.seed(55)
 g <- factor(rep(paste0("M", 1:5), each = 9))
-any_reject <- replicate(4000, {
+n_reject <- replicate(4000, {
   p <- pairwise.t.test(rnorm(45), g, p.adjust.method = "none")$p.value
-  any(p < 0.05, na.rm = TRUE)
+  sum(p < 0.05, na.rm = TRUE)                    # false rejections in this experiment
 })
-mean(any_reject)
+c(P_any = mean(n_reject > 0), mean_rejections = mean(n_reject))
+table(n_reject)
 ```
 
-- ב-`r percent(mean(any_reject), 1)` מהניסויים "מצאנו" לפחות זוג מודלים שונים, אף שכולם זהים
-- פחות מ-40% בגלל התלות בין המבחנים, אבל הרבה יותר מ-5%
+- ב-`r percent(mean(n_reject > 0), 1)` מהניסויים "מצאנו" לפחות זוג מודלים שונים, אף שכולם זהים. הרבה יותר מ-5%
 
-## שלוש שיטות, שלוש משמעויות של "מובהק" {.smaller}
+## הסימולציה בתרשים {.smaller}
 
-כל השיטות משוות **הפרש בין ממוצעים** לסף. כולן משתמשות בשגיאת התקן של ממוצע, $s_{\bar y} = \sqrt{MS_E / n}$:
+```{r}
+#| label: fwer-sim-plot
+#| echo: false
+#| fig-height: 3.8
+fwer_dist <- tibble(k = 0:6) |>
+  mutate(prob = map_dbl(k, \(x) mean(n_reject == x)),
+         any_error = k > 0)
 
-| השיטה | הסף | שולטת ב- |
+ggplot(fwer_dist, aes(factor(k), prob, fill = any_error)) +
+  geom_col(width = 0.7, show.legend = FALSE) +
+  geom_text(aes(label = percent(prob, 1)), vjust = -0.4, size = 3.5) +
+  scale_fill_manual(values = c(`FALSE` = nanas_pal[["grey"]], `TRUE` = nanas_pal[["accent"]])) +
+  scale_y_continuous(labels = percent, expand = expansion(mult = c(0, 0.1))) +
+  labs(title = "כל עמודה כתומה היא ניסוי עם תגלית שגויה",
+       subtitle = "4,000 ניסויים, בכולם אין שום הבדל בין המודלים",
+       x = "False rejections in one experiment (out of 10 pairs)", y = "Share of experiments")
+```
+
+- **אפור:** `r percent(mean(n_reject == 0), 1)` מהניסויים בלי אף טעות. **כתום:** `r percent(mean(n_reject > 0), 1)` עם טעות אחת לפחות. ובחלק מהם יש כמה טעויות יחד
+
+## למה פחות מ-40%? {.smaller}
+
+- $1 - 0.95^{10} = 0.40$ מניח 10 מבחנים **בלתי תלויים**. כאן הם תלויים: כל ממוצע משתתף ב-4 השוואות, וכל העשר חולקות את אותו $MS_E$
+- **הטעויות מגיעות בצרורות.** כשממוצע אחד יוצא קיצוני במקרה, הוא "מושך" כמה השוואות לדחייה **יחד**. וכש-$MS_E$ יוצא קטן במקרה, כל עשרת המבחנים נעשים מקלים יחד
+- **מספר הדחיות השגויות בממוצע לא משתנה:** $10 \times 0.05 = 0.5$ (בסימולציה: `r round(mean(n_reject), 2)`). אבל הן מתרכזות בפחות ניסויים: בניסוי שיש בו טעות, יש בממוצע `r round(mean(n_reject[n_reject > 0]), 1)` טעויות
+- לכן ההסתברות ל**טעות אחת לפחות** קטנה מ-40%. **ועדיין** היא פי 5 מה-5% שרצינו
+
+## שתי שיטות, שתי משמעויות של "מובהק" {.smaller}
+
+שתי השיטות משוות **הפרש בין ממוצעים** לסף. שתיהן משתמשות בשגיאת התקן של ממוצע, $s_{\bar y} = \sqrt{MS_E / n}$:
+
+| השיטה | הסף | שיעור הטעות למשפחה (FWER) |
 |---|---|---|
-| [LSD]{.en} של [Fisher]{.en} | $t_{1-\alpha/2,\,N-a}\sqrt{2MS_E/n}$ | שיעור הטעות לכל השוואה. רק אחרי F מובהק |
-| [Duncan]{.en} | $r_\alpha(p, f)\, s_{\bar y}$, תלוי במרחק $p$ בין הממוצעים | ביניים |
-| [Tukey HSD]{.en} | $q_\alpha(a, f)\, s_{\bar y}$, סף אחד לכל הזוגות | שיעור הטעות למשפחה (FWER) |
+| [Duncan]{.en} | $r_\alpha(p, f)\, s_{\bar y}$, תלוי במרחק $p$ בין הממוצעים | גבוה מ-$\alpha$, וגדל עם מספר הרמות |
+| [Tukey HSD]{.en} | $q_\alpha(a, f)\, s_{\bar y}$, סף אחד לכל הזוגות | בדיוק $\alpha$ (בניסוי מאוזן) |
 
 למודלים: $s_{\bar y} = \sqrt{0.854/9} = 0.308$, ו-$f = N - a = 40$.
 
 ```{r}
-#| label: lsd
-c(s_ybar = sqrt(mse / 9), LSD = qt(0.975, 40) * sqrt(2 * mse / 9))
+#| label: s-ybar
+sqrt(mse / 9)
 ```
 
 # שיטת [Duncan]{.en}
 
-## הרעיון {.smaller}
+## הרעיון: הסף תלוי במרחק בדירוג {.smaller}
 
-**[Duncan's multiple range test]{.en}** משווה את כל הזוגות, אבל הסף תלוי **כמה ממוצעים** נמצאים בין שני הממוצעים שמשווים.
+**[Duncan's multiple range test]{.en}** משווה את כל הזוגות, אחרי שמבחן ה-F דחה. החידוש: **לא כל הזוגות מקבלים אותו סף**.
 
-1. ממיינים את ממוצעי הרמות בסדר יורד
-2. לזוג שמרוחק $p$ מקומות (כולל שניהם, $p = 2, \dots, a$) מחשבים את **הטווח המובהק הקטן ביותר**:
+**למה?** נניח שאין שום הבדל בין 5 המודלים. נמיין את 5 הממוצעים:
+
+- שני ממוצעים **שכנים** בדירוג נבדלים רק ברעש של שני ממוצעים
+- הממוצע **הגבוה** והממוצע **הנמוך** מבין החמישה הם הקיצוניים מתוך 5. הפער ביניהם גדול כמעט תמיד, גם בלי שום אפקט
+- לכן זוג שנמצא בקצוות של הדירוג צריך לעבור סף **גבוה** יותר, וזוג של שכנים סף **נמוך** יותר
+
+**המרחק $p$:** כמה ממוצעים נמצאים בטווח בין שני הממוצעים שמשווים, **כולל שניהם**. במודלים:
+
+| דירוג | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| מודל | M2 | M1 | M3 | M5 | M4 |
+| ממוצע | 5.33 | 5.00 | 3.99 | 3.96 | 3.76 |
+
+דוגמאות:
+
+| הזוג | M2, M1 | M2, M3 | M1, M4 | M2, M4 |
+|---|---|---|---|---|
+| הממוצעים בטווח | M2, M1 | M2, M1, M3 | M1, M3, M5, M4 | כל החמישה |
+| $p$ | 2 (שכנים) | 3 | 4 | 5 (הקצוות) |
+
+## השלבים {.smaller}
+
+1. **ממיינים** את ממוצעי הרמות בסדר יורד
+2. **מחשבים סף לכל מרחק** $p = 2, \dots, a$, **הטווח המובהק הקטן ביותר** ([least significant range]{.en}):
 
 $$
-R_p = r_\alpha(p, f)\cdot\sqrt{\frac{MS_E}{n}}
+R_p = r_\alpha(p, f)\cdot s_{\bar y} \qquad s_{\bar y} = \sqrt{\frac{MS_E}{n}}
 $$
 
-3. אם $|\bar y_{i\cdot} - \bar y_{k\cdot}| > R_p$, ההפרש מובהק
+   $r_\alpha(p, f)$ הם **מקדמי [Duncan]{.en}** מטבלה, ו-$f = N - a$ הן דרגות החופש של $MS_E$. המקדם גדל עם $p$
 
-- $r_\alpha(p, f)$ הם **מקדמי [Duncan]{.en}**, מטבלה. $f = N - a$ הן דרגות החופש של $MS_E$
-- זוג רחוק ($p$ גדול) צריך הפרש גדול יותר כדי להיות מובהק
-- **כלל ההגנה:** אם טווח לא מובהק, לא בודקים זוגות **בתוכו**
+3. **בודקים מבחוץ פנימה:** קודם הזוג של הקצוות ($p = a$), אחר כך זוגות עם $p = a - 1$, וכן הלאה. ההפרש מובהק אם $|\bar y_{i\cdot} - \bar y_{k\cdot}| > R_p$
+4. **כלל ההגנה:** אם ההפרש בין שני ממוצעים **לא** מובהק, כל הממוצעים שביניהם נחשבים שווים, ו**לא בודקים** זוגות בתוך הטווח הזה
+5. **מסכמים באותיות:** רמות שחולקות אות לא שונות זו מזו באופן מובהק
+
+::: notes
+הדגש: שלב 3 ו-4 הם מה שמבדיל את דנקן מסתם 10 מבחני t. דוגמה לכלל ההגנה: אם M3 מול M4 (p = 3) לא מובהק, לא בודקים את M3 מול M5 ואת M5 מול M4.
+:::
 
 ## מאיפה מגיעים המקדמים? {.smaller}
 
-המקדמים הם ערכים של **התפלגות הטווח המסוטנדרט** ([studentized range]{.en}), אותה התפלגות שבה משתמשת שיטת [Tukey]{.en}. ההבדל הוא ברמת המובהקות: לטווח של $p$ ממוצעים, [Duncan]{.en} משתמש ב-
+המקדמים הם ערכים של התפלגות ה-**[studentized range]{.en}**: ההתפלגות של $(\bar y_{max} - \bar y_{min})/s_{\bar y}$, הטווח של $p$ ממוצעים מחולק בשגיאת התקן שלהם, כש-$H_0$ נכונה. זו אותה התפלגות שבה משתמשת שיטת [Tukey]{.en}. ההבדל הוא ברמת המובהקות: לטווח של $p$ ממוצעים, [Duncan]{.en} משתמש ב-
 
 $$
 \alpha_p = 1 - (1 - \alpha)^{p - 1}
@@ -473,6 +1005,55 @@ duncan <- combn(names(means), 2, simplify = FALSE) |>
 duncan
 ```
 
+## השלבים בתרשים {.smaller}
+
+```{r}
+#| label: duncan-ladder
+#| echo: false
+#| fig-height: 4.3
+pos <- set_names(seq_along(means), names(means))
+# protection rule: skip a pair if a wider range that contains it was not significant
+ladder <- duncan |>
+  mutate(i = pos[high], k = pos[low], status = "significant")
+for (r in seq_len(nrow(ladder))) {
+  inside_ns <- ladder$i <= ladder$i[r] & ladder$k >= ladder$k[r] & ladder$p > ladder$p[r] &
+    ladder$status != "significant"
+  if (any(inside_ns)) ladder$status[r] <- "not tested (protection rule)"
+  else if (!ladder$significant[r]) ladder$status[r] <- "not significant"
+}
+ladder <- ladder |>
+  arrange(desc(p), i) |>
+  mutate(row = rev(seq_len(n())),
+         label = sprintf("%s-%s  (p = %d)", high, low, p),
+         x_lo = means[low], x_hi = means[high],
+         note = if_else(status == "not tested (protection rule)", "skipped",
+                        sprintf("%.2f %s %.2f", diff, if_else(significant, ">", "<"), R_p)),
+         status = factor(status, levels = c("significant", "not significant",
+                                            "not tested (protection rule)")))
+
+ggplot(ladder) +
+  geom_vline(xintercept = means, colour = nanas_pal[["grey"]], linewidth = 0.3, linetype = "dotted") +
+  geom_segment(aes(x = x_lo, xend = x_hi, y = row, yend = row, colour = status, linetype = status),
+               linewidth = 1.4) +
+  geom_point(aes(x = x_lo, y = row, colour = status), size = 2) +
+  geom_point(aes(x = x_hi, y = row, colour = status), size = 2) +
+  geom_text(aes(x = x_hi + 0.04, y = row, label = note), hjust = 0, size = 3.2) +
+  annotate("text", x = means, y = c(0, 0, 0, -0.6, 0), label = names(means), size = 3.5, fontface = "bold") +   # M5 lowered: close to M3
+  scale_y_continuous(breaks = ladder$row, labels = ladder$label) +
+  scale_x_continuous(limits = c(3.7, 5.85), breaks = seq(3.75, 5.25, 0.25)) +
+  scale_colour_manual(values = c(nanas_pal[["accent"]], nanas_pal[["grey"]], nanas_pal[["grey"]]),
+                      drop = FALSE) +
+  scale_linetype_manual(values = c("solid", "solid", "dashed"), drop = FALSE) +
+  labs(title = "בודקים מלמעלה למטה: מהקצוות פנימה",
+       subtitle = "כל קו הוא טווח בין שני ממוצעים · מובהק אם ההפרש גדול מ-Rp",
+       x = "Mean handle time (min)", y = NULL, colour = NULL, linetype = NULL) +
+  theme(legend.position = "bottom")
+```
+
+::: notes
+לעבור על התרשים מלמעלה למטה: p = 5, אחר כך שני הטווחים עם p = 4, וכן הלאה. הטווח M3-M4 (p = 3) לא מובהק, ולכן M3-M5 ו-M5-M4 שבתוכו לא נבדקים. בסוף: M2 ו-M1 בקבוצה אחת, M3, M5, M4 בקבוצה שנייה.
+:::
+
 ## התוצאה {.smaller}
 
 | | M2 | M1 | M3 | M5 | M4 |
@@ -484,14 +1065,14 @@ duncan
 - **M3, M5 ו-M4** לא שונים זה מזה: הטווח של שלושתם הוא 0.23 < $R_3$ = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו
 - רמות עם אותה **אות** לא שונות זו מזו באופן מובהק
 
-**ההמלצה:** להפעיל את אחד מ-M3, M4 או M5. הנתונים לא מבדילים ביניהם, ולכן M3, הזול שבהם, הוא בחירה סבירה.
+**ההמלצה:** להפעיל את אחד מ-M3, M4 או M5. משך הטיפול לא מבדיל ביניהם, ולכן את הבחירה ביניהם קובעים שיקולים אחרים, למשל עלות: M3 הוא המודל הבינוני, ו-M4 ו-M5 הם הגדולים והיקרים.
 
 ## ביקורת על [Duncan]{.en}
 
 - $\alpha_p$ גדלה עם מספר הממוצעים: עם 5 רמות, $\alpha_5 = 1 - 0.95^4 = 0.185$
 - כלומר, ה-FWER של השיטה **גבוה מ-5%**, וגדל עם מספר הרמות. עם 10 רמות, $\alpha_{10} = 0.37$
 - השיטה "מוצאת" יותר הבדלים, וחלקם שגויים
-- [Duncan]{.en} נפוצה בספרות החקלאית וההנדסית הישנה, ותפגשו אותה בבחינה. בעבודה מעשית, מקובל היום להשתמש ב-[Tukey]{.en}
+- בעבודה מעשית, מקובל להשתמש ב-[Tukey]{.en}
 
 # שיטת [Tukey]{.en} ([HSD]{.en})
 
@@ -503,7 +1084,7 @@ $$
 HSD = q_\alpha(a, f)\cdot\sqrt{\frac{MS_E}{n}}
 $$
 
-- $q_\alpha(a, f)$: הערך הקריטי של **התפלגות הטווח המסוטנדרט** של $a$ ממוצעים, עם $f = N - a$ דרגות חופש
+- $q_\alpha(a, f)$: הערך הקריטי של התפלגות ה-[studentized range]{.en} של $a$ ממוצעים, עם $f = N - a$ דרגות חופש
 - **ההיגיון:** אם הזוג **הרחוק ביותר** לא חוצה את הסף תחת $H_0$ בהסתברות $1 - \alpha$, אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא $\alpha$
 
 $$
@@ -564,17 +1145,17 @@ TukeyHSD(fit_ai)$model |>
 
 ## [Duncan]{.en} מול [Tukey]{.en} {.smaller}
 
-| זוג | הפרש | [LSD]{.en} (0.88) | [Duncan]{.en} ($R_p$) | [Tukey]{.en} (1.244) |
-|---|---|---|---|---|
-| M2–M4 | 1.57 | ✓ | ✓ (0.98) | ✓ |
-| M2–M5 | 1.38 | ✓ | ✓ (0.96) | ✓ |
-| M2–M3 | 1.34 | ✓ | ✓ (0.93) | ✓ |
-| M1–M4 | 1.24 | ✓ | ✓ (0.96) | ✗ |
-| M1–M5 | 1.05 | ✓ | ✓ (0.93) | ✗ |
-| M1–M3 | 1.01 | ✓ | ✓ (0.88) | ✗ |
-| M2–M1, M3–M4, M3–M5, M5–M4 | ≤ 0.33 | ✗ | ✗ | ✗ |
+| זוג | הפרש | [Duncan]{.en} ($R_p$) | [Tukey]{.en} (1.244) |
+|---|---|---|---|
+| M2–M4 | 1.57 | ✓ (0.98) | ✓ |
+| M2–M5 | 1.38 | ✓ (0.96) | ✓ |
+| M2–M3 | 1.34 | ✓ (0.93) | ✓ |
+| M1–M4 | 1.24 | ✓ (0.96) | ✗ |
+| M1–M5 | 1.05 | ✓ (0.93) | ✗ |
+| M1–M3 | 1.01 | ✓ (0.88) | ✗ |
+| M2–M1, M3–M4, M3–M5, M5–M4 | ≤ 0.33 | ✗ | ✗ |
 
-- [LSD]{.en} ו-[Duncan]{.en} מוצאים 6 זוגות. [Tukey]{.en} מוצא 3
+- [Duncan]{.en} מוצא 6 זוגות. [Tukey]{.en} מוצא 3
 - **אין כאן "נכון" ו"לא נכון".** זו בחירה בין שתי טעויות: [Tukey]{.en} שומר על הסיכוי לתגלית שגויה **אחת** מתחת ל-5%, במחיר של עוצמה
 
 ## איזו שיטה מתי? {.smaller}
@@ -617,11 +1198,28 @@ ggplot(latency, aes(ms, region)) +
 #| label: latency-aov
 fit_lat <- aov(ms ~ region, data = latency)
 summary(fit_lat)
-shapiro.test(resid(fit_lat))
+ks.test(rstandard(fit_lat), "pnorm")              # standardised residuals vs N(0, 1)
 ```
 
 - ה-ANOVA **לא דוחה** ($p = `r round(summary(fit_lat)[[1]][1, "Pr(>F)"], 3)`$)
-- אבל השאריות רחוקות מנורמליות. הבקשות האיטיות מנפחות את $MS_E$ ו"מסתירות" את ההבדלים
+- **אבל השאריות לא נורמליות.** מבחן [Kolmogorov–Smirnov]{.en} על השאריות המתוקננות, כמו בהרצאה 3: $D = `r round(ks.test(rstandard(fit_lat), "pnorm")$statistic, 3)` > 1.36/\sqrt{48} = `r round(1.36 / sqrt(48), 3)`$, ולכן **דוחים** נורמליות
+
+## השאריות בגרף Q-Q {.smaller}
+
+```{r}
+#| label: latency-qq
+#| fig-height: 2.9
+tibble(r = sort(rstandard(fit_lat))) |>
+  mutate(z = qnorm((row_number() - 0.5) / n())) |>
+  ggplot(aes(z, r)) +
+  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_point(colour = nanas_pal[["primary"]], size = 2.5) +
+  labs(title = "הזנב הימני ארוך מדי: כמה בקשות איטיות מאוד",
+       subtitle = "שאריות מתוקננות · קו מקווקו: N(0,1)",
+       x = "Theoretical quantile (z)", y = "Standardised residual")
+```
+
+- הבקשות האיטיות מנפחות את $MS_E$ ו"מסתירות" את ההבדלים בין האזורים
 - **שתי אפשרויות:** טרנספורמציה ($\log$), או מבחן שלא מניח נורמליות
 
 ## [Kruskal–Wallis]{.en}: הרעיון {.smaller}
@@ -680,6 +1278,32 @@ cotton |>
             R = sum(rank), R_bar = mean(rank))
 ```
 
+## הדרגות בתרשים {.smaller}
+
+```{r}
+#| label: cotton-ranks-plot
+#| echo: false
+#| fig-height: 3.8
+cotton_rbar <- cotton |>
+  group_by(cotton_pct) |>
+  summarise(R = sum(rank), R_bar = mean(rank))
+
+ggplot(cotton, aes(rank, cotton_pct)) +
+  geom_vline(xintercept = 15.5, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_segment(data = cotton_rbar, aes(x = 15.5, xend = R_bar, y = cotton_pct, yend = cotton_pct),
+               colour = nanas_pal[["accent"]], linewidth = 1.2) +
+  geom_point(colour = nanas_pal[["primary"]], size = 3, alpha = 0.8) +
+  geom_point(data = cotton_rbar, aes(x = R_bar), shape = 23, size = 4, fill = "white",
+             colour = nanas_pal[["accent"]], stroke = 1.2) +
+  geom_text(data = cotton_rbar, aes(x = 32, label = sprintf("R = %s", R)), hjust = 0, size = 3.5) +
+  scale_x_continuous(breaks = c(1, 5, 10, 15.5, 20, 25, 30), limits = c(1, 36)) +
+  labs(title = "ב-25% וב-30% הדרגות גבוהות, ב-15%, 20% ו-35% נמוכות",
+       subtitle = "נקודה: דרגה של דגימה · מעוין: ממוצע הדרגות · קו מקווקו: 15.5, הממוצע הצפוי תחת H0",
+       x = "Rank of tensile strength (1 = weakest, 30 = strongest)", y = "Cotton (%)")
+```
+
+- $K$ מסכם את **אורכי הקווים הכתומים** (בריבוע, משוקללים ב-$n_i$): $K = \frac{12}{N(N+1)}\sum n_i(\bar R_{i\cdot} - 15.5)^2$. תחת $H_0$ כל המעוינים קרובים לקו המקווקו
+
 ## חישוב $K$ {.smaller}
 
 ```{r}
@@ -715,12 +1339,40 @@ kruskal.test(strength ~ cotton_pct, data = cotton)
 ```{r}
 #| label: latency-kw
 kruskal.test(ms ~ region, data = latency)
-summary(aov(log(ms) ~ region, data = latency))
+fit_lat_log <- aov(log(ms) ~ region, data = latency)
+summary(fit_lat_log)
 ```
 
 - **[Kruskal–Wallis]{.en} דוחה** ($p = `r round(kruskal.test(ms ~ region, data = latency)$p.value, 4)`$), במקום שה-ANOVA על הנתונים הגולמיים לא דחה
-- גם ANOVA על $\log(\text{ms})$ דוחה. הלוגריתם "מכווץ" את הזנב הימני ומקרב לנורמליות
+- גם ANOVA על $\log(\text{ms})$ דוחה. הלוגריתם "מכווץ" את הזנב הימני ומקרב לנורמליות (השקף הבא)
 - **הדרגות לא רגישות לערכים חריגים:** בקשה של 1,000 מילישניות היא פשוט "הדרגה הגבוהה ביותר", בדיוק כמו בקשה של 400
+
+## מה הלוגריתם עושה לשאריות? {.smaller}
+
+```{r}
+#| label: latency-log-qq
+#| output-location: slide
+#| fig-height: 3.2
+bind_rows(tibble(scale = "ms", r = rstandard(fit_lat)),
+          tibble(scale = "log(ms)", r = rstandard(fit_lat_log))) |>
+  mutate(scale = fct_inorder(scale)) |>
+  group_by(scale) |>
+  arrange(r, .by_group = TRUE) |>
+  mutate(z = qnorm((row_number() - 0.5) / n())) |>
+  ggplot(aes(z, r)) +
+  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[["grey"]], linetype = "dashed") +
+  geom_point(colour = nanas_pal[["primary"]], size = 2.5) +
+  facet_wrap(~ scale) +
+  labs(title = "אחרי הטרנספורמציה, השאריות יושבות על הקו",
+       subtitle = "שאריות מתוקננות · קו מקווקו: N(0,1)",
+       x = "Theoretical quantile (z)", y = "Standardised residual")
+ks_log <- ks.test(rstandard(fit_lat_log), "pnorm")
+c(D = unname(ks_log$statistic), p_value = ks_log$p.value)      # KS on log scale
+```
+
+::: {.content-hidden when-format="revealjs"}
+אחרי הטרנספורמציה, $D = `r round(ks.test(rstandard(fit_lat_log), "pnorm")$statistic, 3)`$, רחוק מתחת לערך הקריטי 0.196. אין עדות לסטייה מנורמליות. זה לא מקרה: הנתונים כאן סומלצו מהתפלגות **לוג-נורמלית**, כלומר $\log(\text{ms})$ מתפלג נורמלית בדיוק. זמני תגובה של מערכות אמיתיות קרובים לעיתים קרובות להתפלגות כזו: הם חיוביים, מוטים ימינה, והרעש בהם "כפלי" (בקשה איטית פי 2) ולא "חיבורי" (בקשה איטית ב-50 מילישניות).
+:::
 
 ## אילו אזורים שונים? השוואות מרובות על דרגות {.smaller}
 
@@ -732,7 +1384,35 @@ pairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = "bonferroni")
 ```
 
 - כל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, **מתוקן** בשיטת [Bonferroni]{.en}: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05
-- **הסתייגות:** כמו בהרצאה 1, מבחן סכום הדירוגים בודק **חציונים** רק תחת הנחת הזזה. כאן, עם התפלגויות לוג-נורמליות עם אותה צורה, ההנחה סבירה בסקאלה הלוגריתמית
+- **אבל האם זה מבחן על חציונים?** תלוי בהנחת ההזזה (השקף הבא)
+
+## מה בודק מבחן סכום הדירוגים? הנחת ההזזה {.smaller}
+
+- **$H_0$ של המבחן:** לשתי הרמות **אותה התפלגות**. הוא דוחה כשתצפיות מרמה אחת נוטות להיות גדולות מתצפיות מהרמה השנייה
+- **הנחת ההזזה** ([shift]{.en}): שתי ההתפלגויות זהות בצורה ובפיזור, ואחת פשוט **מוזזת** ימינה: $F_2(x) = F_1(x - \delta)$. רק תחתיה דחייה פירושה "החציונים שונים"
+- **בלי ההנחה,** המבחן יכול לדחות גם כשהחציונים שווים, למשל כשלאחת הרמות פיזור גדול יותר
+
+```{r}
+#| label: shift-plot
+#| echo: false
+#| fig-height: 2.4
+shift <- expand_grid(region = c("eu-west", "ap-south"), u = seq(3.5, 7.5, length.out = 300)) |>
+  mutate(med = if_else(region == "eu-west", 150, 220), dens_log = dnorm(u, log(med), 0.8))
+bind_rows(shift |> transmute(region, scale = "ms", x = exp(u), dens = dens_log / exp(u)),
+          shift |> transmute(region, scale = "log(ms)", x = u, dens = dens_log)) |>
+  mutate(scale = fct_inorder(scale)) |>
+  filter(scale == "log(ms)" | x <= 900) |>
+  ggplot(aes(x, dens, colour = region)) +
+  geom_line(linewidth = 1.1) +
+  facet_wrap(~ scale, scales = "free") +
+  scale_colour_manual(values = unname(nanas_pal[c("primary", "accent")])) +
+  labs(title = "בסקאלה הלוגריתמית: אותה צורה, רק מוזזת",
+       x = NULL, y = "Density", colour = NULL) +
+  theme(axis.text.y = element_blank())
+```
+
+- **בדוגמה:** הנתונים סומלצו מהתפלגות **לוג-נורמלית**. ב-ms האזור האיטי גם **מפוזר** יותר, ולכן זו לא הזזה. ב-$\log(\text{ms})$ זו הזזה נקייה
+- **והדרגות לא מושפעות מ-$\log$:** הלוגריתם שומר על הסדר, ולכן המבחן על ms והמבחן על $\log(\text{ms})$ **זהים**. ההנחה מתקיימת בסקאלה הלוגריתמית, וחציון של $\log$ הוא $\log$ של החציון. לכן המסקנה על החציונים נכונה גם ב-ms
 
 ## ניגודים עם חציונים {.smaller}
 
@@ -749,21 +1429,44 @@ $$
 
 ## הפתרון: חציונים של הפרשים {.smaller}
 
-לכל זוג רמות $(i, k)$, מחשבים את החציון של **כל ההפרשים** בין תצפית מרמה $i$ לתצפית מרמה $k$:
+**הרעיון:** במקום להשוות כל רמה ל"מרכז" משותף, אומדים **בכמה כל רמה גבוהה מכל רמה אחרת**, ורק אז ממצעים.
+
+1. **לכל זוג רמות $(i, k)$:** מחשבים את **כל** ההפרשים בין תצפית מרמה $i$ לתצפית מרמה $k$ ($n_i \cdot n_k$ הפרשים), ולוקחים את החציון שלהם:
 
 $$
-Z_{ik} = \underset{j,\,m}{\text{median}}\{y_{ij} - y_{km}\} \qquad Z_{ii} = 0
-\qquad\qquad
+Z_{ik} = \underset{j,\,m}{\text{median}}\{y_{ij} - y_{km}\}
+$$
+
+   $Z_{ik}$ עונה על השאלה: **"בכמה, בדרך כלל, תצפית מרמה $i$ גבוהה מתצפית מרמה $k$?"**
+
+2. **מסדרים בטבלה** $a \times a$. על האלכסון $Z_{ii} = 0$, ו-$Z_{ki} = -Z_{ik}$: אם $i$ גבוהה מ-$k$ ב-6, אז $k$ נמוכה מ-$i$ ב-6
+3. **האפקט של רמה** הוא ממוצע השורה שלה, "בכמה היא גבוהה מהרמות, בממוצע":
+
+$$
 \hat\tau_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik}
 $$
 
-מכיוון ש-$Z_{ik} = -Z_{ki}$, הסכום $\sum_i \hat\tau_i = \frac{1}{a}\sum_i\sum_k Z_{ik} = 0$.
+4. **הסכום אפס:** כל זוג $Z_{ik} + Z_{ki} = 0$ מתבטל, ולכן $\sum_i \hat\tau_i = 0$. הבעיה מהשקף הקודם נפתרה
+5. **הניגוד:** $\hat\Gamma = \sum c_i \hat\tau_i$
 
-**בדוגמה הקטנה:** 9 ההפרשים $y_{1j} - y_{2m}$ הם $\{3, 2, 1, 7, 6, 5, 8, 7, 6\}$, והחציון שלהם $Z_{12} = 6$. לכן $Z_{21} = -6$, ו-
+## בדוגמה הקטנה {.smaller}
 
-$$
-\hat\tau_1 = \frac{0 + 6}{2} = 3 \qquad \hat\tau_2 = \frac{-6 + 0}{2} = -3 \qquad \hat\tau_1 + \hat\tau_2 = 0 \;\checkmark
-$$
+$y_{1j} = \{3, 7, 8\}$ ו-$y_{2m} = \{0, 1, 2\}$. כל 9 ההפרשים $y_{1j} - y_{2m}$:
+
+| | $y_{2m} = 0$ | $y_{2m} = 1$ | $y_{2m} = 2$ |
+|---|---|---|---|
+| $y_{1j} = 3$ | 3 | 2 | 1 |
+| $y_{1j} = 7$ | 7 | 6 | 5 |
+| $y_{1j} = 8$ | 8 | 7 | 6 |
+
+ממוינים: $1, 2, 3, 5, \mathbf{6}, 6, 7, 7, 8$. החציון: $Z_{12} = 6$, ולכן $Z_{21} = -6$.
+
+| | רמה 1 | רמה 2 | $\hat\tau_i$ (ממוצע השורה) |
+|---|---|---|---|
+| **רמה 1** | 0 | 6 | $(0 + 6)/2 = 3$ |
+| **רמה 2** | −6 | 0 | $(-6 + 0)/2 = -3$ |
+
+$\hat\tau_1 + \hat\tau_2 = 0$, וההפרש ביניהם, 6, הוא ההזזה האמודה בין הרמות.
 
 ::: {.content-hidden when-format="revealjs"}
 $Z_{ik}$ הוא **אומד [Hodges–Lehmann]{.en}** להזזה בין שתי רמות: האומד שמתאים למבחן סכום הדירוגים, כמו שהפרש ממוצעים מתאים למבחן t. הוא עמיד לערכים חריגים, ומקיים אנטי-סימטריה. ממוצע של אומדי ההזזה מול כל הרמות נותן "אפקט" לכל רמה, ביחס לרמה ממוצעת.
@@ -778,99 +1481,13 @@ $Z_{ik}$ הוא **אומד [Hodges–Lehmann]{.en}** להזזה בין שתי ר
 y_by_level <- split(cotton$strength, cotton$cotton_pct)
 Z <- outer(seq_along(y_by_level), seq_along(y_by_level),
            Vectorize(\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], "-"))))
-tau_hat <- rowMeans(Z)
-round(tau_hat, 2)
-sum(tau_hat)                                     # 0 by construction
-0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]
+dimnames(Z) <- list(names(y_by_level), names(y_by_level))
+round(Z, 2)                                      # Z[i, k] = median of y_i - y_k
+tau_hat <- rowMeans(Z)                           # row means; they sum to 0
+round(c(tau_hat, sum = sum(tau_hat), Gamma = 0.5 * (tau_hat[[1]] + tau_hat[[5]]) - tau_hat[[4]]), 2)
 ```
 
-$$
-\hat\Gamma = \tfrac{1}{2}(`r round(tau_hat[1], 2)` + `r round(tau_hat[5], 2)`) - `r round(tau_hat[4], 2)` = `r round(0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4], 2)`
-$$
-
-בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה.
-
-# מבחן [Friedman]{.en}: טיפולים בתוך בלוקים
-
-## כשכל יחידה מקבלת את כל הטיפולים {.smaller}
-
-**דוגמה:** צוות AI בודק שלוש גרסאות של פרומפט על 8 משימות מבחן ([eval set]{.en}). כל תשובה מקבלת ציון 0–100.
-
-- **כל משימה נבדקת עם כל שלושת הפרומפטים.** המשימה היא **בלוק** ([block]{.en})
-- המשימות שונות מאוד בקושי. ההבדל בין משימה קלה לקשה גדול מההבדל בין פרומפטים
-- [Kruskal–Wallis]{.en} מניח מדגמים **בלתי תלויים**. כאן הם לא: אותה משימה מופיעה בכל הרמות
-- **הפתרון:** משווים את הפרומפטים **בתוך** כל משימה
-
-זה גם המצב של המודלים במוקד: כל המודלים עבדו באותם 9 ימים, והיום הוא בלוק.
-
-## הנתונים
-
-```{r}
-#| label: llm-data
-#| output-location: slide
-#| fig-height: 4
-llm <- read_csv(file.path(np_data_dir, "llm_prompt_eval.csv"), show_col_types = FALSE) |>
-  mutate(prompt = factor(prompt, levels = c("baseline", "few_shot", "reasoning")),
-         task = factor(task))
-
-ggplot(llm, aes(prompt, score, group = task)) +
-  geom_line(colour = "grey70") +
-  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +
-  labs(title = "ברוב המשימות, הפרומפט עם ההנמקה מנצח",
-       subtitle = "כל קו הוא משימה אחת · ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים",
-       x = NULL, y = "Score (0–100)")
-```
-
-## הסטטיסטי {.smaller}
-
-- $b$ בלוקים ו-$k$ טיפולים
-- מדרגים את הטיפולים **בתוך כל בלוק** בנפרד, מ-1 עד $k$
-- $R_j$ הוא **סכום הדרגות** של טיפול $j$ על פני כל הבלוקים
-
-**תחת $H_0$** (אין הבדל בין הטיפולים), בכל בלוק כל סידור של הדרגות סביר באותה מידה, ולכן $E(R_j) = \frac{b(k+1)}{2}$:
-
-$$
-Q = \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k}\left(R_j - \frac{b(k+1)}{2}\right)^2
-= \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k} R_j^2 - 3\,b\,(k+1)
-$$
-
-תחת $H_0$, $Q \sim \chi^2_{k-1}$ בקירוב. דוחים את $H_0$ אם $Q > \chi^2_{1-\alpha,\,k-1}$.
-
-## חישוב {.smaller}
-
-```{r}
-#| label: llm-ranks
-llm_ranked <- llm |> group_by(task) |> mutate(rank = rank(score)) |> ungroup()
-llm_ranked |> select(task, prompt, rank) |> pivot_wider(names_from = prompt, values_from = rank)
-llm_ranked |> group_by(prompt) |> summarise(R = sum(rank))
-```
-
-$$
-Q = \frac{12}{8 \cdot 3 \cdot 4}\left(10^2 + 16^2 + 22^2\right) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 > \chi^2_{0.95,\,2} = 5.99
-$$
-
-**דוחים:** יש הבדל בין הפרומפטים.
-
-## [Friedman]{.en} ב-R, ומה קורה בלי בלוקים {.smaller}
-
-```{r}
-#| label: llm-friedman
-friedman.test(score ~ prompt | task, data = llm)
-kruskal.test(score ~ prompt, data = llm)          # ignores the blocks
-```
-
-- [Friedman]{.en} **דוחה**. [Kruskal–Wallis]{.en}, שמתעלם מהבלוקים, **לא**
-- השונות הגדולה **בין המשימות** "מטביעה" את ההבדל בין הפרומפטים, כמו שאפקט היום ניפח את $MS_E$ במוקד
-- **אותו עיקרון במוקד:**
-
-```{r}
-#| label: calls-friedman
-friedman.test(aht ~ model | day, data = calls)
-```
-
-::: {.content-hidden when-format="revealjs"}
-**המקבילה הפרמטרית** של [Friedman]{.en} היא ניתוח שונות דו-כיווני בלי אינטראקציה, עם הטיפול והבלוק כשני פקטורים: `aov(score ~ prompt + task)`. זה **תכנון בבלוקים אקראיים** ([randomised complete block design]{.en}), ונגיע אליו בהרצאה 6 ובהרצאה על תכנון ניסויים. לשני טיפולים בלבד ($k = 2$), [Friedman]{.en} שקול למבחן הסימן למדגמים מזווגים מהרצאה 1.
-:::
+$\hat\Gamma = \tfrac{1}{2}\big((`r round(tau_hat[1], 2)`) + (`r round(tau_hat[5], 2)`)\big) - `r round(tau_hat[4], 2)` = `r round(0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4], 2)`$: בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה.
 
 # מה יכול להשתבש
 
@@ -879,7 +1496,7 @@ friedman.test(aht ~ model | day, data = calls)
 1. **לבחור את ההשוואה אחרי שרואים את הנתונים**, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן
 2. **לבחור את שיטת התיקון לפי התוצאה:** "ב-[Tukey]{.en} זה לא יצא מובהק, אז ננסה [Duncan]{.en}". זו הגרסה המתוחכמת של [p-hacking]{.en}
 3. **לא לתקן בכלל:** להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק
-4. **להתעלם מבלוקים:** כשאותן יחידות (משימות, ימים, משתמשים) מופיעות בכל הרמות, מבחן למדגמים בלתי תלויים מאבד עוצמה ומפר את ההנחות
+4. **להתעלם מבלוקים:** כשאותן יחידות (ימים, משימות, משתמשים) מופיעות בכל הרמות, מבחן שמניח מדגמים בלתי תלויים מפר את ההנחות ומאבד עוצמה. ראינו את זה עם אפקט היום במוקד. הפתרון בהרצאה 6
 5. **לפרש [Kruskal–Wallis]{.en} כמבחן על חציונים** בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר
 
 # סיכום
@@ -895,6 +1512,5 @@ friedman.test(aht ~ model | day, data = calls)
 | נתונים מוטים, חריגים, סדר | [Kruskal–Wallis]{.en}, $K \sim \chi^2_{a-1}$ | `kruskal.test()` |
 | זוגות אחרי [Kruskal–Wallis]{.en} | סכום דירוגים + תיקון | `pairwise.wilcox.test()` |
 | ניגוד עמיד לחריגים | חציונים של הפרשים, $Z_{ik}$ | |
-| טיפולים בתוך בלוקים | [Friedman]{.en}, $Q \sim \chi^2_{k-1}$ | `friedman.test()` |
 
 **בהרצאה הבאה:** ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל.
