@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.11.9">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-11-07">
+  <meta name="dcterms.date" content="2026-11-08">
   <title>ניתוח נתונים סטטיסטי – 5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -219,12 +219,12 @@
 </div>
 </div>
 
-  <p class="date">2026-11-07</p>
+  <p class="date">2026-11-08</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
 <ul>
-<li><strong>חזרה קצרה</strong> על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)</li>
+<li><strong>חזרה והשלמה מהרצאה 4:</strong> בדיקת ההנחות, שונויות לא שוות, אפקטים אקראיים, גודל אפקט</li>
 <li><strong>ניגודים</strong> (<span class="en">contrasts</span>): שאלות ספציפיות שתכננו מראש</li>
 <li><strong>השוואות מרובות:</strong> למה 10 מבחני t הם בעיה
 <ul>
@@ -235,7 +235,6 @@
 <ul>
 <li><span class="en">Kruskal–Wallis</span>: כמה מדגמים בלתי תלויים</li>
 <li>ניגודים עם חציונים</li>
-<li><span class="en">Friedman</span>: טיפולים בתוך בלוקים</li>
 </ul></li>
 </ul>
 </section>
@@ -269,6 +268,10 @@ H_0: \tau_1 = \dots = \tau_a = 0 \quad (\mu_1 = \dots = \mu_a) \qquad H_1: \tau_
 </div>
 </div>
 </section>
+<section id="הרעיון-אות-מול-רעש" class="slide level2">
+<h2>הרעיון: אות מול רעש</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-signal-noise-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
 <section id="פירוק-השונות-וטבלת-anova" class="slide level2 smaller">
 <h2>פירוק השונות וטבלת ANOVA</h2>
 <p><span class="math display">\[
@@ -315,10 +318,476 @@ H_0: \tau_1 = \dots = \tau_a = 0 \quad (\mu_1 = \dots = \mu_a) \qquad H_1: \tau_
 <li>דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(F_0 &gt; F_{1-\alpha;\,a-1,\,N-a}\)</span></li>
 </ul>
 </section>
+<section id="בדיקת-ההנחות-השאריות" class="slide level2 smaller">
+<h2>בדיקת ההנחות: השאריות</h2>
+<p><span class="math display">\[
+e_{ij} = y_{ij} - \hat y_{ij} = y_{ij} - \bar y_{i\cdot}
+\]</span></p>
+<p>השאריות הן האומדים לשגיאות <span class="math inline">\(\varepsilon_{ij}\)</span>. כל ההנחות נבדקות דרכן:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>ההנחה</th>
+<th>בדיקה גרפית</th>
+<th>בדיקה במבחן</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>נורמליות</td>
+<td>גרף <span class="en">Q-Q</span></td>
+<td><span class="en">Shapiro–Wilk</span>, KS</td>
+</tr>
+<tr class="even">
+<td>אי-תלות</td>
+<td>שאריות לפי סדר האיסוף</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>שונות שווה</td>
+<td><span class="en">boxplot</span>, שאריות מול ממוצעי הרמות</td>
+<td><span class="en">Bartlett</span>, <span class="en">Levene</span></td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>calls_r <span class="ot">&lt;-</span> calls <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">fitted =</span> <span class="fu">fitted</span>(fit_ai), <span class="at">resid =</span> <span class="fu">resid</span>(fit_ai))</span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>calls_r <span class="sc">|&gt;</span> <span class="fu">select</span>(day, model, aht, fitted, resid) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+    day model   aht fitted   resid
+  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+1     1 M1     4.98   5.00 -0.0222
+2     1 M2     5.29   5.33 -0.0444
+3     1 M3     4.51   3.99  0.516 </code></pre>
+</div>
+</div>
+</section>
+<section id="גרף-q-q-איך-בונים-אותו" class="slide level2 smaller">
+<h2>גרף Q-Q: איך בונים אותו</h2>
+<ol type="1">
+<li>ממיינים את <span class="math inline">\(N\)</span> השאריות מהקטנה לגדולה: <span class="math inline">\(e_{(1)} \le e_{(2)} \le \dots \le e_{(N)}\)</span></li>
+<li>לשארית ה-<span class="math inline">\(k\)</span> בסדר מתאימים את <strong>האחוזון</strong> <span class="math inline">\(p_k = \dfrac{k - 0.5}{N}\)</span></li>
+<li>מחשבים את <strong>הערך התיאורטי</strong> של <span class="math inline">\(N(0,1)\)</span> באחוזון הזה: <span class="math inline">\(z_k = \Phi^{-1}(p_k)\)</span></li>
+<li>משרטטים את <span class="math inline">\(e_{(k)}\)</span> (ציר אנכי) מול <span class="math inline">\(z_k\)</span> (ציר אופקי)</li>
+</ol>
+<p><strong>אם השאריות נורמליות, הנקודות על קו ישר</strong> (השיפוע הוא בערך <span class="math inline">\(\hat\sigma\)</span>).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>qq <span class="ot">&lt;-</span> calls_r <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(resid) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">k =</span> <span class="fu">row_number</span>(), <span class="at">p =</span> (k <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">/</span> <span class="fu">n</span>(), <span class="at">z =</span> <span class="fu">qnorm</span>(p))</span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>qq <span class="sc">|&gt;</span> <span class="fu">select</span>(resid, k, p, z) <span class="sc">|&gt;</span> <span class="fu">slice</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">45</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  resid     k      p     z
+  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1 -1.97     1 0.0111 -2.29
+2 -1.93     2 0.0333 -1.83
+3  1.50    45 0.989   2.29</code></pre>
+</div>
+</div>
+</section>
+<section id="גרף-q-q-למודלים" class="slide level2">
+<h2>גרף Q-Q למודלים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(qq, <span class="fu">aes</span>(z, resid)) <span class="sc">+</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="fu">sqrt</span>(mse), <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"השאריות קרובות לקו, עם זנב שמאלי ארוך מעט"</span>,</span>
+<span id="cb7-5"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"קו מקווקו: שיפוע σ̂ = √MSE"</span>,</span>
+<span id="cb7-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile (z)"</span>, <span class="at">y =</span> <span class="st">"Residual (min)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-qq-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="אי-תלות-שאריות-לפי-היום" class="slide level2 smaller">
+<h2>אי-תלות: שאריות לפי היום</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-resid-by-day-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>אפקט היום “נכנס” ל-<span class="math inline">\(SS_E\)</span> ומנפח את <span class="math inline">\(MS_E\)</span>. הפתרון: היום כ<strong>בלוק</strong> במודל. נגיע לזה בהרצאה 6 (ניתוח שונות רב-כיווני)</li>
+</ul>
+</section>
+<section id="שונות-שווה-שאריות-מול-ממוצעי-הרמות" class="slide level2 smaller">
+<h2>שונות שווה: שאריות מול ממוצעי הרמות</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-equal-var-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>כל עמודה היא רמה אחת. מחפשים <strong>פיזור אנכי דומה</strong> בכל העמודות</li>
+<li>סימן אזהרה: “משפך”, כשהפיזור גדל עם הממוצע. אצלנו M4 צפוף מעט יותר, אבל אין דפוס ברור</li>
+</ul>
+</section>
+<section id="מבחן-bartlett" class="slide level2 smaller">
+<h2>מבחן <span class="en">Bartlett</span></h2>
+<p><span class="math inline">\(H_0: \sigma_1^2 = \dots = \sigma_a^2\)</span> מול <span class="math inline">\(H_1\)</span>: לפחות שונות אחת שונה.</p>
+<ul>
+<li><strong>זהירות:</strong> המבחן רגיש מאוד לסטייה מנורמליות. כשהשאריות לא נורמליות, משתמשים במבחן <span class="en">Levene</span></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">tapply</span>(calls<span class="sc">$</span>aht, calls<span class="sc">$</span>model, var), <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  M1   M2   M3   M4   M5 
+1.05 1.31 0.76 0.39 0.76 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(aht <span class="sc">~</span> model, <span class="at">data =</span> calls)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Bartlett test of homogeneity of variances
+
+data:  aht by model
+Bartlett's K-squared = 3, df = 4, p-value = 0.6</code></pre>
+</div>
+</div>
+</section>
+<section id="anova-של-welch" class="slide level2 smaller">
+<h2>ANOVA של <span class="en">Welch</span></h2>
+<p>מבחן F הקלאסי מאחד את כל <span class="math inline">\(S_i^2\)</span> ל-<span class="math inline">\(MS_E\)</span> אחד. כשהשונויות שונות, <span class="math inline">\(MS_E\)</span> אחד לא מתאים לאף קבוצה. <span class="en">Welch</span> נותן לכל קבוצה את השונות שלה:</p>
+<p><span class="math display">\[
+w_i = \frac{n_i}{S_i^2}, \qquad \bar y_w = \frac{\sum_i w_i \bar y_{i\cdot}}{\sum_i w_i}, \qquad
+F_W \approx \frac{\frac{1}{a-1}\sum_i w_i(\bar y_{i\cdot} - \bar y_w)^2}{1 + \text{(small correction)}}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(w_i\)</span> הוא אחד חלקי השונות של <span class="math inline">\(\bar y_{i\cdot}\)</span>: ממוצע <strong>מדויק</strong> (קבוצה גדולה, פיזור קטן) מקבל משקל גבוה, ממוצע <strong>רועש</strong> מקבל משקל נמוך</li>
+<li><span class="math inline">\(F_W \sim F_{a-1,\,\nu}\)</span>, עם פחות דרגות חופש במכנה מ-<span class="math inline">\(N-a\)</span> (<span class="math inline">\(\nu\)</span> מחושב מהנתונים). המחיר: קצת פחות עוצמה כשהשונויות באמת שוות</li>
+<li>ב-R זו ברירת המחדל של <code>oneway.test()</code>. במודלים (שונויות דומות) המסקנה זהה ל-F הקלאסי:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">oneway.test</span>(aht <span class="sc">~</span> model, <span class="at">data =</span> calls)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One-way analysis of means (not assuming equal variances)
+
+data:  aht and model
+F = 4.5, num df = 4, denom df = 20, p-value = 0.009</code></pre>
+</div>
+</div>
+</section>
+<section id="סימולציה-ארבעה-תרחישים" class="slide level2 smaller">
+<h2>סימולציה: ארבעה תרחישים</h2>
+<p>בכל התרחישים <strong>התוחלת זהה בשלוש הקבוצות</strong> (<span class="math inline">\(H_0\)</span> נכונה). משתנים רק גודל הקבוצות והפיזור בתוכן. כך נראה ניסוי אחד מכל תרחיש:</p>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-sim-scenarios-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="סימולציה-כשהשונויות-לא-שוות" class="slide level2 smaller">
+<h2>סימולציה: כשהשונויות לא שוות</h2>
+<p>שלוש קבוצות עם <strong>אותה תוחלת</strong> (<span class="math inline">\(H_0\)</span> נכונה). בכמה מהניסויים מבחן F דוחה ב-<span class="math inline">\(\alpha = 0.05\)</span>?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a>sim_reject <span class="ot">&lt;-</span> <span class="cf">function</span>(n, sd, <span class="at">reps =</span> <span class="dv">4000</span>) {</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">seq_along</span>(n), n))</span>
+<span id="cb14-3"><a aria-hidden="true" tabindex="-1"></a>  rejected <span class="ot">&lt;-</span> <span class="fu">replicate</span>(reps, {</span>
+<span id="cb14-4"><a aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">sum</span>(n), <span class="dv">0</span>, <span class="fu">rep</span>(sd, n))</span>
+<span id="cb14-5"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">oneway.test</span>(y <span class="sc">~</span> g, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>p.value, <span class="fu">oneway.test</span>(y <span class="sc">~</span> g)<span class="sc">$</span>p.value) <span class="sc">&lt;</span> <span class="fl">0.05</span></span>
+<span id="cb14-6"><a aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb14-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowMeans</span>(rejected)   <span class="co"># rejection rate: classic F, Welch</span></span>
+<span id="cb14-8"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-9"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">77</span>)</span>
+<span id="cb14-10"><a aria-hidden="true" tabindex="-1"></a>sim_res <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">design =</span> <span class="fu">c</span>(<span class="st">"balanced, equal sd"</span>, <span class="st">"balanced, unequal sd"</span>,</span>
+<span id="cb14-11"><a aria-hidden="true" tabindex="-1"></a>                             <span class="st">"small group has large sd"</span>, <span class="st">"large group has large sd"</span>),</span>
+<span id="cb14-12"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">n  =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>), <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">20</span>)),</span>
+<span id="cb14-13"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),    <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">1</span>),    <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">1</span>),    <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate =</span> <span class="fu">map2</span>(n, sd, sim_reject),</span>
+<span id="cb14-15"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">F =</span> <span class="fu">map_dbl</span>(rate, <span class="dv">1</span>), <span class="at">Welch =</span> <span class="fu">map_dbl</span>(rate, <span class="dv">2</span>))</span>
+<span id="cb14-16"><a aria-hidden="true" tabindex="-1"></a>sim_res <span class="sc">|&gt;</span> <span class="fu">select</span>(design, F, Welch)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  design                         F  Welch
+  &lt;chr&gt;                      &lt;dbl&gt;  &lt;dbl&gt;
+1 balanced, equal sd       0.0472  0.0452
+2 balanced, unequal sd     0.0788  0.0492
+3 small group has large sd 0.241   0.0592
+4 large group has large sd 0.00875 0.0475</code></pre>
+</div>
+</div>
+</section>
+<section id="התוצאה-בתרשים" class="slide level2 smaller">
+<h2>התוצאה בתרשים</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/recap-sim-rates-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>ניסוי לא מאוזן + שונויות שונות = בעיה.</strong> כשלקבוצה הקטנה יש שונות גדולה, F דוחה הרבה יותר מ-5%. <span class="en">Welch</span> (<code>oneway.test()</code>) נשאר קרוב ל-5%</li>
+</ul>
+</section></section>
+<section>
+<section id="השלמה-מהרצאה-4-אפקטים-אקראיים-random-effects" class="title-slide slide level1 center">
+<h1>השלמה מהרצאה 4: אפקטים אקראיים (<span class="en">Random effects</span>)</h1>
+
+</section>
+<section id="השאלה-האם-השרתים-שונים-זה-מזה" class="slide level2 smaller">
+<h2>השאלה: האם השרתים שונים זה מזה?</h2>
+<p>לשירות יש <strong>200 שרתים</strong> זהים, לכאורה. צוות התשתיות חושד שיש שרתים “איטיים” (חומרה ישנה, שכן רועש באותו מחשב פיזי).</p>
+<ul>
+<li>אי אפשר למדוד את כל 200 השרתים. <strong>מגרילים 8 שרתים</strong>, ושולחים לכל אחד 6 בקשות זהות</li>
+<li><strong>השאלה לא</strong> “האם שרת 17 איטי משרת 112”. השרתים שנבחרו לא מעניינים כשלעצמם</li>
+<li><strong>השאלה:</strong> האם <strong>באוכלוסיית השרתים</strong> יש שונות בזמן התגובה? וכמה מהשונות הכוללת היא בין שרתים?</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">404</span>)</span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a>fleet <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">server =</span> <span class="fu">sprintf</span>(<span class="st">"srv-%03d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>), <span class="at">tau =</span> <span class="fu">rnorm</span>(<span class="dv">200</span>, <span class="dv">0</span>, <span class="dv">10</span>))  <span class="co"># sd between servers: 10 ms</span></span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a>servers <span class="ot">&lt;-</span> fleet <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">8</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_grid</span>(<span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">latency =</span> <span class="fu">round</span>(<span class="dv">120</span> <span class="sc">+</span> tau <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="dv">15</span>), <span class="dv">1</span>),                     <span class="co"># sd within: 15 ms</span></span>
+<span id="cb16-7"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">server =</span> <span class="fu">factor</span>(server))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="הנתונים" class="slide level2">
+<h2>הנתונים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(servers, <span class="fu">aes</span>(server, latency)) <span class="sc">+</span></span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>,</span>
+<span id="cb17-3"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.08</span>, <span class="at">seed =</span> <span class="dv">4</span>)) <span class="sc">+</span></span>
+<span id="cb17-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> mean, <span class="at">geom =</span> <span class="st">"crossbar"</span>, <span class="at">width =</span> <span class="fl">0.4</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"accent"</span>]]) <span class="sc">+</span></span>
+<span id="cb17-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"8 שרתים שהוגרלו מתוך 200"</span>,</span>
+<span id="cb17-6"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"6 בקשות לכל שרת · קו כתום: הממוצע של השרת"</span>,</span>
+<span id="cb17-7"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Server"</span>, <span class="at">y =</span> <span class="st">"Latency (ms)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/servers-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="המודל" class="slide level2 smaller">
+<h2>המודל</h2>
+<p><span class="math display">\[
+y_{ij} = \mu + \tau_i + \varepsilon_{ij} \qquad
+\tau_i \sim N(0, \sigma_\tau^2) \qquad
+\varepsilon_{ij} \sim N(0, \sigma^2)
+\]</span></p>
+<ul>
+<li>אותה נוסחה, אבל עכשיו <span class="math inline">\(\tau_i\)</span> הוא <strong>משתנה מקרי</strong>: השרת הוגרל</li>
+<li><span class="math inline">\(\tau_i\)</span> ו-<span class="math inline">\(\varepsilon_{ij}\)</span> בלתי תלויים. <strong>אין</strong> אילוץ <span class="math inline">\(\sum \tau_i = 0\)</span></li>
+<li>השונות של תצפית מתפרקת לשני <strong>רכיבי שונות</strong> (<span class="en">variance components</span>):</li>
+</ul>
+<p><span class="math display">\[
+V(y_{ij}) = \sigma_\tau^2 + \sigma^2
+\]</span></p>
+<p><strong>ההשערות</strong> הן על <span class="math inline">\(\sigma_\tau^2\)</span>, ולא על ה-<span class="math inline">\(\tau_i\)</span> עצמם:</p>
+<p><span class="math display">\[
+H_0: \sigma_\tau^2 = 0 \qquad H_1: \sigma_\tau^2 &gt; 0
+\]</span></p>
+</section>
+<section id="המבחן-והאומדים" class="slide level2 smaller">
+<h2>המבחן והאומדים</h2>
+<p>סכומי הריבועים, הטבלה ו-<span class="math inline">\(F_0 = MS_{Tr}/MS_E\)</span> <strong>זהים</strong> למודל הקבוע. משתנה הפרשנות של התוחלות:</p>
+<p><span class="math display">\[
+E(MS_E) = \sigma^2 \qquad E(MS_{Tr}) = \sigma^2 + n\sigma_\tau^2
+\]</span></p>
+<p>תחת <span class="math inline">\(H_0\)</span> (<span class="math inline">\(\sigma_\tau^2 = 0\)</span>) שניהם אומדים את <span class="math inline">\(\sigma^2\)</span>, ולכן שוב <span class="math inline">\(F_0 \sim F_{a-1,\,N-a}\)</span>. מכאן גם <strong>אומדים לרכיבי השונות</strong>:</p>
+<p><span class="math display">\[
+\hat\sigma^2 = MS_E \qquad \hat\sigma_\tau^2 = \frac{MS_{Tr} - MS_E}{n}
+\]</span></p>
+<p><strong>מתאם תוך-קבוצתי</strong> (<span class="en">intraclass correlation, ICC</span>): איזה חלק מהשונות הכוללת הוא בין הרמות?</p>
+<p><span class="math display">\[
+\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}
+\]</span></p>
+</section>
+<section id="למה-ems_tr-sigma2-nsigma_tau2" class="slide level2 smaller">
+<h2>למה <span class="math inline">\(E(MS_{Tr}) = \sigma^2 + n\sigma_\tau^2\)</span>?</h2>
+<p>עובדה אחת: <strong>שונות מדגמית היא אומד חסר הטיה לשונות.</strong></p>
+<ol type="1">
+<li>הממוצע של רמה <span class="math inline">\(i\)</span>, ו-<span class="math inline">\(\tau_i\)</span> משתנה מקרי בלתי תלוי בשגיאות:</li>
+</ol>
+<p><span class="math display">\[
+\bar y_{i\cdot} = \mu + \tau_i + \bar\varepsilon_{i\cdot} \quad\Rightarrow\quad V(\bar y_{i\cdot}) = \sigma_\tau^2 + \frac{\sigma^2}{n}
+\]</span></p>
+<ol start="2" type="1">
+<li><p>הרמות הוגרלו, ולכן <span class="math inline">\(\bar y_{1\cdot}, \dots, \bar y_{a\cdot}\)</span> הם מדגם של <span class="math inline">\(a\)</span> ערכים בלתי תלויים מאותה התפלגות. השונות המדגמית שלהם, <span class="math inline">\(S^2_{\bar y} = \frac{1}{a-1}\sum_i (\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2\)</span>, חסרת הטיה: <span class="math inline">\(E(S^2_{\bar y}) = \sigma_\tau^2 + \frac{\sigma^2}{n}\)</span></p></li>
+<li><p>ב-<span class="math inline">\(SS_{Tr}\)</span> כל תצפית מוחלפת בממוצע הרמה שלה: <span class="math inline">\(SS_{Tr} = \sum_i\sum_{j=1}^{n}(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2\)</span>. האיבר לא תלוי ב-<span class="math inline">\(j\)</span>, ולכן הוא נספר <span class="math inline">\(n\)</span> פעמים:</p></li>
+</ol>
+<p><span class="math display">\[
+MS_{Tr} = \frac{SS_{Tr}}{a-1} = n \cdot \frac{\sum_i(\bar y_{i\cdot} - \bar y_{\cdot\cdot})^2}{a-1} = n S^2_{\bar y}
+\quad\Rightarrow\quad E(MS_{Tr}) = n\sigma_\tau^2 + \sigma^2
+\]</span></p>
+<p><strong>במודל הקבוע</strong> <span class="math inline">\(\tau_i\)</span> הם קבועים. בשלב 1 נשאר רק <span class="math inline">\(\sigma^2/n\)</span>, ובמקום <span class="math inline">\(\sigma_\tau^2\)</span> מופיע <span class="math inline">\(\frac{\sum\tau_i^2}{a-1}\)</span>: הפיזור של האפקטים שנבחרו, במקום השונות של אוכלוסיית האפקטים.</p>
+</section>
+<section id="בחזרה-לשרתים" class="slide level2 smaller">
+<h2>בחזרה לשרתים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>fit_srv <span class="ot">&lt;-</span> <span class="fu">aov</span>(latency <span class="sc">~</span> server, <span class="at">data =</span> servers)</span>
+<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_srv)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)   
+server       7   5433     776    4.12 0.0017 **
+Residuals   40   7535     188                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a>ms_srv <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_srv)[[<span class="dv">1</span>]][[<span class="st">"Mean Sq"</span>]]</span>
+<span id="cb20-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sigma2_hat =</span> ms_srv[<span class="dv">2</span>], <span class="at">sigma2_tau_hat =</span> (ms_srv[<span class="dv">1</span>] <span class="sc">-</span> ms_srv[<span class="dv">2</span>]) <span class="sc">/</span> <span class="dv">6</span>,</span>
+<span id="cb20-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">icc =</span> ((ms_srv[<span class="dv">1</span>] <span class="sc">-</span> ms_srv[<span class="dv">2</span>]) <span class="sc">/</span> <span class="dv">6</span>) <span class="sc">/</span> ((ms_srv[<span class="dv">1</span>] <span class="sc">-</span> ms_srv[<span class="dv">2</span>]) <span class="sc">/</span> <span class="dv">6</span> <span class="sc">+</span> ms_srv[<span class="dv">2</span>]))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    sigma2_hat sigma2_tau_hat            icc 
+      188.3674        97.9592         0.3421 </code></pre>
+</div>
+</div>
+<ul>
+<li>דוחים את <span class="math inline">\(H_0\)</span> (<span class="math inline">\(p = 0.0017\)</span>)</li>
+<li>סטיית התקן בין שרתים נאמדת ב-<span class="math inline">\(\sqrt{\hat\sigma_\tau^2} = 9.9\)</span> מילישניות (האמת בסימולציה: 10), ובתוך שרת ב-<span class="math inline">\(13.7\)</span> (האמת: 15)</li>
+<li>כ-34% מהשונות בזמן התגובה נובעת מהבדלים בין שרתים. <strong>ההחלטה:</strong> האם שווה לאתר ולהחליף שרתים איטיים, או שרוב הבעיה היא בתוך כל שרת?</li>
+</ul>
+<aside class="notes">
+<p>עם 8 שרתים בלבד, האומד ל-σ_τ² מאוד לא מדויק. זה המחיר של מודל אקראי: את רכיב השונות בין הרמות אומדים מ-a = 8 ממוצעים בלבד. כדי לאמוד אותו טוב, צריך יותר שרתים, לא יותר בקשות לכל שרת.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="קבוע-או-אקראי" class="slide level2 smaller">
+<h2>קבוע או אקראי?</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>אפקטים קבועים</th>
+<th>אפקטים אקראיים</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>הרמות</strong></td>
+<td>כל הרמות שמעניינות אותנו</td>
+<td>מדגם מקרי מתוך הרבה רמות</td>
+</tr>
+<tr class="even">
+<td><strong>דוגמאות</strong></td>
+<td>5 המודלים שהמוקד שקל, 3 גרסאות של מוצר, 4 נוסחים של פרומפט</td>
+<td>שרתים מתוך צי, מוקדנים מתוך מוקד, אצוות של חומר גלם</td>
+</tr>
+<tr class="odd">
+<td><strong><span class="math inline">\(\tau_i\)</span></strong></td>
+<td>קבועים, <span class="math inline">\(\sum \tau_i = 0\)</span></td>
+<td>משתנים מקריים, <span class="math inline">\(N(0, \sigma_\tau^2)\)</span></td>
+</tr>
+<tr class="even">
+<td><strong><span class="math inline">\(H_0\)</span></strong></td>
+<td><span class="math inline">\(\tau_1 = \dots = \tau_a = 0\)</span></td>
+<td><span class="math inline">\(\sigma_\tau^2 = 0\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>מה אומדים</strong></td>
+<td><span class="math inline">\(\mu_i\)</span> והפרשים ביניהן</td>
+<td>רכיבי שונות <span class="math inline">\(\sigma_\tau^2\)</span>, <span class="math inline">\(\sigma^2\)</span>, ICC</td>
+</tr>
+<tr class="even">
+<td><strong>המסקנה חלה על</strong></td>
+<td>הרמות שנבדקו</td>
+<td>כל אוכלוסיית הרמות</td>
+</tr>
+</tbody>
+</table>
+<p><strong>שאלת מבחן:</strong> “אם נחזור על הניסוי, האם נבדוק את אותן רמות?” אם כן: קבוע. אם נגריל רמות חדשות: אקראי.</p>
+</section></section>
+<section>
+<section id="השלמה-מהרצאה-4-מה-יכול-להשתבש" class="title-slide slide level1 center">
+<h1>השלמה מהרצאה 4: מה יכול להשתבש</h1>
+
+</section>
+<section id="חמש-מלכודות-בניתוח-שונות" class="slide level2 smaller">
+<h2>חמש מלכודות בניתוח שונות</h2>
+<ol type="1">
+<li><strong>אין הגרלה:</strong> אם M1 הופעל רק בימי ראשון העמוסים, ההבדל הוא של היום ולא של המודל. ניתוח שונות לא מתקן תכנון גרוע</li>
+<li><strong>חזרות מדומות</strong> (<span class="en">pseudo-replication</span>): 8 בקשות לאותו שרת <strong>אינן</strong> 8 שרתים. ב-<span class="math inline">\(N\)</span> סופרים את היחידות שהוגרלו, לא את המדידות</li>
+<li><strong>“לא מובהק” אינו “שווה”:</strong> אם לא דחינו, ייתכן שפשוט אין מספיק עוצמה. בודקים רווחי סמך וגודל מדגם</li>
+<li><strong>מובהק אינו חשוב:</strong> עם מספיק נתונים, גם הבדל של שנייה אחת יהיה מובהק. מדווחים את גודל האפקט (שקף הבא)</li>
+<li><strong>מבחני t מרובים במקום F:</strong> עם הרבה רמות, הבדל מקרי “יימצא” כמעט בוודאות</li>
+</ol>
+</section>
+<section id="גודל-אפקט-effect-size-eta2" class="slide level2 smaller">
+<h2>גודל אפקט (<span class="en">Effect size</span>): <span class="math inline">\(\eta^2\)</span></h2>
+<p><span class="math display">\[
+\eta^2 = \frac{SS_{Tr}}{SS_T}
+\]</span></p>
+<ul>
+<li>החלק מהשונות הכוללת שמוסבר על ידי הפקטור. זה בדיוק <span class="math inline">\(R^2\)</span> של הרגרסיה המקבילה</li>
+<li>למודלים: <span class="math inline">\(\eta^2 = 18.02 / 52.17 = 0.35\)</span>. המודל מסביר כשליש מהשונות במשך הטיפול</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a>aov_tab <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_ai)[[<span class="dv">1</span>]]</span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">eta2 =</span> aov_tab[<span class="dv">1</span>, <span class="st">"Sum Sq"</span>] <span class="sc">/</span> <span class="fu">sum</span>(aov_tab[, <span class="st">"Sum Sq"</span>]),</span>
+<span id="cb22-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">R2_lm =</span> <span class="fu">summary</span>(<span class="fu">lm</span>(aht <span class="sc">~</span> model, <span class="at">data =</span> calls))<span class="sc">$</span>r.squared)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  eta2  R2_lm 
+0.3455 0.3455 </code></pre>
+</div>
+</div>
+</section>
+<section id="סיכום-הרצאה-4" class="slide level2 smaller">
+<h2>סיכום הרצאה 4</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>השאלה</th>
+<th>הכלי</th>
+<th>ב-R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>האם יש הבדל בין <span class="math inline">\(a\)</span> רמות של פקטור?</td>
+<td>מבחן F, <span class="math inline">\(F_{a-1,\,N-a}\)</span></td>
+<td><code>summary(aov(y ~ g))</code></td>
+</tr>
+<tr class="even">
+<td>מהי השונות של הרעש?</td>
+<td><span class="math inline">\(\hat\sigma^2 = MS_E\)</span></td>
+<td><code>Mean Sq</code> של <code>Residuals</code></td>
+</tr>
+<tr class="odd">
+<td>מהי התוחלת ברמה <span class="math inline">\(i\)</span>?</td>
+<td><span class="math inline">\(\bar y_{i\cdot} \pm t\sqrt{MS_E/n}\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>האם ההנחות מתקיימות?</td>
+<td>Q-Q, שאריות לפי סדר, <span class="en">Bartlett</span>/<span class="en">Levene</span></td>
+<td><code>resid()</code>, <code>bartlett.test()</code></td>
+</tr>
+<tr class="odd">
+<td>שונויות לא שוות?</td>
+<td><span class="en">Welch ANOVA</span></td>
+<td><code>oneway.test()</code></td>
+</tr>
+<tr class="even">
+<td>כמה חזרות צריך?</td>
+<td>ניתוח עוצמה</td>
+<td><code>power.anova.test()</code></td>
+</tr>
+<tr class="odd">
+<td>הרמות הן מדגם מאוכלוסייה?</td>
+<td>אפקטים אקראיים, <span class="math inline">\(\hat\sigma_\tau^2\)</span>, ICC</td>
+<td>אותו <code>aov()</code>, פרשנות אחרת</td>
+</tr>
+<tr class="even">
+<td>כמה הפקטור מסביר?</td>
+<td><span class="math inline">\(\eta^2 = SS_{Tr}/SS_T\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="מכאן-איפה-ההבדל" class="title-slide slide level1 center">
+<h1>מכאן: איפה ההבדל?</h1>
+
+</section>
 <section id="התוצאה-למודלים" class="slide level2">
 <h2>התוצאה למודלים</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ai)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ai)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)   
 model        4   18.0    4.51    5.28 0.0016 **
@@ -338,7 +807,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <li><strong>השוואות מרובות:</strong> כל הזוגות, עם תיקון לכך שבודקים הרבה</li>
 </ol>
 <aside class="notes">
-<p>עוד דבר מיום ראשון: ראינו שבימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נחזור לזה בסוף, במבחן פרידמן.</p>
+<p>תזכורת: בימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נטפל בזה בהרצאה 6, עם בלוקים.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -377,9 +846,9 @@ H_0: \mu_3 - \mu_4 = 0
 </section>
 <section id="הגדרה" class="slide level2 smaller">
 <h2>הגדרה</h2>
-<p><strong>ניגוד</strong> (<span class="en">contrast</span>) הוא צירוף לינארי של התוחלות</p>
+<p><strong>ניגוד</strong> (<span class="en">contrast</span>) הוא צירוף לינארי של התוחלות, שסכום המקדמים שלו אפס:</p>
 <p><span class="math display">\[
-\Gamma = \sum_{i=1}^{a} c_i \mu_i \qquad \text{כאשר} \qquad \sum_{i=1}^{a} c_i = 0
+\Gamma = \sum_{i=1}^{a} c_i \mu_i, \qquad \sum_{i=1}^{a} c_i = 0
 \]</span></p>
 <table class="caption-top">
 <thead>
@@ -432,18 +901,35 @@ V(\hat\Gamma) = \sum_{i=1}^{a} c_i^2 \, V(\bar y_{i\cdot}) = \frac{\sigma^2}{n}\
 t_0 = \frac{\sum c_i \bar y_{i\cdot}}{\sqrt{\frac{MS_E}{n}\sum c_i^2}} \sim t_{N-a} \quad \text{(תחת } H_0\text{)}
 \]</span></p>
 </section>
-<section id="סכום-הריבועים-של-ניגוד" class="slide level2 smaller">
-<h2>סכום הריבועים של ניגוד</h2>
-<p>אפשר לכתוב את אותו מבחן כמבחן F, עם <span class="math inline">\(t_0^2 = F_0\)</span>. בעזרת הסכומים <span class="math inline">\(y_{i\cdot} = n\bar y_{i\cdot}\)</span>:</p>
+<section id="מ-t-ל-f-סכום-הריבועים-של-ניגוד" class="slide level2 smaller">
+<h2>מ-t ל-F: סכום הריבועים של ניגוד</h2>
+<p><strong>מעלים את <span class="math inline">\(t_0\)</span> בריבוע</strong>, מונה ומכנה, ומציבים <span class="math inline">\(\bar y_{i\cdot} = y_{i\cdot}/n\)</span> (הסכומים במקום הממוצעים):</p>
 <p><span class="math display">\[
-SS_C = \frac{\left(\sum_{i=1}^{a} c_i y_{i\cdot}\right)^2}{n\sum_{i=1}^{a} c_i^2}
-\qquad\qquad
-F_0 = \frac{SS_C / 1}{MS_E} \sim F_{1,\; N-a}
+t_0^2 = \frac{\left(\sum c_i \bar y_{i\cdot}\right)^2}{\frac{MS_E}{n}\sum c_i^2}
+= \frac{\left(\sum c_i y_{i\cdot}\right)^2 / n^2}{\frac{MS_E}{n}\sum c_i^2}
+= \frac{1}{MS_E}\cdot\underbrace{\frac{\left(\sum c_i y_{i\cdot}\right)^2}{n\sum c_i^2}}_{SS_C}
+\]</span></p>
+<p><span class="math display">\[
+F_0 = t_0^2 = \frac{SS_C / 1}{MS_E} \sim F_{1,\; N-a}
 \]</span></p>
 <ul>
-<li>לכל ניגוד <strong>דרגת חופש אחת</strong></li>
-<li><span class="math inline">\(SS_C\)</span> הוא החלק של <span class="math inline">\(SS_{Tr}\)</span> ש”מוסבר” על ידי השאלה הספציפית הזו</li>
+<li>המונה, <span class="math inline">\(SS_C\)</span>, הוא <strong>סכום ריבועים</strong> עם <strong>דרגת חופש אחת</strong>. המכנה הוא אותו <span class="math inline">\(MS_E\)</span> כמו במבחן t</li>
+<li><strong>זה אותו מבחן:</strong> <span class="math inline">\(t_{0.975,\,40}^2 = 2.021^2 = 4.08 = F_{0.95;\,1,\,40}\)</span>, ו-p-value זהה למבחן t דו-צדדי</li>
 <li>דוחים את <span class="math inline">\(H_0: \Gamma = 0\)</span> אם <span class="math inline">\(F_0 &gt; F_{1-\alpha;\,1,\,N-a}\)</span></li>
+</ul>
+</section>
+<section id="אז-למה-לעבור-ל-f" class="slide level2 smaller">
+<h2>אז למה לעבור ל-F?</h2>
+<p><strong>כי <span class="math inline">\(SS_C\)</span> מדבר באותה שפה כמו טבלת ANOVA:</strong></p>
+<ul>
+<li><span class="math inline">\(SS_C\)</span> הוא <strong>חלק מ-<span class="math inline">\(SS_{Tr}\)</span></strong>: כמה מההבדלים בין הרמות השאלה הספציפית הזו מסבירה. ב-t אין לזה מקבילה</li>
+<li>עם ניגודים <strong>אורתוגונליים</strong> (בעוד רגע), ה-<span class="math inline">\(SS_C\)</span> מחלקים בדיוק את <span class="math inline">\(SS_{Tr}\)</span>. מבחן ה-F הכללי הוא בעצם <strong>הממוצע</strong> של <span class="math inline">\(a - 1\)</span> מבחני F של ניגודים: <span class="math inline">\(MS_{Tr} = \frac{1}{a-1}\sum SS_{C_k}\)</span></li>
+<li>החישוב הידני מהסכומים <span class="math inline">\(y_{i\cdot}\)</span> נוח, וזה הפורמט של שאלות הבחינה</li>
+</ul>
+<p><strong>מתי להישאר עם t?</strong></p>
+<ul>
+<li><strong>השערה חד-צדדית.</strong> <span class="math inline">\(t_0^2\)</span> מאבד את הסימן. “האם המודלים הגדולים <strong>מקצרים</strong> את הטיפול?” היא בעצם שאלה חד-צדדית: <span class="math inline">\(t_0 &gt; t_{1-\alpha,\,N-a}\)</span></li>
+<li><strong>רווח סמך לניגוד:</strong> <span class="math inline">\(\hat\Gamma \pm t_{1-\alpha/2,\,N-a}\sqrt{\frac{MS_E}{n}\sum c_i^2}\)</span>. הוא אומר <strong>כמה</strong>, לא רק <strong>אם</strong></li>
 </ul>
 </section>
 <section id="המודלים-קטנים-מול-גדולים" class="slide level2 smaller">
@@ -465,23 +951,39 @@ SS_{C_2} = \frac{(35.95 - 33.87)^2}{9 \cdot 2} = 0.24 \qquad F_0 = \frac{0.24}{0
 \]</span></p>
 <p><strong>לא דוחים:</strong> אין עדות להבדל בין M3 ל-M4.</p>
 </section>
-<section id="אותו-חישוב-ב-r" class="slide level2">
+<section id="אותו-חישוב-ב-r" class="slide level2 smaller">
 <h2>אותו חישוב ב-R</h2>
+<p><strong>ידנית</strong>, לפי הנוסחאות:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>contrast_test <span class="ot">&lt;-</span> <span class="cf">function</span>(c, totals, n, mse, df_e) {</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  ss <span class="ot">&lt;-</span> <span class="fu">sum</span>(c <span class="sc">*</span> totals)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n <span class="sc">*</span> <span class="fu">sum</span>(c<span class="sc">^</span><span class="dv">2</span>))</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">estimate =</span> <span class="fu">sum</span>(c <span class="sc">*</span> totals <span class="sc">/</span> n), <span class="at">SS =</span> ss, <span class="at">F =</span> ss <span class="sc">/</span> mse,</span>
-<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fu">pf</span>(ss <span class="sc">/</span> mse, <span class="dv">1</span>, df_e, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb5-5"><a aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-6"><a aria-hidden="true" tabindex="-1"></a>totals <span class="ot">&lt;-</span> <span class="fu">tapply</span>(calls<span class="sc">$</span>aht, calls<span class="sc">$</span>model, sum)</span>
-<span id="cb5-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">small_vs_large =</span> <span class="fu">contrast_test</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), totals, <span class="dv">9</span>, mse, <span class="dv">40</span>),</span>
-<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">M3_vs_M4       =</span> <span class="fu">contrast_test</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>),  totals, <span class="dv">9</span>, mse, <span class="dv">40</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a>contrast_test <span class="ot">&lt;-</span> <span class="cf">function</span>(c, totals, n, mse, df_e) {</span>
+<span id="cb26-2"><a aria-hidden="true" tabindex="-1"></a>  ss <span class="ot">&lt;-</span> <span class="fu">sum</span>(c <span class="sc">*</span> totals)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n <span class="sc">*</span> <span class="fu">sum</span>(c<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb26-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">estimate =</span> <span class="fu">sum</span>(c <span class="sc">*</span> totals <span class="sc">/</span> n), <span class="at">SS =</span> ss, <span class="at">F =</span> ss <span class="sc">/</span> mse,</span>
+<span id="cb26-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fu">pf</span>(ss <span class="sc">/</span> mse, <span class="dv">1</span>, df_e, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb26-5"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-6"><a aria-hidden="true" tabindex="-1"></a>totals <span class="ot">&lt;-</span> <span class="fu">tapply</span>(calls<span class="sc">$</span>aht, calls<span class="sc">$</span>model, sum)</span>
+<span id="cb26-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">small_vs_large =</span> <span class="fu">contrast_test</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), totals, <span class="dv">9</span>, mse, <span class="dv">40</span>),</span>
+<span id="cb26-8"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">M3_vs_M4       =</span> <span class="fu">contrast_test</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>),  totals, <span class="dv">9</span>, mse, <span class="dv">40</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               estimate      SS       F         p
 small_vs_large   2.6178 15.4187 18.0627 0.0001243
 M3_vs_M4         0.2311  0.2404  0.2816 0.5986067</code></pre>
 </div>
 </div>
+<p><strong>בפקודה מוכנה</strong>, חבילת <span class="en">emmeans</span>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a>emm <span class="ot">&lt;-</span> emmeans<span class="sc">::</span><span class="fu">emmeans</span>(fit_ai, <span class="sc">~</span> model)   <span class="co"># the 5 level means</span></span>
+<span id="cb28-2"><a aria-hidden="true" tabindex="-1"></a>emmeans<span class="sc">::</span><span class="fu">contrast</span>(emm, <span class="fu">list</span>(<span class="at">small_vs_large =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb28-3"><a aria-hidden="true" tabindex="-1"></a>                            <span class="at">M3_vs_M4       =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>)))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> contrast       estimate    SE df t.ratio p.value
+ small_vs_large    1.309 0.308 40   4.250  0.0001
+ M3_vs_M4          0.231 0.436 40   0.531  0.5986</code></pre>
+</div>
+</div>
+<ul>
+<li><span class="en">emmeans</span> מדווח <span class="math inline">\(t\)</span> ולא <span class="math inline">\(F\)</span>, אבל <span class="math inline">\(t^2 = F\)</span>: <span class="math inline">\(4.25^2 = 18.06\)</span>, <span class="math inline">\(0.53^2 = 0.28\)</span>. אותו <span class="math inline">\(p\)</span></li>
+<li>חילקנו את הניגוד הראשון ב-2 כדי שהאומדן יהיה <span class="math inline">\(\hat\Gamma = 1.31\)</span> דקות. כפל של <span class="math inline">\(c\)</span> בקבוע לא משנה את <span class="math inline">\(t\)</span> ואת <span class="math inline">\(p\)</span></li>
+</ul>
 </section>
 <section id="ניגודים-אורתוגונליים-orthogonal-contrasts" class="slide level2 smaller">
 <h2>ניגודים אורתוגונליים (<span class="en">Orthogonal contrasts</span>)</h2>
@@ -617,9 +1119,9 @@ SS_{C_1} + SS_{C_2} + \dots + SS_{C_{a-1}} = SS_{Tr}
 </tbody>
 </table>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="at">small_vs_large =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), <span class="at">M1_vs_M2 =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">M4_vs_M5 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>),        <span class="at">M3_vs_rest =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>C <span class="sc">%*%</span> <span class="fu">t</span>(C)                                       <span class="co"># off-diagonal zeros: pairwise orthogonal</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="at">small_vs_large =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), <span class="at">M1_vs_M2 =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb30-2"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">M4_vs_M5 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>),        <span class="at">M3_vs_rest =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb30-3"><a aria-hidden="true" tabindex="-1"></a>C <span class="sc">%*%</span> <span class="fu">t</span>(C)                                       <span class="co"># off-diagonal zeros: pairwise orthogonal</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               small_vs_large M1_vs_M2 M4_vs_M5 M3_vs_rest
 small_vs_large              4        0        0          0
@@ -627,8 +1129,8 @@ M1_vs_M2                    0        2        0          0
 M4_vs_M5                    0        0        2          0
 M3_vs_rest                  0        0        0         20</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>ss_c <span class="ot">&lt;-</span> <span class="fu">apply</span>(C, <span class="dv">1</span>, contrast_test, <span class="at">totals =</span> totals, <span class="at">n =</span> <span class="dv">9</span>, <span class="at">mse =</span> mse, <span class="at">df_e =</span> <span class="dv">40</span>)</span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(ss_c, <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a>ss_c <span class="ot">&lt;-</span> <span class="fu">apply</span>(C, <span class="dv">1</span>, contrast_test, <span class="at">totals =</span> totals, <span class="at">n =</span> <span class="dv">9</span>, <span class="at">mse =</span> mse, <span class="at">df_e =</span> <span class="dv">40</span>)</span>
+<span id="cb32-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(ss_c, <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         small_vs_large M1_vs_M2 M4_vs_M5 M3_vs_rest
 estimate          2.618   -0.332   -0.192      2.078
@@ -636,7 +1138,7 @@ SS               15.419    0.497    0.166      1.943
 F                18.063    0.582    0.195      2.276
 p                 0.000    0.450    0.661      0.139</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sum_SS_C =</span> <span class="fu">sum</span>(ss_c[<span class="st">"SS"</span>, ]), <span class="at">SS_Tr =</span> <span class="fu">summary</span>(fit_ai)[[<span class="dv">1</span>]][<span class="dv">1</span>, <span class="st">"Sum Sq"</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sum_SS_C =</span> <span class="fu">sum</span>(ss_c[<span class="st">"SS"</span>, ]), <span class="at">SS_Tr =</span> <span class="fu">summary</span>(fit_ai)[[<span class="dv">1</span>]][<span class="dv">1</span>, <span class="st">"Sum Sq"</span>])</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>sum_SS_C    SS_Tr 
    18.02    18.02 </code></pre>
@@ -646,14 +1148,14 @@ p                 0.000    0.450    0.661      0.139</code></pre>
 <section id="איך-קוראים-את-הפירוק" class="slide level2">
 <h2>איך קוראים את הפירוק</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">contrast =</span> <span class="fu">colnames</span>(ss_c), <span class="at">SS =</span> ss_c[<span class="st">"SS"</span>, ]) <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">share =</span> SS <span class="sc">/</span> <span class="fu">sum</span>(SS), <span class="at">contrast =</span> <span class="fu">fct_reorder</span>(contrast, SS)) <span class="sc">|&gt;</span></span>
-<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(share, contrast)) <span class="sc">+</span></span>
-<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
-<span id="cb13-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">percent</span>(share, <span class="dv">1</span>)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>) <span class="sc">+</span></span>
-<span id="cb13-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb13-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"86% מההבדלים בין המודלים: קטנים מול גדולים"</span>,</span>
-<span id="cb13-8"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"החלק של כל ניגוד ב-SS_Tr = 18.02"</span>, <span class="at">x =</span> <span class="st">"Share of SS_Tr"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">contrast =</span> <span class="fu">colnames</span>(ss_c), <span class="at">SS =</span> ss_c[<span class="st">"SS"</span>, ]) <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">share =</span> SS <span class="sc">/</span> <span class="fu">sum</span>(SS), <span class="at">contrast =</span> <span class="fu">fct_reorder</span>(contrast, SS)) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(share, contrast)) <span class="sc">+</span></span>
+<span id="cb36-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> nanas_pal[[<span class="st">"primary"</span>]]) <span class="sc">+</span></span>
+<span id="cb36-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">percent</span>(share, <span class="dv">1</span>)), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb36-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb36-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"86% מההבדלים בין המודלים: קטנים מול גדולים"</span>,</span>
+<span id="cb36-8"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"החלק של כל ניגוד ב-SS_Tr = 18.02"</span>, <span class="at">x =</span> <span class="st">"Share of SS_Tr"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
 <img data-src="05-contrasts-multiple-comparisons_files/figure-html/orthogonal-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
@@ -665,9 +1167,13 @@ p                 0.000    0.450    0.661      0.139</code></pre>
 <h2>ניגודים בניסוי לא מאוזן</h2>
 <p>כש-<span class="math inline">\(n_i\)</span> שונים, מגדירים את הניגוד על <strong>הסכומים</strong> <span class="math inline">\(y_{i\cdot}\)</span>:</p>
 <p><span class="math display">\[
-C = \sum_{i=1}^{a} c_i y_{i\cdot} \qquad E(C) = \sum_{i=1}^{a} c_i n_i (\mu + \tau_i) = \mu\sum_{i=1}^{a} n_i c_i + \sum_{i=1}^{a} n_i c_i \tau_i
+C = \sum_{i=1}^{a} c_i y_{i\cdot}
 \]</span></p>
-<p>כדי ש-<span class="math inline">\(\mu\)</span> יתבטל, התנאי הוא:</p>
+<p><span class="math inline">\(y_{i\cdot}\)</span> הוא סכום של <span class="math inline">\(n_i\)</span> תצפיות, ולכל אחת תוחלת <span class="math inline">\(\mu + \tau_i\)</span>. לכן <span class="math inline">\(E(y_{i\cdot}) = n_i(\mu + \tau_i)\)</span>, ומליניאריות התוחלת:</p>
+<p><span class="math display">\[
+E(C) = \sum_{i=1}^{a} c_i\, E(y_{i\cdot}) = \sum_{i=1}^{a} c_i n_i (\mu + \tau_i) = \mu\sum_{i=1}^{a} n_i c_i + \sum_{i=1}^{a} n_i c_i \tau_i
+\]</span></p>
+<p>הניגוד צריך למדוד רק הבדלים בין האפקטים <span class="math inline">\(\tau_i\)</span>, ולא את הרמה הכללית <span class="math inline">\(\mu\)</span>. כדי ש-<span class="math inline">\(\mu\)</span> יתבטל, התנאי הוא:</p>
 <p><span class="math display">\[
 \sum_{i=1}^{a} n_i c_i = 0 \qquad\qquad SS_C = \frac{\left(\sum c_i y_{i\cdot}\right)^2}{\sum n_i c_i^2}
 \]</span></p>
@@ -680,8 +1186,8 @@ C = \sum_{i=1}^{a} c_i y_{i\cdot} \qquad E(C) = \sum_{i=1}^{a} c_i n_i (\mu + \t
 <h2>דוגמה: מבחן בשלוש כיתות</h2>
 <p>מבחן התקיים בשלוש כיתות: 40 סטודנטים בכיתה 1, ו-30 בכל אחת מכיתות 2 ו-3. <strong>כיתה 3 סמוכה לאתר בנייה.</strong> הסטודנטים שלה מבקשים פקטור. <strong>האם הטענה מוצדקת?</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a>rooms <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"exam_rooms.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a>rooms <span class="sc">|&gt;</span> <span class="fu">group_by</span>(room) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">sum</span>(grade), <span class="at">mean =</span> <span class="fu">mean</span>(grade))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a aria-hidden="true" tabindex="-1"></a>rooms <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(data_dir, <span class="st">"exam_rooms.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb37-2"><a aria-hidden="true" tabindex="-1"></a>rooms <span class="sc">|&gt;</span> <span class="fu">group_by</span>(room) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">sum</span>(grade), <span class="at">mean =</span> <span class="fu">mean</span>(grade))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 4
   room      n total  mean
@@ -690,8 +1196,8 @@ C = \sum_{i=1}^{a} c_i y_{i\cdot} \qquad E(C) = \sum_{i=1}^{a} c_i n_i (\mu + \t
 2 room2    30  2258  75.3
 3 room3    30  2015  67.2</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a>fit_rooms <span class="ot">&lt;-</span> <span class="fu">aov</span>(grade <span class="sc">~</span> room, <span class="at">data =</span> rooms)</span>
-<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_rooms)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a aria-hidden="true" tabindex="-1"></a>fit_rooms <span class="ot">&lt;-</span> <span class="fu">aov</span>(grade <span class="sc">~</span> room, <span class="at">data =</span> rooms)</span>
+<span id="cb39-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_rooms)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)  
 room         2   1394     697    4.08   0.02 *
@@ -702,29 +1208,49 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>ה-ANOVA דוחה (<span class="math inline">\(p = 0.02\)</span>). אבל השאלה ספציפית: <strong>כיתה 3 מול שתי האחרות</strong>.</p>
 </section>
-<section id="הניגוד-לכיתה-3" class="slide level2 smaller">
-<h2>הניגוד לכיתה 3</h2>
-<p>צריך <span class="math inline">\(\sum n_i c_i = 0\)</span> עם <span class="math inline">\(n = (40, 30, 30)\)</span>. ננסה <span class="math inline">\(c = (1, 1, c_3)\)</span>:</p>
+<section id="הניגוד-לכיתה-3-בחירת-המקדמים" class="slide level2 smaller">
+<h2>הניגוד לכיתה 3: בחירת המקדמים</h2>
+<p><strong>השאלה:</strong> האם הממוצע בכיתה 3 נמוך מהממוצע של כיתות 1 ו-2 יחד?</p>
+<ol type="1">
+<li><strong>כיתות 1 ו-2 באותו צד של השאלה</strong>, ולכן מקבלות <strong>אותו</strong> מקדם. נבחר <span class="math inline">\(c_1 = c_2 = 1\)</span></li>
+<li><strong>את <span class="math inline">\(c_3\)</span> קובע התנאי לניסוי לא מאוזן,</strong> <span class="math inline">\(\sum n_i c_i = 0\)</span>, עם <span class="math inline">\(n = (40, 30, 30)\)</span>:</li>
+</ol>
 <p><span class="math display">\[
-40 + 30 + 30c_3 = 0 \;\Longrightarrow\; c_3 = -\tfrac{7}{3} \;\Longrightarrow\; c = (3, 3, -7)
+40 \cdot 1 + 30 \cdot 1 + 30\,c_3 = 0 \;\Longrightarrow\; c_3 = -\tfrac{7}{3}
+\]</span></p>
+<ol start="3" type="1">
+<li><strong>כופלים ב-3</strong> כדי לעבוד עם מספרים שלמים: <span class="math inline">\(c = (3, 3, -7)\)</span>. כפל בקבוע לא משנה את <span class="math inline">\(SS_C\)</span>: המונה והמכנה מוכפלים שניהם ב-<span class="math inline">\(9\)</span></li>
+</ol>
+<p><strong>מה הניגוד מודד?</strong> כי <span class="math inline">\(3 \cdot 70 = 7 \cdot 30 = 210\)</span>:</p>
+<p><span class="math display">\[
+C = 3(y_{1\cdot} + y_{2\cdot}) - 7\,y_{3\cdot} = 210\left(\underbrace{\frac{y_{1\cdot} + y_{2\cdot}}{70}}_{\bar y_{1,2}} - \underbrace{\frac{y_{3\cdot}}{30}}_{\bar y_{3\cdot}}\right)
+\]</span></p>
+<p>כלומר <span class="math inline">\(C/210 = \bar y_{1,2} - \bar y_{3\cdot}\)</span>: ההפרש בין הממוצע של כל 70 הסטודנטים בכיתות 1 ו-2 לבין הממוצע בכיתה 3.</p>
+</section>
+<section id="הניגוד-לכיתה-3-החישוב" class="slide level2 smaller">
+<h2>הניגוד לכיתה 3: החישוב</h2>
+<p>מהשקף הקודם: <span class="math inline">\(y_{1\cdot} = 3014\)</span>, <span class="math inline">\(y_{2\cdot} = 2258\)</span>, <span class="math inline">\(y_{3\cdot} = 2015\)</span>, ו-<span class="math inline">\(MS_E = 170.9\)</span> (ה-<code>Mean Sq</code> של <code>Residuals</code>).</p>
+<p><span class="math display">\[
+C = 3 \cdot 3014 + 3 \cdot 2258 - 7 \cdot 2015 = 1711 \qquad \frac{C}{210} = 8.15
 \]</span></p>
 <p><span class="math display">\[
-C = 3 \cdot 3014 + 3 \cdot 2258 - 7 \cdot 2015 = 1711
-\qquad
-\sum n_i c_i^2 = 40 \cdot 9 + 30 \cdot 9 + 30 \cdot 49 = 2100
+SS_C = \frac{C^2}{\sum n_i c_i^2} = \frac{1711^2}{40 \cdot 9 + 30 \cdot 9 + 30 \cdot 49} = \frac{1711^2}{2100} = 1394.1
 \]</span></p>
 <p><span class="math display">\[
-SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\,1,\,97} = 3.94
+F_0 = \frac{SS_C}{MS_E} = \frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\,1,\,97} = 3.94
 \]</span></p>
-<p><strong>דוחים:</strong> בכיתה 3 הציונים נמוכים באופן מובהק משתי הכיתות האחרות, בכ-8 נקודות. <strong>ו-<span class="math inline">\(SS_C\)</span> הוא כמעט כל <span class="math inline">\(SS_{Tr} = 1394.2\)</span>:</strong> בין כיתות 1 ו-2 כמעט אין הבדל.</p>
+<ul>
+<li><strong>דוחים:</strong> בכיתה 3 הציונים נמוכים בכ-8 נקודות מהממוצע בכיתות 1 ו-2, והפער מובהק</li>
+<li><strong><span class="math inline">\(SS_C = 1394.1\)</span> הוא כמעט כל <span class="math inline">\(SS_{Tr} = 1394.2\)</span>.</strong> כל ההבדל בין הכיתות הוא “כיתה 3 מול השאר”. בין כיתות 1 ו-2 כמעט אין הבדל</li>
+</ul>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a>rt <span class="ot">&lt;-</span> <span class="fu">tapply</span>(rooms<span class="sc">$</span>grade, rooms<span class="sc">$</span>room, sum); rn <span class="ot">&lt;-</span> <span class="fu">table</span>(rooms<span class="sc">$</span>room); cc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="sc">-</span><span class="dv">7</span>)</span>
-<span id="cb18-2"><a aria-hidden="true" tabindex="-1"></a>ss_room3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(cc <span class="sc">*</span> rt)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(rn <span class="sc">*</span> cc<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb18-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sum_n_c =</span> <span class="fu">sum</span>(rn <span class="sc">*</span> cc), <span class="at">SS_C =</span> ss_room3, <span class="at">F =</span> ss_room3 <span class="sc">/</span> <span class="fl">170.86</span>,</span>
-<span id="cb18-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fu">pf</span>(ss_room3 <span class="sc">/</span> <span class="fl">170.86</span>, <span class="dv">1</span>, <span class="dv">97</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a aria-hidden="true" tabindex="-1"></a>rt <span class="ot">&lt;-</span> <span class="fu">tapply</span>(rooms<span class="sc">$</span>grade, rooms<span class="sc">$</span>room, sum); rn <span class="ot">&lt;-</span> <span class="fu">table</span>(rooms<span class="sc">$</span>room); cc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="sc">-</span><span class="dv">7</span>)</span>
+<span id="cb41-2"><a aria-hidden="true" tabindex="-1"></a>ss_room3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(cc <span class="sc">*</span> rt)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(rn <span class="sc">*</span> cc<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb41-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">sum_n_c =</span> <span class="fu">sum</span>(rn <span class="sc">*</span> cc), <span class="at">C =</span> <span class="fu">sum</span>(cc <span class="sc">*</span> rt), <span class="at">diff =</span> <span class="fu">sum</span>(cc <span class="sc">*</span> rt) <span class="sc">/</span> <span class="dv">210</span>, <span class="at">SS_C =</span> ss_room3,</span>
+<span id="cb41-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">F =</span> ss_room3 <span class="sc">/</span> <span class="fl">170.86</span>, <span class="at">p =</span> <span class="fu">pf</span>(ss_room3 <span class="sc">/</span> <span class="fl">170.86</span>, <span class="dv">1</span>, <span class="dv">97</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  sum_n_c      SS_C         F         p 
-0.000e+00 1.394e+03 8.159e+00 5.242e-03 </code></pre>
+<pre><code>  sum_n_c         C      diff      SS_C         F         p 
+0.000e+00 1.711e+03 8.148e+00 1.394e+03 8.159e+00 5.242e-03 </code></pre>
 </div>
 </div>
 <aside class="notes">
@@ -788,28 +1314,51 @@ SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 &gt
 <li><strong>שיעור הטעות למשפחה</strong> (<span class="en">familywise error rate, FWER</span>): ההסתברות לטעות <strong>אחת לפחות</strong> בכל קבוצת המבחנים</li>
 </ul>
 </section>
-<section id="סימולציה-10-מבחני-t-כשאין-שום-הבדל" class="slide level2">
+<section id="סימולציה-10-מבחני-t-כשאין-שום-הבדל" class="slide level2 smaller">
 <h2>סימולציה: 10 מבחני t כשאין שום הבדל</h2>
+<p>5 מודלים זהים, 9 תצפיות לכל אחד. משווים <strong>כל זוג</strong> במבחן t ב-<span class="math inline">\(\alpha = 0.05\)</span>. מספר הזוגות: <span class="math inline">\(\binom{5}{2} = \frac{5 \cdot 4}{2} = 10\)</span> (כל אחד מ-5 המודלים מול 4 האחרים, וכל זוג נספר פעמיים). חוזרים על הניסוי 4,000 פעמים.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">55</span>)</span>
-<span id="cb20-2"><a aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"M"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="at">each =</span> <span class="dv">9</span>))</span>
-<span id="cb20-3"><a aria-hidden="true" tabindex="-1"></a>any_reject <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">4000</span>, {</span>
-<span id="cb20-4"><a aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">pairwise.t.test</span>(<span class="fu">rnorm</span>(<span class="dv">45</span>), g, <span class="at">p.adjust.method =</span> <span class="st">"none"</span>)<span class="sc">$</span>p.value</span>
-<span id="cb20-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">any</span>(p <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-6"><a aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb20-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(any_reject)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">55</span>)</span>
+<span id="cb43-2"><a aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"M"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>), <span class="at">each =</span> <span class="dv">9</span>))</span>
+<span id="cb43-3"><a aria-hidden="true" tabindex="-1"></a>n_reject <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">4000</span>, {</span>
+<span id="cb43-4"><a aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">pairwise.t.test</span>(<span class="fu">rnorm</span>(<span class="dv">45</span>), g, <span class="at">p.adjust.method =</span> <span class="st">"none"</span>)<span class="sc">$</span>p.value</span>
+<span id="cb43-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(p <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)                    <span class="co"># false rejections in this experiment</span></span>
+<span id="cb43-6"><a aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb43-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">P_any =</span> <span class="fu">mean</span>(n_reject <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="at">mean_rejections =</span> <span class="fu">mean</span>(n_reject))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.269</code></pre>
+<pre><code>          P_any mean_rejections 
+         0.2690          0.4983 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(n_reject)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n_reject
+   0    1    2    3    4    5    6 
+2924  540  284  144   92   11    5 </code></pre>
 </div>
 </div>
 <ul>
-<li>ב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים</li>
-<li>פחות מ-40% בגלל התלות בין המבחנים, אבל הרבה יותר מ-5%</li>
+<li>ב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים. הרבה יותר מ-5%</li>
 </ul>
 </section>
-<section id="שלוש-שיטות-שלוש-משמעויות-של-מובהק" class="slide level2 smaller">
-<h2>שלוש שיטות, שלוש משמעויות של “מובהק”</h2>
-<p>כל השיטות משוות <strong>הפרש בין ממוצעים</strong> לסף. כולן משתמשות בשגיאת התקן של ממוצע, <span class="math inline">\(s_{\bar y} = \sqrt{MS_E / n}\)</span>:</p>
+<section id="הסימולציה-בתרשים" class="slide level2 smaller">
+<h2>הסימולציה בתרשים</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/fwer-sim-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>אפור:</strong> 73% מהניסויים בלי אף טעות. <strong>כתום:</strong> 27% עם טעות אחת לפחות. ובחלק מהם יש כמה טעויות יחד</li>
+</ul>
+</section>
+<section id="למה-פחות-מ-40" class="slide level2 smaller">
+<h2>למה פחות מ-40%?</h2>
+<ul>
+<li><span class="math inline">\(1 - 0.95^{10} = 0.40\)</span> מניח 10 מבחנים <strong>בלתי תלויים</strong>. כאן הם תלויים: כל ממוצע משתתף ב-4 השוואות, וכל העשר חולקות את אותו <span class="math inline">\(MS_E\)</span></li>
+<li><strong>הטעויות מגיעות בצרורות.</strong> כשממוצע אחד יוצא קיצוני במקרה, הוא “מושך” כמה השוואות לדחייה <strong>יחד</strong>. וכש-<span class="math inline">\(MS_E\)</span> יוצא קטן במקרה, כל עשרת המבחנים נעשים מקלים יחד</li>
+<li><strong>מספר הדחיות השגויות בממוצע לא משתנה:</strong> <span class="math inline">\(10 \times 0.05 = 0.5\)</span> (בסימולציה: 0.5). אבל הן מתרכזות בפחות ניסויים: בניסוי שיש בו טעות, יש בממוצע 1.9 טעויות</li>
+<li>לכן ההסתברות ל<strong>טעות אחת לפחות</strong> קטנה מ-40%. <strong>ועדיין</strong> היא פי 5 מה-5% שרצינו</li>
+</ul>
+</section>
+<section id="שתי-שיטות-שתי-משמעויות-של-מובהק" class="slide level2 smaller">
+<h2>שתי שיטות, שתי משמעויות של “מובהק”</h2>
+<p>שתי השיטות משוות <strong>הפרש בין ממוצעים</strong> לסף. שתיהן משתמשות בשגיאת התקן של ממוצע, <span class="math inline">\(s_{\bar y} = \sqrt{MS_E / n}\)</span>:</p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
@@ -820,33 +1369,27 @@ SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 &gt
 <tr class="header">
 <th>השיטה</th>
 <th>הסף</th>
-<th>שולטת ב-</th>
+<th>שיעור הטעות למשפחה (FWER)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="en">LSD</span> של <span class="en">Fisher</span></td>
-<td><span class="math inline">\(t_{1-\alpha/2,\,N-a}\sqrt{2MS_E/n}\)</span></td>
-<td>שיעור הטעות לכל השוואה. רק אחרי F מובהק</td>
-</tr>
-<tr class="even">
 <td><span class="en">Duncan</span></td>
 <td><span class="math inline">\(r_\alpha(p, f)\, s_{\bar y}\)</span>, תלוי במרחק <span class="math inline">\(p\)</span> בין הממוצעים</td>
-<td>ביניים</td>
+<td>גבוה מ-<span class="math inline">\(\alpha\)</span>, וגדל עם מספר הרמות</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><span class="en">Tukey HSD</span></td>
 <td><span class="math inline">\(q_\alpha(a, f)\, s_{\bar y}\)</span>, סף אחד לכל הזוגות</td>
-<td>שיעור הטעות למשפחה (FWER)</td>
+<td>בדיוק <span class="math inline">\(\alpha\)</span> (בניסוי מאוזן)</td>
 </tr>
 </tbody>
 </table>
 <p>למודלים: <span class="math inline">\(s_{\bar y} = \sqrt{0.854/9} = 0.308\)</span>, ו-<span class="math inline">\(f = N - a = 40\)</span>.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">s_ybar =</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>), <span class="at">LSD =</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="dv">40</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> mse <span class="sc">/</span> <span class="dv">9</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>s_ybar    LSD 
-0.3080 0.8803 </code></pre>
+<pre><code>[1] 0.308</code></pre>
 </div>
 </div>
 </section></section>
@@ -855,36 +1398,115 @@ SS_C = \frac{1711^2}{2100} = 1394.1 \qquad F_0 = \frac{1394.1}{170.9} = 8.16 &gt
 <h1>שיטת <span class="en">Duncan</span></h1>
 
 </section>
-<section id="הרעיון" class="slide level2 smaller">
-<h2>הרעיון</h2>
-<p><strong><span class="en">Duncan’s multiple range test</span></strong> משווה את כל הזוגות, אבל הסף תלוי <strong>כמה ממוצעים</strong> נמצאים בין שני הממוצעים שמשווים.</p>
+<section id="הרעיון-הסף-תלוי-במרחק-בדירוג" class="slide level2 smaller">
+<h2>הרעיון: הסף תלוי במרחק בדירוג</h2>
+<p><strong><span class="en">Duncan’s multiple range test</span></strong> משווה את כל הזוגות, אחרי שמבחן ה-F דחה. החידוש: <strong>לא כל הזוגות מקבלים אותו סף</strong>.</p>
+<p><strong>למה?</strong> נניח שאין שום הבדל בין 5 המודלים. נמיין את 5 הממוצעים:</p>
+<ul>
+<li>שני ממוצעים <strong>שכנים</strong> בדירוג נבדלים רק ברעש של שני ממוצעים</li>
+<li>הממוצע <strong>הגבוה</strong> והממוצע <strong>הנמוך</strong> מבין החמישה הם הקיצוניים מתוך 5. הפער ביניהם גדול כמעט תמיד, גם בלי שום אפקט</li>
+<li>לכן זוג שנמצא בקצוות של הדירוג צריך לעבור סף <strong>גבוה</strong> יותר, וזוג של שכנים סף <strong>נמוך</strong> יותר</li>
+</ul>
+<p><strong>המרחק <span class="math inline">\(p\)</span>:</strong> כמה ממוצעים נמצאים בטווח בין שני הממוצעים שמשווים, <strong>כולל שניהם</strong>. במודלים:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>דירוג</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>מודל</td>
+<td>M2</td>
+<td>M1</td>
+<td>M3</td>
+<td>M5</td>
+<td>M4</td>
+</tr>
+<tr class="even">
+<td>ממוצע</td>
+<td>5.33</td>
+<td>5.00</td>
+<td>3.99</td>
+<td>3.96</td>
+<td>3.76</td>
+</tr>
+</tbody>
+</table>
+<p>דוגמאות:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>הזוג</th>
+<th>M2, M1</th>
+<th>M2, M3</th>
+<th>M1, M4</th>
+<th>M2, M4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>הממוצעים בטווח</td>
+<td>M2, M1</td>
+<td>M2, M1, M3</td>
+<td>M1, M3, M5, M4</td>
+<td>כל החמישה</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(p\)</span></td>
+<td>2 (שכנים)</td>
+<td>3</td>
+<td>4</td>
+<td>5 (הקצוות)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="השלבים" class="slide level2 smaller">
+<h2>השלבים</h2>
 <ol type="1">
-<li>ממיינים את ממוצעי הרמות בסדר יורד</li>
-<li>לזוג שמרוחק <span class="math inline">\(p\)</span> מקומות (כולל שניהם, <span class="math inline">\(p = 2, \dots, a\)</span>) מחשבים את <strong>הטווח המובהק הקטן ביותר</strong>:</li>
+<li><strong>ממיינים</strong> את ממוצעי הרמות בסדר יורד</li>
+<li><strong>מחשבים סף לכל מרחק</strong> <span class="math inline">\(p = 2, \dots, a\)</span>, <strong>הטווח המובהק הקטן ביותר</strong> (<span class="en">least significant range</span>):</li>
 </ol>
 <p><span class="math display">\[
-R_p = r_\alpha(p, f)\cdot\sqrt{\frac{MS_E}{n}}
+R_p = r_\alpha(p, f)\cdot s_{\bar y} \qquad s_{\bar y} = \sqrt{\frac{MS_E}{n}}
 \]</span></p>
+<p><span class="math inline">\(r_\alpha(p, f)\)</span> הם <strong>מקדמי <span class="en">Duncan</span></strong> מטבלה, ו-<span class="math inline">\(f = N - a\)</span> הן דרגות החופש של <span class="math inline">\(MS_E\)</span>. המקדם גדל עם <span class="math inline">\(p\)</span></p>
 <ol start="3" type="1">
-<li>אם <span class="math inline">\(|\bar y_{i\cdot} - \bar y_{k\cdot}| &gt; R_p\)</span>, ההפרש מובהק</li>
+<li><strong>בודקים מבחוץ פנימה:</strong> קודם הזוג של הקצוות (<span class="math inline">\(p = a\)</span>), אחר כך זוגות עם <span class="math inline">\(p = a - 1\)</span>, וכן הלאה. ההפרש מובהק אם <span class="math inline">\(|\bar y_{i\cdot} - \bar y_{k\cdot}| &gt; R_p\)</span></li>
+<li><strong>כלל ההגנה:</strong> אם ההפרש בין שני ממוצעים <strong>לא</strong> מובהק, כל הממוצעים שביניהם נחשבים שווים, ו<strong>לא בודקים</strong> זוגות בתוך הטווח הזה</li>
+<li><strong>מסכמים באותיות:</strong> רמות שחולקות אות לא שונות זו מזו באופן מובהק</li>
 </ol>
-<ul>
-<li><span class="math inline">\(r_\alpha(p, f)\)</span> הם <strong>מקדמי <span class="en">Duncan</span></strong>, מטבלה. <span class="math inline">\(f = N - a\)</span> הן דרגות החופש של <span class="math inline">\(MS_E\)</span></li>
-<li>זוג רחוק (<span class="math inline">\(p\)</span> גדול) צריך הפרש גדול יותר כדי להיות מובהק</li>
-<li><strong>כלל ההגנה:</strong> אם טווח לא מובהק, לא בודקים זוגות <strong>בתוכו</strong></li>
-</ul>
+<aside class="notes">
+<p>הדגש: שלב 3 ו-4 הם מה שמבדיל את דנקן מסתם 10 מבחני t. דוגמה לכלל ההגנה: אם M3 מול M4 (p = 3) לא מובהק, לא בודקים את M3 מול M5 ואת M5 מול M4.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="מאיפה-מגיעים-המקדמים" class="slide level2 smaller">
 <h2>מאיפה מגיעים המקדמים?</h2>
-<p>המקדמים הם ערכים של <strong>התפלגות הטווח המסוטנדרט</strong> (<span class="en">studentized range</span>), אותה התפלגות שבה משתמשת שיטת <span class="en">Tukey</span>. ההבדל הוא ברמת המובהקות: לטווח של <span class="math inline">\(p\)</span> ממוצעים, <span class="en">Duncan</span> משתמש ב-</p>
+<p>המקדמים הם ערכים של התפלגות ה-<strong><span class="en">studentized range</span></strong>: ההתפלגות של <span class="math inline">\((\bar y_{max} - \bar y_{min})/s_{\bar y}\)</span>, הטווח של <span class="math inline">\(p\)</span> ממוצעים מחולק בשגיאת התקן שלהם, כש-<span class="math inline">\(H_0\)</span> נכונה. זו אותה התפלגות שבה משתמשת שיטת <span class="en">Tukey</span>. ההבדל הוא ברמת המובהקות: לטווח של <span class="math inline">\(p\)</span> ממוצעים, <span class="en">Duncan</span> משתמש ב-</p>
 <p><span class="math display">\[
 \alpha_p = 1 - (1 - \alpha)^{p - 1}
 \]</span></p>
 <p>ככל ש-<span class="math inline">\(p\)</span> גדל, <span class="math inline">\(\alpha_p\)</span> גדלה, והשיטה “סלחנית” יותר. ב-R אין צורך בטבלה:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span></span>
-<span id="cb24-2"><a aria-hidden="true" tabindex="-1"></a>r_duncan <span class="ot">&lt;-</span> <span class="fu">qtukey</span>((<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.05</span>)<span class="sc">^</span>(p <span class="sc">-</span> <span class="dv">1</span>), <span class="at">nmeans =</span> p, <span class="at">df =</span> <span class="dv">40</span>)   <span class="co"># Duncan's r_alpha(p, 40)</span></span>
-<span id="cb24-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">p =</span> p, <span class="at">alpha_p =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.95</span><span class="sc">^</span>(p <span class="sc">-</span> <span class="dv">1</span>), <span class="at">r =</span> r_duncan, <span class="at">R_p =</span> r_duncan <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb49-2"><a aria-hidden="true" tabindex="-1"></a>r_duncan <span class="ot">&lt;-</span> <span class="fu">qtukey</span>((<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.05</span>)<span class="sc">^</span>(p <span class="sc">-</span> <span class="dv">1</span>), <span class="at">nmeans =</span> p, <span class="at">df =</span> <span class="dv">40</span>)   <span class="co"># Duncan's r_alpha(p, 40)</span></span>
+<span id="cb49-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">p =</span> p, <span class="at">alpha_p =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.95</span><span class="sc">^</span>(p <span class="sc">-</span> <span class="dv">1</span>), <span class="at">r =</span> r_duncan, <span class="at">R_p =</span> r_duncan <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         [,1]  [,2]  [,3]  [,4]
 p       2.000 3.000 4.000 5.000
@@ -898,19 +1520,19 @@ R_p     0.880 0.926 0.955 0.977</code></pre>
 <h2>המודלים: שיטת <span class="en">Duncan</span></h2>
 <p><strong>מיון:</strong> M2 (5.33) · M1 (5.00) · M3 (3.99) · M5 (3.96) · M4 (3.76)</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">tapply</span>(calls<span class="sc">$</span>aht, calls<span class="sc">$</span>model, mean), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb26-2"><a aria-hidden="true" tabindex="-1"></a>R_p   <span class="ot">&lt;-</span> <span class="fu">setNames</span>(r_duncan <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>), <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb26-3"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a aria-hidden="true" tabindex="-1"></a>duncan <span class="ot">&lt;-</span> <span class="fu">combn</span>(<span class="fu">names</span>(means), <span class="dv">2</span>, <span class="at">simplify =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb26-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(pair) {</span>
-<span id="cb26-6"><a aria-hidden="true" tabindex="-1"></a>    pos <span class="ot">&lt;-</span> <span class="fu">match</span>(pair, <span class="fu">names</span>(means))</span>
-<span id="cb26-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">high =</span> pair[<span class="dv">1</span>], <span class="at">low =</span> pair[<span class="dv">2</span>], <span class="at">p =</span> <span class="fu">diff</span>(pos) <span class="sc">+</span> <span class="dv">1</span>,</span>
-<span id="cb26-8"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">diff =</span> means[pair[<span class="dv">1</span>]] <span class="sc">-</span> means[pair[<span class="dv">2</span>]], <span class="at">R_p =</span> R_p[<span class="fu">as.character</span>(<span class="fu">diff</span>(pos) <span class="sc">+</span> <span class="dv">1</span>)])</span>
-<span id="cb26-9"><a aria-hidden="true" tabindex="-1"></a>  }) <span class="sc">|&gt;</span></span>
-<span id="cb26-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">|&gt;</span></span>
-<span id="cb26-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">significant =</span> diff <span class="sc">&gt;</span> R_p) <span class="sc">|&gt;</span></span>
-<span id="cb26-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(p))</span>
-<span id="cb26-13"><a aria-hidden="true" tabindex="-1"></a>duncan</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">tapply</span>(calls<span class="sc">$</span>aht, calls<span class="sc">$</span>model, mean), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb51-2"><a aria-hidden="true" tabindex="-1"></a>R_p   <span class="ot">&lt;-</span> <span class="fu">setNames</span>(r_duncan <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>), <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb51-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a aria-hidden="true" tabindex="-1"></a>duncan <span class="ot">&lt;-</span> <span class="fu">combn</span>(<span class="fu">names</span>(means), <span class="dv">2</span>, <span class="at">simplify =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb51-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(pair) {</span>
+<span id="cb51-6"><a aria-hidden="true" tabindex="-1"></a>    pos <span class="ot">&lt;-</span> <span class="fu">match</span>(pair, <span class="fu">names</span>(means))</span>
+<span id="cb51-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">high =</span> pair[<span class="dv">1</span>], <span class="at">low =</span> pair[<span class="dv">2</span>], <span class="at">p =</span> <span class="fu">diff</span>(pos) <span class="sc">+</span> <span class="dv">1</span>,</span>
+<span id="cb51-8"><a aria-hidden="true" tabindex="-1"></a>           <span class="at">diff =</span> means[pair[<span class="dv">1</span>]] <span class="sc">-</span> means[pair[<span class="dv">2</span>]], <span class="at">R_p =</span> R_p[<span class="fu">as.character</span>(<span class="fu">diff</span>(pos) <span class="sc">+</span> <span class="dv">1</span>)])</span>
+<span id="cb51-9"><a aria-hidden="true" tabindex="-1"></a>  }) <span class="sc">|&gt;</span></span>
+<span id="cb51-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">|&gt;</span></span>
+<span id="cb51-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">significant =</span> diff <span class="sc">&gt;</span> R_p) <span class="sc">|&gt;</span></span>
+<span id="cb51-12"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(p))</span>
+<span id="cb51-13"><a aria-hidden="true" tabindex="-1"></a>duncan</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -930,7 +1552,24 @@ R_p     0.880 0.926 0.955 0.977</code></pre>
  9 M3    M5        2 0.0389 0.880 FALSE      
 10 M5    M4        2 0.192  0.880 FALSE      </code></pre>
 </div>
-</div></section><section id="התוצאה" class="slide level2 smaller">
+</div></section><section id="השלבים-בתרשים" class="slide level2 smaller">
+<h2>השלבים בתרשים</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/duncan-ladder-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><aside class="notes">
+<p>לעבור על התרשים מלמעלה למטה: p = 5, אחר כך שני הטווחים עם p = 4, וכן הלאה. הטווח M3-M4 (p = 3) לא מובהק, ולכן M3-M5 ו-M5-M4 שבתוכו לא נבדקים. בסוף: M2 ו-M1 בקבוצה אחת, M3, M5, M4 בקבוצה שנייה.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="התוצאה" class="slide level2 smaller">
 <h2>התוצאה</h2>
 <table class="caption-top">
 <thead>
@@ -967,7 +1606,7 @@ R_p     0.880 0.926 0.955 0.977</code></pre>
 <li><strong>M3, M5 ו-M4</strong> לא שונים זה מזה: הטווח של שלושתם הוא 0.23 &lt; <span class="math inline">\(R_3\)</span> = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו</li>
 <li>רמות עם אותה <strong>אות</strong> לא שונות זו מזו באופן מובהק</li>
 </ul>
-<p><strong>ההמלצה:</strong> להפעיל את אחד מ-M3, M4 או M5. הנתונים לא מבדילים ביניהם, ולכן M3, הזול שבהם, הוא בחירה סבירה.</p>
+<p><strong>ההמלצה:</strong> להפעיל את אחד מ-M3, M4 או M5. משך הטיפול לא מבדיל ביניהם, ולכן את הבחירה ביניהם קובעים שיקולים אחרים, למשל עלות: M3 הוא המודל הבינוני, ו-M4 ו-M5 הם הגדולים והיקרים.</p>
 </section>
 <section id="ביקורת-על-duncan" class="slide level2">
 <h2>ביקורת על <span class="en">Duncan</span></h2>
@@ -975,7 +1614,7 @@ R_p     0.880 0.926 0.955 0.977</code></pre>
 <li><span class="math inline">\(\alpha_p\)</span> גדלה עם מספר הממוצעים: עם 5 רמות, <span class="math inline">\(\alpha_5 = 1 - 0.95^4 = 0.185\)</span></li>
 <li>כלומר, ה-FWER של השיטה <strong>גבוה מ-5%</strong>, וגדל עם מספר הרמות. עם 10 רמות, <span class="math inline">\(\alpha_{10} = 0.37\)</span></li>
 <li>השיטה “מוצאת” יותר הבדלים, וחלקם שגויים</li>
-<li><span class="en">Duncan</span> נפוצה בספרות החקלאית וההנדסית הישנה, ותפגשו אותה בבחינה. בעבודה מעשית, מקובל היום להשתמש ב-<span class="en">Tukey</span></li>
+<li>בעבודה מעשית, מקובל להשתמש ב-<span class="en">Tukey</span></li>
 </ul>
 </section></section>
 <section>
@@ -983,14 +1622,14 @@ R_p     0.880 0.926 0.955 0.977</code></pre>
 <h1>שיטת <span class="en">Tukey</span> (<span class="en">HSD</span>)</h1>
 
 </section>
-<section id="הרעיון-1" class="slide level2 smaller">
+<section id="הרעיון" class="slide level2 smaller">
 <h2>הרעיון</h2>
 <p><strong><span class="en">Tukey’s Honest Significant Difference</span>:</strong> סף <strong>אחד</strong> לכל הזוגות, שמבטיח FWER <span class="math inline">\(= \alpha\)</span> בדיוק (בניסוי מאוזן).</p>
 <p><span class="math display">\[
 HSD = q_\alpha(a, f)\cdot\sqrt{\frac{MS_E}{n}}
 \]</span></p>
 <ul>
-<li><span class="math inline">\(q_\alpha(a, f)\)</span>: הערך הקריטי של <strong>התפלגות הטווח המסוטנדרט</strong> של <span class="math inline">\(a\)</span> ממוצעים, עם <span class="math inline">\(f = N - a\)</span> דרגות חופש</li>
+<li><span class="math inline">\(q_\alpha(a, f)\)</span>: הערך הקריטי של התפלגות ה-<span class="en">studentized range</span> של <span class="math inline">\(a\)</span> ממוצעים, עם <span class="math inline">\(f = N - a\)</span> דרגות חופש</li>
 <li><strong>ההיגיון:</strong> אם הזוג <strong>הרחוק ביותר</strong> לא חוצה את הסף תחת <span class="math inline">\(H_0\)</span> בהסתברות <span class="math inline">\(1 - \alpha\)</span>, אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא <span class="math inline">\(\alpha\)</span></li>
 </ul>
 <p><span class="math display">\[
@@ -1004,12 +1643,12 @@ q = \frac{\bar y_{max} - \bar y_{min}}{\sqrt{MS_E/n}}
 HSD = q_{0.05}(5, 40)\cdot 0.308 = 4.04 \cdot 0.308 = 1.244
 \]</span></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">q =</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="at">nmeans =</span> <span class="dv">5</span>, <span class="at">df =</span> <span class="dv">40</span>), <span class="at">HSD =</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="dv">5</span>, <span class="dv">40</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">q =</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="at">nmeans =</span> <span class="dv">5</span>, <span class="at">df =</span> <span class="dv">40</span>), <span class="at">HSD =</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="dv">5</span>, <span class="dv">40</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(mse <span class="sc">/</span> <span class="dv">9</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    q   HSD 
 4.039 1.244 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>duncan <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">tukey =</span> diff <span class="sc">&gt;</span> <span class="fl">1.244</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(high, low, diff, <span class="at">duncan =</span> significant, tukey)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a aria-hidden="true" tabindex="-1"></a>duncan <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">tukey =</span> diff <span class="sc">&gt;</span> <span class="fl">1.244</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(high, low, diff, <span class="at">duncan =</span> significant, tukey)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 5
    high  low     diff duncan tukey
@@ -1030,7 +1669,7 @@ HSD = q_{0.05}(5, 40)\cdot 0.308 = 4.04 \cdot 0.308 = 1.244
 <section id="tukey-ב-r" class="slide level2">
 <h2><span class="en">Tukey</span> ב-R</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit_ai)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit_ai)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Tukey multiple comparisons of means
     95% family-wise confidence level
@@ -1077,18 +1716,18 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 <section id="רווחי-הסמך-בתרשים" class="slide level2">
 <h2>רווחי הסמך בתרשים</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit_ai)<span class="sc">$</span>model <span class="sc">|&gt;</span></span>
-<span id="cb34-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"pair"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb34-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pair =</span> <span class="fu">fct_reorder</span>(pair, diff), <span class="at">significant =</span> <span class="st">`</span><span class="at">p adj</span><span class="st">`</span> <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
-<span id="cb34-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(diff, pair, <span class="at">colour =</span> significant)) <span class="sc">+</span></span>
-<span id="cb34-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
-<span id="cb34-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lwr, <span class="at">xmax =</span> upr), <span class="at">width =</span> <span class="fl">0.25</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">orientation =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
-<span id="cb34-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb34-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"grey"</span>]]),</span>
-<span id="cb34-9"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"מובהק"</span>, <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"לא מובהק"</span>)) <span class="sc">+</span></span>
-<span id="cb34-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"שלושה זוגות מובהקים לפי Tukey: M2 מול M3, M4 ו-M5"</span>,</span>
-<span id="cb34-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"רווחי סמך משותפים 95% להפרשים · רווח שלא חוצה את 0 הוא מובהק"</span>,</span>
-<span id="cb34-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Difference in mean handle time (min)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit_ai)<span class="sc">$</span>model <span class="sc">|&gt;</span></span>
+<span id="cb59-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"pair"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb59-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pair =</span> <span class="fu">fct_reorder</span>(pair, diff), <span class="at">significant =</span> <span class="st">`</span><span class="at">p adj</span><span class="st">`</span> <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb59-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(diff, pair, <span class="at">colour =</span> significant)) <span class="sc">+</span></span>
+<span id="cb59-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]]) <span class="sc">+</span></span>
+<span id="cb59-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lwr, <span class="at">xmax =</span> upr), <span class="at">width =</span> <span class="fl">0.25</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">orientation =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb59-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb59-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"accent"</span>]], <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> nanas_pal[[<span class="st">"grey"</span>]]),</span>
+<span id="cb59-9"><a aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">TRUE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"מובהק"</span>, <span class="st">`</span><span class="at">FALSE</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"לא מובהק"</span>)) <span class="sc">+</span></span>
+<span id="cb59-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"שלושה זוגות מובהקים לפי Tukey: M2 מול M3, M4 ו-M5"</span>,</span>
+<span id="cb59-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"רווחי סמך משותפים 95% להפרשים · רווח שלא חוצה את 0 הוא מובהק"</span>,</span>
+<span id="cb59-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Difference in mean handle time (min)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -1103,18 +1742,10 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 </div></section><section id="duncan-מול-tukey" class="slide level2 smaller">
 <h2><span class="en">Duncan</span> מול <span class="en">Tukey</span></h2>
 <table class="caption-top">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>זוג</th>
 <th>הפרש</th>
-<th><span class="en">LSD</span> (0.88)</th>
 <th><span class="en">Duncan</span> (<span class="math inline">\(R_p\)</span>)</th>
 <th><span class="en">Tukey</span> (1.244)</th>
 </tr>
@@ -1123,42 +1754,36 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 <tr class="odd">
 <td>M2–M4</td>
 <td>1.57</td>
-<td>✓</td>
 <td>✓ (0.98)</td>
 <td>✓</td>
 </tr>
 <tr class="even">
 <td>M2–M5</td>
 <td>1.38</td>
-<td>✓</td>
 <td>✓ (0.96)</td>
 <td>✓</td>
 </tr>
 <tr class="odd">
 <td>M2–M3</td>
 <td>1.34</td>
-<td>✓</td>
 <td>✓ (0.93)</td>
 <td>✓</td>
 </tr>
 <tr class="even">
 <td>M1–M4</td>
 <td>1.24</td>
-<td>✓</td>
 <td>✓ (0.96)</td>
 <td>✗</td>
 </tr>
 <tr class="odd">
 <td>M1–M5</td>
 <td>1.05</td>
-<td>✓</td>
 <td>✓ (0.93)</td>
 <td>✗</td>
 </tr>
 <tr class="even">
 <td>M1–M3</td>
 <td>1.01</td>
-<td>✓</td>
 <td>✓ (0.88)</td>
 <td>✗</td>
 </tr>
@@ -1167,12 +1792,11 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 <td>≤ 0.33</td>
 <td>✗</td>
 <td>✗</td>
-<td>✗</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li><span class="en">LSD</span> ו-<span class="en">Duncan</span> מוצאים 6 זוגות. <span class="en">Tukey</span> מוצא 3</li>
+<li><span class="en">Duncan</span> מוצא 6 זוגות. <span class="en">Tukey</span> מוצא 3</li>
 <li><strong>אין כאן “נכון” ו”לא נכון”.</strong> זו בחירה בין שתי טעויות: <span class="en">Tukey</span> שומר על הסיכוי לתגלית שגויה <strong>אחת</strong> מתחת ל-5%, במחיר של עוצמה</li>
 </ul>
 </section>
@@ -1215,18 +1839,18 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 <h2>מתי צריך מבחן א-פרמטרי?</h2>
 <p><strong>הדוגמה:</strong> זמן התגובה של API בארבעה אזורי ענן (<span class="en">regions</span>), 12 בקשות מכל אזור. זמני תגובה מוטים ימינה, עם ערכים חריגים.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">162</span>)</span>
-<span id="cb35-2"><a aria-hidden="true" tabindex="-1"></a>latency <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">region =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"eu-west"</span>, <span class="st">"us-east"</span>, <span class="st">"il-central"</span>, <span class="st">"ap-south"</span>), <span class="at">each =</span> <span class="dv">12</span>),</span>
-<span id="cb35-3"><a aria-hidden="true" tabindex="-1"></a>                                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"eu-west"</span>, <span class="st">"us-east"</span>, <span class="st">"il-central"</span>, <span class="st">"ap-south"</span>)),</span>
-<span id="cb35-4"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">ms =</span> <span class="fu">round</span>(<span class="fu">rlnorm</span>(<span class="dv">48</span>, <span class="fu">log</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">150</span>, <span class="dv">155</span>, <span class="dv">210</span>, <span class="dv">220</span>), <span class="at">each =</span> <span class="dv">12</span>)), <span class="fl">0.8</span>)))</span>
-<span id="cb35-5"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(latency, <span class="fu">aes</span>(ms, region)) <span class="sc">+</span></span>
-<span id="cb35-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">"grey60"</span>) <span class="sc">+</span></span>
-<span id="cb35-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>,</span>
-<span id="cb35-9"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3</span>)) <span class="sc">+</span></span>
-<span id="cb35-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"זמני תגובה מוטים, עם כמה בקשות איטיות מאוד"</span>,</span>
-<span id="cb35-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"12 בקשות מכל אזור"</span>,</span>
-<span id="cb35-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Latency (ms)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">162</span>)</span>
+<span id="cb60-2"><a aria-hidden="true" tabindex="-1"></a>latency <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">region =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"eu-west"</span>, <span class="st">"us-east"</span>, <span class="st">"il-central"</span>, <span class="st">"ap-south"</span>), <span class="at">each =</span> <span class="dv">12</span>),</span>
+<span id="cb60-3"><a aria-hidden="true" tabindex="-1"></a>                                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"eu-west"</span>, <span class="st">"us-east"</span>, <span class="st">"il-central"</span>, <span class="st">"ap-south"</span>)),</span>
+<span id="cb60-4"><a aria-hidden="true" tabindex="-1"></a>                  <span class="at">ms =</span> <span class="fu">round</span>(<span class="fu">rlnorm</span>(<span class="dv">48</span>, <span class="fu">log</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">150</span>, <span class="dv">155</span>, <span class="dv">210</span>, <span class="dv">220</span>), <span class="at">each =</span> <span class="dv">12</span>)), <span class="fl">0.8</span>)))</span>
+<span id="cb60-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(latency, <span class="fu">aes</span>(ms, region)) <span class="sc">+</span></span>
+<span id="cb60-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">colour =</span> <span class="st">"grey60"</span>) <span class="sc">+</span></span>
+<span id="cb60-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">size =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>,</span>
+<span id="cb60-9"><a aria-hidden="true" tabindex="-1"></a>             <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">height =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3</span>)) <span class="sc">+</span></span>
+<span id="cb60-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"זמני תגובה מוטים, עם כמה בקשות איטיות מאוד"</span>,</span>
+<span id="cb60-11"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"12 בקשות מכל אזור"</span>,</span>
+<span id="cb60-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Latency (ms)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 </section>
@@ -1241,8 +1865,8 @@ M5-M4  0.19222 -1.0517  1.436159 0.9918</code></pre>
 </div></section><section id="anova-על-נתונים-מוטים" class="slide level2 smaller">
 <h2>ANOVA על נתונים מוטים</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a>fit_lat <span class="ot">&lt;-</span> <span class="fu">aov</span>(ms <span class="sc">~</span> region, <span class="at">data =</span> latency)</span>
-<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_lat)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a aria-hidden="true" tabindex="-1"></a>fit_lat <span class="ot">&lt;-</span> <span class="fu">aov</span>(ms <span class="sc">~</span> region, <span class="at">data =</span> latency)</span>
+<span id="cb61-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_lat)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Df  Sum Sq Mean Sq F value Pr(&gt;F)  
 region       3  292464   97488    2.35  0.085 .
@@ -1250,18 +1874,36 @@ Residuals   44 1823008   41432
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">resid</span>(fit_lat))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit_lat), <span class="st">"pnorm"</span>)              <span class="co"># standardised residuals vs N(0, 1)</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-    Shapiro-Wilk normality test
+    Exact one-sample Kolmogorov-Smirnov test
 
-data:  resid(fit_lat)
-W = 0.76, p-value = 2e-07</code></pre>
+data:  rstandard(fit_lat)
+D = 0.21, p-value = 0.02
+alternative hypothesis: two-sided</code></pre>
 </div>
 </div>
 <ul>
 <li>ה-ANOVA <strong>לא דוחה</strong> (<span class="math inline">\(p = 0.085\)</span>)</li>
-<li>אבל השאריות רחוקות מנורמליות. הבקשות האיטיות מנפחות את <span class="math inline">\(MS_E\)</span> ו”מסתירות” את ההבדלים</li>
+<li><strong>אבל השאריות לא נורמליות.</strong> מבחן <span class="en">Kolmogorov–Smirnov</span> על השאריות המתוקננות, כמו בהרצאה 3: <span class="math inline">\(D = 0.212 &gt; 1.36/\sqrt{48} = 0.196\)</span>, ולכן <strong>דוחים</strong> נורמליות</li>
+</ul>
+</section>
+<section id="השאריות-בגרף-q-q" class="slide level2 smaller">
+<h2>השאריות בגרף Q-Q</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">r =</span> <span class="fu">sort</span>(<span class="fu">rstandard</span>(fit_lat))) <span class="sc">|&gt;</span></span>
+<span id="cb65-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">z =</span> <span class="fu">qnorm</span>((<span class="fu">row_number</span>() <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">/</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
+<span id="cb65-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(z, r)) <span class="sc">+</span></span>
+<span id="cb65-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb65-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb65-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"הזנב הימני ארוך מדי: כמה בקשות איטיות מאוד"</span>,</span>
+<span id="cb65-7"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות · קו מקווקו: N(0,1)"</span>,</span>
+<span id="cb65-8"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile (z)"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/latency-qq-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>הבקשות האיטיות מנפחות את <span class="math inline">\(MS_E\)</span> ו”מסתירות” את ההבדלים בין האזורים</li>
 <li><strong>שתי אפשרויות:</strong> טרנספורמציה (<span class="math inline">\(\log\)</span>), או מבחן שלא מניח נורמליות</li>
 </ul>
 </section>
@@ -1303,12 +1945,12 @@ K = \frac{12}{N(N+1)}\sum_{i=1}^{a} n_i\left(\bar R_{i\cdot} - \frac{N+1}{2}\rig
 <h2>דוגמה לחישוב ידני: חוזק בד לפי אחוז כותנה</h2>
 <p>מפעל טקסטיל בודק 5 רמות של אחוז כותנה בבד (15%–35%), 6 דגימות בכל רמה. <strong>האם אחוז הכותנה משפיע על חוזק המתיחה?</strong></p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(np_data_dir, <span class="st">"cotton_strength.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb40-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cotton_pct =</span> <span class="fu">factor</span>(cotton_pct), <span class="at">rank =</span> <span class="fu">rank</span>(strength))</span>
-<span id="cb40-3"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="sc">|&gt;</span></span>
-<span id="cb40-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cotton_pct) <span class="sc">|&gt;</span></span>
-<span id="cb40-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">strength =</span> <span class="fu">paste</span>(<span class="fu">sort</span>(strength), <span class="at">collapse =</span> <span class="st">", "</span>),</span>
-<span id="cb40-6"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">R =</span> <span class="fu">sum</span>(rank), <span class="at">R_bar =</span> <span class="fu">mean</span>(rank))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(np_data_dir, <span class="st">"cotton_strength.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cotton_pct =</span> <span class="fu">factor</span>(cotton_pct), <span class="at">rank =</span> <span class="fu">rank</span>(strength))</span>
+<span id="cb66-3"><a aria-hidden="true" tabindex="-1"></a>cotton <span class="sc">|&gt;</span></span>
+<span id="cb66-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cotton_pct) <span class="sc">|&gt;</span></span>
+<span id="cb66-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">strength =</span> <span class="fu">paste</span>(<span class="fu">sort</span>(strength), <span class="at">collapse =</span> <span class="st">", "</span>),</span>
+<span id="cb66-6"><a aria-hidden="true" tabindex="-1"></a>            <span class="at">R =</span> <span class="fu">sum</span>(rank), <span class="at">R_bar =</span> <span class="fu">mean</span>(rank))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 5
   cotton_pct     n strength                               R R_bar
@@ -1321,6 +1963,13 @@ K = \frac{12}{N(N+1)}\sum_{i=1}^{a} n_i\left(\bar R_{i\cdot} - \frac{N+1}{2}\rig
 </div>
 </div>
 </section>
+<section id="הדרגות-בתרשים" class="slide level2 smaller">
+<h2>הדרגות בתרשים</h2>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/cotton-ranks-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><span class="math inline">\(K\)</span> מסכם את <strong>אורכי הקווים הכתומים</strong> (בריבוע, משוקללים ב-<span class="math inline">\(n_i\)</span>): <span class="math inline">\(K = \frac{12}{N(N+1)}\sum n_i(\bar R_{i\cdot} - 15.5)^2\)</span>. תחת <span class="math inline">\(H_0\)</span> כל המעוינים קרובים לקו המקווקו</li>
+</ul>
+</section>
 <section id="חישוב-k" class="slide level2 smaller">
 <h2>חישוב <span class="math inline">\(K\)</span></h2>
 <p><span class="math inline">\(N = 30\)</span>, <span class="math inline">\(a = 5\)</span>, <span class="math inline">\(n_i = 6\)</span>. סכומי הדרגות: <span class="math inline">\(R_{i\cdot} = 58,\ 66.5,\ 123,\ 163,\ 54.5\)</span>.</p>
@@ -1332,7 +1981,7 @@ K = 19.81 &gt; \chi^2_{0.95,\,4} = 9.49
 \]</span></p>
 <p><strong>דוחים</strong> את <span class="math inline">\(H_0\)</span>: אחוז הכותנה משפיע על חוזק הבד.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(strength <span class="sc">~</span> cotton_pct, <span class="at">data =</span> cotton)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(strength <span class="sc">~</span> cotton_pct, <span class="at">data =</span> cotton)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Kruskal-Wallis rank sum test
@@ -1345,7 +1994,7 @@ Kruskal-Wallis chi-squared = 20, df = 4, p-value = 5e-04</code></pre>
 <section id="בחזרה-לזמני-התגובה" class="slide level2 smaller">
 <h2>בחזרה לזמני התגובה</h2>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(ms <span class="sc">~</span> region, <span class="at">data =</span> latency)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(ms <span class="sc">~</span> region, <span class="at">data =</span> latency)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Kruskal-Wallis rank sum test
@@ -1353,7 +2002,8 @@ Kruskal-Wallis chi-squared = 20, df = 4, p-value = 5e-04</code></pre>
 data:  ms by region
 Kruskal-Wallis chi-squared = 12, df = 3, p-value = 0.009</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(<span class="fu">log</span>(ms) <span class="sc">~</span> region, <span class="at">data =</span> latency))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a aria-hidden="true" tabindex="-1"></a>fit_lat_log <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="fu">log</span>(ms) <span class="sc">~</span> region, <span class="at">data =</span> latency)</span>
+<span id="cb72-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_lat_log)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)   
 region       3   7.42   2.473    4.75 0.0059 **
@@ -1364,15 +2014,48 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <ul>
 <li><strong><span class="en">Kruskal–Wallis</span> דוחה</strong> (<span class="math inline">\(p = 0.0085\)</span>), במקום שה-ANOVA על הנתונים הגולמיים לא דחה</li>
-<li>גם ANOVA על <span class="math inline">\(\log(\text{ms})\)</span> דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות</li>
+<li>גם ANOVA על <span class="math inline">\(\log(\text{ms})\)</span> דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות (השקף הבא)</li>
 <li><strong>הדרגות לא רגישות לערכים חריגים:</strong> בקשה של 1,000 מילישניות היא פשוט “הדרגה הגבוהה ביותר”, בדיוק כמו בקשה של 400</li>
 </ul>
 </section>
-<section id="אילו-אזורים-שונים-השוואות-מרובות-על-דרגות" class="slide level2 smaller">
+<section id="מה-הלוגריתם-עושה-לשאריות" class="slide level2 smaller">
+<h2>מה הלוגריתם עושה לשאריות?</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">scale =</span> <span class="st">"ms"</span>, <span class="at">r =</span> <span class="fu">rstandard</span>(fit_lat)),</span>
+<span id="cb74-2"><a aria-hidden="true" tabindex="-1"></a>          <span class="fu">tibble</span>(<span class="at">scale =</span> <span class="st">"log(ms)"</span>, <span class="at">r =</span> <span class="fu">rstandard</span>(fit_lat_log))) <span class="sc">|&gt;</span></span>
+<span id="cb74-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">scale =</span> <span class="fu">fct_inorder</span>(scale)) <span class="sc">|&gt;</span></span>
+<span id="cb74-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(scale) <span class="sc">|&gt;</span></span>
+<span id="cb74-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(r, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb74-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">z =</span> <span class="fu">qnorm</span>((<span class="fu">row_number</span>() <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">/</span> <span class="fu">n</span>())) <span class="sc">|&gt;</span></span>
+<span id="cb74-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(z, r)) <span class="sc">+</span></span>
+<span id="cb74-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">colour =</span> nanas_pal[[<span class="st">"grey"</span>]], <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb74-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">colour =</span> nanas_pal[[<span class="st">"primary"</span>]], <span class="at">size =</span> <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb74-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> scale) <span class="sc">+</span></span>
+<span id="cb74-11"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"אחרי הטרנספורמציה, השאריות יושבות על הקו"</span>,</span>
+<span id="cb74-12"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"שאריות מתוקננות · קו מקווקו: N(0,1)"</span>,</span>
+<span id="cb74-13"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Theoretical quantile (z)"</span>, <span class="at">y =</span> <span class="st">"Standardised residual"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+</section>
+<section id="מה-הלוגריתם-עושה-לשאריות-output" class="slide level2 smaller output-location-slide"><h2>מה הלוגריתם עושה לשאריות?</h2><div class="cell output-location-slide" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="05-contrasts-multiple-comparisons_files/figure-html/latency-log-qq-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a aria-hidden="true" tabindex="-1"></a>ks_log <span class="ot">&lt;-</span> <span class="fu">ks.test</span>(<span class="fu">rstandard</span>(fit_lat_log), <span class="st">"pnorm"</span>)</span>
+<span id="cb75-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">D =</span> <span class="fu">unname</span>(ks_log<span class="sc">$</span>statistic), <span class="at">p_value =</span> ks_log<span class="sc">$</span>p.value)      <span class="co"># KS on log scale</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      D p_value 
+0.06632 0.97494 </code></pre>
+</div>
+</div></section><section id="אילו-אזורים-שונים-השוואות-מרובות-על-דרגות" class="slide level2 smaller">
 <h2>אילו אזורים שונים? השוואות מרובות על דרגות</h2>
 <p>אחרי <span class="en">Kruskal–Wallis</span> מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(latency<span class="sc">$</span>ms, latency<span class="sc">$</span>region, <span class="at">p.adjust.method =</span> <span class="st">"bonferroni"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">pairwise.wilcox.test</span>(latency<span class="sc">$</span>ms, latency<span class="sc">$</span>region, <span class="at">p.adjust.method =</span> <span class="st">"bonferroni"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Pairwise comparisons using Wilcoxon rank sum exact test 
@@ -1389,7 +2072,20 @@ P value adjustment method: bonferroni </code></pre>
 </div>
 <ul>
 <li>כל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, <strong>מתוקן</strong> בשיטת <span class="en">Bonferroni</span>: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05</li>
-<li><strong>הסתייגות:</strong> כמו בהרצאה 1, מבחן סכום הדירוגים בודק <strong>חציונים</strong> רק תחת הנחת הזזה. כאן, עם התפלגויות לוג-נורמליות עם אותה צורה, ההנחה סבירה בסקאלה הלוגריתמית</li>
+<li><strong>אבל האם זה מבחן על חציונים?</strong> תלוי בהנחת ההזזה (השקף הבא)</li>
+</ul>
+</section>
+<section id="מה-בודק-מבחן-סכום-הדירוגים-הנחת-ההזזה" class="slide level2 smaller">
+<h2>מה בודק מבחן סכום הדירוגים? הנחת ההזזה</h2>
+<ul>
+<li><strong><span class="math inline">\(H_0\)</span> של המבחן:</strong> לשתי הרמות <strong>אותה התפלגות</strong>. הוא דוחה כשתצפיות מרמה אחת נוטות להיות גדולות מתצפיות מהרמה השנייה</li>
+<li><strong>הנחת ההזזה</strong> (<span class="en">shift</span>): שתי ההתפלגויות זהות בצורה ובפיזור, ואחת פשוט <strong>מוזזת</strong> ימינה: <span class="math inline">\(F_2(x) = F_1(x - \delta)\)</span>. רק תחתיה דחייה פירושה “החציונים שונים”</li>
+<li><strong>בלי ההנחה,</strong> המבחן יכול לדחות גם כשהחציונים שווים, למשל כשלאחת הרמות פיזור גדול יותר</li>
+</ul>
+
+<img data-src="05-contrasts-multiple-comparisons_files/figure-html/shift-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>בדוגמה:</strong> הנתונים סומלצו מהתפלגות <strong>לוג-נורמלית</strong>. ב-ms האזור האיטי גם <strong>מפוזר</strong> יותר, ולכן זו לא הזזה. ב-<span class="math inline">\(\log(\text{ms})\)</span> זו הזזה נקייה</li>
+<li><strong>והדרגות לא מושפעות מ-<span class="math inline">\(\log\)</span>:</strong> הלוגריתם שומר על הסדר, ולכן המבחן על ms והמבחן על <span class="math inline">\(\log(\text{ms})\)</span> <strong>זהים</strong>. ההנחה מתקיימת בסקאלה הלוגריתמית, וחציון של <span class="math inline">\(\log\)</span> הוא <span class="math inline">\(\log\)</span> של החציון. לכן המסקנה על החציונים נכונה גם ב-ms</li>
 </ul>
 </section>
 <section id="ניגודים-עם-חציונים" class="slide level2 smaller">
@@ -1406,166 +2102,111 @@ P value adjustment method: bonferroni </code></pre>
 </section>
 <section id="הפתרון-חציונים-של-הפרשים" class="slide level2 smaller">
 <h2>הפתרון: חציונים של הפרשים</h2>
-<p>לכל זוג רמות <span class="math inline">\((i, k)\)</span>, מחשבים את החציון של <strong>כל ההפרשים</strong> בין תצפית מרמה <span class="math inline">\(i\)</span> לתצפית מרמה <span class="math inline">\(k\)</span>:</p>
+<p><strong>הרעיון:</strong> במקום להשוות כל רמה ל”מרכז” משותף, אומדים <strong>בכמה כל רמה גבוהה מכל רמה אחרת</strong>, ורק אז ממצעים.</p>
+<ol type="1">
+<li><strong>לכל זוג רמות <span class="math inline">\((i, k)\)</span>:</strong> מחשבים את <strong>כל</strong> ההפרשים בין תצפית מרמה <span class="math inline">\(i\)</span> לתצפית מרמה <span class="math inline">\(k\)</span> (<span class="math inline">\(n_i \cdot n_k\)</span> הפרשים), ולוקחים את החציון שלהם:</li>
+</ol>
 <p><span class="math display">\[
-Z_{ik} = \underset{j,\,m}{\text{median}}\{y_{ij} - y_{km}\} \qquad Z_{ii} = 0
-\qquad\qquad
+Z_{ik} = \underset{j,\,m}{\text{median}}\{y_{ij} - y_{km}\}
+\]</span></p>
+<p><span class="math inline">\(Z_{ik}\)</span> עונה על השאלה: <strong>“בכמה, בדרך כלל, תצפית מרמה <span class="math inline">\(i\)</span> גבוהה מתצפית מרמה <span class="math inline">\(k\)</span>?”</strong></p>
+<ol start="2" type="1">
+<li><strong>מסדרים בטבלה</strong> <span class="math inline">\(a \times a\)</span>. על האלכסון <span class="math inline">\(Z_{ii} = 0\)</span>, ו-<span class="math inline">\(Z_{ki} = -Z_{ik}\)</span>: אם <span class="math inline">\(i\)</span> גבוהה מ-<span class="math inline">\(k\)</span> ב-6, אז <span class="math inline">\(k\)</span> נמוכה מ-<span class="math inline">\(i\)</span> ב-6</li>
+<li><strong>האפקט של רמה</strong> הוא ממוצע השורה שלה, “בכמה היא גבוהה מהרמות, בממוצע”:</li>
+</ol>
+<p><span class="math display">\[
 \hat\tau_i = \frac{1}{a}\sum_{k=1}^{a} Z_{ik}
 \]</span></p>
-<p>מכיוון ש-<span class="math inline">\(Z_{ik} = -Z_{ki}\)</span>, הסכום <span class="math inline">\(\sum_i \hat\tau_i = \frac{1}{a}\sum_i\sum_k Z_{ik} = 0\)</span>.</p>
-<p><strong>בדוגמה הקטנה:</strong> 9 ההפרשים <span class="math inline">\(y_{1j} - y_{2m}\)</span> הם <span class="math inline">\(\{3, 2, 1, 7, 6, 5, 8, 7, 6\}\)</span>, והחציון שלהם <span class="math inline">\(Z_{12} = 6\)</span>. לכן <span class="math inline">\(Z_{21} = -6\)</span>, ו-</p>
-<p><span class="math display">\[
-\hat\tau_1 = \frac{0 + 6}{2} = 3 \qquad \hat\tau_2 = \frac{-6 + 0}{2} = -3 \qquad \hat\tau_1 + \hat\tau_2 = 0 \;\checkmark
-\]</span></p>
+<ol start="4" type="1">
+<li><strong>הסכום אפס:</strong> כל זוג <span class="math inline">\(Z_{ik} + Z_{ki} = 0\)</span> מתבטל, ולכן <span class="math inline">\(\sum_i \hat\tau_i = 0\)</span>. הבעיה מהשקף הקודם נפתרה</li>
+<li><strong>הניגוד:</strong> <span class="math inline">\(\hat\Gamma = \sum c_i \hat\tau_i\)</span></li>
+</ol>
+</section>
+<section id="בדוגמה-הקטנה" class="slide level2 smaller">
+<h2>בדוגמה הקטנה</h2>
+<p><span class="math inline">\(y_{1j} = \{3, 7, 8\}\)</span> ו-<span class="math inline">\(y_{2m} = \{0, 1, 2\}\)</span>. כל 9 ההפרשים <span class="math inline">\(y_{1j} - y_{2m}\)</span>:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(y_{2m} = 0\)</span></th>
+<th><span class="math inline">\(y_{2m} = 1\)</span></th>
+<th><span class="math inline">\(y_{2m} = 2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(y_{1j} = 3\)</span></td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(y_{1j} = 7\)</span></td>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(y_{1j} = 8\)</span></td>
+<td>8</td>
+<td>7</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+<p>ממוינים: <span class="math inline">\(1, 2, 3, 5, \mathbf{6}, 6, 7, 7, 8\)</span>. החציון: <span class="math inline">\(Z_{12} = 6\)</span>, ולכן <span class="math inline">\(Z_{21} = -6\)</span>.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>רמה 1</th>
+<th>רמה 2</th>
+<th><span class="math inline">\(\hat\tau_i\)</span> (ממוצע השורה)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>רמה 1</strong></td>
+<td>0</td>
+<td>6</td>
+<td><span class="math inline">\((0 + 6)/2 = 3\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>רמה 2</strong></td>
+<td>−6</td>
+<td>0</td>
+<td><span class="math inline">\((-6 + 0)/2 = -3\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(\hat\tau_1 + \hat\tau_2 = 0\)</span>, וההפרש ביניהם, 6, הוא ההזזה האמודה בין הרמות.</p>
 </section>
 <section id="ניגוד-בדוגמת-הכותנה" class="slide level2 smaller">
 <h2>ניגוד בדוגמת הכותנה</h2>
 <p><strong>השאלה:</strong> האם הקצוות (15% ו-35%) חלשים מ-30%? <span class="math inline">\(\Gamma = \frac{1}{2}(\tau_1 + \tau_5) - \tau_4\)</span>.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a aria-hidden="true" tabindex="-1"></a>y_by_level <span class="ot">&lt;-</span> <span class="fu">split</span>(cotton<span class="sc">$</span>strength, cotton<span class="sc">$</span>cotton_pct)</span>
-<span id="cb50-2"><a aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="fu">seq_along</span>(y_by_level), <span class="fu">seq_along</span>(y_by_level),</span>
-<span id="cb50-3"><a aria-hidden="true" tabindex="-1"></a>           <span class="fu">Vectorize</span>(\(i, k) <span class="fu">median</span>(<span class="fu">outer</span>(y_by_level[[i]], y_by_level[[k]], <span class="st">"-"</span>))))</span>
-<span id="cb50-4"><a aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(Z)</span>
-<span id="cb50-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(tau_hat, <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a aria-hidden="true" tabindex="-1"></a>y_by_level <span class="ot">&lt;-</span> <span class="fu">split</span>(cotton<span class="sc">$</span>strength, cotton<span class="sc">$</span>cotton_pct)</span>
+<span id="cb79-2"><a aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="fu">seq_along</span>(y_by_level), <span class="fu">seq_along</span>(y_by_level),</span>
+<span id="cb79-3"><a aria-hidden="true" tabindex="-1"></a>           <span class="fu">Vectorize</span>(\(i, k) <span class="fu">median</span>(<span class="fu">outer</span>(y_by_level[[i]], y_by_level[[k]], <span class="st">"-"</span>))))</span>
+<span id="cb79-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(Z) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">names</span>(y_by_level), <span class="fu">names</span>(y_by_level))</span>
+<span id="cb79-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(Z, <span class="dv">2</span>)                                      <span class="co"># Z[i, k] = median of y_i - y_k</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -1.86 -1.26  1.73  3.22 -1.83</code></pre>
+<pre><code>     15    20    25   30    35
+15 0.00 -0.65 -3.55 -5.0 -0.10
+20 0.65  0.00 -3.00 -4.5  0.55
+25 3.55  3.00  0.00 -1.5  3.60
+30 5.00  4.50  1.50  0.0  5.10
+35 0.10 -0.55 -3.60 -5.1  0.00</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(tau_hat)                                     <span class="co"># 0 by construction</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(Z)                           <span class="co"># row means; they sum to 0</span></span>
+<span id="cb81-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(tau_hat, <span class="at">sum =</span> <span class="fu">sum</span>(tau_hat), <span class="at">Gamma =</span> <span class="fl">0.5</span> <span class="sc">*</span> (tau_hat[[<span class="dv">1</span>]] <span class="sc">+</span> tau_hat[[<span class="dv">5</span>]]) <span class="sc">-</span> tau_hat[[<span class="dv">4</span>]]), <span class="dv">2</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.22e-16</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a aria-hidden="true" tabindex="-1"></a><span class="fl">0.5</span> <span class="sc">*</span> (tau_hat[<span class="dv">1</span>] <span class="sc">+</span> tau_hat[<span class="dv">5</span>]) <span class="sc">-</span> tau_hat[<span class="dv">4</span>]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] -5.065</code></pre>
+<pre><code>   15    20    25    30    35   sum Gamma 
+-1.86 -1.26  1.73  3.22 -1.83  0.00 -5.06 </code></pre>
 </div>
 </div>
-<p><span class="math display">\[
-\hat\Gamma = \tfrac{1}{2}(-1.86 + -1.83) - 3.22 = -5.06
-\]</span></p>
-<p>בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה.</p>
-</section></section>
-<section>
-<section id="מבחן-friedman-טיפולים-בתוך-בלוקים" class="title-slide slide level1 center">
-<h1>מבחן <span class="en">Friedman</span>: טיפולים בתוך בלוקים</h1>
-
-</section>
-<section id="כשכל-יחידה-מקבלת-את-כל-הטיפולים" class="slide level2 smaller">
-<h2>כשכל יחידה מקבלת את כל הטיפולים</h2>
-<p><strong>דוגמה:</strong> צוות AI בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (<span class="en">eval set</span>). כל תשובה מקבלת ציון 0–100.</p>
-<ul>
-<li><strong>כל משימה נבדקת עם כל שלושת הפרומפטים.</strong> המשימה היא <strong>בלוק</strong> (<span class="en">block</span>)</li>
-<li>המשימות שונות מאוד בקושי. ההבדל בין משימה קלה לקשה גדול מההבדל בין פרומפטים</li>
-<li><span class="en">Kruskal–Wallis</span> מניח מדגמים <strong>בלתי תלויים</strong>. כאן הם לא: אותה משימה מופיעה בכל הרמות</li>
-<li><strong>הפתרון:</strong> משווים את הפרומפטים <strong>בתוך</strong> כל משימה</li>
-</ul>
-<p>זה גם המצב של המודלים במוקד: כל המודלים עבדו באותם 9 ימים, והיום הוא בלוק.</p>
-</section>
-<section id="הנתונים" class="slide level2">
-<h2>הנתונים</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a aria-hidden="true" tabindex="-1"></a>llm <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(np_data_dir, <span class="st">"llm_prompt_eval.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb56-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prompt =</span> <span class="fu">factor</span>(prompt, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"baseline"</span>, <span class="st">"few_shot"</span>, <span class="st">"reasoning"</span>)),</span>
-<span id="cb56-3"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">task =</span> <span class="fu">factor</span>(task))</span>
-<span id="cb56-4"><a aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(llm, <span class="fu">aes</span>(prompt, score, <span class="at">group =</span> task)) <span class="sc">+</span></span>
-<span id="cb56-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">colour =</span> <span class="st">"grey70"</span>) <span class="sc">+</span></span>
-<span id="cb56-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> prompt), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb56-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"ברוב המשימות, הפרומפט עם ההנמקה מנצח"</span>,</span>
-<span id="cb56-9"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"כל קו הוא משימה אחת · ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים"</span>,</span>
-<span id="cb56-10"><a aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Score (0–100)"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-
-</section>
-<section id="הנתונים-output" class="slide level2 output-location-slide"><h2>הנתונים</h2><div class="cell output-location-slide" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="05-contrasts-multiple-comparisons_files/figure-html/llm-data-1.png" class="quarto-figure quarto-figure-center" width="1200"></p>
-</figure>
-</div>
-</div>
-</div></section><section id="הסטטיסטי-1" class="slide level2 smaller">
-<h2>הסטטיסטי</h2>
-<ul>
-<li><span class="math inline">\(b\)</span> בלוקים ו-<span class="math inline">\(k\)</span> טיפולים</li>
-<li>מדרגים את הטיפולים <strong>בתוך כל בלוק</strong> בנפרד, מ-1 עד <span class="math inline">\(k\)</span></li>
-<li><span class="math inline">\(R_j\)</span> הוא <strong>סכום הדרגות</strong> של טיפול <span class="math inline">\(j\)</span> על פני כל הבלוקים</li>
-</ul>
-<p><strong>תחת <span class="math inline">\(H_0\)</span></strong> (אין הבדל בין הטיפולים), בכל בלוק כל סידור של הדרגות סביר באותה מידה, ולכן <span class="math inline">\(E(R_j) = \frac{b(k+1)}{2}\)</span>:</p>
-<p><span class="math display">\[
-Q = \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k}\left(R_j - \frac{b(k+1)}{2}\right)^2
-= \frac{12}{b\,k\,(k+1)}\sum_{j=1}^{k} R_j^2 - 3\,b\,(k+1)
-\]</span></p>
-<p>תחת <span class="math inline">\(H_0\)</span>, <span class="math inline">\(Q \sim \chi^2_{k-1}\)</span> בקירוב. דוחים את <span class="math inline">\(H_0\)</span> אם <span class="math inline">\(Q &gt; \chi^2_{1-\alpha,\,k-1}\)</span>.</p>
-</section>
-<section id="חישוב" class="slide level2 smaller">
-<h2>חישוב</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a aria-hidden="true" tabindex="-1"></a>llm_ranked <span class="ot">&lt;-</span> llm <span class="sc">|&gt;</span> <span class="fu">group_by</span>(task) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">rank</span>(score)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span>
-<span id="cb57-2"><a aria-hidden="true" tabindex="-1"></a>llm_ranked <span class="sc">|&gt;</span> <span class="fu">select</span>(task, prompt, rank) <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> prompt, <span class="at">values_from =</span> rank)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 4
-  task  baseline few_shot reasoning
-  &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-1 1            1        2         3
-2 2            1        2         3
-3 3            2        1         3
-4 4            1        3         2
-5 5            1        2         3
-6 6            2        1         3
-7 7            1        3         2
-8 8            1        2         3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a aria-hidden="true" tabindex="-1"></a>llm_ranked <span class="sc">|&gt;</span> <span class="fu">group_by</span>(prompt) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">R =</span> <span class="fu">sum</span>(rank))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 2
-  prompt        R
-  &lt;fct&gt;     &lt;dbl&gt;
-1 baseline     10
-2 few_shot     16
-3 reasoning    22</code></pre>
-</div>
-</div>
-<p><span class="math display">\[
-Q = \frac{12}{8 \cdot 3 \cdot 4}\left(10^2 + 16^2 + 22^2\right) - 3 \cdot 8 \cdot 4 = 105 - 96 = 9 &gt; \chi^2_{0.95,\,2} = 5.99
-\]</span></p>
-<p><strong>דוחים:</strong> יש הבדל בין הפרומפטים.</p>
-</section>
-<section id="friedman-ב-r-ומה-קורה-בלי-בלוקים" class="slide level2 smaller">
-<h2><span class="en">Friedman</span> ב-R, ומה קורה בלי בלוקים</h2>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">friedman.test</span>(score <span class="sc">~</span> prompt <span class="sc">|</span> task, <span class="at">data =</span> llm)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Friedman rank sum test
-
-data:  score and prompt and task
-Friedman chi-squared = 9, df = 2, p-value = 0.01</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(score <span class="sc">~</span> prompt, <span class="at">data =</span> llm)          <span class="co"># ignores the blocks</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Kruskal-Wallis rank sum test
-
-data:  score by prompt
-Kruskal-Wallis chi-squared = 4.1, df = 2, p-value = 0.1</code></pre>
-</div>
-</div>
-<ul>
-<li><span class="en">Friedman</span> <strong>דוחה</strong>. <span class="en">Kruskal–Wallis</span>, שמתעלם מהבלוקים, <strong>לא</strong></li>
-<li>השונות הגדולה <strong>בין המשימות</strong> “מטביעה” את ההבדל בין הפרומפטים, כמו שאפקט היום ניפח את <span class="math inline">\(MS_E\)</span> במוקד</li>
-<li><strong>אותו עיקרון במוקד:</strong></li>
-</ul>
-<div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">friedman.test</span>(aht <span class="sc">~</span> model <span class="sc">|</span> day, <span class="at">data =</span> calls)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-    Friedman rank sum test
-
-data:  aht and model and day
-Friedman chi-squared = 23, df = 4, p-value = 1e-04</code></pre>
-</div>
-</div>
+<p><span class="math inline">\(\hat\Gamma = \tfrac{1}{2}\big((-1.86) + (-1.83)\big) - 3.22 = -5.06\)</span>: בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה.</p>
 </section></section>
 <section>
 <section id="מה-יכול-להשתבש" class="title-slide slide level1 center">
@@ -1578,7 +2219,7 @@ Friedman chi-squared = 23, df = 4, p-value = 1e-04</code></pre>
 <li><strong>לבחור את ההשוואה אחרי שרואים את הנתונים</strong>, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן</li>
 <li><strong>לבחור את שיטת התיקון לפי התוצאה:</strong> “ב-<span class="en">Tukey</span> זה לא יצא מובהק, אז ננסה <span class="en">Duncan</span>”. זו הגרסה המתוחכמת של <span class="en">p-hacking</span></li>
 <li><strong>לא לתקן בכלל:</strong> להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק</li>
-<li><strong>להתעלם מבלוקים:</strong> כשאותן יחידות (משימות, ימים, משתמשים) מופיעות בכל הרמות, מבחן למדגמים בלתי תלויים מאבד עוצמה ומפר את ההנחות</li>
+<li><strong>להתעלם מבלוקים:</strong> כשאותן יחידות (ימים, משימות, משתמשים) מופיעות בכל הרמות, מבחן שמניח מדגמים בלתי תלויים מפר את ההנחות ומאבד עוצמה. ראינו את זה עם אפקט היום במוקד. הפתרון בהרצאה 6</li>
 <li><strong>לפרש <span class="en">Kruskal–Wallis</span> כמבחן על חציונים</strong> בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר</li>
 </ol>
 </section></section>
@@ -1637,11 +2278,6 @@ Friedman chi-squared = 23, df = 4, p-value = 1e-04</code></pre>
 <td>ניגוד עמיד לחריגים</td>
 <td>חציונים של הפרשים, <span class="math inline">\(Z_{ik}\)</span></td>
 <td></td>
-</tr>
-<tr class="even">
-<td>טיפולים בתוך בלוקים</td>
-<td><span class="en">Friedman</span>, <span class="math inline">\(Q \sim \chi^2_{k-1}\)</span></td>
-<td><code>friedman.test()</code></td>
 </tr>
 </tbody>
 </table>

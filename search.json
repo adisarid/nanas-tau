@@ -333,7 +333,7 @@
     "href": "lectures/04-one-way-anova-slides.html#מה-עושים-עם-אפקט-של-היום",
     "title": "4. ניתוח שונות חד-כיווני",
     "section": "מה עושים עם אפקט של היום?",
-    "text": "מה עושים עם אפקט של היום?\n\nכל המודלים עבדו באותם ימים. ביום עמוס, או ביום של תקלה רחבה, הטיפול ארוך יותר בכולם. השאריות של אותו יום מתואמות\nמה זה עושה למבחן? ההבדלים בין הימים “נכנסים” ל-\\(SS_E\\) ומנפחים את \\(MS_E\\). המבחן מאבד עוצמה\nהפתרון: להכניס את היום למודל כבלוק (block). זה מודל עם שני פקטורים (הרצאה 6), והתכנון שלו נקרא בלוקים אקראיים (הרצאה על תכנון ניסויים)\n\n\nsummary(aov(aht ~ model + factor(day), data = calls))\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \nmodel        4   18.0    4.51    17.4 1.1e-07 ***\nfactor(day)  8   25.9    3.23    12.5 6.6e-08 ***\nResiduals   32    8.3    0.26                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(MS_E\\) ירד מ-0.854 ל-0.259, ו-\\(F\\) של המודלים עלה מ-5.3 ל-17.4\nבהרצאה הבאה נראה מבחן א-פרמטרי לאותו מבנה: מבחן Friedman"
+    "text": "מה עושים עם אפקט של היום?\n\nכל המודלים עבדו באותם ימים. ביום עמוס, או ביום של תקלה רחבה, הטיפול ארוך יותר בכולם. השאריות של אותו יום מתואמות\nמה זה עושה למבחן? ההבדלים בין הימים “נכנסים” ל-\\(SS_E\\) ומנפחים את \\(MS_E\\). המבחן מאבד עוצמה\nהפתרון: להכניס את היום למודל כבלוק (block). זה מודל עם שני פקטורים (הרצאה 6), והתכנון שלו נקרא בלוקים אקראיים (הרצאה על תכנון ניסויים)\n\n\nsummary(aov(aht ~ model + factor(day), data = calls))\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \nmodel        4   18.0    4.51    17.4 1.1e-07 ***\nfactor(day)  8   25.9    3.23    12.5 6.6e-08 ***\nResiduals   32    8.3    0.26                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(MS_E\\) ירד מ-0.854 ל-0.259, ו-\\(F\\) של המודלים עלה מ-5.3 ל-17.4"
   },
   {
     "objectID": "lectures/04-one-way-anova-slides.html#מה-עושים-כשההנחות-לא-מתקיימות",
@@ -424,7 +424,7 @@
     "href": "lectures/04-one-way-anova-slides.html#מה-לקחת-מההרצאה",
     "title": "4. ניתוח שונות חד-כיווני",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)\n\n\n\n\n\nניתוח שונות חד-כיווני הוא רגרסיה עם משתנה קטגורי אחד\nדחייה של \\(H_0\\) אומרת שיש הבדל איפשהו. בהרצאה הבאה: איפה (ניגודים והשוואות מרובות), ומה עושים כשהנתונים רחוקים מנורמליות (Kruskal–Wallis, Friedman)"
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)\n\n\n\n\n\nניתוח שונות חד-כיווני הוא רגרסיה עם משתנה קטגורי אחד\nדחייה של \\(H_0\\) אומרת שיש הבדל איפשהו. בהרצאה הבאה: איפה (ניגודים והשוואות מרובות), ומה עושים כשהנתונים רחוקים מנורמליות (Kruskal–Wallis)"
   },
   {
     "objectID": "lectures/04-one-way-anova.html",
@@ -697,7 +697,7 @@
     "href": "lectures/04-one-way-anova.html#מה-עושים-עם-אפקט-של-היום",
     "title": "4. ניתוח שונות חד-כיווני",
     "section": "מה עושים עם אפקט של היום?",
-    "text": "מה עושים עם אפקט של היום?\n\nכל המודלים עבדו באותם ימים. ביום עמוס, או ביום של תקלה רחבה, הטיפול ארוך יותר בכולם. השאריות של אותו יום מתואמות\nמה זה עושה למבחן? ההבדלים בין הימים “נכנסים” ל-\\(SS_E\\) ומנפחים את \\(MS_E\\). המבחן מאבד עוצמה\nהפתרון: להכניס את היום למודל כבלוק (block). זה מודל עם שני פקטורים (הרצאה 6), והתכנון שלו נקרא בלוקים אקראיים (הרצאה על תכנון ניסויים)\n\n\n\nקוד\nsummary(aov(aht ~ model + factor(day), data = calls))\n\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \nmodel        4   18.0    4.51    17.4 1.1e-07 ***\nfactor(day)  8   25.9    3.23    12.5 6.6e-08 ***\nResiduals   32    8.3    0.26                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(MS_E\\) ירד מ-0.854 ל-0.259, ו-\\(F\\) של המודלים עלה מ-5.3 ל-17.4\nבהרצאה הבאה נראה מבחן א-פרמטרי לאותו מבנה: מבחן Friedman"
+    "text": "מה עושים עם אפקט של היום?\n\nכל המודלים עבדו באותם ימים. ביום עמוס, או ביום של תקלה רחבה, הטיפול ארוך יותר בכולם. השאריות של אותו יום מתואמות\nמה זה עושה למבחן? ההבדלים בין הימים “נכנסים” ל-\\(SS_E\\) ומנפחים את \\(MS_E\\). המבחן מאבד עוצמה\nהפתרון: להכניס את היום למודל כבלוק (block). זה מודל עם שני פקטורים (הרצאה 6), והתכנון שלו נקרא בלוקים אקראיים (הרצאה על תכנון ניסויים)\n\n\n\nקוד\nsummary(aov(aht ~ model + factor(day), data = calls))\n\n\n            Df Sum Sq Mean Sq F value  Pr(&gt;F)    \nmodel        4   18.0    4.51    17.4 1.1e-07 ***\nfactor(day)  8   25.9    3.23    12.5 6.6e-08 ***\nResiduals   32    8.3    0.26                    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(MS_E\\) ירד מ-0.854 ל-0.259, ו-\\(F\\) של המודלים עלה מ-5.3 ל-17.4"
   },
   {
     "objectID": "lectures/04-one-way-anova.html#מה-עושים-כשההנחות-לא-מתקיימות",
@@ -788,7 +788,7 @@
     "href": "lectures/04-one-way-anova.html#מה-לקחת-מההרצאה",
     "title": "4. ניתוח שונות חד-כיווני",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)\n\n\n\n\n\nניתוח שונות חד-כיווני הוא רגרסיה עם משתנה קטגורי אחד\nדחייה של \\(H_0\\) אומרת שיש הבדל איפשהו. בהרצאה הבאה: איפה (ניגודים והשוואות מרובות), ומה עושים כשהנתונים רחוקים מנורמליות (Kruskal–Wallis, Friedman)"
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)\n\n\n\n\n\nניתוח שונות חד-כיווני הוא רגרסיה עם משתנה קטגורי אחד\nדחייה של \\(H_0\\) אומרת שיש הבדל איפשהו. בהרצאה הבאה: איפה (ניגודים והשוואות מרובות), ומה עושים כשהנתונים רחוקים מנורמליות (Kruskal–Wallis)"
   },
   {
     "objectID": "lectures/02-exit-polls-slides.html#מה-קרה-ביום-שלישי",
@@ -2944,14 +2944,14 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "",
-    "text": "חזרה קצרה על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים\nFriedman: טיפולים בתוך בלוקים"
+    "text": "חזרה והשלמה מהרצאה 4: בדיקת ההנחות, שונויות לא שוות, אפקטים אקראיים, גודל אפקט\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#על-מה-נדבר-היום",
     "href": "lectures/05-contrasts-multiple-comparisons.html#על-מה-נדבר-היום",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "",
-    "text": "חזרה קצרה על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים\nFriedman: טיפולים בתוך בלוקים"
+    "text": "חזרה והשלמה מהרצאה 4: בדיקת ההנחות, שונויות לא שוות, אפקטים אקראיים, גודל אפקט\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#המודל-וההשערות",
@@ -2961,6 +2961,13 @@
     "text": "המודל וההשערות\n\\(a\\) רמות של פקטור אחד, \\(n\\) תצפיות בכל רמה, \\(N = an\\):\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij} \\qquad \\sum_{i=1}^{a}\\tau_i = 0 \\qquad \\varepsilon_{ij} \\overset{iid}{\\sim} N(0, \\sigma^2)\n\\]\n\\[\nH_0: \\tau_1 = \\dots = \\tau_a = 0 \\quad (\\mu_1 = \\dots = \\mu_a) \\qquad H_1: \\tau_i \\neq 0 \\text{ עבור } i \\text{ כלשהו}\n\\]\nשלוש הנחות: נורמליות, אי-תלות, שונות שווה בכל הרמות.\nהדוגמה: מוקד שירות בוחר את מודל השפה לעוזר AI. 5 מודלים (M1, M2 קטנים, M3 בינוני, M4, M5 גדולים), 9 ימים לכל מודל, והתגובה היא משך הטיפול הממוצע בפנייה (דקות). האם יש הבדל, ואיזה מודל להפעיל?\n\n\nקוד\ncalls |&gt; group_by(model) |&gt; summarise(total = sum(aht), mean = mean(aht))\n\n\n# A tibble: 5 × 3\n  model total  mean\n  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 M1     45.0  5.00\n2 M2     48.0  5.33\n3 M3     36.0  3.99\n4 M4     33.9  3.76\n5 M5     35.6  3.96"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-אות-מול-רעש",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-אות-מול-רעש",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הרעיון: אות מול רעש",
+    "text": "הרעיון: אות מול רעש"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#פירוק-השונות-וטבלת-anova",
     "href": "lectures/05-contrasts-multiple-comparisons.html#פירוק-השונות-וטבלת-anova",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
@@ -2968,11 +2975,151 @@
     "text": "פירוק השונות וטבלת ANOVA\n\\[\n\\underbrace{\\sum_{i,j}(y_{ij} - \\bar y_{\\cdot\\cdot})^2}_{SS_T}\n= \\underbrace{n\\sum_{i}(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2}_{SS_{Tr}\\text{: בין הרמות}}\n+ \\underbrace{\\sum_{i,j}(y_{ij} - \\bar y_{i\\cdot})^2}_{SS_E\\text{: בתוך הרמות}}\n\\]\n\n\n\nמקור\nסכום ריבועים\nדרגות חופש\nממוצע ריבועים\n\\(F_0\\)\n\n\n\n\nבין הרמות\n\\(SS_{Tr}\\)\n\\(a - 1\\)\n\\(MS_{Tr}\\)\n\\(MS_{Tr}/MS_E\\)\n\n\nשגיאה\n\\(SS_E\\)\n\\(N - a\\)\n\\(MS_E = \\hat\\sigma^2\\)\n\n\n\nסך הכול\n\\(SS_T\\)\n\\(N - 1\\)\n\n\n\n\n\n\n\\(E(MS_E) = \\sigma^2\\) תמיד. \\(E(MS_{Tr}) = \\sigma^2 + \\frac{n\\sum\\tau_i^2}{a-1}\\)\nדוחים את \\(H_0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,a-1,\\,N-a}\\)"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#בדיקת-ההנחות-השאריות",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#בדיקת-ההנחות-השאריות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בדיקת ההנחות: השאריות",
+    "text": "בדיקת ההנחות: השאריות\n\\[\ne_{ij} = y_{ij} - \\hat y_{ij} = y_{ij} - \\bar y_{i\\cdot}\n\\]\nהשאריות הן האומדים לשגיאות \\(\\varepsilon_{ij}\\). כל ההנחות נבדקות דרכן:\n\n\n\n\n\n\n\n\nההנחה\nבדיקה גרפית\nבדיקה במבחן\n\n\n\n\nנורמליות\nגרף Q-Q\nShapiro–Wilk, KS\n\n\nאי-תלות\nשאריות לפי סדר האיסוף\n\n\n\nשונות שווה\nboxplot, שאריות מול ממוצעי הרמות\nBartlett, Levene\n\n\n\n\n\nקוד\ncalls_r &lt;- calls |&gt; mutate(fitted = fitted(fit_ai), resid = resid(fit_ai))\ncalls_r |&gt; select(day, model, aht, fitted, resid) |&gt; head(3)\n\n\n# A tibble: 3 × 5\n    day model   aht fitted   resid\n  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;\n1     1 M1     4.98   5.00 -0.0222\n2     1 M2     5.29   5.33 -0.0444\n3     1 M3     4.51   3.99  0.516"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#גרף-q-q-איך-בונים-אותו",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#גרף-q-q-איך-בונים-אותו",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גרף Q-Q: איך בונים אותו",
+    "text": "גרף Q-Q: איך בונים אותו\n\nממיינים את \\(N\\) השאריות מהקטנה לגדולה: \\(e_{(1)} \\le e_{(2)} \\le \\dots \\le e_{(N)}\\)\nלשארית ה-\\(k\\) בסדר מתאימים את האחוזון \\(p_k = \\dfrac{k - 0.5}{N}\\)\nמחשבים את הערך התיאורטי של \\(N(0,1)\\) באחוזון הזה: \\(z_k = \\Phi^{-1}(p_k)\\)\nמשרטטים את \\(e_{(k)}\\) (ציר אנכי) מול \\(z_k\\) (ציר אופקי)\n\nאם השאריות נורמליות, הנקודות על קו ישר (השיפוע הוא בערך \\(\\hat\\sigma\\)).\n\n\nקוד\nqq &lt;- calls_r |&gt;\n  arrange(resid) |&gt;\n  mutate(k = row_number(), p = (k - 0.5) / n(), z = qnorm(p))\nqq |&gt; select(resid, k, p, z) |&gt; slice(c(1, 2, 45))\n\n\n# A tibble: 3 × 4\n  resid     k      p     z\n  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 -1.97     1 0.0111 -2.29\n2 -1.93     2 0.0333 -1.83\n3  1.50    45 0.989   2.29"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#גרף-q-q-למודלים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#גרף-q-q-למודלים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גרף Q-Q למודלים",
+    "text": "גרף Q-Q למודלים\n\n\nקוד\nggplot(qq, aes(z, resid)) +\n  geom_abline(intercept = 0, slope = sqrt(mse), colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(size = 2.5) +\n  labs(title = \"השאריות קרובות לקו, עם זנב שמאלי ארוך מעט\",\n       subtitle = \"קו מקווקו: שיפוע σ̂ = √MSE\",\n       x = \"Theoretical quantile (z)\", y = \"Residual (min)\")"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#אי-תלות-שאריות-לפי-היום",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#אי-תלות-שאריות-לפי-היום",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "אי-תלות: שאריות לפי היום",
+    "text": "אי-תלות: שאריות לפי היום\n\n\n\n\n\n\n\n\n\n\nאפקט היום “נכנס” ל-\\(SS_E\\) ומנפח את \\(MS_E\\). הפתרון: היום כבלוק במודל. נגיע לזה בהרצאה 6 (ניתוח שונות רב-כיווני)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#שונות-שווה-שאריות-מול-ממוצעי-הרמות",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#שונות-שווה-שאריות-מול-ממוצעי-הרמות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "שונות שווה: שאריות מול ממוצעי הרמות",
+    "text": "שונות שווה: שאריות מול ממוצעי הרמות\n\n\n\n\n\n\n\n\n\n\nכל עמודה היא רמה אחת. מחפשים פיזור אנכי דומה בכל העמודות\nסימן אזהרה: “משפך”, כשהפיזור גדל עם הממוצע. אצלנו M4 צפוף מעט יותר, אבל אין דפוס ברור"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#מבחן-bartlett",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#מבחן-bartlett",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מבחן Bartlett",
+    "text": "מבחן Bartlett\n\\(H_0: \\sigma_1^2 = \\dots = \\sigma_a^2\\) מול \\(H_1\\): לפחות שונות אחת שונה.\n\\[\nK^2 = \\frac{(N-a)\\ln S_p^2 - \\sum_{i}(n_i-1)\\ln S_i^2}{C} \\;\\sim\\; \\chi^2_{a-1}\n\\qquad S_p^2 = MS_E\n\\]\nהרעיון: \\(S_p^2\\) הוא ממוצע (חשבוני) של \\(S_i^2\\), והאיבר השני הוא ממוצע של הלוגריתמים שלהן (ממוצע הנדסי). ממוצע חשבוני תמיד גדול מהנדסי או שווה לו, ושווה רק כשכל השונויות שוות. ככל שהשונויות מפוזרות יותר, \\(K^2\\) גדל. \\(C = 1 + \\frac{1}{3(a-1)}\\left(\\sum_i \\frac{1}{n_i-1} - \\frac{1}{N-a}\\right)\\) הוא תיקון קטן, קרוב ל-1.\n\nזהירות: המבחן רגיש מאוד לסטייה מנורמליות. כשהשאריות לא נורמליות, משתמשים במבחן Levene\n\n\n\nקוד\nround(tapply(calls$aht, calls$model, var), 2)\n\n\n  M1   M2   M3   M4   M5 \n1.05 1.31 0.76 0.39 0.76 \n\n\nקוד\nbartlett.test(aht ~ model, data = calls)\n\n\n\n    Bartlett test of homogeneity of variances\n\ndata:  aht by model\nBartlett's K-squared = 3, df = 4, p-value = 0.6\n\n\nחישוב ידני. השונויות בין 0.39 (M4) ל-1.31 (M2), \\(S_p^2 = MS_E = 0.854\\), \\(n_i = 9\\), \\(a = 5\\), \\(N - a = 40\\). המונה: \\(40 \\ln 0.854 - 8\\sum_i \\ln S_i^2 = 3.12\\). התיקון: \\(C = 1 + \\frac{1}{12}\\left(\\frac{5}{8} - \\frac{1}{40}\\right) = 1.05\\). לכן \\(K^2 = 2.97\\), קטן בהרבה מ-\\(\\chi^2_{0.95;\\,4} = 9.49\\). אין עדות לשונויות שונות, וזה מתיישב עם הגרף."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#anova-של-welch",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#anova-של-welch",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "ANOVA של Welch",
+    "text": "ANOVA של Welch\nמבחן F הקלאסי מאחד את כל \\(S_i^2\\) ל-\\(MS_E\\) אחד. כשהשונויות שונות, \\(MS_E\\) אחד לא מתאים לאף קבוצה. Welch נותן לכל קבוצה את השונות שלה:\n\\[\nw_i = \\frac{n_i}{S_i^2}, \\qquad \\bar y_w = \\frac{\\sum_i w_i \\bar y_{i\\cdot}}{\\sum_i w_i}, \\qquad\nF_W \\approx \\frac{\\frac{1}{a-1}\\sum_i w_i(\\bar y_{i\\cdot} - \\bar y_w)^2}{1 + \\text{(small correction)}}\n\\]\n\n\\(w_i\\) הוא אחד חלקי השונות של \\(\\bar y_{i\\cdot}\\): ממוצע מדויק (קבוצה גדולה, פיזור קטן) מקבל משקל גבוה, ממוצע רועש מקבל משקל נמוך\n\\(F_W \\sim F_{a-1,\\,\\nu}\\), עם פחות דרגות חופש במכנה מ-\\(N-a\\) (\\(\\nu\\) מחושב מהנתונים). המחיר: קצת פחות עוצמה כשהשונויות באמת שוות\nב-R זו ברירת המחדל של oneway.test(). במודלים (שונויות דומות) המסקנה זהה ל-F הקלאסי:\n\n\n\nקוד\noneway.test(aht ~ model, data = calls)\n\n\n\n    One-way analysis of means (not assuming equal variances)\n\ndata:  aht and model\nF = 4.5, num df = 4, denom df = 20, p-value = 0.009\n\n\nהנוסחה המלאה. עם \\(W = \\sum_i w_i\\) ו-\\(\\Lambda = \\sum_i \\frac{(1 - w_i/W)^2}{n_i - 1}\\), המכנה הוא \\(1 + \\frac{2(a-2)}{a^2-1}\\Lambda\\), ודרגות החופש במכנה הן \\(\\nu = \\frac{a^2-1}{3\\Lambda}\\). הקשר ל-F הקלאסי: אם כל השונויות שוות ל-\\(\\sigma^2\\) ו-\\(n_i = n\\), אז \\(w_i = n/\\sigma^2\\) לכולם, \\(\\bar y_w = \\bar y_{\\cdot\\cdot}\\), והמונה הוא \\(\\frac{n\\sum_i(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2}{(a-1)\\sigma^2} = MS_{Tr}/\\sigma^2\\), כלומר בדיוק סטטיסטי F הקלאסי (כש-\\(\\sigma^2\\) מוחלף ב-\\(MS_E\\)). ההבדל היחיד של Welch הוא שכל קבוצה נמדדת ברעש שלה. במודלים: \\(F_W = 4.5\\) עם \\((4, 20)\\) דרגות חופש, \\(p = 0.009\\), לעומת \\(F_0 = 5.3\\) עם \\((4, 40)\\), \\(p = 0.002\\). הסימולציה הבאה מראה מתי ההבדל בין השניים חשוב."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#סימולציה-ארבעה-תרחישים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#סימולציה-ארבעה-תרחישים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סימולציה: ארבעה תרחישים",
+    "text": "סימולציה: ארבעה תרחישים\nבכל התרחישים התוחלת זהה בשלוש הקבוצות (\\(H_0\\) נכונה). משתנים רק גודל הקבוצות והפיזור בתוכן. כך נראה ניסוי אחד מכל תרחיש:"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#סימולציה-כשהשונויות-לא-שוות",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#סימולציה-כשהשונויות-לא-שוות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סימולציה: כשהשונויות לא שוות",
+    "text": "סימולציה: כשהשונויות לא שוות\nשלוש קבוצות עם אותה תוחלת (\\(H_0\\) נכונה). בכמה מהניסויים מבחן F דוחה ב-\\(\\alpha = 0.05\\)?\n\n\nקוד\nsim_reject &lt;- function(n, sd, reps = 4000) {\n  g &lt;- factor(rep(seq_along(n), n))\n  rejected &lt;- replicate(reps, {\n    y &lt;- rnorm(sum(n), 0, rep(sd, n))\n    c(oneway.test(y ~ g, var.equal = TRUE)$p.value, oneway.test(y ~ g)$p.value) &lt; 0.05\n  })\n  rowMeans(rejected)   # rejection rate: classic F, Welch\n}\nset.seed(77)\nsim_res &lt;- tibble(design = c(\"balanced, equal sd\", \"balanced, unequal sd\",\n                             \"small group has large sd\", \"large group has large sd\"),\n                  n  = list(c(10, 10, 10), c(10, 10, 10), c(5, 10, 20), c(5, 10, 20)),\n                  sd = list(c(1, 1, 1),    c(3, 1, 1),    c(3, 1, 1),    c(1, 1, 3))) |&gt;\n  mutate(rate = map2(n, sd, sim_reject),\n         F = map_dbl(rate, 1), Welch = map_dbl(rate, 2))\nsim_res |&gt; select(design, F, Welch)\n\n\n# A tibble: 4 × 3\n  design                         F  Welch\n  &lt;chr&gt;                      &lt;dbl&gt;  &lt;dbl&gt;\n1 balanced, equal sd       0.0472  0.0452\n2 balanced, unequal sd     0.0788  0.0492\n3 small group has large sd 0.241   0.0592\n4 large group has large sd 0.00875 0.0475"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#התוצאה-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#התוצאה-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "התוצאה בתרשים",
+    "text": "התוצאה בתרשים\n\n\n\n\n\n\n\n\n\n\nניסוי לא מאוזן + שונויות שונות = בעיה. כשלקבוצה הקטנה יש שונות גדולה, F דוחה הרבה יותר מ-5%. Welch (oneway.test()) נשאר קרוב ל-5%\n\nאיך קוראים את התוצאה. כשהכול תקין, מבחן F דוחה ב-5% מהמקרים, כפי שצריך. בניסוי מאוזן עם שונויות שונות, הסטייה קטנה יחסית. בניסוי לא מאוזן, הכיוון תלוי במי שהשונות שלו גדולה: אם לקבוצה הקטנה יש שונות גדולה, \\(MS_E\\) (שנשלט בעיקר על ידי הקבוצות הגדולות) קטן מדי, ומבחן F דוחה הרבה יותר מ-5%: הרבה “תגליות” שגויות. אם לקבוצה הגדולה יש שונות גדולה, \\(MS_E\\) מנופח, והמבחן שמרני מדי ומאבד עוצמה. מבחן Welch לא מניח שונויות שוות: הוא משקלל כל קבוצה לפי \\(n_i / S_i^2\\), ונשאר קרוב ל-5% בכל המקרים."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#השאלה-האם-השרתים-שונים-זה-מזה",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#השאלה-האם-השרתים-שונים-זה-מזה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השאלה: האם השרתים שונים זה מזה?",
+    "text": "השאלה: האם השרתים שונים זה מזה?\nלשירות יש 200 שרתים זהים, לכאורה. צוות התשתיות חושד שיש שרתים “איטיים” (חומרה ישנה, שכן רועש באותו מחשב פיזי).\n\nאי אפשר למדוד את כל 200 השרתים. מגרילים 8 שרתים, ושולחים לכל אחד 6 בקשות זהות\nהשאלה לא “האם שרת 17 איטי משרת 112”. השרתים שנבחרו לא מעניינים כשלעצמם\nהשאלה: האם באוכלוסיית השרתים יש שונות בזמן התגובה? וכמה מהשונות הכוללת היא בין שרתים?\n\n\n\nקוד\nset.seed(404)\nfleet &lt;- tibble(server = sprintf(\"srv-%03d\", 1:200), tau = rnorm(200, 0, 10))  # sd between servers: 10 ms\nservers &lt;- fleet |&gt;\n  slice_sample(n = 8) |&gt;\n  expand_grid(rep = 1:6) |&gt;\n  mutate(latency = round(120 + tau + rnorm(n(), 0, 15), 1),                     # sd within: 15 ms\n         server = factor(server))"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הנתונים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הנתונים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הנתונים",
+    "text": "הנתונים\n\n\nקוד\nggplot(servers, aes(server, latency)) +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5, alpha = 0.8,\n             position = position_jitter(width = 0.08, seed = 4)) +\n  stat_summary(fun = mean, geom = \"crossbar\", width = 0.4, colour = nanas_pal[[\"accent\"]]) +\n  labs(title = \"8 שרתים שהוגרלו מתוך 200\",\n       subtitle = \"6 בקשות לכל שרת · קו כתום: הממוצע של השרת\",\n       x = \"Server\", y = \"Latency (ms)\")"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#המודל",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#המודל",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "המודל",
+    "text": "המודל\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij} \\qquad\n\\tau_i \\sim N(0, \\sigma_\\tau^2) \\qquad\n\\varepsilon_{ij} \\sim N(0, \\sigma^2)\n\\]\n\nאותה נוסחה, אבל עכשיו \\(\\tau_i\\) הוא משתנה מקרי: השרת הוגרל\n\\(\\tau_i\\) ו-\\(\\varepsilon_{ij}\\) בלתי תלויים. אין אילוץ \\(\\sum \\tau_i = 0\\)\nהשונות של תצפית מתפרקת לשני רכיבי שונות (variance components):\n\n\\[\nV(y_{ij}) = \\sigma_\\tau^2 + \\sigma^2\n\\]\nההשערות הן על \\(\\sigma_\\tau^2\\), ולא על ה-\\(\\tau_i\\) עצמם:\n\\[\nH_0: \\sigma_\\tau^2 = 0 \\qquad H_1: \\sigma_\\tau^2 &gt; 0\n\\]"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#המבחן-והאומדים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#המבחן-והאומדים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "המבחן והאומדים",
+    "text": "המבחן והאומדים\nסכומי הריבועים, הטבלה ו-\\(F_0 = MS_{Tr}/MS_E\\) זהים למודל הקבוע. משתנה הפרשנות של התוחלות:\n\\[\nE(MS_E) = \\sigma^2 \\qquad E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\n\\]\nתחת \\(H_0\\) (\\(\\sigma_\\tau^2 = 0\\)) שניהם אומדים את \\(\\sigma^2\\), ולכן שוב \\(F_0 \\sim F_{a-1,\\,N-a}\\). מכאן גם אומדים לרכיבי השונות:\n\\[\n\\hat\\sigma^2 = MS_E \\qquad \\hat\\sigma_\\tau^2 = \\frac{MS_{Tr} - MS_E}{n}\n\\]\nמתאם תוך-קבוצתי (intraclass correlation, ICC): איזה חלק מהשונות הכוללת הוא בין הרמות?\n\\[\n\\rho = \\frac{\\sigma_\\tau^2}{\\sigma_\\tau^2 + \\sigma^2}\n\\]\nאם \\(MS_{Tr} &lt; MS_E\\), האומד \\(\\hat\\sigma_\\tau^2\\) יוצא שלילי. שונות לא יכולה להיות שלילית, ולכן מדווחים \\(\\hat\\sigma_\\tau^2 = 0\\). זה קורה כש-\\(F_0 &lt; 1\\), ומתיישב עם \\(H_0\\).\nבניסוי לא מאוזן מחליפים את \\(n\\) ב-\\(n_0 = \\frac{1}{a-1}\\left(N - \\frac{\\sum n_i^2}{N}\\right)\\).\nלמה הבחירה בין קבוע לאקראי חשובה, אם המבחן זהה? כי המסקנה שונה. במודל קבוע המסקנה חלה רק על הרמות שנבדקו (“יש הבדל בין חמשת המודלים שבדקנו”). במודל אקראי היא חלה על כל האוכלוסייה (“השרתים בצי שונים זה מזה, וזה תורם X% מהשונות”). בניתוח שונות דו-כיווני הבחירה תשנה גם את המבחנים עצמם: את המכנה של ה-F."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#למה-ems_tr-sigma2-nsigma_tau2",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#למה-ems_tr-sigma2-nsigma_tau2",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "למה \\(E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\\)?",
+    "text": "למה \\(E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\\)?\nעובדה אחת: שונות מדגמית היא אומד חסר הטיה לשונות.\n\nהממוצע של רמה \\(i\\), ו-\\(\\tau_i\\) משתנה מקרי בלתי תלוי בשגיאות:\n\n\\[\n\\bar y_{i\\cdot} = \\mu + \\tau_i + \\bar\\varepsilon_{i\\cdot} \\quad\\Rightarrow\\quad V(\\bar y_{i\\cdot}) = \\sigma_\\tau^2 + \\frac{\\sigma^2}{n}\n\\]\n\nהרמות הוגרלו, ולכן \\(\\bar y_{1\\cdot}, \\dots, \\bar y_{a\\cdot}\\) הם מדגם של \\(a\\) ערכים בלתי תלויים מאותה התפלגות. השונות המדגמית שלהם, \\(S^2_{\\bar y} = \\frac{1}{a-1}\\sum_i (\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2\\), חסרת הטיה: \\(E(S^2_{\\bar y}) = \\sigma_\\tau^2 + \\frac{\\sigma^2}{n}\\)\nב-\\(SS_{Tr}\\) כל תצפית מוחלפת בממוצע הרמה שלה: \\(SS_{Tr} = \\sum_i\\sum_{j=1}^{n}(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2\\). האיבר לא תלוי ב-\\(j\\), ולכן הוא נספר \\(n\\) פעמים:\n\n\\[\nMS_{Tr} = \\frac{SS_{Tr}}{a-1} = n \\cdot \\frac{\\sum_i(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2}{a-1} = n S^2_{\\bar y}\n\\quad\\Rightarrow\\quad E(MS_{Tr}) = n\\sigma_\\tau^2 + \\sigma^2\n\\]\nבמודל הקבוע \\(\\tau_i\\) הם קבועים. בשלב 1 נשאר רק \\(\\sigma^2/n\\), ובמקום \\(\\sigma_\\tau^2\\) מופיע \\(\\frac{\\sum\\tau_i^2}{a-1}\\): הפיזור של האפקטים שנבחרו, במקום השונות של אוכלוסיית האפקטים."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#בחזרה-לשרתים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#בחזרה-לשרתים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בחזרה לשרתים",
+    "text": "בחזרה לשרתים\n\n\nקוד\nfit_srv &lt;- aov(latency ~ server, data = servers)\nsummary(fit_srv)\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nserver       7   5433     776    4.12 0.0017 **\nResiduals   40   7535     188                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nקוד\nms_srv &lt;- summary(fit_srv)[[1]][[\"Mean Sq\"]]\nc(sigma2_hat = ms_srv[2], sigma2_tau_hat = (ms_srv[1] - ms_srv[2]) / 6,\n  icc = ((ms_srv[1] - ms_srv[2]) / 6) / ((ms_srv[1] - ms_srv[2]) / 6 + ms_srv[2]))\n\n\n    sigma2_hat sigma2_tau_hat            icc \n      188.3674        97.9592         0.3421 \n\n\n\nדוחים את \\(H_0\\) (\\(p = 0.0017\\))\nסטיית התקן בין שרתים נאמדת ב-\\(\\sqrt{\\hat\\sigma_\\tau^2} = 9.9\\) מילישניות (האמת בסימולציה: 10), ובתוך שרת ב-\\(13.7\\) (האמת: 15)\nכ-34% מהשונות בזמן התגובה נובעת מהבדלים בין שרתים. ההחלטה: האם שווה לאתר ולהחליף שרתים איטיים, או שרוב הבעיה היא בתוך כל שרת?\n\n\nעם 8 שרתים בלבד, האומד ל-σ_τ² מאוד לא מדויק. זה המחיר של מודל אקראי: את רכיב השונות בין הרמות אומדים מ-a = 8 ממוצעים בלבד. כדי לאמוד אותו טוב, צריך יותר שרתים, לא יותר בקשות לכל שרת."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#קבוע-או-אקראי",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#קבוע-או-אקראי",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "קבוע או אקראי?",
+    "text": "קבוע או אקראי?\n\n\n\n\n\n\n\n\n\nאפקטים קבועים\nאפקטים אקראיים\n\n\n\n\nהרמות\nכל הרמות שמעניינות אותנו\nמדגם מקרי מתוך הרבה רמות\n\n\nדוגמאות\n5 המודלים שהמוקד שקל, 3 גרסאות של מוצר, 4 נוסחים של פרומפט\nשרתים מתוך צי, מוקדנים מתוך מוקד, אצוות של חומר גלם\n\n\n\\(\\tau_i\\)\nקבועים, \\(\\sum \\tau_i = 0\\)\nמשתנים מקריים, \\(N(0, \\sigma_\\tau^2)\\)\n\n\n\\(H_0\\)\n\\(\\tau_1 = \\dots = \\tau_a = 0\\)\n\\(\\sigma_\\tau^2 = 0\\)\n\n\nמה אומדים\n\\(\\mu_i\\) והפרשים ביניהן\nרכיבי שונות \\(\\sigma_\\tau^2\\), \\(\\sigma^2\\), ICC\n\n\nהמסקנה חלה על\nהרמות שנבדקו\nכל אוכלוסיית הרמות\n\n\n\nשאלת מבחן: “אם נחזור על הניסוי, האם נבדוק את אותן רמות?” אם כן: קבוע. אם נגריל רמות חדשות: אקראי."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#חמש-מלכודות-בניתוח-שונות",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#חמש-מלכודות-בניתוח-שונות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "חמש מלכודות בניתוח שונות",
+    "text": "חמש מלכודות בניתוח שונות\n\nאין הגרלה: אם M1 הופעל רק בימי ראשון העמוסים, ההבדל הוא של היום ולא של המודל. ניתוח שונות לא מתקן תכנון גרוע\nחזרות מדומות (pseudo-replication): 8 בקשות לאותו שרת אינן 8 שרתים. ב-\\(N\\) סופרים את היחידות שהוגרלו, לא את המדידות\n“לא מובהק” אינו “שווה”: אם לא דחינו, ייתכן שפשוט אין מספיק עוצמה. בודקים רווחי סמך וגודל מדגם\nמובהק אינו חשוב: עם מספיק נתונים, גם הבדל של שנייה אחת יהיה מובהק. מדווחים את גודל האפקט (שקף הבא)\nמבחני t מרובים במקום F: עם הרבה רמות, הבדל מקרי “יימצא” כמעט בוודאות"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#גודל-אפקט-effect-size-eta2",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#גודל-אפקט-effect-size-eta2",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גודל אפקט (Effect size): \\(\\eta^2\\)",
+    "text": "גודל אפקט (Effect size): \\(\\eta^2\\)\n\\[\n\\eta^2 = \\frac{SS_{Tr}}{SS_T}\n\\]\n\nהחלק מהשונות הכוללת שמוסבר על ידי הפקטור. זה בדיוק \\(R^2\\) של הרגרסיה המקבילה\nלמודלים: \\(\\eta^2 = 18.02 / 52.17 = 0.35\\). המודל מסביר כשליש מהשונות במשך הטיפול\n\n\n\nקוד\naov_tab &lt;- summary(fit_ai)[[1]]\nc(eta2 = aov_tab[1, \"Sum Sq\"] / sum(aov_tab[, \"Sum Sq\"]),\n  R2_lm = summary(lm(aht ~ model, data = calls))$r.squared)\n\n\n  eta2  R2_lm \n0.3455 0.3455 \n\n\n\\(\\eta^2\\) מוטה כלפי מעלה במדגמים קטנים (כמו \\(R^2\\)). גרסה מתוקנת היא \\(\\omega^2 = \\frac{SS_{Tr} - (a-1)MS_E}{SS_T + MS_E}\\), שלמודלים יוצאת \\(\\frac{18.02 - 4 \\cdot 0.854}{52.17 + 0.854} = 0.28\\). מעבר למדד היחסי, כדאי לדווח את ההבדלים עצמם ביחידות המקוריות: “עם M4 הטיפול קצר בדקה וחצי בממוצע מאשר עם M2” אומר למנהל יותר מ-\\(\\eta^2 = 0.35\\)."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#סיכום-הרצאה-4",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#סיכום-הרצאה-4",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סיכום הרצאה 4",
+    "text": "סיכום הרצאה 4\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#התוצאה-למודלים",
     "href": "lectures/05-contrasts-multiple-comparisons.html#התוצאה-למודלים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "התוצאה למודלים",
-    "text": "התוצאה למודלים\n\n\nקוד\nsummary(fit_ai)\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nmodel        4   18.0    4.51    5.28 0.0016 **\nResiduals   40   34.1    0.85                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(F_0 = 5.28 &gt; F_{0.95;\\,4,\\,40} = 2.61\\): יש הבדל בין המודלים\n\\(MS_E = 0.854\\), ולכן \\(\\hat\\sigma = 0.92\\) דקות\nאבל מבחן ה-F לא אומר בין מי למי. עם M1 ו-M2 הטיפול נראה ארוך, ועם M3, M4 ו-M5 קצר. האם זה אמיתי?\n\nשתי דרכים לענות:\n\nניגודים: שאלות ספציפיות שניסחנו לפני שראינו את הנתונים\nהשוואות מרובות: כל הזוגות, עם תיקון לכך שבודקים הרבה\n\n\nעוד דבר מיום ראשון: ראינו שבימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נחזור לזה בסוף, במבחן פרידמן."
+    "text": "התוצאה למודלים\n\n\nקוד\nsummary(fit_ai)\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nmodel        4   18.0    4.51    5.28 0.0016 **\nResiduals   40   34.1    0.85                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(F_0 = 5.28 &gt; F_{0.95;\\,4,\\,40} = 2.61\\): יש הבדל בין המודלים\n\\(MS_E = 0.854\\), ולכן \\(\\hat\\sigma = 0.92\\) דקות\nאבל מבחן ה-F לא אומר בין מי למי. עם M1 ו-M2 הטיפול נראה ארוך, ועם M3, M4 ו-M5 קצר. האם זה אמיתי?\n\nשתי דרכים לענות:\n\nניגודים: שאלות ספציפיות שניסחנו לפני שראינו את הנתונים\nהשוואות מרובות: כל הזוגות, עם תיקון לכך שבודקים הרבה\n\n\nתזכורת: בימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נטפל בזה בהרצאה 6, עם בלוקים."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#שאלות-ספציפיות",
@@ -2986,7 +3133,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#הגדרה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הגדרה",
-    "text": "הגדרה\nניגוד (contrast) הוא צירוף לינארי של התוחלות\n\\[\n\\Gamma = \\sum_{i=1}^{a} c_i \\mu_i \\qquad \\text{כאשר} \\qquad \\sum_{i=1}^{a} c_i = 0\n\\]\n\n\n\nהשאלה\n\\(c_1\\)\n\\(c_2\\)\n\\(c_3\\)\n\\(c_4\\)\n\\(c_5\\)\n\n\n\n\nקטנים מול גדולים\n1\n1\n0\n−1\n−1\n\n\nM3 מול M4\n0\n0\n1\n−1\n0\n\n\n\n\nלמה \\(\\sum c_i = 0\\)? כי אז \\(\\sum c_i \\mu_i = \\sum c_i(\\mu + \\tau_i) = \\sum c_i \\tau_i\\). ה-\\(\\mu\\) מתבטל, והניגוד מודד רק הבדלים בין הרמות\nכל השוואה בין שתי רמות היא ניגוד: \\(c = (1, -1, 0, \\dots)\\)"
+    "text": "הגדרה\nניגוד (contrast) הוא צירוף לינארי של התוחלות, שסכום המקדמים שלו אפס:\n\\[\n\\Gamma = \\sum_{i=1}^{a} c_i \\mu_i, \\qquad \\sum_{i=1}^{a} c_i = 0\n\\]\n\n\n\nהשאלה\n\\(c_1\\)\n\\(c_2\\)\n\\(c_3\\)\n\\(c_4\\)\n\\(c_5\\)\n\n\n\n\nקטנים מול גדולים\n1\n1\n0\n−1\n−1\n\n\nM3 מול M4\n0\n0\n1\n−1\n0\n\n\n\n\nלמה \\(\\sum c_i = 0\\)? כי אז \\(\\sum c_i \\mu_i = \\sum c_i(\\mu + \\tau_i) = \\sum c_i \\tau_i\\). ה-\\(\\mu\\) מתבטל, והניגוד מודד רק הבדלים בין הרמות\nכל השוואה בין שתי רמות היא ניגוד: \\(c = (1, -1, 0, \\dots)\\)"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#האומד-והשונות-שלו",
@@ -2996,11 +3143,18 @@
     "text": "האומד והשונות שלו\nהאומד: מחליפים כל תוחלת בממוצע של הרמה:\n\\[\n\\hat\\Gamma = \\sum_{i=1}^{a} c_i \\bar y_{i\\cdot}\n\\]\nהתוחלת: \\(E(\\hat\\Gamma) = \\sum c_i \\mu_i = \\Gamma\\). תחת \\(H_0\\) היא אפס.\nהשונות: הממוצעים בלתי תלויים, וכל אחד עם שונות \\(\\sigma^2/n\\):\n\\[\nV(\\hat\\Gamma) = \\sum_{i=1}^{a} c_i^2 \\, V(\\bar y_{i\\cdot}) = \\frac{\\sigma^2}{n}\\sum_{i=1}^{a} c_i^2\n\\]\nמבחן t: מציבים \\(MS_E\\) במקום \\(\\sigma^2\\):\n\\[\nt_0 = \\frac{\\sum c_i \\bar y_{i\\cdot}}{\\sqrt{\\frac{MS_E}{n}\\sum c_i^2}} \\sim t_{N-a} \\quad \\text{(תחת } H_0\\text{)}\n\\]"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#סכום-הריבועים-של-ניגוד",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#סכום-הריבועים-של-ניגוד",
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#מ-t-ל-f-סכום-הריבועים-של-ניגוד",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#מ-t-ל-f-סכום-הריבועים-של-ניגוד",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "סכום הריבועים של ניגוד",
-    "text": "סכום הריבועים של ניגוד\nאפשר לכתוב את אותו מבחן כמבחן F, עם \\(t_0^2 = F_0\\). בעזרת הסכומים \\(y_{i\\cdot} = n\\bar y_{i\\cdot}\\):\n\\[\nSS_C = \\frac{\\left(\\sum_{i=1}^{a} c_i y_{i\\cdot}\\right)^2}{n\\sum_{i=1}^{a} c_i^2}\n\\qquad\\qquad\nF_0 = \\frac{SS_C / 1}{MS_E} \\sim F_{1,\\; N-a}\n\\]\n\nלכל ניגוד דרגת חופש אחת\n\\(SS_C\\) הוא החלק של \\(SS_{Tr}\\) ש”מוסבר” על ידי השאלה הספציפית הזו\nדוחים את \\(H_0: \\Gamma = 0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,1,\\,N-a}\\)\n\nמאיפה הנוסחה? \\(t_0^2 = \\frac{(\\sum c_i \\bar y_{i\\cdot})^2}{\\frac{MS_E}{n}\\sum c_i^2}\\). נכפיל מונה ומכנה ב-\\(n^2\\): המונה הופך ל-\\((\\sum c_i y_{i\\cdot})^2\\), והמכנה ל-\\(n \\cdot MS_E \\sum c_i^2\\). מכאן \\(t_0^2 = \\frac{SS_C}{MS_E}\\)."
+    "section": "מ-t ל-F: סכום הריבועים של ניגוד",
+    "text": "מ-t ל-F: סכום הריבועים של ניגוד\nמעלים את \\(t_0\\) בריבוע, מונה ומכנה, ומציבים \\(\\bar y_{i\\cdot} = y_{i\\cdot}/n\\) (הסכומים במקום הממוצעים):\n\\[\nt_0^2 = \\frac{\\left(\\sum c_i \\bar y_{i\\cdot}\\right)^2}{\\frac{MS_E}{n}\\sum c_i^2}\n= \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2 / n^2}{\\frac{MS_E}{n}\\sum c_i^2}\n= \\frac{1}{MS_E}\\cdot\\underbrace{\\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{n\\sum c_i^2}}_{SS_C}\n\\]\n\\[\nF_0 = t_0^2 = \\frac{SS_C / 1}{MS_E} \\sim F_{1,\\; N-a}\n\\]\n\nהמונה, \\(SS_C\\), הוא סכום ריבועים עם דרגת חופש אחת. המכנה הוא אותו \\(MS_E\\) כמו במבחן t\nזה אותו מבחן: \\(t_{0.975,\\,40}^2 = 2.021^2 = 4.08 = F_{0.95;\\,1,\\,40}\\), ו-p-value זהה למבחן t דו-צדדי\nדוחים את \\(H_0: \\Gamma = 0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,1,\\,N-a}\\)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#אז-למה-לעבור-ל-f",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#אז-למה-לעבור-ל-f",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "אז למה לעבור ל-F?",
+    "text": "אז למה לעבור ל-F?\nכי \\(SS_C\\) מדבר באותה שפה כמו טבלת ANOVA:\n\n\\(SS_C\\) הוא חלק מ-\\(SS_{Tr}\\): כמה מההבדלים בין הרמות השאלה הספציפית הזו מסבירה. ב-t אין לזה מקבילה\nעם ניגודים אורתוגונליים (בעוד רגע), ה-\\(SS_C\\) מחלקים בדיוק את \\(SS_{Tr}\\). מבחן ה-F הכללי הוא בעצם הממוצע של \\(a - 1\\) מבחני F של ניגודים: \\(MS_{Tr} = \\frac{1}{a-1}\\sum SS_{C_k}\\)\nהחישוב הידני מהסכומים \\(y_{i\\cdot}\\) נוח, וזה הפורמט של שאלות הבחינה\n\nמתי להישאר עם t?\n\nהשערה חד-צדדית. \\(t_0^2\\) מאבד את הסימן. “האם המודלים הגדולים מקצרים את הטיפול?” היא בעצם שאלה חד-צדדית: \\(t_0 &gt; t_{1-\\alpha,\\,N-a}\\)\nרווח סמך לניגוד: \\(\\hat\\Gamma \\pm t_{1-\\alpha/2,\\,N-a}\\sqrt{\\frac{MS_E}{n}\\sum c_i^2}\\). הוא אומר כמה, לא רק אם"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#המודלים-קטנים-מול-גדולים",
@@ -3014,7 +3168,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#אותו-חישוב-ב-r",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "אותו חישוב ב-R",
-    "text": "אותו חישוב ב-R\n\n\nקוד\ncontrast_test &lt;- function(c, totals, n, mse, df_e) {\n  ss &lt;- sum(c * totals)^2 / (n * sum(c^2))\n  c(estimate = sum(c * totals / n), SS = ss, F = ss / mse,\n    p = pf(ss / mse, 1, df_e, lower.tail = FALSE))\n}\ntotals &lt;- tapply(calls$aht, calls$model, sum)\nrbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),\n      M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))\n\n\n               estimate      SS       F         p\nsmall_vs_large   2.6178 15.4187 18.0627 0.0001243\nM3_vs_M4         0.2311  0.2404  0.2816 0.5986067"
+    "text": "אותו חישוב ב-R\nידנית, לפי הנוסחאות:\n\n\nקוד\ncontrast_test &lt;- function(c, totals, n, mse, df_e) {\n  ss &lt;- sum(c * totals)^2 / (n * sum(c^2))\n  c(estimate = sum(c * totals / n), SS = ss, F = ss / mse,\n    p = pf(ss / mse, 1, df_e, lower.tail = FALSE))\n}\ntotals &lt;- tapply(calls$aht, calls$model, sum)\nrbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),\n      M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))\n\n\n               estimate      SS       F         p\nsmall_vs_large   2.6178 15.4187 18.0627 0.0001243\nM3_vs_M4         0.2311  0.2404  0.2816 0.5986067\n\n\nבפקודה מוכנה, חבילת emmeans:\n\n\nקוד\nemm &lt;- emmeans::emmeans(fit_ai, ~ model)   # the 5 level means\nemmeans::contrast(emm, list(small_vs_large = c(1, 1, 0, -1, -1) / 2,\n                            M3_vs_M4       = c(0, 0, 1, -1, 0)))\n\n\n contrast       estimate    SE df t.ratio p.value\n small_vs_large    1.309 0.308 40   4.250  0.0001\n M3_vs_M4          0.231 0.436 40   0.531  0.5986\n\n\n\nemmeans מדווח \\(t\\) ולא \\(F\\), אבל \\(t^2 = F\\): \\(4.25^2 = 18.06\\), \\(0.53^2 = 0.28\\). אותו \\(p\\)\nחילקנו את הניגוד הראשון ב-2 כדי שהאומדן יהיה \\(\\hat\\Gamma = 1.31\\) דקות. כפל של \\(c\\) בקבוע לא משנה את \\(t\\) ואת \\(p\\)"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#ניגודים-אורתוגונליים-orthogonal-contrasts",
@@ -3049,7 +3203,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#ניגודים-בניסוי-לא-מאוזן",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ניגודים בניסוי לא מאוזן",
-    "text": "ניגודים בניסוי לא מאוזן\nכש-\\(n_i\\) שונים, מגדירים את הניגוד על הסכומים \\(y_{i\\cdot}\\):\n\\[\nC = \\sum_{i=1}^{a} c_i y_{i\\cdot} \\qquad E(C) = \\sum_{i=1}^{a} c_i n_i (\\mu + \\tau_i) = \\mu\\sum_{i=1}^{a} n_i c_i + \\sum_{i=1}^{a} n_i c_i \\tau_i\n\\]\nכדי ש-\\(\\mu\\) יתבטל, התנאי הוא:\n\\[\n\\sum_{i=1}^{a} n_i c_i = 0 \\qquad\\qquad SS_C = \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{\\sum n_i c_i^2}\n\\]\n\nאורתוגונליות בניסוי לא מאוזן: \\(\\sum n_i c_i d_i = 0\\)\nבניסוי מאוזן (\\(n_i = n\\)) חוזרים לתנאים הקודמים"
+    "text": "ניגודים בניסוי לא מאוזן\nכש-\\(n_i\\) שונים, מגדירים את הניגוד על הסכומים \\(y_{i\\cdot}\\):\n\\[\nC = \\sum_{i=1}^{a} c_i y_{i\\cdot}\n\\]\n\\(y_{i\\cdot}\\) הוא סכום של \\(n_i\\) תצפיות, ולכל אחת תוחלת \\(\\mu + \\tau_i\\). לכן \\(E(y_{i\\cdot}) = n_i(\\mu + \\tau_i)\\), ומליניאריות התוחלת:\n\\[\nE(C) = \\sum_{i=1}^{a} c_i\\, E(y_{i\\cdot}) = \\sum_{i=1}^{a} c_i n_i (\\mu + \\tau_i) = \\mu\\sum_{i=1}^{a} n_i c_i + \\sum_{i=1}^{a} n_i c_i \\tau_i\n\\]\nהניגוד צריך למדוד רק הבדלים בין האפקטים \\(\\tau_i\\), ולא את הרמה הכללית \\(\\mu\\). כדי ש-\\(\\mu\\) יתבטל, התנאי הוא:\n\\[\n\\sum_{i=1}^{a} n_i c_i = 0 \\qquad\\qquad SS_C = \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{\\sum n_i c_i^2}\n\\]\n\nאורתוגונליות בניסוי לא מאוזן: \\(\\sum n_i c_i d_i = 0\\)\nבניסוי מאוזן (\\(n_i = n\\)) חוזרים לתנאים הקודמים"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#דוגמה-מבחן-בשלוש-כיתות",
@@ -3059,11 +3213,18 @@
     "text": "דוגמה: מבחן בשלוש כיתות\nמבחן התקיים בשלוש כיתות: 40 סטודנטים בכיתה 1, ו-30 בכל אחת מכיתות 2 ו-3. כיתה 3 סמוכה לאתר בנייה. הסטודנטים שלה מבקשים פקטור. האם הטענה מוצדקת?\n\n\nקוד\nrooms &lt;- read_csv(file.path(data_dir, \"exam_rooms.csv\"), show_col_types = FALSE)\nrooms |&gt; group_by(room) |&gt; summarise(n = n(), total = sum(grade), mean = mean(grade))\n\n\n# A tibble: 3 × 4\n  room      n total  mean\n  &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 room1    40  3014  75.4\n2 room2    30  2258  75.3\n3 room3    30  2015  67.2\n\n\nקוד\nfit_rooms &lt;- aov(grade ~ room, data = rooms)\nsummary(fit_rooms)\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)  \nroom         2   1394     697    4.08   0.02 *\nResiduals   97  16573     171                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nה-ANOVA דוחה (\\(p = 0.02\\)). אבל השאלה ספציפית: כיתה 3 מול שתי האחרות."
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3",
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3-בחירת-המקדמים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3-בחירת-המקדמים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הניגוד לכיתה 3",
-    "text": "הניגוד לכיתה 3\nצריך \\(\\sum n_i c_i = 0\\) עם \\(n = (40, 30, 30)\\). ננסה \\(c = (1, 1, c_3)\\):\n\\[\n40 + 30 + 30c_3 = 0 \\;\\Longrightarrow\\; c_3 = -\\tfrac{7}{3} \\;\\Longrightarrow\\; c = (3, 3, -7)\n\\]\n\\[\nC = 3 \\cdot 3014 + 3 \\cdot 2258 - 7 \\cdot 2015 = 1711\n\\qquad\n\\sum n_i c_i^2 = 40 \\cdot 9 + 30 \\cdot 9 + 30 \\cdot 49 = 2100\n\\]\n\\[\nSS_C = \\frac{1711^2}{2100} = 1394.1 \\qquad F_0 = \\frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\\,1,\\,97} = 3.94\n\\]\nדוחים: בכיתה 3 הציונים נמוכים באופן מובהק משתי הכיתות האחרות, בכ-8 נקודות. ו-\\(SS_C\\) הוא כמעט כל \\(SS_{Tr} = 1394.2\\): בין כיתות 1 ו-2 כמעט אין הבדל.\n\n\nקוד\nrt &lt;- tapply(rooms$grade, rooms$room, sum); rn &lt;- table(rooms$room); cc &lt;- c(3, 3, -7)\nss_room3 &lt;- sum(cc * rt)^2 / sum(rn * cc^2)\nc(sum_n_c = sum(rn * cc), SS_C = ss_room3, F = ss_room3 / 170.86,\n  p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))\n\n\n  sum_n_c      SS_C         F         p \n0.000e+00 1.394e+03 8.159e+00 5.242e-03 \n\n\n\nשאלה לדיון: האם זה מוכיח שהרעש גרם לציונים נמוכים? רק אם הסטודנטים שובצו לכיתות באקראי. אם כיתה 3 הייתה, למשל, הכיתה של מי שנרשם אחרון למבחן, ייתכן שזו אוכלוסייה אחרת."
+    "section": "הניגוד לכיתה 3: בחירת המקדמים",
+    "text": "הניגוד לכיתה 3: בחירת המקדמים\nהשאלה: האם הממוצע בכיתה 3 נמוך מהממוצע של כיתות 1 ו-2 יחד?\n\nכיתות 1 ו-2 באותו צד של השאלה, ולכן מקבלות אותו מקדם. נבחר \\(c_1 = c_2 = 1\\)\nאת \\(c_3\\) קובע התנאי לניסוי לא מאוזן, \\(\\sum n_i c_i = 0\\), עם \\(n = (40, 30, 30)\\):\n\n\\[\n40 \\cdot 1 + 30 \\cdot 1 + 30\\,c_3 = 0 \\;\\Longrightarrow\\; c_3 = -\\tfrac{7}{3}\n\\]\n\nכופלים ב-3 כדי לעבוד עם מספרים שלמים: \\(c = (3, 3, -7)\\). כפל בקבוע לא משנה את \\(SS_C\\): המונה והמכנה מוכפלים שניהם ב-\\(9\\)\n\nמה הניגוד מודד? כי \\(3 \\cdot 70 = 7 \\cdot 30 = 210\\):\n\\[\nC = 3(y_{1\\cdot} + y_{2\\cdot}) - 7\\,y_{3\\cdot} = 210\\left(\\underbrace{\\frac{y_{1\\cdot} + y_{2\\cdot}}{70}}_{\\bar y_{1,2}} - \\underbrace{\\frac{y_{3\\cdot}}{30}}_{\\bar y_{3\\cdot}}\\right)\n\\]\nכלומר \\(C/210 = \\bar y_{1,2} - \\bar y_{3\\cdot}\\): ההפרש בין הממוצע של כל 70 הסטודנטים בכיתות 1 ו-2 לבין הממוצע בכיתה 3."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3-החישוב",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הניגוד-לכיתה-3-החישוב",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הניגוד לכיתה 3: החישוב",
+    "text": "הניגוד לכיתה 3: החישוב\nמהשקף הקודם: \\(y_{1\\cdot} = 3014\\), \\(y_{2\\cdot} = 2258\\), \\(y_{3\\cdot} = 2015\\), ו-\\(MS_E = 170.9\\) (ה-Mean Sq של Residuals).\n\\[\nC = 3 \\cdot 3014 + 3 \\cdot 2258 - 7 \\cdot 2015 = 1711 \\qquad \\frac{C}{210} = 8.15\n\\]\n\\[\nSS_C = \\frac{C^2}{\\sum n_i c_i^2} = \\frac{1711^2}{40 \\cdot 9 + 30 \\cdot 9 + 30 \\cdot 49} = \\frac{1711^2}{2100} = 1394.1\n\\]\n\\[\nF_0 = \\frac{SS_C}{MS_E} = \\frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\\,1,\\,97} = 3.94\n\\]\n\nדוחים: בכיתה 3 הציונים נמוכים בכ-8 נקודות מהממוצע בכיתות 1 ו-2, והפער מובהק\n\\(SS_C = 1394.1\\) הוא כמעט כל \\(SS_{Tr} = 1394.2\\). כל ההבדל בין הכיתות הוא “כיתה 3 מול השאר”. בין כיתות 1 ו-2 כמעט אין הבדל\n\n\n\nקוד\nrt &lt;- tapply(rooms$grade, rooms$room, sum); rn &lt;- table(rooms$room); cc &lt;- c(3, 3, -7)\nss_room3 &lt;- sum(cc * rt)^2 / sum(rn * cc^2)\nc(sum_n_c = sum(rn * cc), C = sum(cc * rt), diff = sum(cc * rt) / 210, SS_C = ss_room3,\n  F = ss_room3 / 170.86, p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))\n\n\n  sum_n_c         C      diff      SS_C         F         p \n0.000e+00 1.711e+03 8.148e+00 1.394e+03 8.159e+00 5.242e-03 \n\n\n\nשאלה לדיון: האם זה מוכיח שהרעש גרם לציונים נמוכים? רק אם הסטודנטים שובצו לכיתות באקראי. אם כיתה 3 הייתה, למשל, הכיתה של מי שנרשם אחרון למבחן, ייתכן שזו אוכלוסייה אחרת."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#ניגודים-מתוכננים-מול-מה-שנראה-מעניין",
@@ -3084,28 +3245,49 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#סימולציה-10-מבחני-t-כשאין-שום-הבדל",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "סימולציה: 10 מבחני t כשאין שום הבדל",
-    "text": "סימולציה: 10 מבחני t כשאין שום הבדל\n\n\nקוד\nset.seed(55)\ng &lt;- factor(rep(paste0(\"M\", 1:5), each = 9))\nany_reject &lt;- replicate(4000, {\n  p &lt;- pairwise.t.test(rnorm(45), g, p.adjust.method = \"none\")$p.value\n  any(p &lt; 0.05, na.rm = TRUE)\n})\nmean(any_reject)\n\n\n[1] 0.269\n\n\n\nב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים\nפחות מ-40% בגלל התלות בין המבחנים, אבל הרבה יותר מ-5%"
+    "text": "סימולציה: 10 מבחני t כשאין שום הבדל\n5 מודלים זהים, 9 תצפיות לכל אחד. משווים כל זוג במבחן t ב-\\(\\alpha = 0.05\\). מספר הזוגות: \\(\\binom{5}{2} = \\frac{5 \\cdot 4}{2} = 10\\) (כל אחד מ-5 המודלים מול 4 האחרים, וכל זוג נספר פעמיים). חוזרים על הניסוי 4,000 פעמים.\n\n\nקוד\nset.seed(55)\ng &lt;- factor(rep(paste0(\"M\", 1:5), each = 9))\nn_reject &lt;- replicate(4000, {\n  p &lt;- pairwise.t.test(rnorm(45), g, p.adjust.method = \"none\")$p.value\n  sum(p &lt; 0.05, na.rm = TRUE)                    # false rejections in this experiment\n})\nc(P_any = mean(n_reject &gt; 0), mean_rejections = mean(n_reject))\n\n\n          P_any mean_rejections \n         0.2690          0.4983 \n\n\nקוד\ntable(n_reject)\n\n\nn_reject\n   0    1    2    3    4    5    6 \n2924  540  284  144   92   11    5 \n\n\n\nב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים. הרבה יותר מ-5%"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#שלוש-שיטות-שלוש-משמעויות-של-מובהק",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#שלוש-שיטות-שלוש-משמעויות-של-מובהק",
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הסימולציה-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הסימולציה-בתרשים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "שלוש שיטות, שלוש משמעויות של “מובהק”",
-    "text": "שלוש שיטות, שלוש משמעויות של “מובהק”\nכל השיטות משוות הפרש בין ממוצעים לסף. כולן משתמשות בשגיאת התקן של ממוצע, \\(s_{\\bar y} = \\sqrt{MS_E / n}\\):\n\n\n\n\n\n\n\n\nהשיטה\nהסף\nשולטת ב-\n\n\n\n\nLSD של Fisher\n\\(t_{1-\\alpha/2,\\,N-a}\\sqrt{2MS_E/n}\\)\nשיעור הטעות לכל השוואה. רק אחרי F מובהק\n\n\nDuncan\n\\(r_\\alpha(p, f)\\, s_{\\bar y}\\), תלוי במרחק \\(p\\) בין הממוצעים\nביניים\n\n\nTukey HSD\n\\(q_\\alpha(a, f)\\, s_{\\bar y}\\), סף אחד לכל הזוגות\nשיעור הטעות למשפחה (FWER)\n\n\n\nלמודלים: \\(s_{\\bar y} = \\sqrt{0.854/9} = 0.308\\), ו-\\(f = N - a = 40\\).\n\n\nקוד\nc(s_ybar = sqrt(mse / 9), LSD = qt(0.975, 40) * sqrt(2 * mse / 9))\n\n\ns_ybar    LSD \n0.3080 0.8803"
+    "section": "הסימולציה בתרשים",
+    "text": "הסימולציה בתרשים\n\n\n\n\n\n\n\n\n\n\nאפור: 73% מהניסויים בלי אף טעות. כתום: 27% עם טעות אחת לפחות. ובחלק מהם יש כמה טעויות יחד"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הרעיון",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#הרעיון",
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#למה-פחות-מ-40",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#למה-פחות-מ-40",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הרעיון",
-    "text": "הרעיון\nDuncan’s multiple range test משווה את כל הזוגות, אבל הסף תלוי כמה ממוצעים נמצאים בין שני הממוצעים שמשווים.\n\nממיינים את ממוצעי הרמות בסדר יורד\nלזוג שמרוחק \\(p\\) מקומות (כולל שניהם, \\(p = 2, \\dots, a\\)) מחשבים את הטווח המובהק הקטן ביותר:\n\n\\[\nR_p = r_\\alpha(p, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\nאם \\(|\\bar y_{i\\cdot} - \\bar y_{k\\cdot}| &gt; R_p\\), ההפרש מובהק\n\n\n\\(r_\\alpha(p, f)\\) הם מקדמי Duncan, מטבלה. \\(f = N - a\\) הן דרגות החופש של \\(MS_E\\)\nזוג רחוק (\\(p\\) גדול) צריך הפרש גדול יותר כדי להיות מובהק\nכלל ההגנה: אם טווח לא מובהק, לא בודקים זוגות בתוכו"
+    "section": "למה פחות מ-40%?",
+    "text": "למה פחות מ-40%?\n\n\\(1 - 0.95^{10} = 0.40\\) מניח 10 מבחנים בלתי תלויים. כאן הם תלויים: כל ממוצע משתתף ב-4 השוואות, וכל העשר חולקות את אותו \\(MS_E\\)\nהטעויות מגיעות בצרורות. כשממוצע אחד יוצא קיצוני במקרה, הוא “מושך” כמה השוואות לדחייה יחד. וכש-\\(MS_E\\) יוצא קטן במקרה, כל עשרת המבחנים נעשים מקלים יחד\nמספר הדחיות השגויות בממוצע לא משתנה: \\(10 \\times 0.05 = 0.5\\) (בסימולציה: 0.5). אבל הן מתרכזות בפחות ניסויים: בניסוי שיש בו טעות, יש בממוצע 1.9 טעויות\nלכן ההסתברות לטעות אחת לפחות קטנה מ-40%. ועדיין היא פי 5 מה-5% שרצינו"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#שתי-שיטות-שתי-משמעויות-של-מובהק",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#שתי-שיטות-שתי-משמעויות-של-מובהק",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "שתי שיטות, שתי משמעויות של “מובהק”",
+    "text": "שתי שיטות, שתי משמעויות של “מובהק”\nשתי השיטות משוות הפרש בין ממוצעים לסף. שתיהן משתמשות בשגיאת התקן של ממוצע, \\(s_{\\bar y} = \\sqrt{MS_E / n}\\):\n\n\n\n\n\n\n\n\nהשיטה\nהסף\nשיעור הטעות למשפחה (FWER)\n\n\n\n\nDuncan\n\\(r_\\alpha(p, f)\\, s_{\\bar y}\\), תלוי במרחק \\(p\\) בין הממוצעים\nגבוה מ-\\(\\alpha\\), וגדל עם מספר הרמות\n\n\nTukey HSD\n\\(q_\\alpha(a, f)\\, s_{\\bar y}\\), סף אחד לכל הזוגות\nבדיוק \\(\\alpha\\) (בניסוי מאוזן)\n\n\n\nלמודלים: \\(s_{\\bar y} = \\sqrt{0.854/9} = 0.308\\), ו-\\(f = N - a = 40\\).\n\n\nקוד\nsqrt(mse / 9)\n\n\n[1] 0.308"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-הסף-תלוי-במרחק-בדירוג",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-הסף-תלוי-במרחק-בדירוג",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הרעיון: הסף תלוי במרחק בדירוג",
+    "text": "הרעיון: הסף תלוי במרחק בדירוג\nDuncan’s multiple range test משווה את כל הזוגות, אחרי שמבחן ה-F דחה. החידוש: לא כל הזוגות מקבלים אותו סף.\nלמה? נניח שאין שום הבדל בין 5 המודלים. נמיין את 5 הממוצעים:\n\nשני ממוצעים שכנים בדירוג נבדלים רק ברעש של שני ממוצעים\nהממוצע הגבוה והממוצע הנמוך מבין החמישה הם הקיצוניים מתוך 5. הפער ביניהם גדול כמעט תמיד, גם בלי שום אפקט\nלכן זוג שנמצא בקצוות של הדירוג צריך לעבור סף גבוה יותר, וזוג של שכנים סף נמוך יותר\n\nהמרחק \\(p\\): כמה ממוצעים נמצאים בטווח בין שני הממוצעים שמשווים, כולל שניהם. במודלים:\n\n\n\nדירוג\n1\n2\n3\n4\n5\n\n\n\n\nמודל\nM2\nM1\nM3\nM5\nM4\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\n\nדוגמאות:\n\n\n\nהזוג\nM2, M1\nM2, M3\nM1, M4\nM2, M4\n\n\n\n\nהממוצעים בטווח\nM2, M1\nM2, M1, M3\nM1, M3, M5, M4\nכל החמישה\n\n\n\\(p\\)\n2 (שכנים)\n3\n4\n5 (הקצוות)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#השלבים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#השלבים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השלבים",
+    "text": "השלבים\n\nממיינים את ממוצעי הרמות בסדר יורד\nמחשבים סף לכל מרחק \\(p = 2, \\dots, a\\), הטווח המובהק הקטן ביותר (least significant range):\n\n\\[\nR_p = r_\\alpha(p, f)\\cdot s_{\\bar y} \\qquad s_{\\bar y} = \\sqrt{\\frac{MS_E}{n}}\n\\]\n\\(r_\\alpha(p, f)\\) הם מקדמי Duncan מטבלה, ו-\\(f = N - a\\) הן דרגות החופש של \\(MS_E\\). המקדם גדל עם \\(p\\)\n\nבודקים מבחוץ פנימה: קודם הזוג של הקצוות (\\(p = a\\)), אחר כך זוגות עם \\(p = a - 1\\), וכן הלאה. ההפרש מובהק אם \\(|\\bar y_{i\\cdot} - \\bar y_{k\\cdot}| &gt; R_p\\)\nכלל ההגנה: אם ההפרש בין שני ממוצעים לא מובהק, כל הממוצעים שביניהם נחשבים שווים, ולא בודקים זוגות בתוך הטווח הזה\nמסכמים באותיות: רמות שחולקות אות לא שונות זו מזו באופן מובהק\n\n\nהדגש: שלב 3 ו-4 הם מה שמבדיל את דנקן מסתם 10 מבחני t. דוגמה לכלל ההגנה: אם M3 מול M4 (p = 3) לא מובהק, לא בודקים את M3 מול M5 ואת M5 מול M4."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#מאיפה-מגיעים-המקדמים",
     "href": "lectures/05-contrasts-multiple-comparisons.html#מאיפה-מגיעים-המקדמים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "מאיפה מגיעים המקדמים?",
-    "text": "מאיפה מגיעים המקדמים?\nהמקדמים הם ערכים של התפלגות הטווח המסוטנדרט (studentized range), אותה התפלגות שבה משתמשת שיטת Tukey. ההבדל הוא ברמת המובהקות: לטווח של \\(p\\) ממוצעים, Duncan משתמש ב-\n\\[\n\\alpha_p = 1 - (1 - \\alpha)^{p - 1}\n\\]\nככל ש-\\(p\\) גדל, \\(\\alpha_p\\) גדלה, והשיטה “סלחנית” יותר. ב-R אין צורך בטבלה:\n\n\nקוד\np &lt;- 2:5\nr_duncan &lt;- qtukey((1 - 0.05)^(p - 1), nmeans = p, df = 40)   # Duncan's r_alpha(p, 40)\nrbind(p = p, alpha_p = 1 - 0.95^(p - 1), r = r_duncan, R_p = r_duncan * sqrt(mse / 9)) |&gt; round(3)\n\n\n         [,1]  [,2]  [,3]  [,4]\np       2.000 3.000 4.000 5.000\nalpha_p 0.050 0.098 0.143 0.185\nr       2.858 3.005 3.102 3.171\nR_p     0.880 0.926 0.955 0.977\n\n\nהערכים 2.86, 3.01, 3.10, 3.17 הם בדיוק הערכים בטבלאות של Duncan לדרגות חופש 40. בבחינה תקבלו טבלה. כאן רואים שהיא לא קסם: זו ההתפלגות של \\((\\bar y_{max} - \\bar y_{min})/s_{\\bar y}\\) מתוך \\(p\\) ממוצעים, ברמת מובהקות שתלויה ב-\\(p\\)."
+    "text": "מאיפה מגיעים המקדמים?\nהמקדמים הם ערכים של התפלגות ה-studentized range: ההתפלגות של \\((\\bar y_{max} - \\bar y_{min})/s_{\\bar y}\\), הטווח של \\(p\\) ממוצעים מחולק בשגיאת התקן שלהם, כש-\\(H_0\\) נכונה. זו אותה התפלגות שבה משתמשת שיטת Tukey. ההבדל הוא ברמת המובהקות: לטווח של \\(p\\) ממוצעים, Duncan משתמש ב-\n\\[\n\\alpha_p = 1 - (1 - \\alpha)^{p - 1}\n\\]\nככל ש-\\(p\\) גדל, \\(\\alpha_p\\) גדלה, והשיטה “סלחנית” יותר. ב-R אין צורך בטבלה:\n\n\nקוד\np &lt;- 2:5\nr_duncan &lt;- qtukey((1 - 0.05)^(p - 1), nmeans = p, df = 40)   # Duncan's r_alpha(p, 40)\nrbind(p = p, alpha_p = 1 - 0.95^(p - 1), r = r_duncan, R_p = r_duncan * sqrt(mse / 9)) |&gt; round(3)\n\n\n         [,1]  [,2]  [,3]  [,4]\np       2.000 3.000 4.000 5.000\nalpha_p 0.050 0.098 0.143 0.185\nr       2.858 3.005 3.102 3.171\nR_p     0.880 0.926 0.955 0.977\n\n\nהערכים 2.86, 3.01, 3.10, 3.17 הם בדיוק הערכים בטבלאות של Duncan לדרגות חופש 40. בבחינה תקבלו טבלה. כאן רואים שהיא לא קסם: זו ההתפלגות של \\((\\bar y_{max} - \\bar y_{min})/s_{\\bar y}\\) מתוך \\(p\\) ממוצעים, ברמת מובהקות שתלויה ב-\\(p\\)."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#המודלים-שיטת-duncan",
@@ -3115,25 +3297,32 @@
     "text": "המודלים: שיטת Duncan\nמיון: M2 (5.33) · M1 (5.00) · M3 (3.99) · M5 (3.96) · M4 (3.76)\n\n\nקוד\nmeans &lt;- sort(tapply(calls$aht, calls$model, mean), decreasing = TRUE)\nR_p   &lt;- setNames(r_duncan * sqrt(mse / 9), 2:5)\n\nduncan &lt;- combn(names(means), 2, simplify = FALSE) |&gt;\n  map(\\(pair) {\n    pos &lt;- match(pair, names(means))\n    tibble(high = pair[1], low = pair[2], p = diff(pos) + 1,\n           diff = means[pair[1]] - means[pair[2]], R_p = R_p[as.character(diff(pos) + 1)])\n  }) |&gt;\n  list_rbind() |&gt;\n  mutate(significant = diff &gt; R_p) |&gt;\n  arrange(desc(p))\nduncan\n\n\n# A tibble: 10 × 6\n   high  low       p   diff   R_p significant\n   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;      \n 1 M2    M4        5 1.57   0.977 TRUE       \n 2 M2    M5        4 1.38   0.955 TRUE       \n 3 M1    M4        4 1.24   0.955 TRUE       \n 4 M2    M3        3 1.34   0.926 TRUE       \n 5 M1    M5        3 1.05   0.926 TRUE       \n 6 M3    M4        3 0.231  0.926 FALSE      \n 7 M2    M1        2 0.332  0.880 FALSE      \n 8 M1    M3        2 1.01   0.880 TRUE       \n 9 M3    M5        2 0.0389 0.880 FALSE      \n10 M5    M4        2 0.192  0.880 FALSE"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#השלבים-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#השלבים-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השלבים בתרשים",
+    "text": "השלבים בתרשים\n\n\n\n\n\n\n\n\n\n\nלעבור על התרשים מלמעלה למטה: p = 5, אחר כך שני הטווחים עם p = 4, וכן הלאה. הטווח M3-M4 (p = 3) לא מובהק, ולכן M3-M5 ו-M5-M4 שבתוכו לא נבדקים. בסוף: M2 ו-M1 בקבוצה אחת, M3, M5, M4 בקבוצה שנייה."
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#התוצאה",
     "href": "lectures/05-contrasts-multiple-comparisons.html#התוצאה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "התוצאה",
-    "text": "התוצאה\n\n\n\n\nM2\nM1\nM3\nM5\nM4\n\n\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\nקבוצה\nא\nא\nב\nב\nב\n\n\n\n\nM2 ו-M1 לא שונים זה מזה (0.33 &lt; 0.88), ושניהם שונים מכל השאר\nM3, M5 ו-M4 לא שונים זה מזה: הטווח של שלושתם הוא 0.23 &lt; \\(R_3\\) = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו\nרמות עם אותה אות לא שונות זו מזו באופן מובהק\n\nההמלצה: להפעיל את אחד מ-M3, M4 או M5. הנתונים לא מבדילים ביניהם, ולכן M3, הזול שבהם, הוא בחירה סבירה."
+    "text": "התוצאה\n\n\n\n\nM2\nM1\nM3\nM5\nM4\n\n\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\nקבוצה\nא\nא\nב\nב\nב\n\n\n\n\nM2 ו-M1 לא שונים זה מזה (0.33 &lt; 0.88), ושניהם שונים מכל השאר\nM3, M5 ו-M4 לא שונים זה מזה: הטווח של שלושתם הוא 0.23 &lt; \\(R_3\\) = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו\nרמות עם אותה אות לא שונות זו מזו באופן מובהק\n\nההמלצה: להפעיל את אחד מ-M3, M4 או M5. משך הטיפול לא מבדיל ביניהם, ולכן את הבחירה ביניהם קובעים שיקולים אחרים, למשל עלות: M3 הוא המודל הבינוני, ו-M4 ו-M5 הם הגדולים והיקרים."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#ביקורת-על-duncan",
     "href": "lectures/05-contrasts-multiple-comparisons.html#ביקורת-על-duncan",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ביקורת על Duncan",
-    "text": "ביקורת על Duncan\n\n\\(\\alpha_p\\) גדלה עם מספר הממוצעים: עם 5 רמות, \\(\\alpha_5 = 1 - 0.95^4 = 0.185\\)\nכלומר, ה-FWER של השיטה גבוה מ-5%, וגדל עם מספר הרמות. עם 10 רמות, \\(\\alpha_{10} = 0.37\\)\nהשיטה “מוצאת” יותר הבדלים, וחלקם שגויים\nDuncan נפוצה בספרות החקלאית וההנדסית הישנה, ותפגשו אותה בבחינה. בעבודה מעשית, מקובל היום להשתמש ב-Tukey"
+    "text": "ביקורת על Duncan\n\n\\(\\alpha_p\\) גדלה עם מספר הממוצעים: עם 5 רמות, \\(\\alpha_5 = 1 - 0.95^4 = 0.185\\)\nכלומר, ה-FWER של השיטה גבוה מ-5%, וגדל עם מספר הרמות. עם 10 רמות, \\(\\alpha_{10} = 0.37\\)\nהשיטה “מוצאת” יותר הבדלים, וחלקם שגויים\nבעבודה מעשית, מקובל להשתמש ב-Tukey"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-1",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#הרעיון-1",
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הרעיון",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הרעיון",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הרעיון",
-    "text": "הרעיון\nTukey’s Honest Significant Difference: סף אחד לכל הזוגות, שמבטיח FWER \\(= \\alpha\\) בדיוק (בניסוי מאוזן).\n\\[\nHSD = q_\\alpha(a, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\n\\(q_\\alpha(a, f)\\): הערך הקריטי של התפלגות הטווח המסוטנדרט של \\(a\\) ממוצעים, עם \\(f = N - a\\) דרגות חופש\nההיגיון: אם הזוג הרחוק ביותר לא חוצה את הסף תחת \\(H_0\\) בהסתברות \\(1 - \\alpha\\), אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא \\(\\alpha\\)\n\n\\[\nq = \\frac{\\bar y_{max} - \\bar y_{min}}{\\sqrt{MS_E/n}}\n\\]\nרווחי סמך משותפים לכל ההפרשים: \\((\\bar y_{i\\cdot} - \\bar y_{k\\cdot}) \\pm HSD\\). בניסוי לא מאוזן (Tukey–Kramer): \\(q_\\alpha(a, f)\\sqrt{\\frac{MS_E}{2}\\left(\\frac{1}{n_i} + \\frac{1}{n_k}\\right)}\\)."
+    "text": "הרעיון\nTukey’s Honest Significant Difference: סף אחד לכל הזוגות, שמבטיח FWER \\(= \\alpha\\) בדיוק (בניסוי מאוזן).\n\\[\nHSD = q_\\alpha(a, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\n\\(q_\\alpha(a, f)\\): הערך הקריטי של התפלגות ה-studentized range של \\(a\\) ממוצעים, עם \\(f = N - a\\) דרגות חופש\nההיגיון: אם הזוג הרחוק ביותר לא חוצה את הסף תחת \\(H_0\\) בהסתברות \\(1 - \\alpha\\), אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא \\(\\alpha\\)\n\n\\[\nq = \\frac{\\bar y_{max} - \\bar y_{min}}{\\sqrt{MS_E/n}}\n\\]\nרווחי סמך משותפים לכל ההפרשים: \\((\\bar y_{i\\cdot} - \\bar y_{k\\cdot}) \\pm HSD\\). בניסוי לא מאוזן (Tukey–Kramer): \\(q_\\alpha(a, f)\\sqrt{\\frac{MS_E}{2}\\left(\\frac{1}{n_i} + \\frac{1}{n_k}\\right)}\\)."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#המודלים-חישוב-ידני",
@@ -3168,7 +3357,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#duncan-מול-tukey",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "Duncan מול Tukey",
-    "text": "Duncan מול Tukey\n\n\n\n\n\n\n\n\n\n\nזוג\nהפרש\nLSD (0.88)\nDuncan (\\(R_p\\))\nTukey (1.244)\n\n\n\n\nM2–M4\n1.57\n✓\n✓ (0.98)\n✓\n\n\nM2–M5\n1.38\n✓\n✓ (0.96)\n✓\n\n\nM2–M3\n1.34\n✓\n✓ (0.93)\n✓\n\n\nM1–M4\n1.24\n✓\n✓ (0.96)\n✗\n\n\nM1–M5\n1.05\n✓\n✓ (0.93)\n✗\n\n\nM1–M3\n1.01\n✓\n✓ (0.88)\n✗\n\n\nM2–M1, M3–M4, M3–M5, M5–M4\n≤ 0.33\n✗\n✗\n✗\n\n\n\n\nLSD ו-Duncan מוצאים 6 זוגות. Tukey מוצא 3\nאין כאן “נכון” ו”לא נכון”. זו בחירה בין שתי טעויות: Tukey שומר על הסיכוי לתגלית שגויה אחת מתחת ל-5%, במחיר של עוצמה"
+    "text": "Duncan מול Tukey\n\n\n\nזוג\nהפרש\nDuncan (\\(R_p\\))\nTukey (1.244)\n\n\n\n\nM2–M4\n1.57\n✓ (0.98)\n✓\n\n\nM2–M5\n1.38\n✓ (0.96)\n✓\n\n\nM2–M3\n1.34\n✓ (0.93)\n✓\n\n\nM1–M4\n1.24\n✓ (0.96)\n✗\n\n\nM1–M5\n1.05\n✓ (0.93)\n✗\n\n\nM1–M3\n1.01\n✓ (0.88)\n✗\n\n\nM2–M1, M3–M4, M3–M5, M5–M4\n≤ 0.33\n✗\n✗\n\n\n\n\nDuncan מוצא 6 זוגות. Tukey מוצא 3\nאין כאן “נכון” ו”לא נכון”. זו בחירה בין שתי טעויות: Tukey שומר על הסיכוי לתגלית שגויה אחת מתחת ל-5%, במחיר של עוצמה"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#איזו-שיטה-מתי",
@@ -3189,7 +3378,14 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#anova-על-נתונים-מוטים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ANOVA על נתונים מוטים",
-    "text": "ANOVA על נתונים מוטים\n\n\nקוד\nfit_lat &lt;- aov(ms ~ region, data = latency)\nsummary(fit_lat)\n\n\n            Df  Sum Sq Mean Sq F value Pr(&gt;F)  \nregion       3  292464   97488    2.35  0.085 .\nResiduals   44 1823008   41432                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nקוד\nshapiro.test(resid(fit_lat))\n\n\n\n    Shapiro-Wilk normality test\n\ndata:  resid(fit_lat)\nW = 0.76, p-value = 2e-07\n\n\n\nה-ANOVA לא דוחה (\\(p = 0.085\\))\nאבל השאריות רחוקות מנורמליות. הבקשות האיטיות מנפחות את \\(MS_E\\) ו”מסתירות” את ההבדלים\nשתי אפשרויות: טרנספורמציה (\\(\\log\\)), או מבחן שלא מניח נורמליות"
+    "text": "ANOVA על נתונים מוטים\n\n\nקוד\nfit_lat &lt;- aov(ms ~ region, data = latency)\nsummary(fit_lat)\n\n\n            Df  Sum Sq Mean Sq F value Pr(&gt;F)  \nregion       3  292464   97488    2.35  0.085 .\nResiduals   44 1823008   41432                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nקוד\nks.test(rstandard(fit_lat), \"pnorm\")              # standardised residuals vs N(0, 1)\n\n\n\n    Exact one-sample Kolmogorov-Smirnov test\n\ndata:  rstandard(fit_lat)\nD = 0.21, p-value = 0.02\nalternative hypothesis: two-sided\n\n\n\nה-ANOVA לא דוחה (\\(p = 0.085\\))\nאבל השאריות לא נורמליות. מבחן Kolmogorov–Smirnov על השאריות המתוקננות, כמו בהרצאה 3: \\(D = 0.212 &gt; 1.36/\\sqrt{48} = 0.196\\), ולכן דוחים נורמליות"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#השאריות-בגרף-q-q",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#השאריות-בגרף-q-q",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השאריות בגרף Q-Q",
+    "text": "השאריות בגרף Q-Q\n\n\nקוד\ntibble(r = sort(rstandard(fit_lat))) |&gt;\n  mutate(z = qnorm((row_number() - 0.5) / n())) |&gt;\n  ggplot(aes(z, r)) +\n  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5) +\n  labs(title = \"הזנב הימני ארוך מדי: כמה בקשות איטיות מאוד\",\n       subtitle = \"שאריות מתוקננות · קו מקווקו: N(0,1)\",\n       x = \"Theoretical quantile (z)\", y = \"Standardised residual\")\n\n\n\n\n\n\n\n\n\n\nהבקשות האיטיות מנפחות את \\(MS_E\\) ו”מסתירות” את ההבדלים בין האזורים\nשתי אפשרויות: טרנספורמציה (\\(\\log\\)), או מבחן שלא מניח נורמליות"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#kruskalwallis-הרעיון",
@@ -3213,6 +3409,13 @@
     "text": "דוגמה לחישוב ידני: חוזק בד לפי אחוז כותנה\nמפעל טקסטיל בודק 5 רמות של אחוז כותנה בבד (15%–35%), 6 דגימות בכל רמה. האם אחוז הכותנה משפיע על חוזק המתיחה?\n\n\nקוד\ncotton &lt;- read_csv(file.path(np_data_dir, \"cotton_strength.csv\"), show_col_types = FALSE) |&gt;\n  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))\ncotton |&gt;\n  group_by(cotton_pct) |&gt;\n  summarise(n = n(), strength = paste(sort(strength), collapse = \", \"),\n            R = sum(rank), R_bar = mean(rank))\n\n\n# A tibble: 5 × 5\n  cotton_pct     n strength                               R R_bar\n  &lt;fct&gt;      &lt;int&gt; &lt;chr&gt;                              &lt;dbl&gt; &lt;dbl&gt;\n1 15             6 8.5, 9.9, 10.3, 11.6, 12.8, 15.2    58    9.67\n2 20             6 10.6, 10.8, 11.3, 11.6, 12.3, 13.4  66.5 11.1 \n3 25             6 13.7, 14, 14.4, 14.5, 15, 15.5     123   20.5 \n4 30             6 15.1, 15.8, 15.9, 16, 16.2, 17     163   27.2 \n5 35             6 10, 10.3, 10.4, 10.9, 12.2, 14.1    54.5  9.08"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הדרגות-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#הדרגות-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הדרגות בתרשים",
+    "text": "הדרגות בתרשים\n\n\n\n\n\n\n\n\n\n\n\\(K\\) מסכם את אורכי הקווים הכתומים (בריבוע, משוקללים ב-\\(n_i\\)): \\(K = \\frac{12}{N(N+1)}\\sum n_i(\\bar R_{i\\cdot} - 15.5)^2\\). תחת \\(H_0\\) כל המעוינים קרובים לקו המקווקו"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#חישוב-k",
     "href": "lectures/05-contrasts-multiple-comparisons.html#חישוב-k",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
@@ -3224,14 +3427,28 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#בחזרה-לזמני-התגובה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "בחזרה לזמני התגובה",
-    "text": "בחזרה לזמני התגובה\n\n\nקוד\nkruskal.test(ms ~ region, data = latency)\n\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  ms by region\nKruskal-Wallis chi-squared = 12, df = 3, p-value = 0.009\n\n\nקוד\nsummary(aov(log(ms) ~ region, data = latency))\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nregion       3   7.42   2.473    4.75 0.0059 **\nResiduals   44  22.91   0.521                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\nKruskal–Wallis דוחה (\\(p = 0.0085\\)), במקום שה-ANOVA על הנתונים הגולמיים לא דחה\nגם ANOVA על \\(\\log(\\text{ms})\\) דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות\nהדרגות לא רגישות לערכים חריגים: בקשה של 1,000 מילישניות היא פשוט “הדרגה הגבוהה ביותר”, בדיוק כמו בקשה של 400"
+    "text": "בחזרה לזמני התגובה\n\n\nקוד\nkruskal.test(ms ~ region, data = latency)\n\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  ms by region\nKruskal-Wallis chi-squared = 12, df = 3, p-value = 0.009\n\n\nקוד\nfit_lat_log &lt;- aov(log(ms) ~ region, data = latency)\nsummary(fit_lat_log)\n\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nregion       3   7.42   2.473    4.75 0.0059 **\nResiduals   44  22.91   0.521                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\nKruskal–Wallis דוחה (\\(p = 0.0085\\)), במקום שה-ANOVA על הנתונים הגולמיים לא דחה\nגם ANOVA על \\(\\log(\\text{ms})\\) דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות (השקף הבא)\nהדרגות לא רגישות לערכים חריגים: בקשה של 1,000 מילישניות היא פשוט “הדרגה הגבוהה ביותר”, בדיוק כמו בקשה של 400"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#מה-הלוגריתם-עושה-לשאריות",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#מה-הלוגריתם-עושה-לשאריות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מה הלוגריתם עושה לשאריות?",
+    "text": "מה הלוגריתם עושה לשאריות?\n\n\nקוד\nbind_rows(tibble(scale = \"ms\", r = rstandard(fit_lat)),\n          tibble(scale = \"log(ms)\", r = rstandard(fit_lat_log))) |&gt;\n  mutate(scale = fct_inorder(scale)) |&gt;\n  group_by(scale) |&gt;\n  arrange(r, .by_group = TRUE) |&gt;\n  mutate(z = qnorm((row_number() - 0.5) / n())) |&gt;\n  ggplot(aes(z, r)) +\n  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5) +\n  facet_wrap(~ scale) +\n  labs(title = \"אחרי הטרנספורמציה, השאריות יושבות על הקו\",\n       subtitle = \"שאריות מתוקננות · קו מקווקו: N(0,1)\",\n       x = \"Theoretical quantile (z)\", y = \"Standardised residual\")\n\n\n\n\n\n\n\n\n\nקוד\nks_log &lt;- ks.test(rstandard(fit_lat_log), \"pnorm\")\nc(D = unname(ks_log$statistic), p_value = ks_log$p.value)      # KS on log scale\n\n\n      D p_value \n0.06632 0.97494 \n\n\nאחרי הטרנספורמציה, \\(D = 0.066\\), רחוק מתחת לערך הקריטי 0.196. אין עדות לסטייה מנורמליות. זה לא מקרה: הנתונים כאן סומלצו מהתפלגות לוג-נורמלית, כלומר \\(\\log(\\text{ms})\\) מתפלג נורמלית בדיוק. זמני תגובה של מערכות אמיתיות קרובים לעיתים קרובות להתפלגות כזו: הם חיוביים, מוטים ימינה, והרעש בהם “כפלי” (בקשה איטית פי 2) ולא “חיבורי” (בקשה איטית ב-50 מילישניות)."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#אילו-אזורים-שונים-השוואות-מרובות-על-דרגות",
     "href": "lectures/05-contrasts-multiple-comparisons.html#אילו-אזורים-שונים-השוואות-מרובות-על-דרגות",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "אילו אזורים שונים? השוואות מרובות על דרגות",
-    "text": "אילו אזורים שונים? השוואות מרובות על דרגות\nאחרי Kruskal–Wallis מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:\n\n\nקוד\npairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = \"bonferroni\")\n\n\n\n    Pairwise comparisons using Wilcoxon rank sum exact test \n\ndata:  latency$ms and latency$region \n\n           eu-west us-east il-central\nus-east    0.468   -       -         \nil-central 1.000   0.060   -         \nap-south   1.000   0.003   1.000     \n\nP value adjustment method: bonferroni \n\n\n\nכל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, מתוקן בשיטת Bonferroni: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05\nהסתייגות: כמו בהרצאה 1, מבחן סכום הדירוגים בודק חציונים רק תחת הנחת הזזה. כאן, עם התפלגויות לוג-נורמליות עם אותה צורה, ההנחה סבירה בסקאלה הלוגריתמית"
+    "text": "אילו אזורים שונים? השוואות מרובות על דרגות\nאחרי Kruskal–Wallis מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:\n\n\nקוד\npairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = \"bonferroni\")\n\n\n\n    Pairwise comparisons using Wilcoxon rank sum exact test \n\ndata:  latency$ms and latency$region \n\n           eu-west us-east il-central\nus-east    0.468   -       -         \nil-central 1.000   0.060   -         \nap-south   1.000   0.003   1.000     \n\nP value adjustment method: bonferroni \n\n\n\nכל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, מתוקן בשיטת Bonferroni: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05\nאבל האם זה מבחן על חציונים? תלוי בהנחת ההזזה (השקף הבא)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#מה-בודק-מבחן-סכום-הדירוגים-הנחת-ההזזה",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#מה-בודק-מבחן-סכום-הדירוגים-הנחת-ההזזה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מה בודק מבחן סכום הדירוגים? הנחת ההזזה",
+    "text": "מה בודק מבחן סכום הדירוגים? הנחת ההזזה\n\n\\(H_0\\) של המבחן: לשתי הרמות אותה התפלגות. הוא דוחה כשתצפיות מרמה אחת נוטות להיות גדולות מתצפיות מהרמה השנייה\nהנחת ההזזה (shift): שתי ההתפלגויות זהות בצורה ובפיזור, ואחת פשוט מוזזת ימינה: \\(F_2(x) = F_1(x - \\delta)\\). רק תחתיה דחייה פירושה “החציונים שונים”\nבלי ההנחה, המבחן יכול לדחות גם כשהחציונים שווים, למשל כשלאחת הרמות פיזור גדול יותר\n\n\n\n\n\n\n\n\n\n\n\nבדוגמה: הנתונים סומלצו מהתפלגות לוג-נורמלית. ב-ms האזור האיטי גם מפוזר יותר, ולכן זו לא הזזה. ב-\\(\\log(\\text{ms})\\) זו הזזה נקייה\nוהדרגות לא מושפעות מ-\\(\\log\\): הלוגריתם שומר על הסדר, ולכן המבחן על ms והמבחן על \\(\\log(\\text{ms})\\) זהים. ההנחה מתקיימת בסקאלה הלוגריתמית, וחציון של \\(\\log\\) הוא \\(\\log\\) של החציון. לכן המסקנה על החציונים נכונה גם ב-ms"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#ניגודים-עם-חציונים",
@@ -3245,70 +3462,42 @@
     "href": "lectures/05-contrasts-multiple-comparisons.html#הפתרון-חציונים-של-הפרשים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הפתרון: חציונים של הפרשים",
-    "text": "הפתרון: חציונים של הפרשים\nלכל זוג רמות \\((i, k)\\), מחשבים את החציון של כל ההפרשים בין תצפית מרמה \\(i\\) לתצפית מרמה \\(k\\):\n\\[\nZ_{ik} = \\underset{j,\\,m}{\\text{median}}\\{y_{ij} - y_{km}\\} \\qquad Z_{ii} = 0\n\\qquad\\qquad\n\\hat\\tau_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik}\n\\]\nמכיוון ש-\\(Z_{ik} = -Z_{ki}\\), הסכום \\(\\sum_i \\hat\\tau_i = \\frac{1}{a}\\sum_i\\sum_k Z_{ik} = 0\\).\nבדוגמה הקטנה: 9 ההפרשים \\(y_{1j} - y_{2m}\\) הם \\(\\{3, 2, 1, 7, 6, 5, 8, 7, 6\\}\\), והחציון שלהם \\(Z_{12} = 6\\). לכן \\(Z_{21} = -6\\), ו-\n\\[\n\\hat\\tau_1 = \\frac{0 + 6}{2} = 3 \\qquad \\hat\\tau_2 = \\frac{-6 + 0}{2} = -3 \\qquad \\hat\\tau_1 + \\hat\\tau_2 = 0 \\;\\checkmark\n\\]\n\\(Z_{ik}\\) הוא אומד Hodges–Lehmann להזזה בין שתי רמות: האומד שמתאים למבחן סכום הדירוגים, כמו שהפרש ממוצעים מתאים למבחן t. הוא עמיד לערכים חריגים, ומקיים אנטי-סימטריה. ממוצע של אומדי ההזזה מול כל הרמות נותן “אפקט” לכל רמה, ביחס לרמה ממוצעת."
+    "text": "הפתרון: חציונים של הפרשים\nהרעיון: במקום להשוות כל רמה ל”מרכז” משותף, אומדים בכמה כל רמה גבוהה מכל רמה אחרת, ורק אז ממצעים.\n\nלכל זוג רמות \\((i, k)\\): מחשבים את כל ההפרשים בין תצפית מרמה \\(i\\) לתצפית מרמה \\(k\\) (\\(n_i \\cdot n_k\\) הפרשים), ולוקחים את החציון שלהם:\n\n\\[\nZ_{ik} = \\underset{j,\\,m}{\\text{median}}\\{y_{ij} - y_{km}\\}\n\\]\n\\(Z_{ik}\\) עונה על השאלה: “בכמה, בדרך כלל, תצפית מרמה \\(i\\) גבוהה מתצפית מרמה \\(k\\)?”\n\nמסדרים בטבלה \\(a \\times a\\). על האלכסון \\(Z_{ii} = 0\\), ו-\\(Z_{ki} = -Z_{ik}\\): אם \\(i\\) גבוהה מ-\\(k\\) ב-6, אז \\(k\\) נמוכה מ-\\(i\\) ב-6\nהאפקט של רמה הוא ממוצע השורה שלה, “בכמה היא גבוהה מהרמות, בממוצע”:\n\n\\[\n\\hat\\tau_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik}\n\\]\n\nהסכום אפס: כל זוג \\(Z_{ik} + Z_{ki} = 0\\) מתבטל, ולכן \\(\\sum_i \\hat\\tau_i = 0\\). הבעיה מהשקף הקודם נפתרה\nהניגוד: \\(\\hat\\Gamma = \\sum c_i \\hat\\tau_i\\)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons.html#בדוגמה-הקטנה",
+    "href": "lectures/05-contrasts-multiple-comparisons.html#בדוגמה-הקטנה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בדוגמה הקטנה",
+    "text": "בדוגמה הקטנה\n\\(y_{1j} = \\{3, 7, 8\\}\\) ו-\\(y_{2m} = \\{0, 1, 2\\}\\). כל 9 ההפרשים \\(y_{1j} - y_{2m}\\):\n\n\n\n\n\\(y_{2m} = 0\\)\n\\(y_{2m} = 1\\)\n\\(y_{2m} = 2\\)\n\n\n\n\n\\(y_{1j} = 3\\)\n3\n2\n1\n\n\n\\(y_{1j} = 7\\)\n7\n6\n5\n\n\n\\(y_{1j} = 8\\)\n8\n7\n6\n\n\n\nממוינים: \\(1, 2, 3, 5, \\mathbf{6}, 6, 7, 7, 8\\). החציון: \\(Z_{12} = 6\\), ולכן \\(Z_{21} = -6\\).\n\n\n\n\nרמה 1\nרמה 2\n\\(\\hat\\tau_i\\) (ממוצע השורה)\n\n\n\n\nרמה 1\n0\n6\n\\((0 + 6)/2 = 3\\)\n\n\nרמה 2\n−6\n0\n\\((-6 + 0)/2 = -3\\)\n\n\n\n\\(\\hat\\tau_1 + \\hat\\tau_2 = 0\\), וההפרש ביניהם, 6, הוא ההזזה האמודה בין הרמות.\n\\(Z_{ik}\\) הוא אומד Hodges–Lehmann להזזה בין שתי רמות: האומד שמתאים למבחן סכום הדירוגים, כמו שהפרש ממוצעים מתאים למבחן t. הוא עמיד לערכים חריגים, ומקיים אנטי-סימטריה. ממוצע של אומדי ההזזה מול כל הרמות נותן “אפקט” לכל רמה, ביחס לרמה ממוצעת."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#ניגוד-בדוגמת-הכותנה",
     "href": "lectures/05-contrasts-multiple-comparisons.html#ניגוד-בדוגמת-הכותנה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ניגוד בדוגמת הכותנה",
-    "text": "ניגוד בדוגמת הכותנה\nהשאלה: האם הקצוות (15% ו-35%) חלשים מ-30%? \\(\\Gamma = \\frac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\).\n\n\nקוד\ny_by_level &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(y_by_level), seq_along(y_by_level),\n           Vectorize(\\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], \"-\"))))\ntau_hat &lt;- rowMeans(Z)\nround(tau_hat, 2)\n\n\n[1] -1.86 -1.26  1.73  3.22 -1.83\n\n\nקוד\nsum(tau_hat)                                     # 0 by construction\n\n\n[1] 2.22e-16\n\n\nקוד\n0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]\n\n\n[1] -5.065\n\n\n\\[\n\\hat\\Gamma = \\tfrac{1}{2}(-1.86 + -1.83) - 3.22 = -5.06\n\\]\nבד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#כשכל-יחידה-מקבלת-את-כל-הטיפולים",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#כשכל-יחידה-מקבלת-את-כל-הטיפולים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "כשכל יחידה מקבלת את כל הטיפולים",
-    "text": "כשכל יחידה מקבלת את כל הטיפולים\nדוגמה: צוות AI בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (eval set). כל תשובה מקבלת ציון 0–100.\n\nכל משימה נבדקת עם כל שלושת הפרומפטים. המשימה היא בלוק (block)\nהמשימות שונות מאוד בקושי. ההבדל בין משימה קלה לקשה גדול מההבדל בין פרומפטים\nKruskal–Wallis מניח מדגמים בלתי תלויים. כאן הם לא: אותה משימה מופיעה בכל הרמות\nהפתרון: משווים את הפרומפטים בתוך כל משימה\n\nזה גם המצב של המודלים במוקד: כל המודלים עבדו באותם 9 ימים, והיום הוא בלוק."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הנתונים",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#הנתונים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הנתונים",
-    "text": "הנתונים\n\n\nקוד\nllm &lt;- read_csv(file.path(np_data_dir, \"llm_prompt_eval.csv\"), show_col_types = FALSE) |&gt;\n  mutate(prompt = factor(prompt, levels = c(\"baseline\", \"few_shot\", \"reasoning\")),\n         task = factor(task))\n\nggplot(llm, aes(prompt, score, group = task)) +\n  geom_line(colour = \"grey70\") +\n  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +\n  labs(title = \"ברוב המשימות, הפרומפט עם ההנמקה מנצח\",\n       subtitle = \"כל קו הוא משימה אחת · ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים\",\n       x = NULL, y = \"Score (0–100)\")"
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#הסטטיסטי-1",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#הסטטיסטי-1",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הסטטיסטי",
-    "text": "הסטטיסטי\n\n\\(b\\) בלוקים ו-\\(k\\) טיפולים\nמדרגים את הטיפולים בתוך כל בלוק בנפרד, מ-1 עד \\(k\\)\n\\(R_j\\) הוא סכום הדרגות של טיפול \\(j\\) על פני כל הבלוקים\n\nתחת \\(H_0\\) (אין הבדל בין הטיפולים), בכל בלוק כל סידור של הדרגות סביר באותה מידה, ולכן \\(E(R_j) = \\frac{b(k+1)}{2}\\):\n\\[\nQ = \\frac{12}{b\\,k\\,(k+1)}\\sum_{j=1}^{k}\\left(R_j - \\frac{b(k+1)}{2}\\right)^2\n= \\frac{12}{b\\,k\\,(k+1)}\\sum_{j=1}^{k} R_j^2 - 3\\,b\\,(k+1)\n\\]\nתחת \\(H_0\\), \\(Q \\sim \\chi^2_{k-1}\\) בקירוב. דוחים את \\(H_0\\) אם \\(Q &gt; \\chi^2_{1-\\alpha,\\,k-1}\\)."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#חישוב",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#חישוב",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "חישוב",
-    "text": "חישוב\n\n\nקוד\nllm_ranked &lt;- llm |&gt; group_by(task) |&gt; mutate(rank = rank(score)) |&gt; ungroup()\nllm_ranked |&gt; select(task, prompt, rank) |&gt; pivot_wider(names_from = prompt, values_from = rank)\n\n\n# A tibble: 8 × 4\n  task  baseline few_shot reasoning\n  &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1 1            1        2         3\n2 2            1        2         3\n3 3            2        1         3\n4 4            1        3         2\n5 5            1        2         3\n6 6            2        1         3\n7 7            1        3         2\n8 8            1        2         3\n\n\nקוד\nllm_ranked |&gt; group_by(prompt) |&gt; summarise(R = sum(rank))\n\n\n# A tibble: 3 × 2\n  prompt        R\n  &lt;fct&gt;     &lt;dbl&gt;\n1 baseline     10\n2 few_shot     16\n3 reasoning    22\n\n\n\\[\nQ = \\frac{12}{8 \\cdot 3 \\cdot 4}\\left(10^2 + 16^2 + 22^2\\right) - 3 \\cdot 8 \\cdot 4 = 105 - 96 = 9 &gt; \\chi^2_{0.95,\\,2} = 5.99\n\\]\nדוחים: יש הבדל בין הפרומפטים."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons.html#friedman-ב-r-ומה-קורה-בלי-בלוקים",
-    "href": "lectures/05-contrasts-multiple-comparisons.html#friedman-ב-r-ומה-קורה-בלי-בלוקים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "Friedman ב-R, ומה קורה בלי בלוקים",
-    "text": "Friedman ב-R, ומה קורה בלי בלוקים\n\n\nקוד\nfriedman.test(score ~ prompt | task, data = llm)\n\n\n\n    Friedman rank sum test\n\ndata:  score and prompt and task\nFriedman chi-squared = 9, df = 2, p-value = 0.01\n\n\nקוד\nkruskal.test(score ~ prompt, data = llm)          # ignores the blocks\n\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  score by prompt\nKruskal-Wallis chi-squared = 4.1, df = 2, p-value = 0.1\n\n\n\nFriedman דוחה. Kruskal–Wallis, שמתעלם מהבלוקים, לא\nהשונות הגדולה בין המשימות “מטביעה” את ההבדל בין הפרומפטים, כמו שאפקט היום ניפח את \\(MS_E\\) במוקד\nאותו עיקרון במוקד:\n\n\n\nקוד\nfriedman.test(aht ~ model | day, data = calls)\n\n\n\n    Friedman rank sum test\n\ndata:  aht and model and day\nFriedman chi-squared = 23, df = 4, p-value = 1e-04\n\n\nהמקבילה הפרמטרית של Friedman היא ניתוח שונות דו-כיווני בלי אינטראקציה, עם הטיפול והבלוק כשני פקטורים: aov(score ~ prompt + task). זה תכנון בבלוקים אקראיים (randomised complete block design), ונגיע אליו בהרצאה 6 ובהרצאה על תכנון ניסויים. לשני טיפולים בלבד (\\(k = 2\\)), Friedman שקול למבחן הסימן למדגמים מזווגים מהרצאה 1."
+    "text": "ניגוד בדוגמת הכותנה\nהשאלה: האם הקצוות (15% ו-35%) חלשים מ-30%? \\(\\Gamma = \\frac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\).\n\n\nקוד\ny_by_level &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(y_by_level), seq_along(y_by_level),\n           Vectorize(\\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], \"-\"))))\ndimnames(Z) &lt;- list(names(y_by_level), names(y_by_level))\nround(Z, 2)                                      # Z[i, k] = median of y_i - y_k\n\n\n     15    20    25   30    35\n15 0.00 -0.65 -3.55 -5.0 -0.10\n20 0.65  0.00 -3.00 -4.5  0.55\n25 3.55  3.00  0.00 -1.5  3.60\n30 5.00  4.50  1.50  0.0  5.10\n35 0.10 -0.55 -3.60 -5.1  0.00\n\n\nקוד\ntau_hat &lt;- rowMeans(Z)                           # row means; they sum to 0\nround(c(tau_hat, sum = sum(tau_hat), Gamma = 0.5 * (tau_hat[[1]] + tau_hat[[5]]) - tau_hat[[4]]), 2)\n\n\n   15    20    25    30    35   sum Gamma \n-1.86 -1.26  1.73  3.22 -1.83  0.00 -5.06 \n\n\n\\(\\hat\\Gamma = \\tfrac{1}{2}\\big((-1.86) + (-1.83)\\big) - 3.22 = -5.06\\): בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#חמש-מלכודות",
     "href": "lectures/05-contrasts-multiple-comparisons.html#חמש-מלכודות",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "חמש מלכודות",
-    "text": "חמש מלכודות\n\nלבחור את ההשוואה אחרי שרואים את הנתונים, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן\nלבחור את שיטת התיקון לפי התוצאה: “ב-Tukey זה לא יצא מובהק, אז ננסה Duncan”. זו הגרסה המתוחכמת של p-hacking\nלא לתקן בכלל: להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק\nלהתעלם מבלוקים: כשאותן יחידות (משימות, ימים, משתמשים) מופיעות בכל הרמות, מבחן למדגמים בלתי תלויים מאבד עוצמה ומפר את ההנחות\nלפרש Kruskal–Wallis כמבחן על חציונים בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר"
+    "text": "חמש מלכודות\n\nלבחור את ההשוואה אחרי שרואים את הנתונים, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן\nלבחור את שיטת התיקון לפי התוצאה: “ב-Tukey זה לא יצא מובהק, אז ננסה Duncan”. זו הגרסה המתוחכמת של p-hacking\nלא לתקן בכלל: להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק\nלהתעלם מבלוקים: כשאותן יחידות (ימים, משימות, משתמשים) מופיעות בכל הרמות, מבחן שמניח מדגמים בלתי תלויים מפר את ההנחות ומאבד עוצמה. ראינו את זה עם אפקט היום במוקד. הפתרון בהרצאה 6\nלפרש Kruskal–Wallis כמבחן על חציונים בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons.html#מה-לקחת-מההרצאה",
     "href": "lectures/05-contrasts-multiple-comparisons.html#מה-לקחת-מההרצאה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nשאלה ספציפית, מתוכננת מראש\nניגוד, \\(SS_C\\), \\(F_{1,\\,N-a}\\)\nידני, pf()\n\n\nלפרק את \\(SS_{Tr}\\) לשאלות נפרדות\n\\(a - 1\\) ניגודים אורתוגונליים\n\n\n\nכל הזוגות (גרסת הבחינה)\nDuncan, \\(R_p = r_\\alpha(p, f)\\,s_{\\bar y}\\)\nqtukey((1-α)^(p-1), p, f)\n\n\nכל הזוגות, FWER \\(= \\alpha\\)\nTukey HSD, \\(q_\\alpha(a, f)\\,s_{\\bar y}\\)\nTukeyHSD()\n\n\nנתונים מוטים, חריגים, סדר\nKruskal–Wallis, \\(K \\sim \\chi^2_{a-1}\\)\nkruskal.test()\n\n\nזוגות אחרי Kruskal–Wallis\nסכום דירוגים + תיקון\npairwise.wilcox.test()\n\n\nניגוד עמיד לחריגים\nחציונים של הפרשים, \\(Z_{ik}\\)\n\n\n\nטיפולים בתוך בלוקים\nFriedman, \\(Q \\sim \\chi^2_{k-1}\\)\nfriedman.test()\n\n\n\nבהרצאה הבאה: ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל."
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nשאלה ספציפית, מתוכננת מראש\nניגוד, \\(SS_C\\), \\(F_{1,\\,N-a}\\)\nידני, pf()\n\n\nלפרק את \\(SS_{Tr}\\) לשאלות נפרדות\n\\(a - 1\\) ניגודים אורתוגונליים\n\n\n\nכל הזוגות (גרסת הבחינה)\nDuncan, \\(R_p = r_\\alpha(p, f)\\,s_{\\bar y}\\)\nqtukey((1-α)^(p-1), p, f)\n\n\nכל הזוגות, FWER \\(= \\alpha\\)\nTukey HSD, \\(q_\\alpha(a, f)\\,s_{\\bar y}\\)\nTukeyHSD()\n\n\nנתונים מוטים, חריגים, סדר\nKruskal–Wallis, \\(K \\sim \\chi^2_{a-1}\\)\nkruskal.test()\n\n\nזוגות אחרי Kruskal–Wallis\nסכום דירוגים + תיקון\npairwise.wilcox.test()\n\n\nניגוד עמיד לחריגים\nחציונים של הפרשים, \\(Z_{ik}\\)\n\n\n\n\nבהרצאה הבאה: ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#על-מה-נדבר-היום",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#על-מה-נדבר-היום",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "על מה נדבר היום",
-    "text": "על מה נדבר היום\n\nחזרה קצרה על ניתוח שונות חד-כיווני (למי שלא היה ביום ראשון)\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים\nFriedman: טיפולים בתוך בלוקים"
+    "text": "על מה נדבר היום\n\nחזרה והשלמה מהרצאה 4: בדיקת ההנחות, שונויות לא שוות, אפקטים אקראיים, גודל אפקט\nניגודים (contrasts): שאלות ספציפיות שתכננו מראש\nהשוואות מרובות: למה 10 מבחני t הם בעיה\n\nשיטת Duncan\nשיטת Tukey (HSD)\n\nניתוח שונות א-פרמטרי:\n\nKruskal–Wallis: כמה מדגמים בלתי תלויים\nניגודים עם חציונים"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המודל-וההשערות",
@@ -3318,6 +3507,13 @@
     "text": "המודל וההשערות\n\\(a\\) רמות של פקטור אחד, \\(n\\) תצפיות בכל רמה, \\(N = an\\):\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij} \\qquad \\sum_{i=1}^{a}\\tau_i = 0 \\qquad \\varepsilon_{ij} \\overset{iid}{\\sim} N(0, \\sigma^2)\n\\]\n\\[\nH_0: \\tau_1 = \\dots = \\tau_a = 0 \\quad (\\mu_1 = \\dots = \\mu_a) \\qquad H_1: \\tau_i \\neq 0 \\text{ עבור } i \\text{ כלשהו}\n\\]\nשלוש הנחות: נורמליות, אי-תלות, שונות שווה בכל הרמות.\nהדוגמה: מוקד שירות בוחר את מודל השפה לעוזר AI. 5 מודלים (M1, M2 קטנים, M3 בינוני, M4, M5 גדולים), 9 ימים לכל מודל, והתגובה היא משך הטיפול הממוצע בפנייה (דקות). האם יש הבדל, ואיזה מודל להפעיל?\n\ncalls |&gt; group_by(model) |&gt; summarise(total = sum(aht), mean = mean(aht))\n\n# A tibble: 5 × 3\n  model total  mean\n  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 M1     45.0  5.00\n2 M2     48.0  5.33\n3 M3     36.0  3.99\n4 M4     33.9  3.76\n5 M5     35.6  3.96"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-אות-מול-רעש",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-אות-מול-רעש",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הרעיון: אות מול רעש",
+    "text": "הרעיון: אות מול רעש"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#פירוק-השונות-וטבלת-anova",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#פירוק-השונות-וטבלת-anova",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
@@ -3325,11 +3521,151 @@
     "text": "פירוק השונות וטבלת ANOVA\n\\[\n\\underbrace{\\sum_{i,j}(y_{ij} - \\bar y_{\\cdot\\cdot})^2}_{SS_T}\n= \\underbrace{n\\sum_{i}(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2}_{SS_{Tr}\\text{: בין הרמות}}\n+ \\underbrace{\\sum_{i,j}(y_{ij} - \\bar y_{i\\cdot})^2}_{SS_E\\text{: בתוך הרמות}}\n\\]\n\n\n\nמקור\nסכום ריבועים\nדרגות חופש\nממוצע ריבועים\n\\(F_0\\)\n\n\n\n\nבין הרמות\n\\(SS_{Tr}\\)\n\\(a - 1\\)\n\\(MS_{Tr}\\)\n\\(MS_{Tr}/MS_E\\)\n\n\nשגיאה\n\\(SS_E\\)\n\\(N - a\\)\n\\(MS_E = \\hat\\sigma^2\\)\n\n\n\nסך הכול\n\\(SS_T\\)\n\\(N - 1\\)\n\n\n\n\n\n\n\\(E(MS_E) = \\sigma^2\\) תמיד. \\(E(MS_{Tr}) = \\sigma^2 + \\frac{n\\sum\\tau_i^2}{a-1}\\)\nדוחים את \\(H_0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,a-1,\\,N-a}\\)"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#בדיקת-ההנחות-השאריות",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#בדיקת-ההנחות-השאריות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בדיקת ההנחות: השאריות",
+    "text": "בדיקת ההנחות: השאריות\n\\[\ne_{ij} = y_{ij} - \\hat y_{ij} = y_{ij} - \\bar y_{i\\cdot}\n\\]\nהשאריות הן האומדים לשגיאות \\(\\varepsilon_{ij}\\). כל ההנחות נבדקות דרכן:\n\n\n\n\n\n\n\n\nההנחה\nבדיקה גרפית\nבדיקה במבחן\n\n\n\n\nנורמליות\nגרף Q-Q\nShapiro–Wilk, KS\n\n\nאי-תלות\nשאריות לפי סדר האיסוף\n\n\n\nשונות שווה\nboxplot, שאריות מול ממוצעי הרמות\nBartlett, Levene\n\n\n\n\ncalls_r &lt;- calls |&gt; mutate(fitted = fitted(fit_ai), resid = resid(fit_ai))\ncalls_r |&gt; select(day, model, aht, fitted, resid) |&gt; head(3)\n\n# A tibble: 3 × 5\n    day model   aht fitted   resid\n  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;\n1     1 M1     4.98   5.00 -0.0222\n2     1 M2     5.29   5.33 -0.0444\n3     1 M3     4.51   3.99  0.516"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#גרף-q-q-איך-בונים-אותו",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#גרף-q-q-איך-בונים-אותו",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גרף Q-Q: איך בונים אותו",
+    "text": "גרף Q-Q: איך בונים אותו\n\nממיינים את \\(N\\) השאריות מהקטנה לגדולה: \\(e_{(1)} \\le e_{(2)} \\le \\dots \\le e_{(N)}\\)\nלשארית ה-\\(k\\) בסדר מתאימים את האחוזון \\(p_k = \\dfrac{k - 0.5}{N}\\)\nמחשבים את הערך התיאורטי של \\(N(0,1)\\) באחוזון הזה: \\(z_k = \\Phi^{-1}(p_k)\\)\nמשרטטים את \\(e_{(k)}\\) (ציר אנכי) מול \\(z_k\\) (ציר אופקי)\n\nאם השאריות נורמליות, הנקודות על קו ישר (השיפוע הוא בערך \\(\\hat\\sigma\\)).\n\nqq &lt;- calls_r |&gt;\n  arrange(resid) |&gt;\n  mutate(k = row_number(), p = (k - 0.5) / n(), z = qnorm(p))\nqq |&gt; select(resid, k, p, z) |&gt; slice(c(1, 2, 45))\n\n# A tibble: 3 × 4\n  resid     k      p     z\n  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 -1.97     1 0.0111 -2.29\n2 -1.93     2 0.0333 -1.83\n3  1.50    45 0.989   2.29"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#גרף-q-q-למודלים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#גרף-q-q-למודלים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גרף Q-Q למודלים",
+    "text": "גרף Q-Q למודלים\n\nggplot(qq, aes(z, resid)) +\n  geom_abline(intercept = 0, slope = sqrt(mse), colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(size = 2.5) +\n  labs(title = \"השאריות קרובות לקו, עם זנב שמאלי ארוך מעט\",\n       subtitle = \"קו מקווקו: שיפוע σ̂ = √MSE\",\n       x = \"Theoretical quantile (z)\", y = \"Residual (min)\")"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#אי-תלות-שאריות-לפי-היום",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#אי-תלות-שאריות-לפי-היום",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "אי-תלות: שאריות לפי היום",
+    "text": "אי-תלות: שאריות לפי היום\n\n\nאפקט היום “נכנס” ל-\\(SS_E\\) ומנפח את \\(MS_E\\). הפתרון: היום כבלוק במודל. נגיע לזה בהרצאה 6 (ניתוח שונות רב-כיווני)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#שונות-שווה-שאריות-מול-ממוצעי-הרמות",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#שונות-שווה-שאריות-מול-ממוצעי-הרמות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "שונות שווה: שאריות מול ממוצעי הרמות",
+    "text": "שונות שווה: שאריות מול ממוצעי הרמות\n\n\nכל עמודה היא רמה אחת. מחפשים פיזור אנכי דומה בכל העמודות\nסימן אזהרה: “משפך”, כשהפיזור גדל עם הממוצע. אצלנו M4 צפוף מעט יותר, אבל אין דפוס ברור"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מבחן-bartlett",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מבחן-bartlett",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מבחן Bartlett",
+    "text": "מבחן Bartlett\n\\(H_0: \\sigma_1^2 = \\dots = \\sigma_a^2\\) מול \\(H_1\\): לפחות שונות אחת שונה.\n\nזהירות: המבחן רגיש מאוד לסטייה מנורמליות. כשהשאריות לא נורמליות, משתמשים במבחן Levene\n\n\nround(tapply(calls$aht, calls$model, var), 2)\n\n  M1   M2   M3   M4   M5 \n1.05 1.31 0.76 0.39 0.76 \n\nbartlett.test(aht ~ model, data = calls)\n\n\n    Bartlett test of homogeneity of variances\n\ndata:  aht by model\nBartlett's K-squared = 3, df = 4, p-value = 0.6"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#anova-של-welch",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#anova-של-welch",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "ANOVA של Welch",
+    "text": "ANOVA של Welch\nמבחן F הקלאסי מאחד את כל \\(S_i^2\\) ל-\\(MS_E\\) אחד. כשהשונויות שונות, \\(MS_E\\) אחד לא מתאים לאף קבוצה. Welch נותן לכל קבוצה את השונות שלה:\n\\[\nw_i = \\frac{n_i}{S_i^2}, \\qquad \\bar y_w = \\frac{\\sum_i w_i \\bar y_{i\\cdot}}{\\sum_i w_i}, \\qquad\nF_W \\approx \\frac{\\frac{1}{a-1}\\sum_i w_i(\\bar y_{i\\cdot} - \\bar y_w)^2}{1 + \\text{(small correction)}}\n\\]\n\n\\(w_i\\) הוא אחד חלקי השונות של \\(\\bar y_{i\\cdot}\\): ממוצע מדויק (קבוצה גדולה, פיזור קטן) מקבל משקל גבוה, ממוצע רועש מקבל משקל נמוך\n\\(F_W \\sim F_{a-1,\\,\\nu}\\), עם פחות דרגות חופש במכנה מ-\\(N-a\\) (\\(\\nu\\) מחושב מהנתונים). המחיר: קצת פחות עוצמה כשהשונויות באמת שוות\nב-R זו ברירת המחדל של oneway.test(). במודלים (שונויות דומות) המסקנה זהה ל-F הקלאסי:\n\n\noneway.test(aht ~ model, data = calls)\n\n\n    One-way analysis of means (not assuming equal variances)\n\ndata:  aht and model\nF = 4.5, num df = 4, denom df = 20, p-value = 0.009"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#סימולציה-ארבעה-תרחישים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#סימולציה-ארבעה-תרחישים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סימולציה: ארבעה תרחישים",
+    "text": "סימולציה: ארבעה תרחישים\nבכל התרחישים התוחלת זהה בשלוש הקבוצות (\\(H_0\\) נכונה). משתנים רק גודל הקבוצות והפיזור בתוכן. כך נראה ניסוי אחד מכל תרחיש:"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#סימולציה-כשהשונויות-לא-שוות",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#סימולציה-כשהשונויות-לא-שוות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סימולציה: כשהשונויות לא שוות",
+    "text": "סימולציה: כשהשונויות לא שוות\nשלוש קבוצות עם אותה תוחלת (\\(H_0\\) נכונה). בכמה מהניסויים מבחן F דוחה ב-\\(\\alpha = 0.05\\)?\n\nsim_reject &lt;- function(n, sd, reps = 4000) {\n  g &lt;- factor(rep(seq_along(n), n))\n  rejected &lt;- replicate(reps, {\n    y &lt;- rnorm(sum(n), 0, rep(sd, n))\n    c(oneway.test(y ~ g, var.equal = TRUE)$p.value, oneway.test(y ~ g)$p.value) &lt; 0.05\n  })\n  rowMeans(rejected)   # rejection rate: classic F, Welch\n}\nset.seed(77)\nsim_res &lt;- tibble(design = c(\"balanced, equal sd\", \"balanced, unequal sd\",\n                             \"small group has large sd\", \"large group has large sd\"),\n                  n  = list(c(10, 10, 10), c(10, 10, 10), c(5, 10, 20), c(5, 10, 20)),\n                  sd = list(c(1, 1, 1),    c(3, 1, 1),    c(3, 1, 1),    c(1, 1, 3))) |&gt;\n  mutate(rate = map2(n, sd, sim_reject),\n         F = map_dbl(rate, 1), Welch = map_dbl(rate, 2))\nsim_res |&gt; select(design, F, Welch)\n\n# A tibble: 4 × 3\n  design                         F  Welch\n  &lt;chr&gt;                      &lt;dbl&gt;  &lt;dbl&gt;\n1 balanced, equal sd       0.0472  0.0452\n2 balanced, unequal sd     0.0788  0.0492\n3 small group has large sd 0.241   0.0592\n4 large group has large sd 0.00875 0.0475"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "התוצאה בתרשים",
+    "text": "התוצאה בתרשים\n\n\nניסוי לא מאוזן + שונויות שונות = בעיה. כשלקבוצה הקטנה יש שונות גדולה, F דוחה הרבה יותר מ-5%. Welch (oneway.test()) נשאר קרוב ל-5%"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#השאלה-האם-השרתים-שונים-זה-מזה",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#השאלה-האם-השרתים-שונים-זה-מזה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השאלה: האם השרתים שונים זה מזה?",
+    "text": "השאלה: האם השרתים שונים זה מזה?\nלשירות יש 200 שרתים זהים, לכאורה. צוות התשתיות חושד שיש שרתים “איטיים” (חומרה ישנה, שכן רועש באותו מחשב פיזי).\n\nאי אפשר למדוד את כל 200 השרתים. מגרילים 8 שרתים, ושולחים לכל אחד 6 בקשות זהות\nהשאלה לא “האם שרת 17 איטי משרת 112”. השרתים שנבחרו לא מעניינים כשלעצמם\nהשאלה: האם באוכלוסיית השרתים יש שונות בזמן התגובה? וכמה מהשונות הכוללת היא בין שרתים?\n\n\nset.seed(404)\nfleet &lt;- tibble(server = sprintf(\"srv-%03d\", 1:200), tau = rnorm(200, 0, 10))  # sd between servers: 10 ms\nservers &lt;- fleet |&gt;\n  slice_sample(n = 8) |&gt;\n  expand_grid(rep = 1:6) |&gt;\n  mutate(latency = round(120 + tau + rnorm(n(), 0, 15), 1),                     # sd within: 15 ms\n         server = factor(server))"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הנתונים",
+    "text": "הנתונים\n\nggplot(servers, aes(server, latency)) +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5, alpha = 0.8,\n             position = position_jitter(width = 0.08, seed = 4)) +\n  stat_summary(fun = mean, geom = \"crossbar\", width = 0.4, colour = nanas_pal[[\"accent\"]]) +\n  labs(title = \"8 שרתים שהוגרלו מתוך 200\",\n       subtitle = \"6 בקשות לכל שרת · קו כתום: הממוצע של השרת\",\n       x = \"Server\", y = \"Latency (ms)\")"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המודל",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#המודל",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "המודל",
+    "text": "המודל\n\\[\ny_{ij} = \\mu + \\tau_i + \\varepsilon_{ij} \\qquad\n\\tau_i \\sim N(0, \\sigma_\\tau^2) \\qquad\n\\varepsilon_{ij} \\sim N(0, \\sigma^2)\n\\]\n\nאותה נוסחה, אבל עכשיו \\(\\tau_i\\) הוא משתנה מקרי: השרת הוגרל\n\\(\\tau_i\\) ו-\\(\\varepsilon_{ij}\\) בלתי תלויים. אין אילוץ \\(\\sum \\tau_i = 0\\)\nהשונות של תצפית מתפרקת לשני רכיבי שונות (variance components):\n\n\\[\nV(y_{ij}) = \\sigma_\\tau^2 + \\sigma^2\n\\]\nההשערות הן על \\(\\sigma_\\tau^2\\), ולא על ה-\\(\\tau_i\\) עצמם:\n\\[\nH_0: \\sigma_\\tau^2 = 0 \\qquad H_1: \\sigma_\\tau^2 &gt; 0\n\\]"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המבחן-והאומדים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#המבחן-והאומדים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "המבחן והאומדים",
+    "text": "המבחן והאומדים\nסכומי הריבועים, הטבלה ו-\\(F_0 = MS_{Tr}/MS_E\\) זהים למודל הקבוע. משתנה הפרשנות של התוחלות:\n\\[\nE(MS_E) = \\sigma^2 \\qquad E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\n\\]\nתחת \\(H_0\\) (\\(\\sigma_\\tau^2 = 0\\)) שניהם אומדים את \\(\\sigma^2\\), ולכן שוב \\(F_0 \\sim F_{a-1,\\,N-a}\\). מכאן גם אומדים לרכיבי השונות:\n\\[\n\\hat\\sigma^2 = MS_E \\qquad \\hat\\sigma_\\tau^2 = \\frac{MS_{Tr} - MS_E}{n}\n\\]\nמתאם תוך-קבוצתי (intraclass correlation, ICC): איזה חלק מהשונות הכוללת הוא בין הרמות?\n\\[\n\\rho = \\frac{\\sigma_\\tau^2}{\\sigma_\\tau^2 + \\sigma^2}\n\\]"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#למה-ems_tr-sigma2-nsigma_tau2",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#למה-ems_tr-sigma2-nsigma_tau2",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "למה \\(E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\\)?",
+    "text": "למה \\(E(MS_{Tr}) = \\sigma^2 + n\\sigma_\\tau^2\\)?\nעובדה אחת: שונות מדגמית היא אומד חסר הטיה לשונות.\n\nהממוצע של רמה \\(i\\), ו-\\(\\tau_i\\) משתנה מקרי בלתי תלוי בשגיאות:\n\n\\[\n\\bar y_{i\\cdot} = \\mu + \\tau_i + \\bar\\varepsilon_{i\\cdot} \\quad\\Rightarrow\\quad V(\\bar y_{i\\cdot}) = \\sigma_\\tau^2 + \\frac{\\sigma^2}{n}\n\\]\n\nהרמות הוגרלו, ולכן \\(\\bar y_{1\\cdot}, \\dots, \\bar y_{a\\cdot}\\) הם מדגם של \\(a\\) ערכים בלתי תלויים מאותה התפלגות. השונות המדגמית שלהם, \\(S^2_{\\bar y} = \\frac{1}{a-1}\\sum_i (\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2\\), חסרת הטיה: \\(E(S^2_{\\bar y}) = \\sigma_\\tau^2 + \\frac{\\sigma^2}{n}\\)\nב-\\(SS_{Tr}\\) כל תצפית מוחלפת בממוצע הרמה שלה: \\(SS_{Tr} = \\sum_i\\sum_{j=1}^{n}(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2\\). האיבר לא תלוי ב-\\(j\\), ולכן הוא נספר \\(n\\) פעמים:\n\n\\[\nMS_{Tr} = \\frac{SS_{Tr}}{a-1} = n \\cdot \\frac{\\sum_i(\\bar y_{i\\cdot} - \\bar y_{\\cdot\\cdot})^2}{a-1} = n S^2_{\\bar y}\n\\quad\\Rightarrow\\quad E(MS_{Tr}) = n\\sigma_\\tau^2 + \\sigma^2\n\\]\nבמודל הקבוע \\(\\tau_i\\) הם קבועים. בשלב 1 נשאר רק \\(\\sigma^2/n\\), ובמקום \\(\\sigma_\\tau^2\\) מופיע \\(\\frac{\\sum\\tau_i^2}{a-1}\\): הפיזור של האפקטים שנבחרו, במקום השונות של אוכלוסיית האפקטים."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#בחזרה-לשרתים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#בחזרה-לשרתים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בחזרה לשרתים",
+    "text": "בחזרה לשרתים\n\nfit_srv &lt;- aov(latency ~ server, data = servers)\nsummary(fit_srv)\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nserver       7   5433     776    4.12 0.0017 **\nResiduals   40   7535     188                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nms_srv &lt;- summary(fit_srv)[[1]][[\"Mean Sq\"]]\nc(sigma2_hat = ms_srv[2], sigma2_tau_hat = (ms_srv[1] - ms_srv[2]) / 6,\n  icc = ((ms_srv[1] - ms_srv[2]) / 6) / ((ms_srv[1] - ms_srv[2]) / 6 + ms_srv[2]))\n\n    sigma2_hat sigma2_tau_hat            icc \n      188.3674        97.9592         0.3421 \n\n\n\nדוחים את \\(H_0\\) (\\(p = 0.0017\\))\nסטיית התקן בין שרתים נאמדת ב-\\(\\sqrt{\\hat\\sigma_\\tau^2} = 9.9\\) מילישניות (האמת בסימולציה: 10), ובתוך שרת ב-\\(13.7\\) (האמת: 15)\nכ-34% מהשונות בזמן התגובה נובעת מהבדלים בין שרתים. ההחלטה: האם שווה לאתר ולהחליף שרתים איטיים, או שרוב הבעיה היא בתוך כל שרת?\n\n\nעם 8 שרתים בלבד, האומד ל-σ_τ² מאוד לא מדויק. זה המחיר של מודל אקראי: את רכיב השונות בין הרמות אומדים מ-a = 8 ממוצעים בלבד. כדי לאמוד אותו טוב, צריך יותר שרתים, לא יותר בקשות לכל שרת."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#קבוע-או-אקראי",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#קבוע-או-אקראי",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "קבוע או אקראי?",
+    "text": "קבוע או אקראי?\n\n\n\n\n\n\n\n\n\nאפקטים קבועים\nאפקטים אקראיים\n\n\n\n\nהרמות\nכל הרמות שמעניינות אותנו\nמדגם מקרי מתוך הרבה רמות\n\n\nדוגמאות\n5 המודלים שהמוקד שקל, 3 גרסאות של מוצר, 4 נוסחים של פרומפט\nשרתים מתוך צי, מוקדנים מתוך מוקד, אצוות של חומר גלם\n\n\n\\(\\tau_i\\)\nקבועים, \\(\\sum \\tau_i = 0\\)\nמשתנים מקריים, \\(N(0, \\sigma_\\tau^2)\\)\n\n\n\\(H_0\\)\n\\(\\tau_1 = \\dots = \\tau_a = 0\\)\n\\(\\sigma_\\tau^2 = 0\\)\n\n\nמה אומדים\n\\(\\mu_i\\) והפרשים ביניהן\nרכיבי שונות \\(\\sigma_\\tau^2\\), \\(\\sigma^2\\), ICC\n\n\nהמסקנה חלה על\nהרמות שנבדקו\nכל אוכלוסיית הרמות\n\n\n\nשאלת מבחן: “אם נחזור על הניסוי, האם נבדוק את אותן רמות?” אם כן: קבוע. אם נגריל רמות חדשות: אקראי."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#חמש-מלכודות-בניתוח-שונות",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#חמש-מלכודות-בניתוח-שונות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "חמש מלכודות בניתוח שונות",
+    "text": "חמש מלכודות בניתוח שונות\n\nאין הגרלה: אם M1 הופעל רק בימי ראשון העמוסים, ההבדל הוא של היום ולא של המודל. ניתוח שונות לא מתקן תכנון גרוע\nחזרות מדומות (pseudo-replication): 8 בקשות לאותו שרת אינן 8 שרתים. ב-\\(N\\) סופרים את היחידות שהוגרלו, לא את המדידות\n“לא מובהק” אינו “שווה”: אם לא דחינו, ייתכן שפשוט אין מספיק עוצמה. בודקים רווחי סמך וגודל מדגם\nמובהק אינו חשוב: עם מספיק נתונים, גם הבדל של שנייה אחת יהיה מובהק. מדווחים את גודל האפקט (שקף הבא)\nמבחני t מרובים במקום F: עם הרבה רמות, הבדל מקרי “יימצא” כמעט בוודאות"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#גודל-אפקט-effect-size-eta2",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#גודל-אפקט-effect-size-eta2",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "גודל אפקט (Effect size): \\(\\eta^2\\)",
+    "text": "גודל אפקט (Effect size): \\(\\eta^2\\)\n\\[\n\\eta^2 = \\frac{SS_{Tr}}{SS_T}\n\\]\n\nהחלק מהשונות הכוללת שמוסבר על ידי הפקטור. זה בדיוק \\(R^2\\) של הרגרסיה המקבילה\nלמודלים: \\(\\eta^2 = 18.02 / 52.17 = 0.35\\). המודל מסביר כשליש מהשונות במשך הטיפול\n\n\naov_tab &lt;- summary(fit_ai)[[1]]\nc(eta2 = aov_tab[1, \"Sum Sq\"] / sum(aov_tab[, \"Sum Sq\"]),\n  R2_lm = summary(lm(aht ~ model, data = calls))$r.squared)\n\n  eta2  R2_lm \n0.3455 0.3455"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#סיכום-הרצאה-4",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#סיכום-הרצאה-4",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "סיכום הרצאה 4",
+    "text": "סיכום הרצאה 4\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nהאם יש הבדל בין \\(a\\) רמות של פקטור?\nמבחן F, \\(F_{a-1,\\,N-a}\\)\nsummary(aov(y ~ g))\n\n\nמהי השונות של הרעש?\n\\(\\hat\\sigma^2 = MS_E\\)\nMean Sq של Residuals\n\n\nמהי התוחלת ברמה \\(i\\)?\n\\(\\bar y_{i\\cdot} \\pm t\\sqrt{MS_E/n}\\)\n\n\n\nהאם ההנחות מתקיימות?\nQ-Q, שאריות לפי סדר, Bartlett/Levene\nresid(), bartlett.test()\n\n\nשונויות לא שוות?\nWelch ANOVA\noneway.test()\n\n\nכמה חזרות צריך?\nניתוח עוצמה\npower.anova.test()\n\n\nהרמות הן מדגם מאוכלוסייה?\nאפקטים אקראיים, \\(\\hat\\sigma_\\tau^2\\), ICC\nאותו aov(), פרשנות אחרת\n\n\nכמה הפקטור מסביר?\n\\(\\eta^2 = SS_{Tr}/SS_T\\)"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה-למודלים",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה-למודלים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "התוצאה למודלים",
-    "text": "התוצאה למודלים\n\nsummary(fit_ai)\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nmodel        4   18.0    4.51    5.28 0.0016 **\nResiduals   40   34.1    0.85                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(F_0 = 5.28 &gt; F_{0.95;\\,4,\\,40} = 2.61\\): יש הבדל בין המודלים\n\\(MS_E = 0.854\\), ולכן \\(\\hat\\sigma = 0.92\\) דקות\nאבל מבחן ה-F לא אומר בין מי למי. עם M1 ו-M2 הטיפול נראה ארוך, ועם M3, M4 ו-M5 קצר. האם זה אמיתי?\n\nשתי דרכים לענות:\n\nניגודים: שאלות ספציפיות שניסחנו לפני שראינו את הנתונים\nהשוואות מרובות: כל הזוגות, עם תיקון לכך שבודקים הרבה\n\n\nעוד דבר מיום ראשון: ראינו שבימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נחזור לזה בסוף, במבחן פרידמן."
+    "text": "התוצאה למודלים\n\nsummary(fit_ai)\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nmodel        4   18.0    4.51    5.28 0.0016 **\nResiduals   40   34.1    0.85                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\n\\(F_0 = 5.28 &gt; F_{0.95;\\,4,\\,40} = 2.61\\): יש הבדל בין המודלים\n\\(MS_E = 0.854\\), ולכן \\(\\hat\\sigma = 0.92\\) דקות\nאבל מבחן ה-F לא אומר בין מי למי. עם M1 ו-M2 הטיפול נראה ארוך, ועם M3, M4 ו-M5 קצר. האם זה אמיתי?\n\nשתי דרכים לענות:\n\nניגודים: שאלות ספציפיות שניסחנו לפני שראינו את הנתונים\nהשוואות מרובות: כל הזוגות, עם תיקון לכך שבודקים הרבה\n\n\nתזכורת: בימים 6 ו-8 הטיפול היה קצר בכל המודלים, כלומר יש אפקט של יום. נטפל בזה בהרצאה 6, עם בלוקים."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#שאלות-ספציפיות",
@@ -3343,7 +3679,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הגדרה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הגדרה",
-    "text": "הגדרה\nניגוד (contrast) הוא צירוף לינארי של התוחלות\n\\[\n\\Gamma = \\sum_{i=1}^{a} c_i \\mu_i \\qquad \\text{כאשר} \\qquad \\sum_{i=1}^{a} c_i = 0\n\\]\n\n\n\nהשאלה\n\\(c_1\\)\n\\(c_2\\)\n\\(c_3\\)\n\\(c_4\\)\n\\(c_5\\)\n\n\n\n\nקטנים מול גדולים\n1\n1\n0\n−1\n−1\n\n\nM3 מול M4\n0\n0\n1\n−1\n0\n\n\n\n\nלמה \\(\\sum c_i = 0\\)? כי אז \\(\\sum c_i \\mu_i = \\sum c_i(\\mu + \\tau_i) = \\sum c_i \\tau_i\\). ה-\\(\\mu\\) מתבטל, והניגוד מודד רק הבדלים בין הרמות\nכל השוואה בין שתי רמות היא ניגוד: \\(c = (1, -1, 0, \\dots)\\)"
+    "text": "הגדרה\nניגוד (contrast) הוא צירוף לינארי של התוחלות, שסכום המקדמים שלו אפס:\n\\[\n\\Gamma = \\sum_{i=1}^{a} c_i \\mu_i, \\qquad \\sum_{i=1}^{a} c_i = 0\n\\]\n\n\n\nהשאלה\n\\(c_1\\)\n\\(c_2\\)\n\\(c_3\\)\n\\(c_4\\)\n\\(c_5\\)\n\n\n\n\nקטנים מול גדולים\n1\n1\n0\n−1\n−1\n\n\nM3 מול M4\n0\n0\n1\n−1\n0\n\n\n\n\nלמה \\(\\sum c_i = 0\\)? כי אז \\(\\sum c_i \\mu_i = \\sum c_i(\\mu + \\tau_i) = \\sum c_i \\tau_i\\). ה-\\(\\mu\\) מתבטל, והניגוד מודד רק הבדלים בין הרמות\nכל השוואה בין שתי רמות היא ניגוד: \\(c = (1, -1, 0, \\dots)\\)"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#האומד-והשונות-שלו",
@@ -3353,11 +3689,18 @@
     "text": "האומד והשונות שלו\nהאומד: מחליפים כל תוחלת בממוצע של הרמה:\n\\[\n\\hat\\Gamma = \\sum_{i=1}^{a} c_i \\bar y_{i\\cdot}\n\\]\nהתוחלת: \\(E(\\hat\\Gamma) = \\sum c_i \\mu_i = \\Gamma\\). תחת \\(H_0\\) היא אפס.\nהשונות: הממוצעים בלתי תלויים, וכל אחד עם שונות \\(\\sigma^2/n\\):\n\\[\nV(\\hat\\Gamma) = \\sum_{i=1}^{a} c_i^2 \\, V(\\bar y_{i\\cdot}) = \\frac{\\sigma^2}{n}\\sum_{i=1}^{a} c_i^2\n\\]\nמבחן t: מציבים \\(MS_E\\) במקום \\(\\sigma^2\\):\n\\[\nt_0 = \\frac{\\sum c_i \\bar y_{i\\cdot}}{\\sqrt{\\frac{MS_E}{n}\\sum c_i^2}} \\sim t_{N-a} \\quad \\text{(תחת } H_0\\text{)}\n\\]"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#סכום-הריבועים-של-ניגוד",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#סכום-הריבועים-של-ניגוד",
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מ-t-ל-f-סכום-הריבועים-של-ניגוד",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מ-t-ל-f-סכום-הריבועים-של-ניגוד",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "סכום הריבועים של ניגוד",
-    "text": "סכום הריבועים של ניגוד\nאפשר לכתוב את אותו מבחן כמבחן F, עם \\(t_0^2 = F_0\\). בעזרת הסכומים \\(y_{i\\cdot} = n\\bar y_{i\\cdot}\\):\n\\[\nSS_C = \\frac{\\left(\\sum_{i=1}^{a} c_i y_{i\\cdot}\\right)^2}{n\\sum_{i=1}^{a} c_i^2}\n\\qquad\\qquad\nF_0 = \\frac{SS_C / 1}{MS_E} \\sim F_{1,\\; N-a}\n\\]\n\nלכל ניגוד דרגת חופש אחת\n\\(SS_C\\) הוא החלק של \\(SS_{Tr}\\) ש”מוסבר” על ידי השאלה הספציפית הזו\nדוחים את \\(H_0: \\Gamma = 0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,1,\\,N-a}\\)"
+    "section": "מ-t ל-F: סכום הריבועים של ניגוד",
+    "text": "מ-t ל-F: סכום הריבועים של ניגוד\nמעלים את \\(t_0\\) בריבוע, מונה ומכנה, ומציבים \\(\\bar y_{i\\cdot} = y_{i\\cdot}/n\\) (הסכומים במקום הממוצעים):\n\\[\nt_0^2 = \\frac{\\left(\\sum c_i \\bar y_{i\\cdot}\\right)^2}{\\frac{MS_E}{n}\\sum c_i^2}\n= \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2 / n^2}{\\frac{MS_E}{n}\\sum c_i^2}\n= \\frac{1}{MS_E}\\cdot\\underbrace{\\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{n\\sum c_i^2}}_{SS_C}\n\\]\n\\[\nF_0 = t_0^2 = \\frac{SS_C / 1}{MS_E} \\sim F_{1,\\; N-a}\n\\]\n\nהמונה, \\(SS_C\\), הוא סכום ריבועים עם דרגת חופש אחת. המכנה הוא אותו \\(MS_E\\) כמו במבחן t\nזה אותו מבחן: \\(t_{0.975,\\,40}^2 = 2.021^2 = 4.08 = F_{0.95;\\,1,\\,40}\\), ו-p-value זהה למבחן t דו-צדדי\nדוחים את \\(H_0: \\Gamma = 0\\) אם \\(F_0 &gt; F_{1-\\alpha;\\,1,\\,N-a}\\)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#אז-למה-לעבור-ל-f",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#אז-למה-לעבור-ל-f",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "אז למה לעבור ל-F?",
+    "text": "אז למה לעבור ל-F?\nכי \\(SS_C\\) מדבר באותה שפה כמו טבלת ANOVA:\n\n\\(SS_C\\) הוא חלק מ-\\(SS_{Tr}\\): כמה מההבדלים בין הרמות השאלה הספציפית הזו מסבירה. ב-t אין לזה מקבילה\nעם ניגודים אורתוגונליים (בעוד רגע), ה-\\(SS_C\\) מחלקים בדיוק את \\(SS_{Tr}\\). מבחן ה-F הכללי הוא בעצם הממוצע של \\(a - 1\\) מבחני F של ניגודים: \\(MS_{Tr} = \\frac{1}{a-1}\\sum SS_{C_k}\\)\nהחישוב הידני מהסכומים \\(y_{i\\cdot}\\) נוח, וזה הפורמט של שאלות הבחינה\n\nמתי להישאר עם t?\n\nהשערה חד-צדדית. \\(t_0^2\\) מאבד את הסימן. “האם המודלים הגדולים מקצרים את הטיפול?” היא בעצם שאלה חד-צדדית: \\(t_0 &gt; t_{1-\\alpha,\\,N-a}\\)\nרווח סמך לניגוד: \\(\\hat\\Gamma \\pm t_{1-\\alpha/2,\\,N-a}\\sqrt{\\frac{MS_E}{n}\\sum c_i^2}\\). הוא אומר כמה, לא רק אם"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המודלים-קטנים-מול-גדולים",
@@ -3371,7 +3714,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#אותו-חישוב-ב-r",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "אותו חישוב ב-R",
-    "text": "אותו חישוב ב-R\n\ncontrast_test &lt;- function(c, totals, n, mse, df_e) {\n  ss &lt;- sum(c * totals)^2 / (n * sum(c^2))\n  c(estimate = sum(c * totals / n), SS = ss, F = ss / mse,\n    p = pf(ss / mse, 1, df_e, lower.tail = FALSE))\n}\ntotals &lt;- tapply(calls$aht, calls$model, sum)\nrbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),\n      M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))\n\n               estimate      SS       F         p\nsmall_vs_large   2.6178 15.4187 18.0627 0.0001243\nM3_vs_M4         0.2311  0.2404  0.2816 0.5986067"
+    "text": "אותו חישוב ב-R\nידנית, לפי הנוסחאות:\n\ncontrast_test &lt;- function(c, totals, n, mse, df_e) {\n  ss &lt;- sum(c * totals)^2 / (n * sum(c^2))\n  c(estimate = sum(c * totals / n), SS = ss, F = ss / mse,\n    p = pf(ss / mse, 1, df_e, lower.tail = FALSE))\n}\ntotals &lt;- tapply(calls$aht, calls$model, sum)\nrbind(small_vs_large = contrast_test(c(1, 1, 0, -1, -1), totals, 9, mse, 40),\n      M3_vs_M4       = contrast_test(c(0, 0, 1, -1, 0),  totals, 9, mse, 40))\n\n               estimate      SS       F         p\nsmall_vs_large   2.6178 15.4187 18.0627 0.0001243\nM3_vs_M4         0.2311  0.2404  0.2816 0.5986067\n\n\nבפקודה מוכנה, חבילת emmeans:\n\nemm &lt;- emmeans::emmeans(fit_ai, ~ model)   # the 5 level means\nemmeans::contrast(emm, list(small_vs_large = c(1, 1, 0, -1, -1) / 2,\n                            M3_vs_M4       = c(0, 0, 1, -1, 0)))\n\n contrast       estimate    SE df t.ratio p.value\n small_vs_large    1.309 0.308 40   4.250  0.0001\n M3_vs_M4          0.231 0.436 40   0.531  0.5986\n\n\n\nemmeans מדווח \\(t\\) ולא \\(F\\), אבל \\(t^2 = F\\): \\(4.25^2 = 18.06\\), \\(0.53^2 = 0.28\\). אותו \\(p\\)\nחילקנו את הניגוד הראשון ב-2 כדי שהאומדן יהיה \\(\\hat\\Gamma = 1.31\\) דקות. כפל של \\(c\\) בקבוע לא משנה את \\(t\\) ואת \\(p\\)"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגודים-אורתוגונליים-orthogonal-contrasts",
@@ -3406,7 +3749,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגודים-בניסוי-לא-מאוזן",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ניגודים בניסוי לא מאוזן",
-    "text": "ניגודים בניסוי לא מאוזן\nכש-\\(n_i\\) שונים, מגדירים את הניגוד על הסכומים \\(y_{i\\cdot}\\):\n\\[\nC = \\sum_{i=1}^{a} c_i y_{i\\cdot} \\qquad E(C) = \\sum_{i=1}^{a} c_i n_i (\\mu + \\tau_i) = \\mu\\sum_{i=1}^{a} n_i c_i + \\sum_{i=1}^{a} n_i c_i \\tau_i\n\\]\nכדי ש-\\(\\mu\\) יתבטל, התנאי הוא:\n\\[\n\\sum_{i=1}^{a} n_i c_i = 0 \\qquad\\qquad SS_C = \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{\\sum n_i c_i^2}\n\\]\n\nאורתוגונליות בניסוי לא מאוזן: \\(\\sum n_i c_i d_i = 0\\)\nבניסוי מאוזן (\\(n_i = n\\)) חוזרים לתנאים הקודמים"
+    "text": "ניגודים בניסוי לא מאוזן\nכש-\\(n_i\\) שונים, מגדירים את הניגוד על הסכומים \\(y_{i\\cdot}\\):\n\\[\nC = \\sum_{i=1}^{a} c_i y_{i\\cdot}\n\\]\n\\(y_{i\\cdot}\\) הוא סכום של \\(n_i\\) תצפיות, ולכל אחת תוחלת \\(\\mu + \\tau_i\\). לכן \\(E(y_{i\\cdot}) = n_i(\\mu + \\tau_i)\\), ומליניאריות התוחלת:\n\\[\nE(C) = \\sum_{i=1}^{a} c_i\\, E(y_{i\\cdot}) = \\sum_{i=1}^{a} c_i n_i (\\mu + \\tau_i) = \\mu\\sum_{i=1}^{a} n_i c_i + \\sum_{i=1}^{a} n_i c_i \\tau_i\n\\]\nהניגוד צריך למדוד רק הבדלים בין האפקטים \\(\\tau_i\\), ולא את הרמה הכללית \\(\\mu\\). כדי ש-\\(\\mu\\) יתבטל, התנאי הוא:\n\\[\n\\sum_{i=1}^{a} n_i c_i = 0 \\qquad\\qquad SS_C = \\frac{\\left(\\sum c_i y_{i\\cdot}\\right)^2}{\\sum n_i c_i^2}\n\\]\n\nאורתוגונליות בניסוי לא מאוזן: \\(\\sum n_i c_i d_i = 0\\)\nבניסוי מאוזן (\\(n_i = n\\)) חוזרים לתנאים הקודמים"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#דוגמה-מבחן-בשלוש-כיתות",
@@ -3416,11 +3759,18 @@
     "text": "דוגמה: מבחן בשלוש כיתות\nמבחן התקיים בשלוש כיתות: 40 סטודנטים בכיתה 1, ו-30 בכל אחת מכיתות 2 ו-3. כיתה 3 סמוכה לאתר בנייה. הסטודנטים שלה מבקשים פקטור. האם הטענה מוצדקת?\n\nrooms &lt;- read_csv(file.path(data_dir, \"exam_rooms.csv\"), show_col_types = FALSE)\nrooms |&gt; group_by(room) |&gt; summarise(n = n(), total = sum(grade), mean = mean(grade))\n\n# A tibble: 3 × 4\n  room      n total  mean\n  &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n1 room1    40  3014  75.4\n2 room2    30  2258  75.3\n3 room3    30  2015  67.2\n\nfit_rooms &lt;- aov(grade ~ room, data = rooms)\nsummary(fit_rooms)\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)  \nroom         2   1394     697    4.08   0.02 *\nResiduals   97  16573     171                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\nה-ANOVA דוחה (\\(p = 0.02\\)). אבל השאלה ספציפית: כיתה 3 מול שתי האחרות."
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3",
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3-בחירת-המקדמים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3-בחירת-המקדמים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הניגוד לכיתה 3",
-    "text": "הניגוד לכיתה 3\nצריך \\(\\sum n_i c_i = 0\\) עם \\(n = (40, 30, 30)\\). ננסה \\(c = (1, 1, c_3)\\):\n\\[\n40 + 30 + 30c_3 = 0 \\;\\Longrightarrow\\; c_3 = -\\tfrac{7}{3} \\;\\Longrightarrow\\; c = (3, 3, -7)\n\\]\n\\[\nC = 3 \\cdot 3014 + 3 \\cdot 2258 - 7 \\cdot 2015 = 1711\n\\qquad\n\\sum n_i c_i^2 = 40 \\cdot 9 + 30 \\cdot 9 + 30 \\cdot 49 = 2100\n\\]\n\\[\nSS_C = \\frac{1711^2}{2100} = 1394.1 \\qquad F_0 = \\frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\\,1,\\,97} = 3.94\n\\]\nדוחים: בכיתה 3 הציונים נמוכים באופן מובהק משתי הכיתות האחרות, בכ-8 נקודות. ו-\\(SS_C\\) הוא כמעט כל \\(SS_{Tr} = 1394.2\\): בין כיתות 1 ו-2 כמעט אין הבדל.\n\nrt &lt;- tapply(rooms$grade, rooms$room, sum); rn &lt;- table(rooms$room); cc &lt;- c(3, 3, -7)\nss_room3 &lt;- sum(cc * rt)^2 / sum(rn * cc^2)\nc(sum_n_c = sum(rn * cc), SS_C = ss_room3, F = ss_room3 / 170.86,\n  p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))\n\n  sum_n_c      SS_C         F         p \n0.000e+00 1.394e+03 8.159e+00 5.242e-03 \n\n\n\nשאלה לדיון: האם זה מוכיח שהרעש גרם לציונים נמוכים? רק אם הסטודנטים שובצו לכיתות באקראי. אם כיתה 3 הייתה, למשל, הכיתה של מי שנרשם אחרון למבחן, ייתכן שזו אוכלוסייה אחרת."
+    "section": "הניגוד לכיתה 3: בחירת המקדמים",
+    "text": "הניגוד לכיתה 3: בחירת המקדמים\nהשאלה: האם הממוצע בכיתה 3 נמוך מהממוצע של כיתות 1 ו-2 יחד?\n\nכיתות 1 ו-2 באותו צד של השאלה, ולכן מקבלות אותו מקדם. נבחר \\(c_1 = c_2 = 1\\)\nאת \\(c_3\\) קובע התנאי לניסוי לא מאוזן, \\(\\sum n_i c_i = 0\\), עם \\(n = (40, 30, 30)\\):\n\n\\[\n40 \\cdot 1 + 30 \\cdot 1 + 30\\,c_3 = 0 \\;\\Longrightarrow\\; c_3 = -\\tfrac{7}{3}\n\\]\n\nכופלים ב-3 כדי לעבוד עם מספרים שלמים: \\(c = (3, 3, -7)\\). כפל בקבוע לא משנה את \\(SS_C\\): המונה והמכנה מוכפלים שניהם ב-\\(9\\)\n\nמה הניגוד מודד? כי \\(3 \\cdot 70 = 7 \\cdot 30 = 210\\):\n\\[\nC = 3(y_{1\\cdot} + y_{2\\cdot}) - 7\\,y_{3\\cdot} = 210\\left(\\underbrace{\\frac{y_{1\\cdot} + y_{2\\cdot}}{70}}_{\\bar y_{1,2}} - \\underbrace{\\frac{y_{3\\cdot}}{30}}_{\\bar y_{3\\cdot}}\\right)\n\\]\nכלומר \\(C/210 = \\bar y_{1,2} - \\bar y_{3\\cdot}\\): ההפרש בין הממוצע של כל 70 הסטודנטים בכיתות 1 ו-2 לבין הממוצע בכיתה 3."
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3-החישוב",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הניגוד-לכיתה-3-החישוב",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הניגוד לכיתה 3: החישוב",
+    "text": "הניגוד לכיתה 3: החישוב\nמהשקף הקודם: \\(y_{1\\cdot} = 3014\\), \\(y_{2\\cdot} = 2258\\), \\(y_{3\\cdot} = 2015\\), ו-\\(MS_E = 170.9\\) (ה-Mean Sq של Residuals).\n\\[\nC = 3 \\cdot 3014 + 3 \\cdot 2258 - 7 \\cdot 2015 = 1711 \\qquad \\frac{C}{210} = 8.15\n\\]\n\\[\nSS_C = \\frac{C^2}{\\sum n_i c_i^2} = \\frac{1711^2}{40 \\cdot 9 + 30 \\cdot 9 + 30 \\cdot 49} = \\frac{1711^2}{2100} = 1394.1\n\\]\n\\[\nF_0 = \\frac{SS_C}{MS_E} = \\frac{1394.1}{170.9} = 8.16 &gt; F_{0.95;\\,1,\\,97} = 3.94\n\\]\n\nדוחים: בכיתה 3 הציונים נמוכים בכ-8 נקודות מהממוצע בכיתות 1 ו-2, והפער מובהק\n\\(SS_C = 1394.1\\) הוא כמעט כל \\(SS_{Tr} = 1394.2\\). כל ההבדל בין הכיתות הוא “כיתה 3 מול השאר”. בין כיתות 1 ו-2 כמעט אין הבדל\n\n\nrt &lt;- tapply(rooms$grade, rooms$room, sum); rn &lt;- table(rooms$room); cc &lt;- c(3, 3, -7)\nss_room3 &lt;- sum(cc * rt)^2 / sum(rn * cc^2)\nc(sum_n_c = sum(rn * cc), C = sum(cc * rt), diff = sum(cc * rt) / 210, SS_C = ss_room3,\n  F = ss_room3 / 170.86, p = pf(ss_room3 / 170.86, 1, 97, lower.tail = FALSE))\n\n  sum_n_c         C      diff      SS_C         F         p \n0.000e+00 1.711e+03 8.148e+00 1.394e+03 8.159e+00 5.242e-03 \n\n\n\nשאלה לדיון: האם זה מוכיח שהרעש גרם לציונים נמוכים? רק אם הסטודנטים שובצו לכיתות באקראי. אם כיתה 3 הייתה, למשל, הכיתה של מי שנרשם אחרון למבחן, ייתכן שזו אוכלוסייה אחרת."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגודים-מתוכננים-מול-מה-שנראה-מעניין",
@@ -3441,28 +3791,49 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#סימולציה-10-מבחני-t-כשאין-שום-הבדל",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "סימולציה: 10 מבחני t כשאין שום הבדל",
-    "text": "סימולציה: 10 מבחני t כשאין שום הבדל\n\nset.seed(55)\ng &lt;- factor(rep(paste0(\"M\", 1:5), each = 9))\nany_reject &lt;- replicate(4000, {\n  p &lt;- pairwise.t.test(rnorm(45), g, p.adjust.method = \"none\")$p.value\n  any(p &lt; 0.05, na.rm = TRUE)\n})\nmean(any_reject)\n\n[1] 0.269\n\n\n\nב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים\nפחות מ-40% בגלל התלות בין המבחנים, אבל הרבה יותר מ-5%"
+    "text": "סימולציה: 10 מבחני t כשאין שום הבדל\n5 מודלים זהים, 9 תצפיות לכל אחד. משווים כל זוג במבחן t ב-\\(\\alpha = 0.05\\). מספר הזוגות: \\(\\binom{5}{2} = \\frac{5 \\cdot 4}{2} = 10\\) (כל אחד מ-5 המודלים מול 4 האחרים, וכל זוג נספר פעמיים). חוזרים על הניסוי 4,000 פעמים.\n\nset.seed(55)\ng &lt;- factor(rep(paste0(\"M\", 1:5), each = 9))\nn_reject &lt;- replicate(4000, {\n  p &lt;- pairwise.t.test(rnorm(45), g, p.adjust.method = \"none\")$p.value\n  sum(p &lt; 0.05, na.rm = TRUE)                    # false rejections in this experiment\n})\nc(P_any = mean(n_reject &gt; 0), mean_rejections = mean(n_reject))\n\n          P_any mean_rejections \n         0.2690          0.4983 \n\ntable(n_reject)\n\nn_reject\n   0    1    2    3    4    5    6 \n2924  540  284  144   92   11    5 \n\n\n\nב-27% מהניסויים “מצאנו” לפחות זוג מודלים שונים, אף שכולם זהים. הרבה יותר מ-5%"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#שלוש-שיטות-שלוש-משמעויות-של-מובהק",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#שלוש-שיטות-שלוש-משמעויות-של-מובהק",
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הסימולציה-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הסימולציה-בתרשים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "שלוש שיטות, שלוש משמעויות של “מובהק”",
-    "text": "שלוש שיטות, שלוש משמעויות של “מובהק”\nכל השיטות משוות הפרש בין ממוצעים לסף. כולן משתמשות בשגיאת התקן של ממוצע, \\(s_{\\bar y} = \\sqrt{MS_E / n}\\):\n\n\n\n\n\n\n\n\nהשיטה\nהסף\nשולטת ב-\n\n\n\n\nLSD של Fisher\n\\(t_{1-\\alpha/2,\\,N-a}\\sqrt{2MS_E/n}\\)\nשיעור הטעות לכל השוואה. רק אחרי F מובהק\n\n\nDuncan\n\\(r_\\alpha(p, f)\\, s_{\\bar y}\\), תלוי במרחק \\(p\\) בין הממוצעים\nביניים\n\n\nTukey HSD\n\\(q_\\alpha(a, f)\\, s_{\\bar y}\\), סף אחד לכל הזוגות\nשיעור הטעות למשפחה (FWER)\n\n\n\nלמודלים: \\(s_{\\bar y} = \\sqrt{0.854/9} = 0.308\\), ו-\\(f = N - a = 40\\).\n\nc(s_ybar = sqrt(mse / 9), LSD = qt(0.975, 40) * sqrt(2 * mse / 9))\n\ns_ybar    LSD \n0.3080 0.8803"
+    "section": "הסימולציה בתרשים",
+    "text": "הסימולציה בתרשים\n\n\nאפור: 73% מהניסויים בלי אף טעות. כתום: 27% עם טעות אחת לפחות. ובחלק מהם יש כמה טעויות יחד"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון",
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#למה-פחות-מ-40",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#למה-פחות-מ-40",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הרעיון",
-    "text": "הרעיון\nDuncan’s multiple range test משווה את כל הזוגות, אבל הסף תלוי כמה ממוצעים נמצאים בין שני הממוצעים שמשווים.\n\nממיינים את ממוצעי הרמות בסדר יורד\nלזוג שמרוחק \\(p\\) מקומות (כולל שניהם, \\(p = 2, \\dots, a\\)) מחשבים את הטווח המובהק הקטן ביותר:\n\n\\[\nR_p = r_\\alpha(p, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\nאם \\(|\\bar y_{i\\cdot} - \\bar y_{k\\cdot}| &gt; R_p\\), ההפרש מובהק\n\n\n\\(r_\\alpha(p, f)\\) הם מקדמי Duncan, מטבלה. \\(f = N - a\\) הן דרגות החופש של \\(MS_E\\)\nזוג רחוק (\\(p\\) גדול) צריך הפרש גדול יותר כדי להיות מובהק\nכלל ההגנה: אם טווח לא מובהק, לא בודקים זוגות בתוכו"
+    "section": "למה פחות מ-40%?",
+    "text": "למה פחות מ-40%?\n\n\\(1 - 0.95^{10} = 0.40\\) מניח 10 מבחנים בלתי תלויים. כאן הם תלויים: כל ממוצע משתתף ב-4 השוואות, וכל העשר חולקות את אותו \\(MS_E\\)\nהטעויות מגיעות בצרורות. כשממוצע אחד יוצא קיצוני במקרה, הוא “מושך” כמה השוואות לדחייה יחד. וכש-\\(MS_E\\) יוצא קטן במקרה, כל עשרת המבחנים נעשים מקלים יחד\nמספר הדחיות השגויות בממוצע לא משתנה: \\(10 \\times 0.05 = 0.5\\) (בסימולציה: 0.5). אבל הן מתרכזות בפחות ניסויים: בניסוי שיש בו טעות, יש בממוצע 1.9 טעויות\nלכן ההסתברות לטעות אחת לפחות קטנה מ-40%. ועדיין היא פי 5 מה-5% שרצינו"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#שתי-שיטות-שתי-משמעויות-של-מובהק",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#שתי-שיטות-שתי-משמעויות-של-מובהק",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "שתי שיטות, שתי משמעויות של “מובהק”",
+    "text": "שתי שיטות, שתי משמעויות של “מובהק”\nשתי השיטות משוות הפרש בין ממוצעים לסף. שתיהן משתמשות בשגיאת התקן של ממוצע, \\(s_{\\bar y} = \\sqrt{MS_E / n}\\):\n\n\n\n\n\n\n\n\nהשיטה\nהסף\nשיעור הטעות למשפחה (FWER)\n\n\n\n\nDuncan\n\\(r_\\alpha(p, f)\\, s_{\\bar y}\\), תלוי במרחק \\(p\\) בין הממוצעים\nגבוה מ-\\(\\alpha\\), וגדל עם מספר הרמות\n\n\nTukey HSD\n\\(q_\\alpha(a, f)\\, s_{\\bar y}\\), סף אחד לכל הזוגות\nבדיוק \\(\\alpha\\) (בניסוי מאוזן)\n\n\n\nלמודלים: \\(s_{\\bar y} = \\sqrt{0.854/9} = 0.308\\), ו-\\(f = N - a = 40\\).\n\nsqrt(mse / 9)\n\n[1] 0.308"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-הסף-תלוי-במרחק-בדירוג",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-הסף-תלוי-במרחק-בדירוג",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הרעיון: הסף תלוי במרחק בדירוג",
+    "text": "הרעיון: הסף תלוי במרחק בדירוג\nDuncan’s multiple range test משווה את כל הזוגות, אחרי שמבחן ה-F דחה. החידוש: לא כל הזוגות מקבלים אותו סף.\nלמה? נניח שאין שום הבדל בין 5 המודלים. נמיין את 5 הממוצעים:\n\nשני ממוצעים שכנים בדירוג נבדלים רק ברעש של שני ממוצעים\nהממוצע הגבוה והממוצע הנמוך מבין החמישה הם הקיצוניים מתוך 5. הפער ביניהם גדול כמעט תמיד, גם בלי שום אפקט\nלכן זוג שנמצא בקצוות של הדירוג צריך לעבור סף גבוה יותר, וזוג של שכנים סף נמוך יותר\n\nהמרחק \\(p\\): כמה ממוצעים נמצאים בטווח בין שני הממוצעים שמשווים, כולל שניהם. במודלים:\n\n\n\nדירוג\n1\n2\n3\n4\n5\n\n\n\n\nמודל\nM2\nM1\nM3\nM5\nM4\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\n\nדוגמאות:\n\n\n\nהזוג\nM2, M1\nM2, M3\nM1, M4\nM2, M4\n\n\n\n\nהממוצעים בטווח\nM2, M1\nM2, M1, M3\nM1, M3, M5, M4\nכל החמישה\n\n\n\\(p\\)\n2 (שכנים)\n3\n4\n5 (הקצוות)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#השלבים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#השלבים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השלבים",
+    "text": "השלבים\n\nממיינים את ממוצעי הרמות בסדר יורד\nמחשבים סף לכל מרחק \\(p = 2, \\dots, a\\), הטווח המובהק הקטן ביותר (least significant range):\n\n\\[\nR_p = r_\\alpha(p, f)\\cdot s_{\\bar y} \\qquad s_{\\bar y} = \\sqrt{\\frac{MS_E}{n}}\n\\]\n\\(r_\\alpha(p, f)\\) הם מקדמי Duncan מטבלה, ו-\\(f = N - a\\) הן דרגות החופש של \\(MS_E\\). המקדם גדל עם \\(p\\)\n\nבודקים מבחוץ פנימה: קודם הזוג של הקצוות (\\(p = a\\)), אחר כך זוגות עם \\(p = a - 1\\), וכן הלאה. ההפרש מובהק אם \\(|\\bar y_{i\\cdot} - \\bar y_{k\\cdot}| &gt; R_p\\)\nכלל ההגנה: אם ההפרש בין שני ממוצעים לא מובהק, כל הממוצעים שביניהם נחשבים שווים, ולא בודקים זוגות בתוך הטווח הזה\nמסכמים באותיות: רמות שחולקות אות לא שונות זו מזו באופן מובהק\n\n\nהדגש: שלב 3 ו-4 הם מה שמבדיל את דנקן מסתם 10 מבחני t. דוגמה לכלל ההגנה: אם M3 מול M4 (p = 3) לא מובהק, לא בודקים את M3 מול M5 ואת M5 מול M4."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מאיפה-מגיעים-המקדמים",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מאיפה-מגיעים-המקדמים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "מאיפה מגיעים המקדמים?",
-    "text": "מאיפה מגיעים המקדמים?\nהמקדמים הם ערכים של התפלגות הטווח המסוטנדרט (studentized range), אותה התפלגות שבה משתמשת שיטת Tukey. ההבדל הוא ברמת המובהקות: לטווח של \\(p\\) ממוצעים, Duncan משתמש ב-\n\\[\n\\alpha_p = 1 - (1 - \\alpha)^{p - 1}\n\\]\nככל ש-\\(p\\) גדל, \\(\\alpha_p\\) גדלה, והשיטה “סלחנית” יותר. ב-R אין צורך בטבלה:\n\np &lt;- 2:5\nr_duncan &lt;- qtukey((1 - 0.05)^(p - 1), nmeans = p, df = 40)   # Duncan's r_alpha(p, 40)\nrbind(p = p, alpha_p = 1 - 0.95^(p - 1), r = r_duncan, R_p = r_duncan * sqrt(mse / 9)) |&gt; round(3)\n\n         [,1]  [,2]  [,3]  [,4]\np       2.000 3.000 4.000 5.000\nalpha_p 0.050 0.098 0.143 0.185\nr       2.858 3.005 3.102 3.171\nR_p     0.880 0.926 0.955 0.977"
+    "text": "מאיפה מגיעים המקדמים?\nהמקדמים הם ערכים של התפלגות ה-studentized range: ההתפלגות של \\((\\bar y_{max} - \\bar y_{min})/s_{\\bar y}\\), הטווח של \\(p\\) ממוצעים מחולק בשגיאת התקן שלהם, כש-\\(H_0\\) נכונה. זו אותה התפלגות שבה משתמשת שיטת Tukey. ההבדל הוא ברמת המובהקות: לטווח של \\(p\\) ממוצעים, Duncan משתמש ב-\n\\[\n\\alpha_p = 1 - (1 - \\alpha)^{p - 1}\n\\]\nככל ש-\\(p\\) גדל, \\(\\alpha_p\\) גדלה, והשיטה “סלחנית” יותר. ב-R אין צורך בטבלה:\n\np &lt;- 2:5\nr_duncan &lt;- qtukey((1 - 0.05)^(p - 1), nmeans = p, df = 40)   # Duncan's r_alpha(p, 40)\nrbind(p = p, alpha_p = 1 - 0.95^(p - 1), r = r_duncan, R_p = r_duncan * sqrt(mse / 9)) |&gt; round(3)\n\n         [,1]  [,2]  [,3]  [,4]\np       2.000 3.000 4.000 5.000\nalpha_p 0.050 0.098 0.143 0.185\nr       2.858 3.005 3.102 3.171\nR_p     0.880 0.926 0.955 0.977"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המודלים-שיטת-duncan",
@@ -3479,25 +3850,32 @@
     "text": "המודלים: שיטת Duncan\n\n# A tibble: 10 × 6\n   high  low       p   diff   R_p significant\n   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;      \n 1 M2    M4        5 1.57   0.977 TRUE       \n 2 M2    M5        4 1.38   0.955 TRUE       \n 3 M1    M4        4 1.24   0.955 TRUE       \n 4 M2    M3        3 1.34   0.926 TRUE       \n 5 M1    M5        3 1.05   0.926 TRUE       \n 6 M3    M4        3 0.231  0.926 FALSE      \n 7 M2    M1        2 0.332  0.880 FALSE      \n 8 M1    M3        2 1.01   0.880 TRUE       \n 9 M3    M5        2 0.0389 0.880 FALSE      \n10 M5    M4        2 0.192  0.880 FALSE"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#השלבים-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#השלבים-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השלבים בתרשים",
+    "text": "השלבים בתרשים\n\n\nלעבור על התרשים מלמעלה למטה: p = 5, אחר כך שני הטווחים עם p = 4, וכן הלאה. הטווח M3-M4 (p = 3) לא מובהק, ולכן M3-M5 ו-M5-M4 שבתוכו לא נבדקים. בסוף: M2 ו-M1 בקבוצה אחת, M3, M5, M4 בקבוצה שנייה."
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#התוצאה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "התוצאה",
-    "text": "התוצאה\n\n\n\n\nM2\nM1\nM3\nM5\nM4\n\n\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\nקבוצה\nא\nא\nב\nב\nב\n\n\n\n\nM2 ו-M1 לא שונים זה מזה (0.33 &lt; 0.88), ושניהם שונים מכל השאר\nM3, M5 ו-M4 לא שונים זה מזה: הטווח של שלושתם הוא 0.23 &lt; \\(R_3\\) = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו\nרמות עם אותה אות לא שונות זו מזו באופן מובהק\n\nההמלצה: להפעיל את אחד מ-M3, M4 או M5. הנתונים לא מבדילים ביניהם, ולכן M3, הזול שבהם, הוא בחירה סבירה."
+    "text": "התוצאה\n\n\n\n\nM2\nM1\nM3\nM5\nM4\n\n\n\n\nממוצע\n5.33\n5.00\n3.99\n3.96\n3.76\n\n\nקבוצה\nא\nא\nב\nב\nב\n\n\n\n\nM2 ו-M1 לא שונים זה מזה (0.33 &lt; 0.88), ושניהם שונים מכל השאר\nM3, M5 ו-M4 לא שונים זה מזה: הטווח של שלושתם הוא 0.23 &lt; \\(R_3\\) = 0.93. לפי כלל ההגנה, לא בודקים זוגות בתוכו\nרמות עם אותה אות לא שונות זו מזו באופן מובהק\n\nההמלצה: להפעיל את אחד מ-M3, M4 או M5. משך הטיפול לא מבדיל ביניהם, ולכן את הבחירה ביניהם קובעים שיקולים אחרים, למשל עלות: M3 הוא המודל הבינוני, ו-M4 ו-M5 הם הגדולים והיקרים."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#ביקורת-על-duncan",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#ביקורת-על-duncan",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ביקורת על Duncan",
-    "text": "ביקורת על Duncan\n\n\\(\\alpha_p\\) גדלה עם מספר הממוצעים: עם 5 רמות, \\(\\alpha_5 = 1 - 0.95^4 = 0.185\\)\nכלומר, ה-FWER של השיטה גבוה מ-5%, וגדל עם מספר הרמות. עם 10 רמות, \\(\\alpha_{10} = 0.37\\)\nהשיטה “מוצאת” יותר הבדלים, וחלקם שגויים\nDuncan נפוצה בספרות החקלאית וההנדסית הישנה, ותפגשו אותה בבחינה. בעבודה מעשית, מקובל היום להשתמש ב-Tukey"
+    "text": "ביקורת על Duncan\n\n\\(\\alpha_p\\) גדלה עם מספר הממוצעים: עם 5 רמות, \\(\\alpha_5 = 1 - 0.95^4 = 0.185\\)\nכלומר, ה-FWER של השיטה גבוה מ-5%, וגדל עם מספר הרמות. עם 10 רמות, \\(\\alpha_{10} = 0.37\\)\nהשיטה “מוצאת” יותר הבדלים, וחלקם שגויים\nבעבודה מעשית, מקובל להשתמש ב-Tukey"
   },
   {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-1",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון-1",
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הרעיון",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הרעיון",
-    "text": "הרעיון\nTukey’s Honest Significant Difference: סף אחד לכל הזוגות, שמבטיח FWER \\(= \\alpha\\) בדיוק (בניסוי מאוזן).\n\\[\nHSD = q_\\alpha(a, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\n\\(q_\\alpha(a, f)\\): הערך הקריטי של התפלגות הטווח המסוטנדרט של \\(a\\) ממוצעים, עם \\(f = N - a\\) דרגות חופש\nההיגיון: אם הזוג הרחוק ביותר לא חוצה את הסף תחת \\(H_0\\) בהסתברות \\(1 - \\alpha\\), אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא \\(\\alpha\\)\n\n\\[\nq = \\frac{\\bar y_{max} - \\bar y_{min}}{\\sqrt{MS_E/n}}\n\\]\nרווחי סמך משותפים לכל ההפרשים: \\((\\bar y_{i\\cdot} - \\bar y_{k\\cdot}) \\pm HSD\\). בניסוי לא מאוזן (Tukey–Kramer): \\(q_\\alpha(a, f)\\sqrt{\\frac{MS_E}{2}\\left(\\frac{1}{n_i} + \\frac{1}{n_k}\\right)}\\)."
+    "text": "הרעיון\nTukey’s Honest Significant Difference: סף אחד לכל הזוגות, שמבטיח FWER \\(= \\alpha\\) בדיוק (בניסוי מאוזן).\n\\[\nHSD = q_\\alpha(a, f)\\cdot\\sqrt{\\frac{MS_E}{n}}\n\\]\n\n\\(q_\\alpha(a, f)\\): הערך הקריטי של התפלגות ה-studentized range של \\(a\\) ממוצעים, עם \\(f = N - a\\) דרגות חופש\nההיגיון: אם הזוג הרחוק ביותר לא חוצה את הסף תחת \\(H_0\\) בהסתברות \\(1 - \\alpha\\), אף זוג לא חוצה אותו. לכן ההסתברות לטעות אחת לפחות היא \\(\\alpha\\)\n\n\\[\nq = \\frac{\\bar y_{max} - \\bar y_{min}}{\\sqrt{MS_E/n}}\n\\]\nרווחי סמך משותפים לכל ההפרשים: \\((\\bar y_{i\\cdot} - \\bar y_{k\\cdot}) \\pm HSD\\). בניסוי לא מאוזן (Tukey–Kramer): \\(q_\\alpha(a, f)\\sqrt{\\frac{MS_E}{2}\\left(\\frac{1}{n_i} + \\frac{1}{n_k}\\right)}\\)."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#המודלים-חישוב-ידני",
@@ -3539,7 +3917,7 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#duncan-מול-tukey",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "Duncan מול Tukey",
-    "text": "Duncan מול Tukey\n\n\n\n\n\n\n\n\n\n\nזוג\nהפרש\nLSD (0.88)\nDuncan (\\(R_p\\))\nTukey (1.244)\n\n\n\n\nM2–M4\n1.57\n✓\n✓ (0.98)\n✓\n\n\nM2–M5\n1.38\n✓\n✓ (0.96)\n✓\n\n\nM2–M3\n1.34\n✓\n✓ (0.93)\n✓\n\n\nM1–M4\n1.24\n✓\n✓ (0.96)\n✗\n\n\nM1–M5\n1.05\n✓\n✓ (0.93)\n✗\n\n\nM1–M3\n1.01\n✓\n✓ (0.88)\n✗\n\n\nM2–M1, M3–M4, M3–M5, M5–M4\n≤ 0.33\n✗\n✗\n✗\n\n\n\n\nLSD ו-Duncan מוצאים 6 זוגות. Tukey מוצא 3\nאין כאן “נכון” ו”לא נכון”. זו בחירה בין שתי טעויות: Tukey שומר על הסיכוי לתגלית שגויה אחת מתחת ל-5%, במחיר של עוצמה"
+    "text": "Duncan מול Tukey\n\n\n\nזוג\nהפרש\nDuncan (\\(R_p\\))\nTukey (1.244)\n\n\n\n\nM2–M4\n1.57\n✓ (0.98)\n✓\n\n\nM2–M5\n1.38\n✓ (0.96)\n✓\n\n\nM2–M3\n1.34\n✓ (0.93)\n✓\n\n\nM1–M4\n1.24\n✓ (0.96)\n✗\n\n\nM1–M5\n1.05\n✓ (0.93)\n✗\n\n\nM1–M3\n1.01\n✓ (0.88)\n✗\n\n\nM2–M1, M3–M4, M3–M5, M5–M4\n≤ 0.33\n✗\n✗\n\n\n\n\nDuncan מוצא 6 זוגות. Tukey מוצא 3\nאין כאן “נכון” ו”לא נכון”. זו בחירה בין שתי טעויות: Tukey שומר על הסיכוי לתגלית שגויה אחת מתחת ל-5%, במחיר של עוצמה"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#איזו-שיטה-מתי",
@@ -3567,7 +3945,14 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#anova-על-נתונים-מוטים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ANOVA על נתונים מוטים",
-    "text": "ANOVA על נתונים מוטים\n\nfit_lat &lt;- aov(ms ~ region, data = latency)\nsummary(fit_lat)\n\n            Df  Sum Sq Mean Sq F value Pr(&gt;F)  \nregion       3  292464   97488    2.35  0.085 .\nResiduals   44 1823008   41432                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nshapiro.test(resid(fit_lat))\n\n\n    Shapiro-Wilk normality test\n\ndata:  resid(fit_lat)\nW = 0.76, p-value = 2e-07\n\n\n\nה-ANOVA לא דוחה (\\(p = 0.085\\))\nאבל השאריות רחוקות מנורמליות. הבקשות האיטיות מנפחות את \\(MS_E\\) ו”מסתירות” את ההבדלים\nשתי אפשרויות: טרנספורמציה (\\(\\log\\)), או מבחן שלא מניח נורמליות"
+    "text": "ANOVA על נתונים מוטים\n\nfit_lat &lt;- aov(ms ~ region, data = latency)\nsummary(fit_lat)\n\n            Df  Sum Sq Mean Sq F value Pr(&gt;F)  \nregion       3  292464   97488    2.35  0.085 .\nResiduals   44 1823008   41432                 \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nks.test(rstandard(fit_lat), \"pnorm\")              # standardised residuals vs N(0, 1)\n\n\n    Exact one-sample Kolmogorov-Smirnov test\n\ndata:  rstandard(fit_lat)\nD = 0.21, p-value = 0.02\nalternative hypothesis: two-sided\n\n\n\nה-ANOVA לא דוחה (\\(p = 0.085\\))\nאבל השאריות לא נורמליות. מבחן Kolmogorov–Smirnov על השאריות המתוקננות, כמו בהרצאה 3: \\(D = 0.212 &gt; 1.36/\\sqrt{48} = 0.196\\), ולכן דוחים נורמליות"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#השאריות-בגרף-q-q",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#השאריות-בגרף-q-q",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "השאריות בגרף Q-Q",
+    "text": "השאריות בגרף Q-Q\n\ntibble(r = sort(rstandard(fit_lat))) |&gt;\n  mutate(z = qnorm((row_number() - 0.5) / n())) |&gt;\n  ggplot(aes(z, r)) +\n  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5) +\n  labs(title = \"הזנב הימני ארוך מדי: כמה בקשות איטיות מאוד\",\n       subtitle = \"שאריות מתוקננות · קו מקווקו: N(0,1)\",\n       x = \"Theoretical quantile (z)\", y = \"Standardised residual\")\n\n\n\nהבקשות האיטיות מנפחות את \\(MS_E\\) ו”מסתירות” את ההבדלים בין האזורים\nשתי אפשרויות: טרנספורמציה (\\(\\log\\)), או מבחן שלא מניח נורמליות"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#kruskalwallis-הרעיון",
@@ -3591,6 +3976,13 @@
     "text": "דוגמה לחישוב ידני: חוזק בד לפי אחוז כותנה\nמפעל טקסטיל בודק 5 רמות של אחוז כותנה בבד (15%–35%), 6 דגימות בכל רמה. האם אחוז הכותנה משפיע על חוזק המתיחה?\n\ncotton &lt;- read_csv(file.path(np_data_dir, \"cotton_strength.csv\"), show_col_types = FALSE) |&gt;\n  mutate(cotton_pct = factor(cotton_pct), rank = rank(strength))\ncotton |&gt;\n  group_by(cotton_pct) |&gt;\n  summarise(n = n(), strength = paste(sort(strength), collapse = \", \"),\n            R = sum(rank), R_bar = mean(rank))\n\n# A tibble: 5 × 5\n  cotton_pct     n strength                               R R_bar\n  &lt;fct&gt;      &lt;int&gt; &lt;chr&gt;                              &lt;dbl&gt; &lt;dbl&gt;\n1 15             6 8.5, 9.9, 10.3, 11.6, 12.8, 15.2    58    9.67\n2 20             6 10.6, 10.8, 11.3, 11.6, 12.3, 13.4  66.5 11.1 \n3 25             6 13.7, 14, 14.4, 14.5, 15, 15.5     123   20.5 \n4 30             6 15.1, 15.8, 15.9, 16, 16.2, 17     163   27.2 \n5 35             6 10, 10.3, 10.4, 10.9, 12.2, 14.1    54.5  9.08"
   },
   {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הדרגות-בתרשים",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הדרגות-בתרשים",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "הדרגות בתרשים",
+    "text": "הדרגות בתרשים\n\n\n\\(K\\) מסכם את אורכי הקווים הכתומים (בריבוע, משוקללים ב-\\(n_i\\)): \\(K = \\frac{12}{N(N+1)}\\sum n_i(\\bar R_{i\\cdot} - 15.5)^2\\). תחת \\(H_0\\) כל המעוינים קרובים לקו המקווקו"
+  },
+  {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#חישוב-k",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#חישוב-k",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
@@ -3602,14 +3994,35 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#בחזרה-לזמני-התגובה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "בחזרה לזמני התגובה",
-    "text": "בחזרה לזמני התגובה\n\nkruskal.test(ms ~ region, data = latency)\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  ms by region\nKruskal-Wallis chi-squared = 12, df = 3, p-value = 0.009\n\nsummary(aov(log(ms) ~ region, data = latency))\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nregion       3   7.42   2.473    4.75 0.0059 **\nResiduals   44  22.91   0.521                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\nKruskal–Wallis דוחה (\\(p = 0.0085\\)), במקום שה-ANOVA על הנתונים הגולמיים לא דחה\nגם ANOVA על \\(\\log(\\text{ms})\\) דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות\nהדרגות לא רגישות לערכים חריגים: בקשה של 1,000 מילישניות היא פשוט “הדרגה הגבוהה ביותר”, בדיוק כמו בקשה של 400"
+    "text": "בחזרה לזמני התגובה\n\nkruskal.test(ms ~ region, data = latency)\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  ms by region\nKruskal-Wallis chi-squared = 12, df = 3, p-value = 0.009\n\nfit_lat_log &lt;- aov(log(ms) ~ region, data = latency)\nsummary(fit_lat_log)\n\n            Df Sum Sq Mean Sq F value Pr(&gt;F)   \nregion       3   7.42   2.473    4.75 0.0059 **\nResiduals   44  22.91   0.521                  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n\n\nKruskal–Wallis דוחה (\\(p = 0.0085\\)), במקום שה-ANOVA על הנתונים הגולמיים לא דחה\nגם ANOVA על \\(\\log(\\text{ms})\\) דוחה. הלוגריתם “מכווץ” את הזנב הימני ומקרב לנורמליות (השקף הבא)\nהדרגות לא רגישות לערכים חריגים: בקשה של 1,000 מילישניות היא פשוט “הדרגה הגבוהה ביותר”, בדיוק כמו בקשה של 400"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-הלוגריתם-עושה-לשאריות",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-הלוגריתם-עושה-לשאריות",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מה הלוגריתם עושה לשאריות?",
+    "text": "מה הלוגריתם עושה לשאריות?\n\nbind_rows(tibble(scale = \"ms\", r = rstandard(fit_lat)),\n          tibble(scale = \"log(ms)\", r = rstandard(fit_lat_log))) |&gt;\n  mutate(scale = fct_inorder(scale)) |&gt;\n  group_by(scale) |&gt;\n  arrange(r, .by_group = TRUE) |&gt;\n  mutate(z = qnorm((row_number() - 0.5) / n())) |&gt;\n  ggplot(aes(z, r)) +\n  geom_abline(intercept = 0, slope = 1, colour = nanas_pal[[\"grey\"]], linetype = \"dashed\") +\n  geom_point(colour = nanas_pal[[\"primary\"]], size = 2.5) +\n  facet_wrap(~ scale) +\n  labs(title = \"אחרי הטרנספורמציה, השאריות יושבות על הקו\",\n       subtitle = \"שאריות מתוקננות · קו מקווקו: N(0,1)\",\n       x = \"Theoretical quantile (z)\", y = \"Standardised residual\")"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-הלוגריתם-עושה-לשאריות-output",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-הלוגריתם-עושה-לשאריות-output",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מה הלוגריתם עושה לשאריות?",
+    "text": "מה הלוגריתם עושה לשאריות?\n\n\n\n\n\n\n\nks_log &lt;- ks.test(rstandard(fit_lat_log), \"pnorm\")\nc(D = unname(ks_log$statistic), p_value = ks_log$p.value)      # KS on log scale\n\n      D p_value \n0.06632 0.97494"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#אילו-אזורים-שונים-השוואות-מרובות-על-דרגות",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#אילו-אזורים-שונים-השוואות-מרובות-על-דרגות",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "אילו אזורים שונים? השוואות מרובות על דרגות",
-    "text": "אילו אזורים שונים? השוואות מרובות על דרגות\nאחרי Kruskal–Wallis מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:\n\npairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = \"bonferroni\")\n\n\n    Pairwise comparisons using Wilcoxon rank sum exact test \n\ndata:  latency$ms and latency$region \n\n           eu-west us-east il-central\nus-east    0.468   -       -         \nil-central 1.000   0.060   -         \nap-south   1.000   0.003   1.000     \n\nP value adjustment method: bonferroni \n\n\n\nכל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, מתוקן בשיטת Bonferroni: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05\nהסתייגות: כמו בהרצאה 1, מבחן סכום הדירוגים בודק חציונים רק תחת הנחת הזזה. כאן, עם התפלגויות לוג-נורמליות עם אותה צורה, ההנחה סבירה בסקאלה הלוגריתמית"
+    "text": "אילו אזורים שונים? השוואות מרובות על דרגות\nאחרי Kruskal–Wallis מובהק, משווים זוגות במבחן סכום הדירוגים, ומתקנים להשוואות מרובות:\n\npairwise.wilcox.test(latency$ms, latency$region, p.adjust.method = \"bonferroni\")\n\n\n    Pairwise comparisons using Wilcoxon rank sum exact test \n\ndata:  latency$ms and latency$region \n\n           eu-west us-east il-central\nus-east    0.468   -       -         \nil-central 1.000   0.060   -         \nap-south   1.000   0.003   1.000     \n\nP value adjustment method: bonferroni \n\n\n\nכל תא הוא p-value של מבחן סכום הדירוגים בין שני אזורים, מתוקן בשיטת Bonferroni: מוכפל במספר ההשוואות (וחסום ב-1). דוחים אם הוא קטן מ-0.05\nאבל האם זה מבחן על חציונים? תלוי בהנחת ההזזה (השקף הבא)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-בודק-מבחן-סכום-הדירוגים-הנחת-ההזזה",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-בודק-מבחן-סכום-הדירוגים-הנחת-ההזזה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "מה בודק מבחן סכום הדירוגים? הנחת ההזזה",
+    "text": "מה בודק מבחן סכום הדירוגים? הנחת ההזזה\n\n\\(H_0\\) של המבחן: לשתי הרמות אותה התפלגות. הוא דוחה כשתצפיות מרמה אחת נוטות להיות גדולות מתצפיות מהרמה השנייה\nהנחת ההזזה (shift): שתי ההתפלגויות זהות בצורה ובפיזור, ואחת פשוט מוזזת ימינה: \\(F_2(x) = F_1(x - \\delta)\\). רק תחתיה דחייה פירושה “החציונים שונים”\nבלי ההנחה, המבחן יכול לדחות גם כשהחציונים שווים, למשל כשלאחת הרמות פיזור גדול יותר\n\n\n\nבדוגמה: הנתונים סומלצו מהתפלגות לוג-נורמלית. ב-ms האזור האיטי גם מפוזר יותר, ולכן זו לא הזזה. ב-\\(\\log(\\text{ms})\\) זו הזזה נקייה\nוהדרגות לא מושפעות מ-\\(\\log\\): הלוגריתם שומר על הסדר, ולכן המבחן על ms והמבחן על \\(\\log(\\text{ms})\\) זהים. ההנחה מתקיימת בסקאלה הלוגריתמית, וחציון של \\(\\log\\) הוא \\(\\log\\) של החציון. לכן המסקנה על החציונים נכונה גם ב-ms"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגודים-עם-חציונים",
@@ -3623,69 +4036,34 @@
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הפתרון-חציונים-של-הפרשים",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "הפתרון: חציונים של הפרשים",
-    "text": "הפתרון: חציונים של הפרשים\nלכל זוג רמות \\((i, k)\\), מחשבים את החציון של כל ההפרשים בין תצפית מרמה \\(i\\) לתצפית מרמה \\(k\\):\n\\[\nZ_{ik} = \\underset{j,\\,m}{\\text{median}}\\{y_{ij} - y_{km}\\} \\qquad Z_{ii} = 0\n\\qquad\\qquad\n\\hat\\tau_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik}\n\\]\nמכיוון ש-\\(Z_{ik} = -Z_{ki}\\), הסכום \\(\\sum_i \\hat\\tau_i = \\frac{1}{a}\\sum_i\\sum_k Z_{ik} = 0\\).\nבדוגמה הקטנה: 9 ההפרשים \\(y_{1j} - y_{2m}\\) הם \\(\\{3, 2, 1, 7, 6, 5, 8, 7, 6\\}\\), והחציון שלהם \\(Z_{12} = 6\\). לכן \\(Z_{21} = -6\\), ו-\n\\[\n\\hat\\tau_1 = \\frac{0 + 6}{2} = 3 \\qquad \\hat\\tau_2 = \\frac{-6 + 0}{2} = -3 \\qquad \\hat\\tau_1 + \\hat\\tau_2 = 0 \\;\\checkmark\n\\]"
+    "text": "הפתרון: חציונים של הפרשים\nהרעיון: במקום להשוות כל רמה ל”מרכז” משותף, אומדים בכמה כל רמה גבוהה מכל רמה אחרת, ורק אז ממצעים.\n\nלכל זוג רמות \\((i, k)\\): מחשבים את כל ההפרשים בין תצפית מרמה \\(i\\) לתצפית מרמה \\(k\\) (\\(n_i \\cdot n_k\\) הפרשים), ולוקחים את החציון שלהם:\n\n\\[\nZ_{ik} = \\underset{j,\\,m}{\\text{median}}\\{y_{ij} - y_{km}\\}\n\\]\n\\(Z_{ik}\\) עונה על השאלה: “בכמה, בדרך כלל, תצפית מרמה \\(i\\) גבוהה מתצפית מרמה \\(k\\)?”\n\nמסדרים בטבלה \\(a \\times a\\). על האלכסון \\(Z_{ii} = 0\\), ו-\\(Z_{ki} = -Z_{ik}\\): אם \\(i\\) גבוהה מ-\\(k\\) ב-6, אז \\(k\\) נמוכה מ-\\(i\\) ב-6\nהאפקט של רמה הוא ממוצע השורה שלה, “בכמה היא גבוהה מהרמות, בממוצע”:\n\n\\[\n\\hat\\tau_i = \\frac{1}{a}\\sum_{k=1}^{a} Z_{ik}\n\\]\n\nהסכום אפס: כל זוג \\(Z_{ik} + Z_{ki} = 0\\) מתבטל, ולכן \\(\\sum_i \\hat\\tau_i = 0\\). הבעיה מהשקף הקודם נפתרה\nהניגוד: \\(\\hat\\Gamma = \\sum c_i \\hat\\tau_i\\)"
+  },
+  {
+    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#בדוגמה-הקטנה",
+    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#בדוגמה-הקטנה",
+    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
+    "section": "בדוגמה הקטנה",
+    "text": "בדוגמה הקטנה\n\\(y_{1j} = \\{3, 7, 8\\}\\) ו-\\(y_{2m} = \\{0, 1, 2\\}\\). כל 9 ההפרשים \\(y_{1j} - y_{2m}\\):\n\n\n\n\n\\(y_{2m} = 0\\)\n\\(y_{2m} = 1\\)\n\\(y_{2m} = 2\\)\n\n\n\n\n\\(y_{1j} = 3\\)\n3\n2\n1\n\n\n\\(y_{1j} = 7\\)\n7\n6\n5\n\n\n\\(y_{1j} = 8\\)\n8\n7\n6\n\n\n\nממוינים: \\(1, 2, 3, 5, \\mathbf{6}, 6, 7, 7, 8\\). החציון: \\(Z_{12} = 6\\), ולכן \\(Z_{21} = -6\\).\n\n\n\n\nרמה 1\nרמה 2\n\\(\\hat\\tau_i\\) (ממוצע השורה)\n\n\n\n\nרמה 1\n0\n6\n\\((0 + 6)/2 = 3\\)\n\n\nרמה 2\n−6\n0\n\\((-6 + 0)/2 = -3\\)\n\n\n\n\\(\\hat\\tau_1 + \\hat\\tau_2 = 0\\), וההפרש ביניהם, 6, הוא ההזזה האמודה בין הרמות."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגוד-בדוגמת-הכותנה",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#ניגוד-בדוגמת-הכותנה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "ניגוד בדוגמת הכותנה",
-    "text": "ניגוד בדוגמת הכותנה\nהשאלה: האם הקצוות (15% ו-35%) חלשים מ-30%? \\(\\Gamma = \\frac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\).\n\ny_by_level &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(y_by_level), seq_along(y_by_level),\n           Vectorize(\\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], \"-\"))))\ntau_hat &lt;- rowMeans(Z)\nround(tau_hat, 2)\n\n[1] -1.86 -1.26  1.73  3.22 -1.83\n\nsum(tau_hat)                                     # 0 by construction\n\n[1] 2.22e-16\n\n0.5 * (tau_hat[1] + tau_hat[5]) - tau_hat[4]\n\n[1] -5.065\n\n\n\\[\n\\hat\\Gamma = \\tfrac{1}{2}(-1.86 + -1.83) - 3.22 = -5.06\n\\]\nבד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#כשכל-יחידה-מקבלת-את-כל-הטיפולים",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#כשכל-יחידה-מקבלת-את-כל-הטיפולים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "כשכל יחידה מקבלת את כל הטיפולים",
-    "text": "כשכל יחידה מקבלת את כל הטיפולים\nדוגמה: צוות AI בודק שלוש גרסאות של פרומפט על 8 משימות מבחן (eval set). כל תשובה מקבלת ציון 0–100.\n\nכל משימה נבדקת עם כל שלושת הפרומפטים. המשימה היא בלוק (block)\nהמשימות שונות מאוד בקושי. ההבדל בין משימה קלה לקשה גדול מההבדל בין פרומפטים\nKruskal–Wallis מניח מדגמים בלתי תלויים. כאן הם לא: אותה משימה מופיעה בכל הרמות\nהפתרון: משווים את הפרומפטים בתוך כל משימה\n\nזה גם המצב של המודלים במוקד: כל המודלים עבדו באותם 9 ימים, והיום הוא בלוק."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הנתונים",
-    "text": "הנתונים\n\nllm &lt;- read_csv(file.path(np_data_dir, \"llm_prompt_eval.csv\"), show_col_types = FALSE) |&gt;\n  mutate(prompt = factor(prompt, levels = c(\"baseline\", \"few_shot\", \"reasoning\")),\n         task = factor(task))\n\nggplot(llm, aes(prompt, score, group = task)) +\n  geom_line(colour = \"grey70\") +\n  geom_point(aes(colour = prompt), size = 3, show.legend = FALSE) +\n  labs(title = \"ברוב המשימות, הפרומפט עם ההנמקה מנצח\",\n       subtitle = \"כל קו הוא משימה אחת · ההבדלים בין המשימות גדולים מההבדלים בין הפרומפטים\",\n       x = NULL, y = \"Score (0–100)\")"
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים-output",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הנתונים-output",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הנתונים",
-    "text": "הנתונים"
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#הסטטיסטי-1",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#הסטטיסטי-1",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "הסטטיסטי",
-    "text": "הסטטיסטי\n\n\\(b\\) בלוקים ו-\\(k\\) טיפולים\nמדרגים את הטיפולים בתוך כל בלוק בנפרד, מ-1 עד \\(k\\)\n\\(R_j\\) הוא סכום הדרגות של טיפול \\(j\\) על פני כל הבלוקים\n\nתחת \\(H_0\\) (אין הבדל בין הטיפולים), בכל בלוק כל סידור של הדרגות סביר באותה מידה, ולכן \\(E(R_j) = \\frac{b(k+1)}{2}\\):\n\\[\nQ = \\frac{12}{b\\,k\\,(k+1)}\\sum_{j=1}^{k}\\left(R_j - \\frac{b(k+1)}{2}\\right)^2\n= \\frac{12}{b\\,k\\,(k+1)}\\sum_{j=1}^{k} R_j^2 - 3\\,b\\,(k+1)\n\\]\nתחת \\(H_0\\), \\(Q \\sim \\chi^2_{k-1}\\) בקירוב. דוחים את \\(H_0\\) אם \\(Q &gt; \\chi^2_{1-\\alpha,\\,k-1}\\)."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#חישוב",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#חישוב",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "חישוב",
-    "text": "חישוב\n\nllm_ranked &lt;- llm |&gt; group_by(task) |&gt; mutate(rank = rank(score)) |&gt; ungroup()\nllm_ranked |&gt; select(task, prompt, rank) |&gt; pivot_wider(names_from = prompt, values_from = rank)\n\n# A tibble: 8 × 4\n  task  baseline few_shot reasoning\n  &lt;fct&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1 1            1        2         3\n2 2            1        2         3\n3 3            2        1         3\n4 4            1        3         2\n5 5            1        2         3\n6 6            2        1         3\n7 7            1        3         2\n8 8            1        2         3\n\nllm_ranked |&gt; group_by(prompt) |&gt; summarise(R = sum(rank))\n\n# A tibble: 3 × 2\n  prompt        R\n  &lt;fct&gt;     &lt;dbl&gt;\n1 baseline     10\n2 few_shot     16\n3 reasoning    22\n\n\n\\[\nQ = \\frac{12}{8 \\cdot 3 \\cdot 4}\\left(10^2 + 16^2 + 22^2\\right) - 3 \\cdot 8 \\cdot 4 = 105 - 96 = 9 &gt; \\chi^2_{0.95,\\,2} = 5.99\n\\]\nדוחים: יש הבדל בין הפרומפטים."
-  },
-  {
-    "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#friedman-ב-r-ומה-קורה-בלי-בלוקים",
-    "href": "lectures/05-contrasts-multiple-comparisons-slides.html#friedman-ב-r-ומה-קורה-בלי-בלוקים",
-    "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
-    "section": "Friedman ב-R, ומה קורה בלי בלוקים",
-    "text": "Friedman ב-R, ומה קורה בלי בלוקים\n\nfriedman.test(score ~ prompt | task, data = llm)\n\n\n    Friedman rank sum test\n\ndata:  score and prompt and task\nFriedman chi-squared = 9, df = 2, p-value = 0.01\n\nkruskal.test(score ~ prompt, data = llm)          # ignores the blocks\n\n\n    Kruskal-Wallis rank sum test\n\ndata:  score by prompt\nKruskal-Wallis chi-squared = 4.1, df = 2, p-value = 0.1\n\n\n\nFriedman דוחה. Kruskal–Wallis, שמתעלם מהבלוקים, לא\nהשונות הגדולה בין המשימות “מטביעה” את ההבדל בין הפרומפטים, כמו שאפקט היום ניפח את \\(MS_E\\) במוקד\nאותו עיקרון במוקד:\n\n\nfriedman.test(aht ~ model | day, data = calls)\n\n\n    Friedman rank sum test\n\ndata:  aht and model and day\nFriedman chi-squared = 23, df = 4, p-value = 1e-04"
+    "text": "ניגוד בדוגמת הכותנה\nהשאלה: האם הקצוות (15% ו-35%) חלשים מ-30%? \\(\\Gamma = \\frac{1}{2}(\\tau_1 + \\tau_5) - \\tau_4\\).\n\ny_by_level &lt;- split(cotton$strength, cotton$cotton_pct)\nZ &lt;- outer(seq_along(y_by_level), seq_along(y_by_level),\n           Vectorize(\\(i, k) median(outer(y_by_level[[i]], y_by_level[[k]], \"-\"))))\ndimnames(Z) &lt;- list(names(y_by_level), names(y_by_level))\nround(Z, 2)                                      # Z[i, k] = median of y_i - y_k\n\n     15    20    25   30    35\n15 0.00 -0.65 -3.55 -5.0 -0.10\n20 0.65  0.00 -3.00 -4.5  0.55\n25 3.55  3.00  0.00 -1.5  3.60\n30 5.00  4.50  1.50  0.0  5.10\n35 0.10 -0.55 -3.60 -5.1  0.00\n\ntau_hat &lt;- rowMeans(Z)                           # row means; they sum to 0\nround(c(tau_hat, sum = sum(tau_hat), Gamma = 0.5 * (tau_hat[[1]] + tau_hat[[5]]) - tau_hat[[4]]), 2)\n\n   15    20    25    30    35   sum Gamma \n-1.86 -1.26  1.73  3.22 -1.83  0.00 -5.06 \n\n\n\\(\\hat\\Gamma = \\tfrac{1}{2}\\big((-1.86) + (-1.83)\\big) - 3.22 = -5.06\\): בד עם 15% או 35% כותנה חלש בכ-5 יחידות מבד עם 30% כותנה."
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#חמש-מלכודות",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#חמש-מלכודות",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "חמש מלכודות",
-    "text": "חמש מלכודות\n\nלבחור את ההשוואה אחרי שרואים את הנתונים, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן\nלבחור את שיטת התיקון לפי התוצאה: “ב-Tukey זה לא יצא מובהק, אז ננסה Duncan”. זו הגרסה המתוחכמת של p-hacking\nלא לתקן בכלל: להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק\nלהתעלם מבלוקים: כשאותן יחידות (משימות, ימים, משתמשים) מופיעות בכל הרמות, מבחן למדגמים בלתי תלויים מאבד עוצמה ומפר את ההנחות\nלפרש Kruskal–Wallis כמבחן על חציונים בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר"
+    "text": "חמש מלכודות\n\nלבחור את ההשוואה אחרי שרואים את הנתונים, ולבדוק אותה כאילו תוכננה מראש. ניגוד מתוכנן חייב להיות מתוכנן\nלבחור את שיטת התיקון לפי התוצאה: “ב-Tukey זה לא יצא מובהק, אז ננסה Duncan”. זו הגרסה המתוחכמת של p-hacking\nלא לתקן בכלל: להריץ מבחן t על כל הזוגות, ולהכריז על הזוג שיצא מובהק\nלהתעלם מבלוקים: כשאותן יחידות (ימים, משימות, משתמשים) מופיעות בכל הרמות, מבחן שמניח מדגמים בלתי תלויים מפר את ההנחות ומאבד עוצמה. ראינו את זה עם אפקט היום במוקד. הפתרון בהרצאה 6\nלפרש Kruskal–Wallis כמבחן על חציונים בלי הנחת הזזה. אם לרמות יש צורות שונות (למשל פיזור שונה), המבחן בודק משהו אחר"
   },
   {
     "objectID": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-לקחת-מההרצאה",
     "href": "lectures/05-contrasts-multiple-comparisons-slides.html#מה-לקחת-מההרצאה",
     "title": "5. ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי",
     "section": "מה לקחת מההרצאה",
-    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nשאלה ספציפית, מתוכננת מראש\nניגוד, \\(SS_C\\), \\(F_{1,\\,N-a}\\)\nידני, pf()\n\n\nלפרק את \\(SS_{Tr}\\) לשאלות נפרדות\n\\(a - 1\\) ניגודים אורתוגונליים\n\n\n\nכל הזוגות (גרסת הבחינה)\nDuncan, \\(R_p = r_\\alpha(p, f)\\,s_{\\bar y}\\)\nqtukey((1-α)^(p-1), p, f)\n\n\nכל הזוגות, FWER \\(= \\alpha\\)\nTukey HSD, \\(q_\\alpha(a, f)\\,s_{\\bar y}\\)\nTukeyHSD()\n\n\nנתונים מוטים, חריגים, סדר\nKruskal–Wallis, \\(K \\sim \\chi^2_{a-1}\\)\nkruskal.test()\n\n\nזוגות אחרי Kruskal–Wallis\nסכום דירוגים + תיקון\npairwise.wilcox.test()\n\n\nניגוד עמיד לחריגים\nחציונים של הפרשים, \\(Z_{ik}\\)\n\n\n\nטיפולים בתוך בלוקים\nFriedman, \\(Q \\sim \\chi^2_{k-1}\\)\nfriedman.test()\n\n\n\nבהרצאה הבאה: ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל."
+    "text": "מה לקחת מההרצאה\n\n\n\n\n\n\n\n\nהשאלה\nהכלי\nב-R\n\n\n\n\nשאלה ספציפית, מתוכננת מראש\nניגוד, \\(SS_C\\), \\(F_{1,\\,N-a}\\)\nידני, pf()\n\n\nלפרק את \\(SS_{Tr}\\) לשאלות נפרדות\n\\(a - 1\\) ניגודים אורתוגונליים\n\n\n\nכל הזוגות (גרסת הבחינה)\nDuncan, \\(R_p = r_\\alpha(p, f)\\,s_{\\bar y}\\)\nqtukey((1-α)^(p-1), p, f)\n\n\nכל הזוגות, FWER \\(= \\alpha\\)\nTukey HSD, \\(q_\\alpha(a, f)\\,s_{\\bar y}\\)\nTukeyHSD()\n\n\nנתונים מוטים, חריגים, סדר\nKruskal–Wallis, \\(K \\sim \\chi^2_{a-1}\\)\nkruskal.test()\n\n\nזוגות אחרי Kruskal–Wallis\nסכום דירוגים + תיקון\npairwise.wilcox.test()\n\n\nניגוד עמיד לחריגים\nחציונים של הפרשים, \\(Z_{ik}\\)\n\n\n\n\nבהרצאה הבאה: ניתוח שונות עם כמה פקטורים, אינטראקציות, ובלוקים כחלק מהמודל."
   }
 ]
