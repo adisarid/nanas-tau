@@ -53,6 +53,8 @@ website:
             text: "4. ניתוח שונות חד-כיווני"
           - href: lectures/05-contrasts-multiple-comparisons.qmd
             text: "5. ניגודים, השוואות מרובות וא-פרמטרי"
+          - href: lectures/06-two-way-anova.qmd
+            text: "6. השוואות מרובות (המשך) וניתוח שונות דו-כיווני"
       - text: מחשבונים אונליין
         menu:
           - href: calculators/prediction-intervals.qmd
@@ -68,7 +70,7 @@ website:
         aria-label: GitHub
   page-footer:
     center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
-    right: "עודכן לאחרונה: 09.11.2026"   # update on every push to main (see README)
+    right: "עודכן לאחרונה: 15.11.2026"   # update on every push to main (see README)
 
 format:
   html:

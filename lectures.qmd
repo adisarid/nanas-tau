@@ -14,7 +14,7 @@ toc: false
 | 3 | רגרסיה לינארית מרובה | [סיכום](lectures/03-multiple-regression.qmd) · [מצגת](lectures/03-multiple-regression-slides.html) · [PDF](lectures/pdf/03-multiple-regression-slides.pdf) |
 | 4 | ניתוח שונות חד-כיווני (One-way ANOVA). יום א׳ 8.11, שיעור ההשלמה | [סיכום](lectures/04-one-way-anova.qmd) · [מצגת](lectures/04-one-way-anova-slides.html) · [PDF](lectures/pdf/04-one-way-anova-slides.pdf) |
 | 5 | ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי. יום ב׳ 9.11, נפתח בחזרה קצרה על הרצאה 4 | [סיכום](lectures/05-contrasts-multiple-comparisons.qmd) · [מצגת](lectures/05-contrasts-multiple-comparisons-slides.html) · [PDF](lectures/pdf/05-contrasts-multiple-comparisons-slides.pdf) |
-| 6 | ניתוח שונות רב-כיווני (Two-way ANOVA) | |
+| 6 | השלמת השוואות מרובות ([Duncan]{.en}, [Tukey]{.en}, [Kruskal–Wallis]{.en}) וניתוח שונות דו-כיווני (Two-way ANOVA). יום ב׳ 16.11 | [סיכום](lectures/06-two-way-anova.qmd) · [מצגת](lectures/06-two-way-anova-slides.html) · [PDF](lectures/pdf/06-two-way-anova-slides.pdf) |
 | 7 | תכנון ניסויים (DOE) | |
 | 8 | רגרסיה לוגיסטית | |
 | 9 | ניתוח גורמים ראשיים (PCA) | |
