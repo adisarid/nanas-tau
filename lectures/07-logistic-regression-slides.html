@@ -1,0 +1,2662 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.11.9">
+
+  <meta name="author" content="ד״ר עדי שריד">
+  <meta name="dcterms.date" content="2026-11-20">
+  <title>ניתוח נתונים סטטיסטי – 7. ניתוח שונות דו-כיווני (המשך), תרגיל מסכם ורגרסיה לוגיסטית</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-ce563808aa1ff32480591f73716ce5e3.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <!-- Slides use MathJax 2. Left alone it picks the STIX fonts installed on macOS,
+       whose metrics misplace accents (the tilde in \tilde{\mu} drifts right).
+       Force MathJax's own TeX web fonts so math looks the same on every machine. -->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: [], preferredFont: null, webFont: "TeX" }
+  });
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">7. ניתוח שונות דו-כיווני (המשך), תרגיל מסכם ורגרסיה לוגיסטית</h1>
+  <p class="subtitle">ניתוח נתונים סטטיסטי · הרצאה 7</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+ד״ר עדי שריד
+</div>
+</div>
+</div>
+
+  <p class="date">2026-11-20</p>
+</section>
+<section id="על-מה-נדבר-היום" class="slide level2">
+<h2>על מה נדבר היום</h2>
+<ul>
+<li><strong>השלמת ניתוח שונות דו-כיווני</strong> (<span class="en">two-way ANOVA</span>):
+<ul>
+<li>המודל, פירוק השונות, טבלת ANOVA וחישוב ידני</li>
+<li>אפקטים פשוטים ובדיקת ההנחות</li>
+<li>בלוקים, אפקטים אקראיים ומודל היררכי (<span class="en">nested</span>)</li>
+</ul></li>
+<li><strong>תרגיל מסכם מקצה לקצה:</strong> איך לתמחר ספרי שמע לפי סוגה. כל מה שלמדנו עד עכשיו, בשאלה אחת בסגנון הבחינה</li>
+<li><strong>רגרסיה לוגיסטית</strong> (<span class="en">logistic regression</span>), חלק א: כשהתגובה היא כן או לא</li>
+</ul>
+<aside class="notes">
+<p>תכנון זמנים משוער: חזרה 5 דק׳, השלמת הדו-כיווני 70, הפסקה, תרגיל מסכם 45, רגרסיה לוגיסטית 45. אם הזמן לא מספיק, האפקטים האקראיים והמודל ההיררכי יכולים להיות בקצב מהיר (הם מופיעים במלואם בדף הסיכום), אבל כדאי לא לקצר את התרגיל המסכם.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section>
+<section id="חזרה-איפה-עצרנו" class="title-slide slide level1 center">
+<h1>חזרה: איפה עצרנו</h1>
+
+</section>
+<section id="ניתוח-דו-כיווני-השאלה" class="slide level2 smaller">
+<h2>ניתוח דו-כיווני: השאלה</h2>
+<p>צוות ה-AI במוקד בונה בוט שעונה ללקוחות. שתי החלטות פתוחות:</p>
+<ul>
+<li><strong>גודל המודל</strong> (פקטור A): קטן, בינוני או גדול. גדול מדויק יותר, אבל יקר</li>
+<li><strong><span class="en">RAG</span></strong> (פקטור B): לשלוף מסמכי מדיניות ולהכניס אותם לפרומפט, או לא</li>
+</ul>
+<p><strong>הניסוי:</strong> כל אחד מ-<span class="math inline">\(3 \times 2 = 6\)</span> השילובים רץ 4 פעמים על סט הערכה. התגובה: אחוז התשובות הנכונות. ניסוי עם כל השילובים נקרא <strong>ניסוי עצרתי</strong> (<span class="en">factorial design</span>).</p>
+<ul>
+<li><strong>אפקט ראשי</strong> (<span class="en">main effect</span>): ההשפעה של פקטור אחד, בממוצע על פני הרמות של השני</li>
+<li><strong>אינטראקציה</strong> (<span class="en">interaction</span>): ההשפעה של פקטור אחד <strong>תלויה ברמה</strong> של השני</li>
+<li><strong>בגרף אינטראקציה:</strong> קווים מקבילים = אין אינטראקציה</li>
+</ul>
+</section>
+<section id="הנתונים" class="slide level2 smaller">
+<h2>הנתונים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">606</span>)</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>rag <span class="ot">&lt;-</span> <span class="fu">tribble</span>(<span class="sc">~</span>size, <span class="sc">~</span>retrieval, <span class="sc">~</span>m,</span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"small"</span>, <span class="st">"off"</span>, <span class="dv">62</span>, <span class="st">"small"</span>, <span class="st">"on"</span>, <span class="dv">78</span>, <span class="st">"medium"</span>, <span class="st">"off"</span>, <span class="dv">71</span>,</span>
+<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"medium"</span>, <span class="st">"on"</span>, <span class="dv">82</span>, <span class="st">"large"</span>, <span class="st">"off"</span>, <span class="dv">80</span>, <span class="st">"large"</span>, <span class="st">"on"</span>, <span class="dv">84</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_grid</span>(<span class="at">run =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">acc =</span> <span class="fu">round</span>(m <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="dv">3</span>), <span class="dv">1</span>),</span>
+<span id="cb1-7"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">size =</span> <span class="fu">factor</span>(size, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"small"</span>, <span class="st">"medium"</span>, <span class="st">"large"</span>)),</span>
+<span id="cb1-8"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">retrieval =</span> <span class="fu">factor</span>(retrieval, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"off"</span>, <span class="st">"on"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(size, retrieval, run, acc)</span>
+<span id="cb1-10"><a aria-hidden="true" tabindex="-1"></a>rag <span class="sc">|&gt;</span> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> run, <span class="at">values_from =</span> acc, <span class="at">names_prefix =</span> <span class="st">"run "</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  size   retrieval `run 1` `run 2` `run 3` `run 4`
+  &lt;fct&gt;  &lt;fct&gt;       &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+1 small  off          62.3    59.2    58.2    61.6
+2 small  on           76.3    77.1    78.1    78.8
+3 medium off          73.7    74.8    68.6    70.3
+4 medium on           76.3    82.5    85.7    79.7
+5 large  off          85.2    85.2    83.4    80.8
+6 large  on           82.7    79.4    91.5    80.9</code></pre>
+</div>
+</div>
+</section>
+<section id="הנתונים-בתרשים" class="slide level2">
+<h2>הנתונים בתרשים</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/rag-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>הקווים לא מקבילים: נראה שיש אינטראקציה. עכשיו נבנה את המודל ונבדוק אותה בצורה פורמלית</li>
+</ul>
+</section></section>
+<section>
+<section id="ניתוח-שונות-דו-כיווני-המודל-והמבחנים" class="title-slide slide level1 center">
+<h1>ניתוח שונות דו-כיווני: המודל והמבחנים</h1>
+
+</section>
+<section id="סימון" class="slide level2 smaller">
+<h2>סימון</h2>
+<p>פקטור A עם <span class="math inline">\(a\)</span> רמות (גודל המודל, <span class="math inline">\(a = 3\)</span>), פקטור B עם <span class="math inline">\(b\)</span> רמות (RAG, <span class="math inline">\(b = 2\)</span>), <strong><span class="math inline">\(n\)</span> חזרות בכל תא</strong> (<span class="math inline">\(n = 4\)</span>). <span class="math inline">\(N = abn = 24\)</span>.</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><span class="math inline">\(B_1\)</span></th>
+<th><span class="math inline">\(\cdots\)</span></th>
+<th><span class="math inline">\(B_b\)</span></th>
+<th>סכום</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(A_1\)</span></td>
+<td><span class="math inline">\(y_{111}, \dots, y_{11n}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(y_{1b1}, \dots, y_{1bn}\)</span></td>
+<td><span class="math inline">\(y_{1\cdot\cdot}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td></td>
+<td><span class="math inline">\(y_{ij\cdot}\)</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(A_a\)</span></td>
+<td><span class="math inline">\(y_{a11}, \dots, y_{a1n}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(y_{ab1}, \dots, y_{abn}\)</span></td>
+<td><span class="math inline">\(y_{a\cdot\cdot}\)</span></td>
+</tr>
+<tr class="even">
+<td>סכום</td>
+<td><span class="math inline">\(y_{\cdot 1\cdot}\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\(y_{\cdot b\cdot}\)</span></td>
+<td><span class="math inline">\(y_{\cdot\cdot\cdot}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(y_{ijk}\)</span>: התצפית ה-<span class="math inline">\(k\)</span> ברמה <span class="math inline">\(i\)</span> של A וברמה <span class="math inline">\(j\)</span> של B. <strong>נקודה במקום אינדקס = סכום על האינדקס הזה</strong>:</p>
+<p><span class="math display">\[
+y_{ij\cdot} = \sum_{k=1}^{n} y_{ijk} \qquad
+y_{i\cdot\cdot} = \sum_{j=1}^{b}\sum_{k=1}^{n} y_{ijk} \qquad
+y_{\cdot j\cdot} = \sum_{i=1}^{a}\sum_{k=1}^{n} y_{ijk} \qquad
+y_{\cdot\cdot\cdot} = \sum_{i,j,k} y_{ijk}
+\]</span></p>
+<p>והממוצעים: <span class="math inline">\(\bar y_{ij\cdot} = y_{ij\cdot}/n\)</span>, <span class="math inline">\(\bar y_{i\cdot\cdot} = y_{i\cdot\cdot}/(bn)\)</span>, <span class="math inline">\(\bar y_{\cdot j\cdot} = y_{\cdot j\cdot}/(an)\)</span>, <span class="math inline">\(\bar y_{\cdot\cdot\cdot} = y_{\cdot\cdot\cdot}/(abn)\)</span>.</p>
+</section>
+<section id="המודל" class="slide level2 smaller">
+<h2>המודל</h2>
+<p><span class="math display">\[
+y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}
+\qquad \varepsilon_{ijk} \overset{iid}{\sim} N(0, \sigma^2)
+\]</span></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>האיבר</th>
+<th>המשמעות</th>
+<th>אילוץ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mu\)</span></td>
+<td>התוחלת הכללית</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\tau_i\)</span></td>
+<td>האפקט של רמה <span class="math inline">\(i\)</span> של A (גודל המודל)</td>
+<td><span class="math inline">\(\sum_i \tau_i = 0\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\beta_j\)</span></td>
+<td>האפקט של רמה <span class="math inline">\(j\)</span> של B (RAG)</td>
+<td><span class="math inline">\(\sum_j \beta_j = 0\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\((\tau\beta)_{ij}\)</span></td>
+<td><strong>האינטראקציה:</strong> התוספת של השילוב <span class="math inline">\((i, j)\)</span>, מעבר לסכום האפקטים</td>
+<td><span class="math inline">\(\sum_i (\tau\beta)_{ij} = 0\)</span> לכל <span class="math inline">\(j\)</span>, <span class="math inline">\(\sum_j (\tau\beta)_{ij} = 0\)</span> לכל <span class="math inline">\(i\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>התוחלת בתא: <span class="math inline">\(\mu_{ij} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij}\)</span></li>
+<li><strong>בלי אינטראקציה</strong> (<span class="math inline">\((\tau\beta)_{ij} = 0\)</span>): <span class="math inline">\(\mu_{ij} = \mu + \tau_i + \beta_j\)</span>. המודל <strong>אדיטיבי</strong>, וזה בדיוק “קווים מקבילים”</li>
+</ul>
+</section>
+<section id="שלוש-מערכות-השערות" class="slide level2 smaller">
+<h2>שלוש מערכות השערות</h2>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\text{A:} &amp;&amp; H_0: \tau_1 = \dots = \tau_a = 0 &amp;&amp; H_1: \tau_i \neq 0 \text{ עבור } i \text{ כלשהו} \\
+&amp;\text{B:} &amp;&amp; H_0: \beta_1 = \dots = \beta_b = 0 &amp;&amp; H_1: \beta_j \neq 0 \text{ עבור } j \text{ כלשהו} \\
+&amp;\text{AB:} &amp;&amp; H_0: (\tau\beta)_{ij} = 0 \text{ לכל } i, j &amp;&amp; H_1: (\tau\beta)_{ij} \neq 0 \text{ עבור } i, j \text{ כלשהם}
+\end{aligned}
+\]</span></p>
+<p><strong>סדר הקריאה:</strong> קודם האינטראקציה.</p>
+<ul>
+<li><strong>אם האינטראקציה מובהקת:</strong> האפקטים הראשיים הם ממוצע של אפקטים שונים, ולכן הם לא מספרים את כל הסיפור. בודקים את ההשפעה של A <strong>בכל רמה</strong> של B בנפרד</li>
+<li><strong>אם היא לא מובהקת:</strong> אפשר לפרש את האפקטים הראשיים ישירות</li>
+</ul>
+</section>
+<section id="פירוק-השונות" class="slide level2 smaller">
+<h2>פירוק השונות</h2>
+<p>כמו בחד-כיווני, מפרקים כל סטייה מהממוצע הכללי לחלקים:</p>
+<p><span class="math display">\[
+y_{ijk} - \bar y_{\cdot\cdot\cdot} =
+\underbrace{(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})}_{\hat\tau_i} +
+\underbrace{(\bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot})}_{\hat\beta_j} +
+\underbrace{(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot})}_{\widehat{(\tau\beta)}_{ij}} +
+\underbrace{(y_{ijk} - \bar y_{ij\cdot})}_{e_{ijk}}
+\]</span></p>
+<p>מעלים בריבוע וסוכמים. כל המכפלות המעורבות מתאפסות (בניסוי מאוזן), ונשאר:</p>
+<p><span class="math display">\[
+SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_A}
++ \underbrace{an\sum_j(\bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_B}
++ \underbrace{n\sum_{i,j}(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot})^2}_{SS_{AB}}
++ \underbrace{\sum_{i,j,k}(y_{ijk} - \bar y_{ij\cdot})^2}_{SS_E}
+\]</span></p>
+<p><strong>דרגות חופש:</strong> <span class="math inline">\(abn - 1 = (a-1) + (b-1) + (a-1)(b-1) + ab(n-1)\)</span></p>
+<ul>
+<li><strong>האינטראקציה:</strong> כמה התא סוטה ממה שהמודל האדיטיבי צופה, <span class="math inline">\(\bar y_{i\cdot\cdot} + \bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot}\)</span></li>
+<li><strong>השגיאה:</strong> הפיזור <strong>בתוך</strong> כל תא. לכן צריך <span class="math inline">\(n \ge 2\)</span> כדי לאמוד אותה</li>
+</ul>
+</section>
+<section id="טבלת-anova" class="slide level2 smaller">
+<h2>טבלת ANOVA</h2>
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>סכום ריבועים</th>
+<th>דרגות חופש</th>
+<th>ממוצע ריבועים</th>
+<th><span class="math inline">\(E(MS)\)</span></th>
+<th><span class="math inline">\(F_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><span class="math inline">\(SS_A\)</span></td>
+<td><span class="math inline">\(a-1\)</span></td>
+<td><span class="math inline">\(MS_A\)</span></td>
+<td><span class="math inline">\(\sigma^2 + \frac{bn\sum\tau_i^2}{a-1}\)</span></td>
+<td><span class="math inline">\(MS_A/MS_E\)</span></td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td><span class="math inline">\(SS_B\)</span></td>
+<td><span class="math inline">\(b-1\)</span></td>
+<td><span class="math inline">\(MS_B\)</span></td>
+<td><span class="math inline">\(\sigma^2 + \frac{an\sum\beta_j^2}{b-1}\)</span></td>
+<td><span class="math inline">\(MS_B/MS_E\)</span></td>
+</tr>
+<tr class="odd">
+<td>AB</td>
+<td><span class="math inline">\(SS_{AB}\)</span></td>
+<td><span class="math inline">\((a-1)(b-1)\)</span></td>
+<td><span class="math inline">\(MS_{AB}\)</span></td>
+<td><span class="math inline">\(\sigma^2 + \frac{n\sum\sum(\tau\beta)_{ij}^2}{(a-1)(b-1)}\)</span></td>
+<td><span class="math inline">\(MS_{AB}/MS_E\)</span></td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td><span class="math inline">\(SS_E\)</span></td>
+<td><span class="math inline">\(ab(n-1)\)</span></td>
+<td><span class="math inline">\(MS_E\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>סך הכול</td>
+<td><span class="math inline">\(SS_T\)</span></td>
+<td><span class="math inline">\(abn-1\)</span></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>אותו היגיון כמו בחד-כיווני: תחת <span class="math inline">\(H_0\)</span> המונה והמכנה אומדים את <span class="math inline">\(\sigma^2\)</span>, ו-<span class="math inline">\(F_0 \sim F\)</span> עם דרגות החופש שלהם</li>
+<li>למשל, דוחים <span class="math inline">\(H_0\)</span> לאינטראקציה אם <span class="math inline">\(F_0 &gt; F_{1-\alpha;\,(a-1)(b-1),\,ab(n-1)}\)</span></li>
+<li><span class="math inline">\(bn\)</span> ב-<span class="math inline">\(E(MS_A)\)</span>: כל ממוצע <span class="math inline">\(\bar y_{i\cdot\cdot}\)</span> מבוסס על <span class="math inline">\(bn\)</span> תצפיות</li>
+</ul>
+</section>
+<section id="נוסחאות-לחישוב-ידני" class="slide level2 smaller">
+<h2>נוסחאות לחישוב ידני</h2>
+<p>עובדים עם <strong>סכומים</strong>. מגדירים את <strong>גורם התיקון</strong> <span class="math inline">\(C = \dfrac{y_{\cdot\cdot\cdot}^2}{abn}\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+SS_T &amp;= \sum_{i,j,k} y_{ijk}^2 - C \\
+SS_A &amp;= \frac{1}{bn}\sum_{i} y_{i\cdot\cdot}^2 - C \qquad\qquad
+SS_B = \frac{1}{an}\sum_{j} y_{\cdot j\cdot}^2 - C \\
+SS_{\text{cells}} &amp;= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \qquad\quad\;\, \text{(ה-SS בין כל } ab \text{ התאים)} \\
+SS_{AB} &amp;= SS_{\text{cells}} - SS_A - SS_B \\
+SS_E &amp;= SS_T - SS_{\text{cells}}
+\end{aligned}
+\]</span></p>
+<ul>
+<li><strong>הכלל:</strong> סכום בריבוע, חלקי מספר התצפיות שבסכום, פחות <span class="math inline">\(C\)</span></li>
+<li><span class="math inline">\(SS_{\text{cells}}\)</span> הוא ה-<span class="math inline">\(SS_{Tr}\)</span> של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה</li>
+</ul>
+</section>
+<section id="חישוב-ידני-טבלת-הסכומים" class="slide level2 smaller">
+<h2>חישוב ידני: טבלת הסכומים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a>cell_tot <span class="ot">&lt;-</span> rag <span class="sc">|&gt;</span> <span class="fu">group_by</span>(size, retrieval) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">y_ij =</span> <span class="fu">sum</span>(acc), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>cell_tot <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> retrieval, <span class="at">values_from =</span> y_ij) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_i =</span> off <span class="sc">+</span> on)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  size     off    on   y_i
+  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 small   241.  310.  552.
+2 medium  287.  324.  612.
+3 large   335.  334.  669.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">y_off =</span> <span class="fu">sum</span>(rag<span class="sc">$</span>acc[rag<span class="sc">$</span>retrieval <span class="sc">==</span> <span class="st">"off"</span>]), <span class="at">y_on =</span> <span class="fu">sum</span>(rag<span class="sc">$</span>acc[rag<span class="sc">$</span>retrieval <span class="sc">==</span> <span class="st">"on"</span>]),</span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">y_total =</span> <span class="fu">sum</span>(rag<span class="sc">$</span>acc), <span class="at">sum_y2 =</span> <span class="fu">sum</span>(rag<span class="sc">$</span>acc<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   y_off     y_on  y_total   sum_y2 
+   863.3    969.0   1832.3 141705.2 </code></pre>
+</div>
+</div>
+</section>
+<section id="חישוב-ידני-סכומי-הריבועים" class="slide level2 smaller">
+<h2>חישוב ידני: סכומי הריבועים</h2>
+<p><span class="math display">\[
+C = \frac{1,832.3^2}{24} = 139,888.5 \qquad SS_T = 141,705.17 - C = 1,816.7
+\]</span></p>
+<p><span class="math display">\[
+SS_A = \frac{551.6^2 + 611.6^2 + 669.1^2}{2 \cdot 4} - C = 863.0
+\qquad
+SS_B = \frac{863.3^2 + 969.0^2}{3 \cdot 4} - C = 465.5
+\]</span></p>
+<p><span class="math display">\[
+SS_{\text{cells}} = \frac{241.3^2 + 310.3^2 + 287.4^2 + 324.2^2 + 334.6^2 + 334.5^2}{4} - C = 1,627.4
+\]</span></p>
+<p><span class="math display">\[
+SS_{AB} = 1,627.4 - 863.0 - 465.5 = 298.9
+\qquad
+SS_E = 1,816.7 - 1,627.4 = 189.3
+\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>SS</th>
+<th>df</th>
+<th>MS</th>
+<th><span class="math inline">\(F_0\)</span></th>
+<th><span class="math inline">\(F_{0.95}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>גודל (A)</td>
+<td>863.0</td>
+<td>2</td>
+<td>431.5</td>
+<td>41.04</td>
+<td>3.55</td>
+</tr>
+<tr class="even">
+<td>RAG (B)</td>
+<td>465.5</td>
+<td>1</td>
+<td>465.5</td>
+<td>44.27</td>
+<td>4.41</td>
+</tr>
+<tr class="odd">
+<td>AB</td>
+<td>298.9</td>
+<td>2</td>
+<td>149.4</td>
+<td>14.21</td>
+<td>3.55</td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td>189.3</td>
+<td>18</td>
+<td>10.52</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="אותו-ניתוח-ב-r" class="slide level2 smaller">
+<h2>אותו ניתוח ב-R</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a>fit_rag <span class="ot">&lt;-</span> <span class="fu">aov</span>(acc <span class="sc">~</span> size <span class="sc">*</span> retrieval, <span class="at">data =</span> rag)   <span class="co"># size * retrieval = size + retrieval + size:retrieval</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_rag)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               Df Sum Sq Mean Sq F value Pr(&gt;F)    
+size            2    863     432    41.0  2e-07 ***
+retrieval       1    466     466    44.3  3e-06 ***
+size:retrieval  2    299     149    14.2  2e-04 ***
+Residuals      18    189      11                   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><strong><code>size:retrieval</code></strong> היא שורת האינטראקציה. <span class="math inline">\(F_0 = 14.21\)</span>, <span class="math inline">\(p &lt; 0.001\)</span>: <strong>יש אינטראקציה</strong></li>
+<li>גם שני האפקטים הראשיים מובהקים, אבל בגלל האינטראקציה הם לא מספרים את כל הסיפור</li>
+<li><span class="math inline">\(MS_E = 10.52\)</span>, ולכן <span class="math inline">\(\hat\sigma = 3.24\)</span> נקודות אחוז: הרעש בין ריצות על מדגמי שאלות שונים</li>
+</ul>
+</section>
+<section id="אומדים-לאפקטים" class="slide level2 smaller">
+<h2>אומדים לאפקטים</h2>
+<p><span class="math display">\[
+\hat\mu = \bar y_{\cdot\cdot\cdot} \qquad
+\hat\tau_i = \bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot} \qquad
+\hat\beta_j = \bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot} \qquad
+\widehat{(\tau\beta)}_{ij} = \bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot} \qquad
+\hat\sigma^2 = MS_E
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a>mu_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(rag<span class="sc">$</span>acc)</span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a>eff <span class="ot">&lt;-</span> rag <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(size, retrieval) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">cell =</span> <span class="fu">mean</span>(acc), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(size) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">row_mean =</span> <span class="fu">mean</span>(cell)) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(retrieval) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">col_mean =</span> <span class="fu">mean</span>(cell)) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tau =</span> row_mean <span class="sc">-</span> mu_hat, <span class="at">beta =</span> col_mean <span class="sc">-</span> mu_hat,</span>
+<span id="cb9-7"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">tau_beta =</span> cell <span class="sc">-</span> row_mean <span class="sc">-</span> col_mean <span class="sc">+</span> mu_hat)</span>
+<span id="cb9-8"><a aria-hidden="true" tabindex="-1"></a>eff <span class="sc">|&gt;</span> <span class="fu">select</span>(size, retrieval, cell, tau, beta, tau_beta) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">round</span>(x, <span class="dv">2</span>)))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  size   retrieval  cell   tau  beta tau_beta
+  &lt;fct&gt;  &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 small  off        60.3 -7.4   -4.4    -4.22
+2 small  on         77.6 -7.4    4.4     4.22
+3 medium off        71.8  0.1   -4.4    -0.2 
+4 medium on         81.0  0.1    4.4     0.2 
+5 large  off        83.6  7.29  -4.4     4.42
+6 large  on         83.6  7.29   4.4    -4.42</code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(\widehat{(\tau\beta)}_{small,\,on} &gt; 0\)</span>, <span class="math inline">\(\widehat{(\tau\beta)}_{large,\,on} &lt; 0\)</span>: עם RAG, המודל הקטן מרוויח <strong>יותר</strong> ממה שהמודל האדיטיבי צופה, והגדול <strong>פחות</strong></li>
+</ul>
+</section>
+<section id="כשהאינטראקציה-מובהקת-אפקטים-פשוטים" class="slide level2 smaller">
+<h2>כשהאינטראקציה מובהקת: אפקטים פשוטים</h2>
+<p><strong>אפקט פשוט</strong> (<span class="en">simple effect</span>): האפקט של RAG <strong>בכל גודל מודל בנפרד</strong>. כל השוואה משתמשת ב-<span class="math inline">\(MS_E\)</span> של המודל המלא:</p>
+<p><span class="math display">\[
+t_0 = \frac{\bar y_{i2\cdot} - \bar y_{i1\cdot}}{\sqrt{2MS_E/n}} \sim t_{ab(n-1)}
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a>emm_rag <span class="ot">&lt;-</span> emmeans<span class="sc">::</span><span class="fu">emmeans</span>(fit_rag, <span class="sc">~</span> retrieval <span class="sc">|</span> size)</span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a>emmeans<span class="sc">::</span><span class="fu">contrast</span>(emm_rag, <span class="st">"revpairwise"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>size = small:
+ contrast estimate   SE df t.ratio p.value
+ on - off   17.250 2.29 18   7.523 &lt;0.0001
+
+size = medium:
+ contrast estimate   SE df t.ratio p.value
+ on - off    9.200 2.29 18   4.012  0.0008
+
+size = large:
+ contrast estimate   SE df t.ratio p.value
+ on - off   -0.025 2.29 18  -0.011  0.9914</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>קטן:</strong> RAG מוסיף כ-17 נקודות. <strong>בינוני:</strong> כ-9. <strong>גדול:</strong> 0</li>
+<li><code>SE</code> זהה בשלושתם: <span class="math inline">\(\sqrt{2 \cdot 10.52 / 4} = 2.29\)</span></li>
+</ul>
+</section>
+<section id="ומה-עם-קטן-rag-מול-גדול" class="slide level2 smaller">
+<h2>ומה עם “קטן + RAG” מול “גדול”?</h2>
+<p>שאלה 3 משווה <strong>תאים</strong>, לא רמות של פקטור. לכן מתייחסים ל-6 התאים כאילו היו 6 קבוצות בניתוח חד-כיווני, ומריצים עליהם <span class="en">Tukey</span>. הסף אחיד לכל 15 הזוגות:</p>
+<p><span class="math display">\[
+HSD = q_\alpha(ab,\, f_E)\cdot\sqrt{\frac{MS_E}{n}}
+\]</span></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>רכיב</th>
+<th>ערך</th>
+<th>למה</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>מספר הממוצעים</td>
+<td><span class="math inline">\(ab = 6\)</span></td>
+<td>כל התאים, לא <span class="math inline">\(a = 3\)</span></td>
+</tr>
+<tr class="even">
+<td>דרגות חופש לשגיאה</td>
+<td><span class="math inline">\(f_E = ab(n-1) = 18\)</span></td>
+<td>מה-<span class="math inline">\(MS_E\)</span> של המודל הדו-כיווני</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(n\)</span></td>
+<td>4</td>
+<td>ריצות בכל תא</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(q_{0.05}(6, 18)\)</span></td>
+<td>4.49</td>
+<td>טבלת <span class="en">studentized range</span>, או <code>qtukey()</code></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(s_{\bar y} = \sqrt{MS_E/n}\)</span></td>
+<td><span class="math inline">\(\sqrt{10.52/4} = 1.62\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[
+HSD = 4.49 \cdot 1.62 = 7.29 \text{ נקודות אחוז}
+\]</span></p>
+<ul>
+<li><strong>כל</strong> הפרש בין שני תאים שגדול מ-7.29 מובהק. קטן ממנו: לא מובהק</li>
+</ul>
+<aside class="notes">
+<p>להדגיש את שני השינויים לעומת Tukey החד-כיווני: מספר הממוצעים הוא 6 (התאים), ודרגות החופש הן של השגיאה במודל הדו-כיווני (18), לא N − 6 שמגיעים אליו במקרה לאותו מספר כאן. ה-HSD של 7.29 הוא “הסרגל” שנראה בתרשים הבא.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="הסף-האחיד-חישוב-ב-r" class="slide level2 smaller">
+<h2>הסף האחיד: חישוב ב-R</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a>mse_rag <span class="ot">&lt;-</span> <span class="fu">deviance</span>(fit_rag) <span class="sc">/</span> <span class="fu">df.residual</span>(fit_rag)          <span class="co"># MS_E = SS_E / 18</span></span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a>q_rag   <span class="ot">&lt;-</span> <span class="fu">qtukey</span>(<span class="fl">0.95</span>, <span class="at">nmeans =</span> <span class="dv">6</span>, <span class="at">df =</span> <span class="fu">df.residual</span>(fit_rag))</span>
+<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a>hsd_rag <span class="ot">&lt;-</span> q_rag <span class="sc">*</span> <span class="fu">sqrt</span>(mse_rag <span class="sc">/</span> <span class="dv">4</span>)</span>
+<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">MSE =</span> mse_rag, <span class="at">q =</span> q_rag, <span class="at">s_ybar =</span> <span class="fu">sqrt</span>(mse_rag <span class="sc">/</span> <span class="dv">4</span>), <span class="at">HSD =</span> hsd_rag)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   MSE      q s_ybar    HSD 
+10.515  4.494  1.621  7.287 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a>cells <span class="ot">&lt;-</span> rag <span class="sc">|&gt;</span> <span class="fu">group_by</span>(size, retrieval) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(acc), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cell =</span> <span class="fu">paste</span>(size, retrieval, <span class="at">sep =</span> <span class="st">":"</span>)) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(mean)</span>
+<span id="cb15-3"><a aria-hidden="true" tabindex="-1"></a>cells <span class="sc">|&gt;</span> <span class="fu">select</span>(cell, mean)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  cell        mean
+  &lt;chr&gt;      &lt;dbl&gt;
+1 small:off   60.3
+2 medium:off  71.8
+3 small:on    77.6
+4 medium:on   81.0
+5 large:on    83.6
+6 large:off   83.6</code></pre>
+</div>
+</div>
+<ul>
+<li>התאים מסודרים מהנמוך לגבוה. כל זוג שהמרחק ביניהם גדול מ-7.29 נבדל</li>
+</ul>
+</section>
+<section id="tukey-על-6-התאים-הפלט-המלא" class="slide level2 smaller">
+<h2><span class="en">Tukey</span> על 6 התאים: הפלט המלא</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a>tk_rag <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(fit_rag, <span class="st">"size:retrieval"</span>)<span class="sc">$</span><span class="st">`</span><span class="at">size:retrieval</span><span class="st">`</span></span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(tk_rag, <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       diff     lwr    upr p adj
+medium:off-small:off 11.525   4.238 18.812 0.001
+large:off-small:off  23.325  16.038 30.612 0.000
+small:on-small:off   17.250   9.963 24.537 0.000
+medium:on-small:off  20.725  13.438 28.012 0.000
+large:on-small:off   23.300  16.013 30.587 0.000
+large:off-medium:off 11.800   4.513 19.087 0.001
+small:on-medium:off   5.725  -1.562 13.012 0.177
+medium:on-medium:off  9.200   1.913 16.487 0.009
+large:on-medium:off  11.775   4.488 19.062 0.001
+small:on-large:off   -6.075 -13.362  1.212 0.136
+medium:on-large:off  -2.600  -9.887  4.687 0.861
+large:on-large:off   -0.025  -7.312  7.262 1.000
+medium:on-small:on    3.475  -3.812 10.762 0.659
+large:on-small:on     6.050  -1.237 13.337 0.138
+large:on-medium:on    2.575  -4.712  9.862 0.866</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>לשים לב: lwr = diff − 7.287 ו-upr = diff + 7.287 בכל השורות. זה ה-HSD. כל רווחי הסמך באותו רוחב, כי הניסוי מאוזן.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="איך-קוראים-את-הפלט" class="slide level2 smaller">
+<h2>איך קוראים את הפלט</h2>
+<ul>
+<li><strong>רוחב אחיד:</strong> בכל שורה, <span class="math inline">\(\text{upr} - \text{diff} = \text{diff} - \text{lwr} = 7.287\)</span>. זה ה-HSD. הניסוי מאוזן, ולכן לכל 15 הזוגות יש אותו רווח</li>
+<li><strong>מובהק</strong> ⇔ <span class="math inline">\(|\text{diff}| &gt; HSD\)</span> ⇔ הרווח לא כולל את 0 ⇔ <code>p adj</code> <span class="math inline">\(&lt; 0.05\)</span>. שלוש דרכים לומר אותו דבר</li>
+<li><strong>10 מתוך 15 זוגות מובהקים.</strong> 5 לא מובהקים, וכולם בין התאים “הטובים”: קטן+RAG, בינוני+RAG, גדול עם RAG ובלי</li>
+<li><strong>קבוצות:</strong>
+<ul>
+<li><strong>A:</strong> קטן בלי RAG (60.3), נמוך מכולם</li>
+<li><strong>B:</strong> בינוני בלי RAG (71.8) וקטן+RAG (77.6). ההפרש ביניהם, 5.72, קטן מה-HSD</li>
+<li><strong>C:</strong> קטן+RAG, בינוני+RAG, גדול+RAG, גדול בלי RAG. כל ההפרשים ביניהם עד 6.08</li>
+</ul></li>
+<li>קטן+RAG נמצא גם ב-B וגם ב-C: הוא לא שונה מובהקות מאף אחד מהשכנים שלו</li>
+</ul>
+</section>
+<section id="ההפרשים-מול-הסף-האחיד" class="slide level2">
+<h2>15 ההפרשים מול הסף האחיד</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/rag-hsd-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="רווחי-הסמך-המשותפים-בתרשים" class="slide level2">
+<h2>רווחי הסמך המשותפים בתרשים</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/rag-tukey-ci-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="בחזרה-לשאלה-קטןrag-מול-גדול" class="slide level2 smaller">
+<h2>בחזרה לשאלה: קטן+RAG מול גדול</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(tk_rag[<span class="fu">c</span>(<span class="st">"small:on-large:off"</span>, <span class="st">"large:on-small:on"</span>), ], <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     diff     lwr    upr p adj
+small:on-large:off -6.075 -13.362  1.212 0.136
+large:on-small:on   6.050  -1.237 13.337 0.138</code></pre>
+</div>
+</div>
+<ul>
+<li><code>small:on-large:off</code>: הקטן עם RAG מפגר אחרי הגדול בלי RAG בכ-6 נקודות. <span class="math inline">\(6.08 &lt; HSD = 7.29\)</span>, ולכן <strong>ההפרש לא מובהק</strong> (<span class="math inline">\(p = 0.14\)</span>)</li>
+<li><strong>אבל “לא מובהק” אינו “שווה”.</strong> רווח הסמך המשותף: מ-13 נקודות לטובת הגדול ועד נקודה אחת לטובת הקטן. ייתכן שהפער אפסי, וייתכן שהוא 13 נקודות</li>
+<li><strong>ההמלצה:</strong> RAG לכל מודל קטן או בינוני. לפני שמחליפים את הגדול בקטן עם RAG, צריך ניסוי ממוקד עם יותר ריצות. עכשיו אפשר לחשב כמה (ניתוח עוצמה, הרצאה 4)</li>
+</ul>
+<aside class="notes">
+<p>זה הרגע להזכיר את מלכודת “לא מובהק ≠ שווה” מהרצאה 4. אם המנהל רוצה לדעת אם הקטן עם RAG “מספיק טוב”, צריך להגדיר מראש פער מקסימלי סביר (למשל 2 נקודות) ולתכנן ניסוי שרווח הסמך שלו צר מזה.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="בדיקת-ההנחות" class="slide level2 smaller">
+<h2>בדיקת ההנחות</h2>
+<p>אותן הנחות כמו בחד-כיווני, ואותם כלים. השאריות: <span class="math inline">\(e_{ijk} = y_{ijk} - \bar y_{ij\cdot}\)</span></p>
+
+<img data-src="07-logistic-regression_files/figure-html/rag-resid-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li>הנקודות ב-Q-Q קרובות לקו. הפיזור דומה ברוב התאים. <span class="en">Bartlett</span> על 6 התאים: <span class="math inline">\(p = 0.18\)</span></li>
+<li>עם 4 תצפיות לתא, אי אפשר לראות הרבה. זה המצב הרגיל בניסויים, ולכן תכנון טוב (הגרלה, ריצות עצמאיות) חשוב יותר מבדיקות</li>
+</ul>
+</section></section>
+<section>
+<section id="בלוקים-ניתוח-דו-כיווני-בלי-חזרות" class="title-slide slide level1 center">
+<h1>בלוקים: ניתוח דו-כיווני בלי חזרות</h1>
+
+</section>
+<section id="חזרה-למוקד-אפקט-היום" class="slide level2 smaller">
+<h2>חזרה למוקד: אפקט היום</h2>
+<p>בהרצאה 4 ראינו שבימים 6 ו-8 הטיפול היה קצר <strong>בכל המודלים</strong>. כל יום הפעלנו את כל חמשת המודלים, על פניות אחרות.</p>
+
+<img data-src="07-logistic-regression_files/figure-html/calls-days-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>היום הוא פקטור שני.</strong> הוא לא מעניין אותנו כשלעצמו, אבל הוא מוסיף רעש. פקטור כזה נקרא <strong>בלוק</strong> (<span class="en">block</span>)</li>
+<li><strong>בכל תא יש תצפית אחת</strong> (<span class="math inline">\(n = 1\)</span>): מודל אחד ביום אחד</li>
+</ul>
+</section>
+<section id="המודל-עם-בלוק" class="slide level2 smaller">
+<h2>המודל עם בלוק</h2>
+<p><span class="math display">\[
+y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij} \qquad i = 1, \dots, a \text{ (מודל)}, \quad j = 1, \dots, b \text{ (יום)}
+\]</span></p>
+<ul>
+<li><strong>אין איבר אינטראקציה.</strong> עם <span class="math inline">\(n = 1\)</span> אין פיזור בתוך תא, ולכן אי אפשר להפריד אינטראקציה משגיאה. מניחים שהמודל <strong>אדיטיבי</strong>: יום עמוס מאריך את הטיפול בכל המודלים באותה מידה</li>
+<li>מה שהיה <span class="math inline">\(SS_{AB}\)</span> משמש כשגיאה:</li>
+</ul>
+<p><span class="math display">\[
+SS_E = SS_T - SS_A - SS_B \qquad df_E = (a-1)(b-1)
+\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>SS</th>
+<th>df</th>
+<th><span class="math inline">\(F_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>מודל (A)</td>
+<td><span class="math inline">\(SS_A\)</span></td>
+<td><span class="math inline">\(a - 1\)</span></td>
+<td><span class="math inline">\(MS_A / MS_E\)</span></td>
+</tr>
+<tr class="even">
+<td>יום (בלוק)</td>
+<td><span class="math inline">\(SS_B\)</span></td>
+<td><span class="math inline">\(b - 1\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>שגיאה</td>
+<td><span class="math inline">\(SS_E\)</span></td>
+<td><span class="math inline">\((a-1)(b-1)\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>סך הכול</td>
+<td><span class="math inline">\(SS_T\)</span></td>
+<td><span class="math inline">\(ab - 1\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="התוצאה-בלי-בלוק-ועם-בלוק" class="slide level2 smaller">
+<h2>התוצאה: בלי בלוק ועם בלוק</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(aht <span class="sc">~</span> model, <span class="at">data =</span> calls_d))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value Pr(&gt;F)   
+model        4   18.0    4.51    5.28 0.0016 **
+Residuals   40   34.1    0.85                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(aht <span class="sc">~</span> model <span class="sc">+</span> day, <span class="at">data =</span> calls_d))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+model        4   18.0    4.51    17.4 1.1e-07 ***
+day          8   25.9    3.23    12.5 6.6e-08 ***
+Residuals   32    8.3    0.26                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(SS_{model} = 18.02\)</span> <strong>לא השתנה</strong>. מה שהשתנה: <span class="math inline">\(25.9\)</span> מתוך <span class="math inline">\(34.1\)</span> של השגיאה הם בעצם הבדלים בין ימים</li>
+<li><span class="math inline">\(MS_E\)</span> ירד מ-0.854 ל-0.259, ו-<span class="math inline">\(F\)</span> של המודלים קפץ מ-5.3 ל-17.4</li>
+<li><strong>המחיר:</strong> 8 דרגות חופש של השגיאה (40 → 32). כשהבלוק באמת משנה, המחיר זניח</li>
+</ul>
+</section></section>
+<section>
+<section id="אפקטים-אקראיים-בניתוח-דו-כיווני" class="title-slide slide level1 center">
+<h1>אפקטים אקראיים בניתוח דו-כיווני</h1>
+
+</section>
+<section id="השאלה-מתייגים-וסוגי-משימות" class="slide level2 smaller">
+<h2>השאלה: מתייגים וסוגי משימות</h2>
+<p>צוות ה-AI משלם למתייגים (<span class="en">annotators</span>) לתייג נתוני אימון. כמה זמן לוקח לתייג פריט, ומאיפה מגיעה השונות?</p>
+<ul>
+<li><strong>מתייגים:</strong> במאגר יש כ-40. <strong>מגרילים 4</strong></li>
+<li><strong>סוגי משימות:</strong> בקטלוג יש עשרות סוגים (סיווג כוונה, זיהוי ישויות, דירוג תשובות…). <strong>מגרילים 3</strong></li>
+<li>כל מתייג מתייג <strong>2 פריטים</strong> מכל סוג משימה. התגובה: שניות לפריט</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">707</span>)</span>
+<span id="cb25-2"><a aria-hidden="true" tabindex="-1"></a>annot <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">annotator =</span> <span class="fu">paste0</span>(<span class="st">"A"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>), <span class="at">task =</span> <span class="fu">paste0</span>(<span class="st">"T"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">u_a =</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(<span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">3</span>), <span class="at">each =</span> <span class="dv">3</span>),      <span class="co"># annotator effect, sd 3 s</span></span>
+<span id="cb25-4"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">u_t =</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(<span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">8</span>), <span class="at">times =</span> <span class="dv">4</span>),     <span class="co"># task-type effect, sd 8 s</span></span>
+<span id="cb25-5"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">u_at =</span> <span class="fu">rnorm</span>(<span class="dv">12</span>, <span class="dv">0</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span>                 <span class="co"># interaction, sd 2 s</span></span>
+<span id="cb25-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_grid</span>(<span class="at">item =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sec =</span> <span class="fu">round</span>(<span class="dv">40</span> <span class="sc">+</span> u_a <span class="sc">+</span> u_t <span class="sc">+</span> u_at <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="fl">2.5</span>), <span class="dv">1</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(annotator, task, item, sec)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>השאלה לא</strong> “האם מתייג A3 איטי מ-A1”, אלא: <strong>כמה מהשונות בזמן התיוג נובעת ממתייגים, כמה מסוגי משימות, וכמה מהשילוב?</strong></p>
+</section>
+<section id="המודל-1" class="slide level2 smaller">
+<h2>המודל</h2>
+<p><span class="math display">\[
+y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}
+\]</span></p>
+<p><span class="math display">\[
+\tau_i \sim N(0, \sigma_\tau^2) \qquad \beta_j \sim N(0, \sigma_\beta^2) \qquad (\tau\beta)_{ij} \sim N(0, \sigma_{\tau\beta}^2) \qquad \varepsilon_{ijk} \sim N(0, \sigma^2)
+\]</span></p>
+<p>כולם בלתי תלויים. <strong>ההשערות:</strong> <span class="math inline">\(H_0: \sigma_\tau^2 = 0\)</span>, <span class="math inline">\(H_0: \sigma_\beta^2 = 0\)</span>, <span class="math inline">\(H_0: \sigma_{\tau\beta}^2 = 0\)</span>.</p>
+<p><strong>סכומי הריבועים ודרגות החופש זהים</strong> למודל הקבוע. מה שמשתנה הן התוחלות:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th><span class="math inline">\(E(MS)\)</span>, אפקטים קבועים</th>
+<th><span class="math inline">\(E(MS)\)</span>, אפקטים אקראיים</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><span class="math inline">\(\sigma^2 + \frac{bn\sum\tau_i^2}{a-1}\)</span></td>
+<td><span class="math inline">\(\sigma^2 + n\sigma_{\tau\beta}^2 + bn\sigma_\tau^2\)</span></td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td><span class="math inline">\(\sigma^2 + \frac{an\sum\beta_j^2}{b-1}\)</span></td>
+<td><span class="math inline">\(\sigma^2 + n\sigma_{\tau\beta}^2 + an\sigma_\beta^2\)</span></td>
+</tr>
+<tr class="odd">
+<td>AB</td>
+<td><span class="math inline">\(\sigma^2 + \frac{n\sum\sum(\tau\beta)_{ij}^2}{(a-1)(b-1)}\)</span></td>
+<td><span class="math inline">\(\sigma^2 + n\sigma_{\tau\beta}^2\)</span></td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="מה-מחלקים-במה" class="slide level2 smaller">
+<h2>מה מחלקים במה?</h2>
+<p><strong>הכלל:</strong> המכנה של <span class="math inline">\(F\)</span> הוא ה-<span class="math inline">\(MS\)</span> שהתוחלת שלו <strong>שווה לתוחלת המונה כש-<span class="math inline">\(H_0\)</span> נכונה</strong>.</p>
+<ul>
+<li><strong>A:</strong> תחת <span class="math inline">\(H_0: \sigma_\tau^2 = 0\)</span>, <span class="math inline">\(E(MS_A) = \sigma^2 + n\sigma_{\tau\beta}^2 = E(MS_{AB})\)</span>. לכן:</li>
+</ul>
+<p><span class="math display">\[
+F_A = \frac{MS_A}{MS_{AB}} \sim F_{a-1,\,(a-1)(b-1)} \qquad F_B = \frac{MS_B}{MS_{AB}} \sim F_{b-1,\,(a-1)(b-1)} \qquad F_{AB} = \frac{MS_{AB}}{MS_E}
+\]</span></p>
+<ul>
+<li><strong>האינטואיציה:</strong> אם המתייגים שהוגרלו מגיבים אחרת לכל סוג משימה, הממוצעים שלהם “קופצים” גם בלי הבדל אמיתי ביניהם. הרעש הזה נכנס ל-<span class="math inline">\(MS_A\)</span>, ולכן צריך להשוות אותו לרעש של האינטראקציה ולא רק לרעש בתוך תא</li>
+</ul>
+<p><strong>אומדים לרכיבי השונות</strong> (פותרים את משוואות התוחלת):</p>
+<p><span class="math display">\[
+\hat\sigma^2 = MS_E \qquad
+\hat\sigma_{\tau\beta}^2 = \frac{MS_{AB} - MS_E}{n} \qquad
+\hat\sigma_\tau^2 = \frac{MS_A - MS_{AB}}{bn} \qquad
+\hat\sigma_\beta^2 = \frac{MS_B - MS_{AB}}{an}
+\]</span></p>
+</section>
+<section id="ב-r-למה-צריך-להגיד-לו-מה-אקראי" class="slide level2 smaller">
+<h2>ב-R: למה צריך להגיד לו מה אקראי</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a aria-hidden="true" tabindex="-1"></a>fit_ann <span class="ot">&lt;-</span> <span class="fu">aov</span>(sec <span class="sc">~</span> annotator <span class="sc">*</span> task, <span class="at">data =</span> annot)</span>
+<span id="cb26-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_ann)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+annotator       3    169      56   13.11 0.00043 ***
+task            2   3315    1658  384.73 1.3e-11 ***
+annotator:task  6     61      10    2.35 0.09812 .  
+Residuals      12     52       4                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p><strong>R לא יודע שהפקטורים אקראיים</strong>, אלא אם אומרים לו. הוא מחלק הכול ב-<span class="math inline">\(MS_E\)</span>. קודם נתקן ידנית (כמו בבחינה), ובשקף הבא נראה איך אומרים ל-R:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a aria-hidden="true" tabindex="-1"></a>ms <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_ann)[[<span class="dv">1</span>]][[<span class="st">"Mean Sq"</span>]]; dfs <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_ann)[[<span class="dv">1</span>]][[<span class="st">"Df"</span>]]   <span class="co"># A, B, AB, E</span></span>
+<span id="cb28-2"><a aria-hidden="true" tabindex="-1"></a>F_A <span class="ot">&lt;-</span> ms[<span class="dv">1</span>] <span class="sc">/</span> ms[<span class="dv">3</span>]; F_B <span class="ot">&lt;-</span> ms[<span class="dv">2</span>] <span class="sc">/</span> ms[<span class="dv">3</span>]</span>
+<span id="cb28-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(<span class="at">annotator =</span> <span class="fu">c</span>(<span class="at">F =</span> F_A, <span class="at">p =</span> <span class="fu">pf</span>(F_A, dfs[<span class="dv">1</span>], dfs[<span class="dv">3</span>], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)),</span>
+<span id="cb28-4"><a aria-hidden="true" tabindex="-1"></a>      <span class="at">task      =</span> <span class="fu">c</span>(<span class="at">F =</span> F_B, <span class="at">p =</span> <span class="fu">pf</span>(F_B, dfs[<span class="dv">2</span>], dfs[<span class="dv">3</span>], <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               F         p
+annotator   5.58 3.596e-02
+task      163.83 5.815e-06</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a aria-hidden="true" tabindex="-1"></a>vc <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">annotator =</span> (ms[<span class="dv">1</span>] <span class="sc">-</span> ms[<span class="dv">3</span>]) <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">*</span> <span class="dv">2</span>), <span class="at">task =</span> (ms[<span class="dv">2</span>] <span class="sc">-</span> ms[<span class="dv">3</span>]) <span class="sc">/</span> (<span class="dv">4</span> <span class="sc">*</span> <span class="dv">2</span>),</span>
+<span id="cb30-2"><a aria-hidden="true" tabindex="-1"></a>        <span class="at">interaction =</span> (ms[<span class="dv">3</span>] <span class="sc">-</span> ms[<span class="dv">4</span>]) <span class="sc">/</span> <span class="dv">2</span>, <span class="at">error =</span> ms[<span class="dv">4</span>])</span>
+<span id="cb30-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">cbind</span>(<span class="at">variance =</span> vc, <span class="at">share =</span> vc <span class="sc">/</span> <span class="fu">sum</span>(vc)), <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            variance share
+annotator      7.725 0.035
+task         205.950 0.932
+interaction    2.905 0.013
+error          4.309 0.020</code></pre>
+</div>
+</div>
+</section>
+<section id="איך-קוראים-את-התוצאה" class="slide level2 smaller">
+<h2>איך קוראים את התוצאה</h2>
+<ul>
+<li><strong>מתייגים:</strong> <span class="math inline">\(F_A = 5.58\)</span> עם <span class="math inline">\((3, 6)\)</span> דרגות חופש, <span class="math inline">\(p = 0.036\)</span>. עם המכנה של R (<span class="math inline">\(MS_E\)</span>): <span class="math inline">\(F = 13.1\)</span>, <span class="math inline">\(p = 4.3\times 10^{-4}\)</span>. ה-p-value הנכון גדול פי 84, כי <span class="math inline">\(MS_{AB}\)</span> גדול פי 2.3 מ-<span class="math inline">\(MS_E\)</span>, ויש רק 6 דרגות חופש במכנה</li>
+<li><strong>סוגי משימות:</strong> כ-93% מהשונות. <strong>ההחלטה:</strong> לתמחר תיוג <strong>לפי סוג משימה</strong>, לא מחיר אחיד לפריט</li>
+<li><strong>מתייגים:</strong> כ-3% מהשונות. יש מתייגים מהירים ואיטיים, אבל זה פחות חשוב מסוג המשימה</li>
+<li><strong>זהירות:</strong> את <span class="math inline">\(\sigma_\beta^2\)</span> אומדים מ-3 סוגי משימות בלבד. האומד מאוד לא מדויק. כדי לאמוד אותו טוב, צריך <strong>יותר סוגי משימות</strong>, לא יותר פריטים</li>
+</ul>
+</section>
+<section id="ב-r-הדרך-הנכונה-עם-error" class="slide level2 smaller">
+<h2>ב-R: הדרך הנכונה, עם <code>Error()</code></h2>
+<p>את החישוב הידני אפשר להחליף בשורה אחת. <code>Error()</code> אומר ל-R <strong>מול איזה איבר אקראי</strong> לבדוק את האפקטים:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(sec <span class="sc">~</span> annotator <span class="sc">+</span> task <span class="sc">+</span> <span class="fu">Error</span>(annotator<span class="sc">:</span>task), <span class="at">data =</span> annot))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Error: annotator:task
+          Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+annotator  3    169      56    5.58   0.036 *  
+task       2   3315    1658  163.83 5.8e-06 ***
+Residuals  6     61      10                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Error: Within
+          Df Sum Sq Mean Sq F value Pr(&gt;F)
+Residuals 12   51.7    4.31               </code></pre>
+</div>
+</div>
+<ul>
+<li>הפלט מחולק ל<strong>שכבות</strong> (<span class="en">strata</span>). בשכבה <code>annotator:task</code>, השורה <code>Residuals</code> היא <span class="math inline">\(MS_{AB}\)</span>, ושני האפקטים נבדקים מולה</li>
+<li><span class="math inline">\(F_A = 5.58\)</span> עם <span class="math inline">\((3, 6)\)</span> דרגות חופש: <strong>בדיוק</strong> החישוב הידני. בשכבה <code>Within</code>, השורה <code>Residuals</code> היא <span class="math inline">\(MS_E\)</span></li>
+<li>את רכיבי השונות עדיין מחשבים מתוחלות ה-MS, כמו קודם</li>
+</ul>
+<aside class="notes">
+<p>R מדפיס אזהרה “Error() model is singular”. היא לא מזיקה כאן (כי A ו-B מופיעים גם כאפקטים וגם בתוך האיבר האקראי), אבל כדאי להזהיר את הסטודנטים שיראו אותה. בבחינה עדיין צריך לדעת לחשב ידנית מטבלת ANOVA.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="מודל-היררכי-nested" class="title-slide slide level1 center">
+<h1>מודל היררכי (<span class="en">Nested</span>)</h1>
+
+</section>
+<section id="מצטלב-מול-היררכי" class="slide level2 smaller">
+<h2>מצטלב מול היררכי</h2>
+<p><strong>מצטלב</strong> (<span class="en">crossed</span>): כל רמה של <span class="math inline">\(A\)</span> מופיעה עם <strong>כל</strong> רמה של <span class="math inline">\(B\)</span>. כל מתייג תייג כל סוג משימה.</p>
+<p><strong>היררכי</strong> (<span class="en">nested</span>): כל רמה של <span class="math inline">\(B\)</span> קיימת <strong>רק בתוך רמה אחת</strong> של <span class="math inline">\(A\)</span>. במקרה כזה אומרים ש-<span class="math inline">\(B\)</span> מקונן ב-<span class="math inline">\(A\)</span>, ומסמנים <span class="math inline">\(B(A)\)</span>.</p>
+<p><strong>הדוגמה:</strong> שלושה מרכזי נתונים (ישראל, אירופה, ארה״ב). בכל אחד מגרילים <strong>4 שרתים</strong>, ושולחים לכל שרת 3 בקשות.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>מרכז נתונים</th>
+<th>ישראל</th>
+<th></th>
+<th></th>
+<th></th>
+<th>אירופה</th>
+<th></th>
+<th></th>
+<th></th>
+<th>ארה״ב</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>שרת</td>
+<td>s1</td>
+<td>s2</td>
+<td>s3</td>
+<td>s4</td>
+<td>s5</td>
+<td>s6</td>
+<td>s7</td>
+<td>s8</td>
+<td>s9</td>
+<td>s10</td>
+<td>s11</td>
+<td>s12</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>שרת s1 קיים רק בישראל. אין משמעות ל”שרת 1 באירופה”, ולכן <strong>אין אינטראקציה</strong> מרכז × שרת</li>
+<li>גם אם נמספר את השרתים 1–4 בכל מרכז, “שרת 1” בישראל ו”שרת 1” באירופה הם שרתים <strong>שונים</strong></li>
+</ul>
+</section>
+<section id="המודל-והטבלה" class="slide level2 smaller">
+<h2>המודל והטבלה</h2>
+<p><span class="math display">\[
+y_{ijk} = \mu + \tau_i + \beta_{j(i)} + \varepsilon_{ijk}
+\qquad i = 1..a \text{ (מרכז)}, \; j = 1..b \text{ (שרת בתוך מרכז)}, \; k = 1..n
+\]</span></p>
+<p><span class="math display">\[
+SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_A}
++ \underbrace{n\sum_{i,j}(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot})^2}_{SS_{B(A)}}
++ \underbrace{\sum_{i,j,k}(y_{ijk} - \bar y_{ij\cdot})^2}_{SS_E}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(SS_{B(A)}\)</span>: הפיזור של השרתים <strong>סביב הממוצע של המרכז שלהם</strong>. דרגות חופש: <span class="math inline">\(a(b-1)\)</span></li>
+<li><span class="math inline">\(SS_{B(A)} = SS_B + SS_{AB}\)</span> של המודל המצטלב</li>
+</ul>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>df</th>
+<th><span class="math inline">\(E(MS)\)</span>, השרתים אקראיים</th>
+<th><span class="math inline">\(F_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A (מרכז)</td>
+<td><span class="math inline">\(a-1\)</span></td>
+<td><span class="math inline">\(\sigma^2 + n\sigma_\beta^2 + \frac{bn\sum\tau_i^2}{a-1}\)</span></td>
+<td><span class="math inline">\(MS_A / MS_{B(A)}\)</span></td>
+</tr>
+<tr class="even">
+<td>B(A) (שרת)</td>
+<td><span class="math inline">\(a(b-1)\)</span></td>
+<td><span class="math inline">\(\sigma^2 + n\sigma_\beta^2\)</span></td>
+<td><span class="math inline">\(MS_{B(A)} / MS_E\)</span></td>
+</tr>
+<tr class="odd">
+<td>שגיאה</td>
+<td><span class="math inline">\(ab(n-1)\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="השרתים-ב-r-ובחישוב-נכון" class="slide level2 smaller">
+<h2>השרתים: ב-R ובחישוב נכון</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">808</span>)</span>
+<span id="cb34-2"><a aria-hidden="true" tabindex="-1"></a>dc_servers <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">dc =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"il"</span>, <span class="st">"eu"</span>, <span class="st">"us"</span>), <span class="at">each =</span> <span class="dv">4</span>), <span class="at">server =</span> <span class="fu">paste0</span>(<span class="st">"s"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>),</span>
+<span id="cb34-3"><a aria-hidden="true" tabindex="-1"></a>                     <span class="at">dc_mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">110</span>, <span class="dv">135</span>), <span class="at">each =</span> <span class="dv">4</span>), <span class="at">u =</span> <span class="fu">rnorm</span>(<span class="dv">12</span>, <span class="dv">0</span>, <span class="dv">8</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_grid</span>(<span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ms =</span> <span class="fu">round</span>(dc_mean <span class="sc">+</span> u <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">n</span>(), <span class="dv">0</span>, <span class="dv">6</span>), <span class="dv">1</span>), <span class="at">dc =</span> <span class="fu">factor</span>(dc, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"il"</span>, <span class="st">"eu"</span>, <span class="st">"us"</span>)))</span>
+<span id="cb34-6"><a aria-hidden="true" tabindex="-1"></a>fit_nest <span class="ot">&lt;-</span> <span class="fu">aov</span>(ms <span class="sc">~</span> dc <span class="sc">/</span> server, <span class="at">data =</span> dc_servers)   <span class="co"># dc / server = dc + dc:server</span></span>
+<span id="cb34-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_nest)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+dc           2   5964    2982   100.5 2.2e-12 ***
+dc:server    9   4502     500    16.9 2.4e-08 ***
+Residuals   24    712      30                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a aria-hidden="true" tabindex="-1"></a>tab_n <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_nest)[[<span class="dv">1</span>]]</span>
+<span id="cb36-2"><a aria-hidden="true" tabindex="-1"></a>F_dc <span class="ot">&lt;-</span> tab_n[<span class="dv">1</span>, <span class="st">"Mean Sq"</span>] <span class="sc">/</span> tab_n[<span class="dv">2</span>, <span class="st">"Mean Sq"</span>]</span>
+<span id="cb36-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">F_dc =</span> F_dc, <span class="at">p =</span> <span class="fu">pf</span>(F_dc, <span class="dv">2</span>, <span class="dv">9</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>), <span class="at">F_crit =</span> <span class="fu">qf</span>(<span class="fl">0.95</span>, <span class="dv">2</span>, <span class="dv">9</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   F_dc       p  F_crit 
+5.96038 0.02246 4.25649 </code></pre>
+</div>
+</div>
+<ul>
+<li>R בודק את המרכזים מול <span class="math inline">\(MS_E\)</span>: <span class="math inline">\(F = 100.5\)</span>. <strong>זה שגוי.</strong> השרתים הוגרלו, ולכן המכנה הוא <span class="math inline">\(MS_{B(A)}\)</span>: <span class="math inline">\(F = 5.96\)</span> עם <span class="math inline">\((2, 9)\)</span> דרגות חופש</li>
+<li>המסקנה נשארת (דוחים), אבל ה-p-value שונה בסדרי גודל. <strong>יש לנו 4 שרתים לכל מרכז, לא 12 בקשות</strong></li>
+</ul>
+<aside class="notes">
+<p>זו בדיוק “החזרות המדומות” מהרצאה 4: 3 בקשות לאותו שרת הן לא 3 שרתים. המבחן הנכון על המרכזים מבוסס על 12 שרתים, ולא על 36 בקשות.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="השרתים-הדרך-הנכונה-עם-error" class="slide level2 smaller">
+<h2>השרתים: הדרך הנכונה, עם <code>Error()</code></h2>
+<p>השרתים הוגרלו, ולכן אומרים ל-R שהם האיבר האקראי:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(ms <span class="sc">~</span> dc <span class="sc">+</span> <span class="fu">Error</span>(server), <span class="at">data =</span> dc_servers))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Error: server
+          Df Sum Sq Mean Sq F value Pr(&gt;F)  
+dc         2   5964    2982    5.96  0.022 *
+Residuals  9   4502     500                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Error: Within
+          Df Sum Sq Mean Sq F value Pr(&gt;F)
+Residuals 24    712    29.7               </code></pre>
+</div>
+</div>
+<ul>
+<li>בשכבה <code>server</code>, השורה <code>Residuals</code> היא <span class="math inline">\(MS_{B(A)}\)</span> עם 9 דרגות חופש, והמרכזים נבדקים מולה: <span class="math inline">\(F = 5.96\)</span>, כמו בחישוב הידני</li>
+<li>שמות השרתים כאן ייחודיים (<code>s1</code>–<code>s12</code>), ולכן מספיק <code>Error(server)</code>. אם השרתים היו ממוספרים מחדש בכל מרכז (<code>s1</code>–<code>s4</code> בכל אחד), היינו כותבים <code>Error(dc:server)</code></li>
+</ul>
+</section></section>
+<section>
+<section id="מה-יכול-להשתבש" class="title-slide slide level1 center">
+<h1>מה יכול להשתבש</h1>
+
+</section>
+<section id="חמש-מלכודות-בניתוח-דו-כיווני" class="slide level2 smaller">
+<h2>חמש מלכודות בניתוח דו-כיווני</h2>
+<ol type="1">
+<li><strong>לפרש אפקט ראשי כשיש אינטראקציה:</strong> “RAG מוסיף 9 נקודות בממוצע” נכון בממוצע, ולא נכון לאף מודל. מסתכלים קודם על האינטראקציה ועל הגרף</li>
+<li><strong>מכנה לא נכון:</strong> עם אפקטים אקראיים או מודל היררכי, <code>aov()</code> רגיל מחלק הכול ב-<span class="math inline">\(MS_E\)</span>. צריך לבחור את המכנה לפי תוחלות ה-MS, או להגדיר אותו ב-<code>Error()</code></li>
+<li><strong>מצטלב במקום היררכי:</strong> אם מריצים <code>dc * server</code> על שרתים שמקוננים במרכזים, מקבלים שורת “אינטראקציה” חסרת משמעות</li>
+<li><strong>להתעלם מבלוק:</strong> אפקט היום נשאר בשגיאה, <span class="math inline">\(MS_E\)</span> מנופח, והמבחן מאבד עוצמה</li>
+<li><strong>ניסוי לא מאוזן:</strong> כשמספר התצפיות בתאים שונה, הפירוק <span class="math inline">\(SS_A + SS_B + SS_{AB} + SS_E\)</span> כבר לא יחיד, ו-<code>aov()</code> נותן תוצאה <strong>שתלויה בסדר</strong> הפקטורים בנוסחה</li>
+</ol>
+</section></section>
+<section>
+<section id="תרגיל-מסכם-לתמחר-ספרי-שמע-לפי-סוגה" class="title-slide slide level1 center">
+<h1>תרגיל מסכם: לתמחר ספרי שמע לפי סוגה</h1>
+
+</section>
+<section id="הסיפור" class="slide level2 smaller">
+<h2>הסיפור</h2>
+<p><strong>ליסנה</strong> (שם בדוי) היא סטארט-אפ שמשיק חנות ספרי שמע (<span class="en">audiobooks</span>). לפני ההשקה, ההנהלה רוצה לקבוע <strong>מחיר לפי סוגה</strong> (<span class="en">genre</span>): מחיר גבוה לסוגות שיש עליהן ביקוש גבוה, ומחיר נמוך יותר כדי למשוך קהל לסוגות עם ביקוש נמוך.</p>
+<p>לליסנה עוד אין נתוני מכירות משלה. לכן אנליסטית בחברה אוספת מדגם מהקטלוג הציבורי של <span class="en">Audible</span>:</p>
+<ul>
+<li><strong>5 סוגות:</strong> פנטזיה, מותחן, רומנטיקה, עזרה עצמית והיסטוריה</li>
+<li><strong>סוג הקריינות:</strong> קריין אנושי, או קול סינתטי (<span class="en">AI narration</span>). ההפקה עם קול סינתטי זולה בהרבה</li>
+<li>מכל צירוף של סוגה וקריינות היא מגרילה <strong>12 ספרים</strong> שיצאו ב-2025. סך הכול <span class="math inline">\(N = 120\)</span></li>
+<li><strong>מדד הביקוש:</strong> מספר הדירוגים שהספר קיבל בשנה הראשונה. <span class="en">Audible</span> לא מפרסמת מכירות, ומספר הדירוגים הוא מדד עקיף נפוץ</li>
+</ul>
+<p><strong>השאלה העסקית:</strong> אילו סוגות זוכות לביקוש גבוה, האם הקריינות משנה, ומה זה אומר על המחיר?</p>
+</section>
+<section id="הנתונים-1" class="slide level2 smaller">
+<h2>הנתונים</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a aria-hidden="true" tabindex="-1"></a>books <span class="sc">|&gt;</span> <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">6</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  genre     narration hours price ratings
+  &lt;fct&gt;     &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 history   ai         15.8  24.0     217
+2 self_help human       6.4  11.0     147
+3 fantasy   ai         20.3  30.0    5950
+4 thriller  human      16.7  30.0    1962
+5 history   human      13.5  27.0     444
+6 romance   ai         10.9  25.0     159</code></pre>
+</div>
+</div>
+<ul>
+<li><code>hours</code>: משך ההקלטה בשעות · <code>price</code>: מחיר מחירון בדולרים · <code>ratings</code>: מספר הדירוגים בשנה הראשונה</li>
+</ul>
+</section>
+<section id="שאלה-1-מה-מודדים" class="slide level2 smaller">
+<h2>שאלה 1: מה מודדים?</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/books-hist-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><p><strong>השאלה:</strong> האנליסטית מנתחת את <span class="math inline">\(\log_{10}(\text{ratings})\)</span> ולא את מספר הדירוגים עצמו. למה? ואיך מפרשים הפרש של 0.3 בסולם הלוגריתמי?</p>
+</section>
+<section id="תשובה-1" class="slide level2 smaller">
+<h2>תשובה 1</h2>
+<ul>
+<li><strong>ההתפלגות מוטה ימינה:</strong> רוב הספרים מקבלים כמה מאות דירוגים, ומעטים מקבלים אלפים. ממוצע של סוגה נגרר אחרי ספר מצליח אחד</li>
+<li><strong>הפיזור גדל עם הממוצע:</strong> בסוגה פופולרית ההבדלים בין ספרים גדולים יותר. זה מפר את הנחת שוויון השונויות</li>
+<li><strong>ההשפעות כפליות:</strong> קריינות טובה מכפילה ביקוש, היא לא “מוסיפה 200 דירוגים”. הלוגריתם הופך השפעות כפליות לחיבוריות, וזה מה ש-ANOVA ורגרסיה מניחות</li>
+</ul>
+<p><strong>הפירוש:</strong> הפרש <span class="math inline">\(d\)</span> בסולם <span class="math inline">\(\log_{10}\)</span> הוא <strong>יחס</strong> של <span class="math inline">\(10^d\)</span> בסולם המקורי.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>הפרש ב-<span class="math inline">\(\log_{10}\)</span></th>
+<th>0.1</th>
+<th>0.3</th>
+<th>0.5</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>יחס בין מספרי הדירוגים</td>
+<td>×1.26</td>
+<td>×2</td>
+<td>×3.16</td>
+<td>×10</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a aria-hidden="true" tabindex="-1"></a>books <span class="ot">&lt;-</span> books <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">log_r =</span> <span class="fu">log10</span>(ratings))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="שאלה-2-השלימו-את-טבלת-ה-anova" class="slide level2 smaller">
+<h2>שאלה 2: השלימו את טבלת ה-ANOVA</h2>
+<p>ניתוח שונות חד-כיווני של <span class="math inline">\(\log_{10}(\text{ratings})\)</span> לפי סוגה (5 סוגות, 24 ספרים בכל אחת). חלק מהפלט נמחק:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>מקור</th>
+<th>SS</th>
+<th>df</th>
+<th>MS</th>
+<th><span class="math inline">\(F_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>סוגה</td>
+<td>5.00</td>
+<td>(א)</td>
+<td>(ב)</td>
+<td>(ה)</td>
+</tr>
+<tr class="even">
+<td>שגיאה</td>
+<td>(ג)</td>
+<td>(ד)</td>
+<td>0.162</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>סך הכול</td>
+<td>23.63</td>
+<td>119</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li>השלימו את הטבלה</li>
+<li>נסחו את ההשערות, ובדקו אותן ב-<span class="math inline">\(\alpha = 0.05\)</span> (<span class="math inline">\(F_{0.95;\,4,\,115} = 2.45\)</span>)</li>
+<li>כמה אחוזים מהשונות בביקוש מוסברים על ידי הסוגה?</li>
+</ol>
+</section>
+<section id="תשובה-2" class="slide level2 smaller">
+<h2>תשובה 2</h2>
+<ul>
+<li>(א) <span class="math inline">\(a - 1 = 4\)</span> · (ב) <span class="math inline">\(MS = 5.00 / 4 = 1.251\)</span> · (ג) <span class="math inline">\(SS_E = 23.63 - 5.00 = 18.63\)</span> · (ד) <span class="math inline">\(N - a = 115\)</span></li>
+<li>(ה) <span class="math inline">\(F_0 = 1.251 / 0.162 = 7.72 &gt; 2.45\)</span>: <strong>דוחים</strong> את <span class="math inline">\(H_0: \tau_1 = \dots = \tau_5 = 0\)</span>. יש הבדל בביקוש בין הסוגות</li>
+<li><span class="math inline">\(\eta^2 = SS_{Tr} / SS_T = 5.00 / 23.63 = 0.21\)</span>: הסוגה מסבירה כ-21% מהשונות. <strong>מובהק, אבל רוב השונות היא בין ספרים בתוך אותה סוגה</strong></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_g)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+genre         4    5.0   1.251    7.72 1.5e-05 ***
+Residuals   115   18.6   0.162                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="שאלה-3-האם-אפשר-לסמוך-על-המבחן" class="slide level2 smaller">
+<h2>שאלה 3: האם אפשר לסמוך על המבחן?</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(ratings <span class="sc">~</span> genre, <span class="at">data =</span> books)<span class="sc">$</span>p.value     <span class="co"># raw counts</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.457e-14</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">bartlett.test</span>(log_r <span class="sc">~</span> genre, <span class="at">data =</span> books)<span class="sc">$</span>p.value       <span class="co"># log scale</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1738</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(ratings <span class="sc">~</span> genre, <span class="at">data =</span> books)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kruskal-Wallis rank sum test
+
+data:  ratings by genre
+Kruskal-Wallis chi-squared = 25, df = 4, p-value = 6e-05</code></pre>
+</div>
+</div>
+<p><strong>השאלה:</strong> מה אומרות שתי בדיקות <span class="en">Bartlett</span>? למה האנליסטית הריצה גם <span class="en">Kruskal–Wallis</span>, ומה היה יוצא אם הייתה מריצה אותו על <code>log_r</code>?</p>
+</section>
+<section id="תשובה-3" class="slide level2 smaller">
+<h2>תשובה 3</h2>
+<ul>
+<li><strong>על המספרים הגולמיים:</strong> <span class="math inline">\(p\)</span> זעיר. השונויות שונות מאוד בין הסוגות, כצפוי כשהפיזור גדל עם הממוצע</li>
+<li><strong>על הלוגריתם:</strong> <span class="math inline">\(p = 0.17\)</span>. אין עדות לשונויות שונות. <strong>הלוגריתם תיקן את הבעיה</strong></li>
+<li><strong><span class="en">Kruskal–Wallis</span></strong> לא מניח נורמליות. הוא מגיע לאותה מסקנה, וזה מחזק את התוצאה</li>
+<li><strong>על <code>log_r</code> הוא היה נותן בדיוק אותה תוצאה.</strong> הלוגריתם הוא פונקציה עולה, ולכן הוא לא משנה את <strong>הדירוגים</strong> (<span class="en">ranks</span>) של התצפיות. מבחנים א-פרמטריים על דרגות לא רגישים לטרנספורמציה עולה</li>
+</ul>
+</section>
+<section id="שאלה-4-אילו-סוגות-שונות-זו-מזו" class="slide level2 smaller">
+<h2>שאלה 4: אילו סוגות שונות זו מזו?</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a>tk <span class="ot">&lt;-</span> <span class="fu">TukeyHSD</span>(fit_g)<span class="sc">$</span>genre</span>
+<span id="cb51-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(tk[<span class="fu">order</span>(tk[, <span class="st">"p adj"</span>]), ], <span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     diff    lwr    upr p adj
+history-fantasy    -0.622 -0.944 -0.300 0.000
+history-romance    -0.454 -0.776 -0.132 0.001
+history-self_help  -0.401 -0.723 -0.079 0.007
+history-thriller   -0.372 -0.694 -0.050 0.015
+thriller-fantasy   -0.250 -0.572  0.072 0.205
+self_help-fantasy  -0.221 -0.543  0.101 0.323
+romance-fantasy    -0.168 -0.490  0.154 0.601
+romance-thriller    0.083 -0.239  0.405 0.954
+self_help-romance  -0.053 -0.375  0.269 0.991
+self_help-thriller  0.030 -0.293  0.352 0.999</code></pre>
+</div>
+</div>
+<ol type="1">
+<li>חשבו את ה-HSD ידנית (<span class="math inline">\(q_{0.95}(5, 115) = 3.92\)</span>), ובדקו שהוא מתאים לרוחב רווחי הסמך בפלט</li>
+<li>חלקו את הסוגות לקבוצות. מה המשמעות לתמחור?</li>
+</ol>
+</section>
+<section id="תשובה-4" class="slide level2 smaller">
+<h2>תשובה 4</h2>
+<p><span class="math display">\[
+HSD = q_{0.95}(5, 115)\sqrt{\frac{MS_E}{n}} = 3.92 \sqrt{\frac{0.162}{24}} = 0.322
+\]</span></p>
+<p>זה בדיוק חצי הרוחב של כל רווח סמך בפלט: <span class="math inline">\(\text{diff} \pm HSD\)</span>.</p>
+<ul>
+<li><strong>היסטוריה</strong> נמוכה מכל ארבע הסוגות האחרות. ההפרש מפנטזיה, <span class="math inline">\(-0.62\)</span> בסולם <span class="math inline">\(\log_{10}\)</span>, הוא יחס של <span class="math inline">\(10^{-0.62} = 0.24\)</span>: <strong>כרבע</strong> מהדירוגים</li>
+<li><strong>בין ארבע האחרות אין הבדל מובהק.</strong> שתי קבוצות: {פנטזיה, מותחן, רומנטיקה, עזרה עצמית} ו-{היסטוריה}</li>
+<li><strong>לתמחור:</strong> לפי הניתוח הזה, שתי מדרגות מחיר. אבל רגע: עוד לא הסתכלנו על הקריינות</li>
+</ul>
+</section>
+<section id="שאלה-5-סוגה-קריינות" class="slide level2 smaller">
+<h2>שאלה 5: סוגה × קריינות</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/books-twoway-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a aria-hidden="true" tabindex="-1"></a>fit_gn <span class="ot">&lt;-</span> <span class="fu">aov</span>(log_r <span class="sc">~</span> genre <span class="sc">*</span> narration, <span class="at">data =</span> books)</span>
+<span id="cb53-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_gn)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Df Sum Sq Mean Sq F value  Pr(&gt;F)    
+genre             4   5.00    1.25   11.87 4.7e-08 ***
+narration         1   5.14    5.14   48.79 2.3e-10 ***
+genre:narration   4   1.89    0.47    4.49  0.0021 ** 
+Residuals       110  11.59    0.11                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p><strong>השאלה:</strong> מה סדר הקריאה של הטבלה? מה המסקנה? בדקו ידנית את <span class="math inline">\(F_0\)</span> של האינטראקציה.</p>
+</section>
+<section id="תשובה-5" class="slide level2 smaller">
+<h2>תשובה 5</h2>
+<ul>
+<li><strong>קודם האינטראקציה:</strong> <span class="math inline">\(F_0 = \frac{1.89 / 4}{11.59 / 110} = \frac{0.474}{0.105} = 4.49 &gt; F_{0.95;\,4,\,110} = 2.45\)</span>. <strong>ההשפעה של הקריינות תלויה בסוגה</strong></li>
+<li>לכן “קול סינתטי מוריד את הביקוש” (האפקט הראשי) הוא ממוצע שלא נכון לאף סוגה. בודקים <strong>אפקטים פשוטים</strong>:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a aria-hidden="true" tabindex="-1"></a>emmeans<span class="sc">::</span><span class="fu">emmeans</span>(fit_gn, <span class="sc">~</span> narration <span class="sc">|</span> genre) <span class="sc">|&gt;</span> emmeans<span class="sc">::</span><span class="fu">contrast</span>(<span class="st">"revpairwise"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb55-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">transmute</span>(genre, <span class="at">ai_minus_human =</span> <span class="fu">round</span>(estimate, <span class="dv">2</span>), <span class="at">ratio =</span> <span class="fu">round</span>(<span class="dv">10</span><span class="sc">^</span>estimate, <span class="dv">2</span>),</span>
+<span id="cb55-3"><a aria-hidden="true" tabindex="-1"></a>                           <span class="at">p =</span> <span class="fu">signif</span>(p.value, <span class="dv">2</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  genre     ai_minus_human ratio        p
+  &lt;fct&gt;              &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+1 fantasy            -0.6   0.25 0.000014
+2 thriller           -0.64  0.23 0.000004
+3 romance            -0.6   0.25 0.000018
+4 self_help          -0.03  0.94 0.84    
+5 history            -0.2   0.63 0.13    </code></pre>
+</div>
+</div>
+<ul>
+<li><strong>בסיפורת</strong> (פנטזיה, מותחן, רומנטיקה): קול סינתטי מוריד את הביקוש לכרבע, ומובהק מאוד</li>
+<li><strong>בעיון:</strong> בעזרה עצמית אין הבדל בכלל. בהיסטוריה ההפרש קטן יותר ולא מובהק, אבל רווח הסמך רחב: אי אפשר לשלול ירידה של עשרות אחוזים</li>
+<li><span class="math inline">\(MS_E\)</span> ירד מ-0.162 ל-0.105: הקריינות הסבירה חלק ממה שבניתוח החד-כיווני נחשב לרעש</li>
+</ul>
+</section>
+<section id="שאלה-6-ומה-עם-המחיר" class="slide level2 smaller">
+<h2>שאלה 6: ומה עם המחיר?</h2>
+<p>האנליסטית מוסיפה את המחיר ואת המשך, ומריצה רגרסיה:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a aria-hidden="true" tabindex="-1"></a>fit_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(log_r <span class="sc">~</span> price <span class="sc">+</span> hours <span class="sc">+</span> genre <span class="sc">+</span> narration, <span class="at">data =</span> books)</span>
+<span id="cb57-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">summary</span>(fit_lm)<span class="sc">$</span>coefficients, <span class="dv">4</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)      2.9841     0.2139  13.950   0.0000
+price            0.0218     0.0091   2.388   0.0186
+hours           -0.0220     0.0173  -1.272   0.2058
+genrethriller   -0.2566     0.1111  -2.311   0.0227
+genreromance    -0.1642     0.1304  -1.259   0.2105
+genreself_help  -0.2183     0.1409  -1.550   0.1240
+genrehistory    -0.5995     0.0993  -6.039   0.0000
+narrationai     -0.3379     0.0694  -4.871   0.0000</code></pre>
+</div>
+</div>
+<ol type="1">
+<li>פרשו את המקדם של <code>narrationai</code>, ובנו לו רווח סמך של 95% (<span class="math inline">\(t_{0.975;\,112} = 1.98\)</span>)</li>
+<li>מנהל המוצר אומר: “המקדם של המחיר <strong>חיובי</strong> ומובהק. נעלה מחירים, והביקוש יעלה.” מה דעתכם?</li>
+<li>למה האנליסטית משתמשת ב-<code>log_r</code> כמשתנה התלוי ברגרסיה? האם אפשר לבנות את מודל הרגרסיה על המשתנה המקורי, מספר הדירוגים (<code>ratings</code>)?</li>
+</ol>
+</section>
+<section id="תשובה-6" class="slide level2 smaller">
+<h2>תשובה 6</h2>
+<ul>
+<li><strong><code>narrationai</code>:</strong> <span class="math inline">\(-0.338 \pm 1.98 \cdot 0.0694 = [-0.475,\ -0.200]\)</span>. ביחס: <span class="math inline">\(10^{-0.34} = 0.46\)</span>, כלומר קול סינתטי מקושר לכמחצית מהדירוגים (בין 0.33 ל-0.63), <strong>כשהסוגה, המחיר והמשך קבועים</strong></li>
+<li><strong>אבל</strong> זה מודל בלי אינטראקציה. בשאלה 5 ראינו שהאפקט שונה מאוד בין סיפורת לעיון, ולכן “פי חצי” הוא ממוצע שלא מתאר אף סוגה (מלכודת 1 של הדו-כיווני)</li>
+<li><strong>המחיר:</strong> <span class="math inline">\(0.0218\)</span> לכל דולר, יחס של <span class="math inline">\(10^{0.0218} = 1.052\)</span>. <strong>אסור להסיק מזה שהעלאת מחיר מעלה ביקוש:</strong>
+<ul>
+<li>אלה <strong>נתוני תצפית</strong>, לא ניסוי. אף אחד לא הגריל מחירים</li>
+<li>מו”לים קובעים מחיר גבוה לספרים <strong>שהם מצפים שיצליחו</strong> (מחבר מוכר, שיווק). ה”באזז” הזה מעלה גם את המחיר וגם את הביקוש, והוא לא במודל</li>
+<li>המקדם החיובי מתאר את <strong>ההחלטות של המו”לים</strong>, לא את התגובה של הקונים למחיר</li>
+</ul></li>
+</ul>
+</section>
+<section id="תשובה-6-המשך-למה-log_r" class="slide level2 smaller">
+<h2>תשובה 6 (המשך): למה <code>log_r</code>?</h2>
+<p><strong>טכנית, אפשר.</strong> <code>lm()</code> ירוץ גם על <code>ratings</code>. השאלה היא אם ההנחות של המודל מתקיימות. נשווה בין שני המודלים:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a aria-hidden="true" tabindex="-1"></a>fit_raw <span class="ot">&lt;-</span> <span class="fu">lm</span>(ratings <span class="sc">~</span> price <span class="sc">+</span> hours <span class="sc">+</span> genre <span class="sc">+</span> narration, <span class="at">data =</span> books)</span>
+<span id="cb59-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">resid</span>(fit_raw))<span class="sc">$</span>p.value   <span class="co"># normality of residuals, raw scale</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.454e-09</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(<span class="fu">resid</span>(fit_lm))<span class="sc">$</span>p.value    <span class="co"># normality of residuals, log scale</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8789</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">fitted</span>(fit_raw) <span class="sc">&lt;</span> <span class="dv">0</span>)               <span class="co"># books with a negative predicted count</span></span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>השאריות לא נורמליות</strong> במודל על <code>ratings</code> (<span class="math inline">\(p &lt; 0.001\)</span> ב-<span class="en">Shapiro–Wilk</span>), ונורמליות על <code>log_r</code> (<span class="math inline">\(p = 0.88\)</span>)</li>
+<li><strong>השונות לא קבועה:</strong> סטיית התקן של השאריות עולה מכ-443 בתחזיות הנמוכות לכ-1,168 בגבוהות. זו אותה בעיה ש-<span class="en">Bartlett</span> מצא בשאלה 3</li>
+<li><strong>תחזיות בלתי אפשריות:</strong> המודל חוזה מספר דירוגים <strong>שלילי</strong> ל-9 ספרים</li>
+</ul>
+</section>
+<section id="למה-log_r-השאריות-של-שני-המודלים" class="slide level2">
+<h2>למה <code>log_r</code>? השאריות של שני המודלים</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/books-raw-resid-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"></section>
+<section id="למה-log_r-הפירוש" class="slide level2 smaller">
+<h2>למה <code>log_r</code>? הפירוש</h2>
+<ul>
+<li><strong>ביקוש פועל באחוזים, לא ביחידות.</strong> במודל על <code>ratings</code>, המקדם של <code>narrationai</code> הוא <span class="math inline">\(-601\)</span> דירוגים, <strong>אותו מספר בכל סוגה</strong>. אבל לספר היסטוריה ממוצע יש רק 294 דירוגים, ולספר פנטזיה 1,594. הורדה של 601 דירוגים גדולה מכל הביקוש הממוצע בהיסטוריה, ובפנטזיה היא רק כ-38% ממנו</li>
+<li><strong>על <code>log_r</code>, המקדם הוא יחס:</strong> <span class="math inline">\(10^{-0.34} = 0.46\)</span>, כלומר “פי חצי” בכל סוגה. זה פירוש שאפשר לקחת להנהלה</li>
+<li><strong>המסקנה:</strong> אפשר לבנות את המודל על <code>ratings</code>, אבל הוא מפר את הנחות הנורמליות ושוויון השונויות, חוזה ערכים שליליים ומניח שהאפקטים חיבוריים. כשהתגובה היא ספירה מוטה ימינה, שמשתנה בסדרי גודל, מנתחים את הלוגריתם שלה</li>
+</ul>
+<aside class="notes">
+<p>אפשר לשאול את הכיתה לפני שמראים: “מה יקרה לשאריות?” רובם יזכרו את Bartlett משאלה 3. הנקודה החשובה לבחינה: “אפשר” ו”כדאי” הן שתי שאלות שונות. לנמק דרך ההנחות (שאריות, שונות) ודרך הפירוש (יחס מול הפרש קבוע).</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="שאלה-7-ההמלצה" class="slide level2 smaller">
+<h2>שאלה 7: ההמלצה</h2>
+<p><strong>מה ממליצים להנהלה של ליסנה?</strong></p>
+<div class="fragment">
+<ol type="1">
+<li><strong>סוגה:</strong> ביקוש גבוה לסיפורת ולעזרה עצמית, נמוך להיסטוריה (כרבע). אפשר להתחיל בשתי מדרגות מחיר</li>
+<li><strong>קריינות:</strong> בסיפורת קול סינתטי מוריד את הביקוש לכרבע. <strong>בעזרה עצמית אין לו מחיר נראה לעין.</strong> לכן: להפיק עזרה עצמית בקול סינתטי (זול) ולתמחר אותה נמוך, להשקיע בקריינים לסיפורת, ולבדוק היסטוריה בניסוי קטן לפני שמחליטים</li>
+<li><strong>מחיר:</strong> הנתונים האלה <strong>לא יכולים</strong> לענות כמה הביקוש רגיש למחיר. ההמלצה: ניסוי מחיר מוגרל בהשקה, למשל שני מחירים לכל סוגה</li>
+<li><strong>הסתייגויות:</strong> מספר דירוגים ≠ מכירות. <span class="en">Audible</span> ≠ השוק של ליסנה. ומדגם של 12 ספרים לתא מספיק לאפקטים גדולים בלבד</li>
+</ol>
+</div>
+<aside class="notes">
+<p>זה המקום להדגיש את המבנה של שאלה בבחינה: תמיד יש חלק של חישוב ידני (השלמת טבלה, HSD, רווח סמך), חלק של קריאת פלט, וחלק של פירוש וביקורת. החלק האחרון הוא זה שמבדיל בין ציון טוב לציון מצוין.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="מה-ראינו-בתרגיל" class="slide level2 smaller">
+<h2>מה ראינו בתרגיל</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>שלב</th>
+<th>הכלי</th>
+<th>מה למדנו</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>להחליט מה מודדים</td>
+<td>התפלגות, טרנספורמציה</td>
+<td><span class="math inline">\(\log\)</span> כשההשפעות כפליות והפיזור גדל עם הממוצע</td>
+</tr>
+<tr class="even">
+<td>האם יש הבדל?</td>
+<td>ANOVA חד-כיווני</td>
+<td>יש, אבל הסוגה מסבירה רק כ-21%</td>
+</tr>
+<tr class="odd">
+<td>האם אפשר לסמוך?</td>
+<td><span class="en">Bartlett</span>, <span class="en">Kruskal–Wallis</span></td>
+<td>הלוגריתם תיקן את השונויות, והמסקנה עמידה</td>
+</tr>
+<tr class="even">
+<td>בין מי למי?</td>
+<td><span class="en">Tukey HSD</span></td>
+<td>היסטוריה לבד, השאר יחד</td>
+</tr>
+<tr class="odd">
+<td>האם ההשפעה תלויה במשהו?</td>
+<td>ANOVA דו-כיווני, אפקטים פשוטים</td>
+<td>קול סינתטי פוגע בסיפורת בלבד</td>
+</tr>
+<tr class="even">
+<td>ומה עם משתנים רציפים?</td>
+<td>רגרסיה מרובה</td>
+<td>מקדם מובהק ≠ סיבתיות</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="רגרסיה-לוגיסטית-logistic-regression" class="title-slide slide level1 center">
+<h1>רגרסיה לוגיסטית (<span class="en">Logistic regression</span>)</h1>
+
+</section>
+<section id="השאלה-מי-יהפוך-למנוי" class="slide level2 smaller">
+<h2>השאלה: מי יהפוך למנוי?</h2>
+<p>ליסנה השיקה. כל משתמש חדש מקבל <strong>שבוע ניסיון חינם</strong>, ובסופו מחליט אם להירשם למנוי בתשלום.</p>
+<p><strong>השאלה העסקית:</strong> האם כמות ההאזנה בשבוע הניסיון מנבאת הרשמה? אם כן, אפשר לזהות מוקדם משתמשים “בסיכון”, ולשלוח להם תזכורת או המלצה.</p>
+<ul>
+<li><strong>התגובה:</strong> <span class="math inline">\(Y_i = 1\)</span> אם המשתמש נרשם, <span class="math inline">\(Y_i = 0\)</span> אם לא. <strong>משתנה בינארי</strong></li>
+<li><strong>המשתנה המסביר:</strong> <span class="math inline">\(x_i\)</span> = שעות האזנה בשבוע הניסיון</li>
+<li><strong>המטרה:</strong> לאמוד את <span class="math inline">\(p(x) = P(Y = 1 \mid x)\)</span>, הסיכוי להירשם כפונקציה של שעות ההאזנה</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1123</span>)</span>
+<span id="cb65-2"><a aria-hidden="true" tabindex="-1"></a>trial <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">hours =</span> <span class="fu">round</span>(<span class="fu">rgamma</span>(<span class="dv">400</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="fl">2.5</span>), <span class="dv">1</span>),</span>
+<span id="cb65-3"><a aria-hidden="true" tabindex="-1"></a>                <span class="at">first_ai =</span> <span class="fu">rbinom</span>(<span class="dv">400</span>, <span class="dv">1</span>, <span class="fl">0.4</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb65-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">converted  =</span> <span class="fu">rbinom</span>(<span class="fu">n</span>(), <span class="dv">1</span>, <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">2.4</span> <span class="sc">+</span> <span class="fl">0.38</span> <span class="sc">*</span> hours <span class="sc">-</span> <span class="fl">0.7</span> <span class="sc">*</span> first_ai)),</span>
+<span id="cb65-5"><a aria-hidden="true" tabindex="-1"></a>         <span class="at">first_book =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(first_ai <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"ai"</span>, <span class="st">"human"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"human"</span>, <span class="st">"ai"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb65-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hours, first_book, converted)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>400 משתמשי ניסיון, מתוכם 121 (30%) נרשמו.</p>
+</section>
+<section id="למה-לא-רגרסיה-לינארית" class="slide level2 smaller">
+<h2>למה לא רגרסיה לינארית?</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/lpm-plot-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>חיזוי מחוץ ל-<span class="math inline">\([0, 1]\)</span>:</strong> הקו הישר צופה “הסתברות” של 1.66 למשתמש שהאזין 25 שעות</li>
+<li><strong>השונות לא קבועה:</strong> <span class="math inline">\(\text{Var}(Y \mid x) = p(x)(1 - p(x))\)</span>. היא תלויה ב-<span class="math inline">\(x\)</span>, בניגוד להנחה של רגרסיה לינארית</li>
+<li><strong>השגיאות לא נורמליות:</strong> <span class="math inline">\(Y\)</span> מקבל רק 0 או 1, ולכן גם השארית מקבלת רק שני ערכים לכל <span class="math inline">\(x\)</span></li>
+</ul>
+</section>
+<section id="סיכוי-odds-ו-logit" class="slide level2 smaller">
+<h2>סיכוי (<span class="en">Odds</span>) ו-<span class="en">logit</span></h2>
+<p><strong>הסיכוי</strong> (<span class="en">odds</span>): היחס בין ההסתברות להצלחה להסתברות לכישלון.</p>
+<p><span class="math display">\[
+\text{odds} = \frac{p}{1 - p} \qquad\qquad \text{logit}(p) = \ln\frac{p}{1 - p}
+\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(p\)</span></th>
+<th>0.1</th>
+<th>0.2</th>
+<th>0.5</th>
+<th>0.8</th>
+<th>0.9</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>odds</strong></td>
+<td>0.11</td>
+<td>0.25 (“1 ל-4”)</td>
+<td>1</td>
+<td>4 (“4 ל-1”)</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><strong>logit</strong></td>
+<td>−2.20</td>
+<td>−1.39</td>
+<td>0</td>
+<td>1.39</td>
+<td>2.20</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><span class="math inline">\(p\)</span> חסום בין 0 ל-1. ה-odds בין 0 לאינסוף. ה-<span class="en">logit</span> <strong>בין מינוס אינסוף לאינסוף</strong></li>
+<li>לכן את ה-<span class="en">logit</span> אפשר למדל בפונקציה לינארית בלי לחשוש מחיזוי לא חוקי</li>
+<li><strong>סימטריה:</strong> <span class="math inline">\(\text{logit}(1 - p) = -\text{logit}(p)\)</span></li>
+</ul>
+</section>
+<section id="המודל-2" class="slide level2 smaller">
+<h2>המודל</h2>
+<p><span class="math display">\[
+Y_i \sim \text{Bernoulli}(p_i), \qquad \text{logit}(p_i) = \ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i
+\]</span></p>
+<p>ובכיוון ההפוך, <strong>הפונקציה הלוגיסטית</strong> (<span class="en">sigmoid</span>):</p>
+<p><span class="math display">\[
+p_i = \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\]</span></p>
+<ul>
+<li><strong>אין איבר שגיאה נורמלי.</strong> האקראיות היא של משתנה ברנולי: בהינתן <span class="math inline">\(p_i\)</span>, המשתמש נרשם או לא</li>
+<li><strong>הקשר בין <span class="math inline">\(x\)</span> ל-<span class="math inline">\(p\)</span> לא לינארי:</strong> הוא לינארי רק בסולם ה-<span class="en">logit</span></li>
+<li><strong>עם כמה משתנים מסבירים:</strong> <span class="math inline">\(\text{logit}(p_i) = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\)</span>. כמו ברגרסיה מרובה</li>
+</ul>
+</section>
+<section id="איך-beta_0-ו-beta_1-קובעים-את-העקומה" class="slide level2 smaller">
+<h2>איך <span class="math inline">\(\beta_0\)</span> ו-<span class="math inline">\(\beta_1\)</span> קובעים את העקומה</h2>
+
+<img data-src="07-logistic-regression_files/figure-html/logistic-shapes-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1200"><ul>
+<li><strong>כיוון:</strong> כש-<span class="math inline">\(\beta_1\)</span> חיובי, ההסתברות עולה עם <span class="math inline">\(x\)</span>. כשהוא שלילי, היא יורדת (העקומה הסגולה)</li>
+<li><strong>תלילות:</strong> ככל שהערך המוחלט של <span class="math inline">\(\beta_1\)</span> גדול יותר, המעבר חד יותר (הירוקה והכתומה מול הכחולה)</li>
+<li><strong>מיקום:</strong> ההסתברות שווה לחצי כשהביטוי <span class="math inline">\(\beta_0 + \beta_1 x\)</span> מתאפס, כלומר בנקודה <span class="math inline">\(x_{50} = -\beta_0 / \beta_1\)</span></li>
+<li><strong>השיפוע בנקודה הזו</strong> הוא <span class="math inline">\(\beta_1 / 4\)</span>. זה השינוי המקסימלי בהסתברות לכל יחידה של <span class="math inline">\(x\)</span></li>
+</ul>
+</section>
+<section id="תרגיל-מציאת-המקדמים-משתי-נקודות" class="slide level2 smaller">
+<h2>תרגיל: מציאת המקדמים משתי נקודות</h2>
+<p>מנתונים קודמים ידוע: משתמש שהאזין <strong>2 שעות</strong> נרשם בהסתברות <strong>20%</strong>, ומשתמש שהאזין <strong>10 שעות</strong> נרשם בהסתברות <strong>80%</strong>.</p>
+<ol type="1">
+<li>מצאו את <span class="math inline">\(\beta_0\)</span> ו-<span class="math inline">\(\beta_1\)</span> של מודל לוגיסטי שעובר בשתי הנקודות</li>
+<li>מה ההסתברות להירשם אחרי 12 שעות?</li>
+<li>כמה שעות צריך להאזין כדי שההסתברות תהיה לפחות 90%?</li>
+</ol>
+<div class="fragment">
+<p><strong>הרמז:</strong> בסולם ה-<span class="en">logit</span> המודל לינארי. שתי נקודות, שני נעלמים.</p>
+</div>
+</section>
+<section id="פתרון" class="slide level2 smaller">
+<h2>פתרון</h2>
+<p><strong>1.</strong> <span class="math inline">\(\text{logit}(0.2) = \ln\frac{0.2}{0.8} = -1.386\)</span>, <span class="math inline">\(\text{logit}(0.8) = 1.386\)</span>:</p>
+<p><span class="math display">\[
+\begin{cases} \beta_0 + 2\beta_1 = -1.386 \\ \beta_0 + 10\beta_1 = 1.386 \end{cases}
+\quad\Rightarrow\quad
+\beta_1 = \frac{1.386 - (-1.386)}{10 - 2} = 0.347, \qquad \beta_0 = -1.386 - 2 \cdot 0.347 = -2.079
+\]</span></p>
+<p><strong>2.</strong> <span class="math inline">\(\text{logit} = -2.079 + 0.347 \cdot 12 = 2.079\)</span>, ולכן <span class="math inline">\(p = \dfrac{1}{1 + e^{-2.079}} = 0.889\)</span></p>
+<p><strong>3.</strong> <span class="math inline">\(\text{logit}(0.9) = \ln 9 = 2.197\)</span>. צריך <span class="math inline">\(-2.079 + 0.347x \ge 2.197\)</span>, כלומר <span class="math inline">\(x \ge 12.3\)</span> שעות</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> (<span class="fu">qlogis</span>(<span class="fl">0.8</span>) <span class="sc">-</span> <span class="fu">qlogis</span>(<span class="fl">0.2</span>)) <span class="sc">/</span> (<span class="dv">10</span> <span class="sc">-</span> <span class="dv">2</span>); b0 <span class="ot">&lt;-</span> <span class="fu">qlogis</span>(<span class="fl">0.2</span>) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> b1</span>
+<span id="cb66-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">b0 =</span> b0, <span class="at">b1 =</span> b1, <span class="at">p_12 =</span> <span class="fu">plogis</span>(b0 <span class="sc">+</span> <span class="dv">12</span> <span class="sc">*</span> b1), <span class="at">x_90 =</span> (<span class="fu">qlogis</span>(<span class="fl">0.9</span>) <span class="sc">-</span> b0) <span class="sc">/</span> b1)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     b0      b1    p_12    x_90 
+-2.0794  0.3466  0.8889 12.3399 </code></pre>
+</div>
+</div>
+</section>
+<section id="פירוש-המקדם-יחס-סיכויים-odds-ratio" class="slide level2 smaller">
+<h2>פירוש המקדם: יחס סיכויים (<span class="en">Odds ratio</span>)</h2>
+<p>מה קורה ל-odds כש-<span class="math inline">\(x\)</span> עולה ביחידה אחת?</p>
+<p><span class="math display">\[
+\frac{\text{odds}(x + 1)}{\text{odds}(x)} = \frac{e^{\beta_0 + \beta_1 (x+1)}}{e^{\beta_0 + \beta_1 x}} = e^{\beta_1}
+\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(e^{\beta_1}\)</span> הוא יחס הסיכויים</strong> (<span class="en">odds ratio, OR</span>): כל שעת האזנה נוספת <strong>מכפילה</strong> את ה-odds ב-<span class="math inline">\(e^{\beta_1}\)</span>, בלי קשר לנקודת ההתחלה</li>
+<li>בתרגיל: <span class="math inline">\(e^{0.347} = 1.41\)</span>. כל שעה מגדילה את ה-odds ב-41%</li>
+<li><strong>ה-odds עולה ב-41%, לא ההסתברות.</strong> השינוי בהסתברות תלוי בנקודת ההתחלה:</li>
+</ul>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>שעות</th>
+<th>0 → 1</th>
+<th>5 → 6</th>
+<th>12 → 13</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(p\)</span></td>
+<td>0.111 → 0.150</td>
+<td>0.414 → 0.500</td>
+<td>0.889 → 0.919</td>
+</tr>
+<tr class="even">
+<td>השינוי בהסתברות</td>
+<td>+0.039</td>
+<td>+0.086</td>
+<td>+0.030</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="משתנה-מסביר-בינארי-טבלת-22" class="slide level2 smaller">
+<h2>משתנה מסביר בינארי: טבלת 2×2</h2>
+<p>האם הספר הראשון ששמעו (קריין אנושי או קול סינתטי) קשור להרשמה?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a aria-hidden="true" tabindex="-1"></a>tab2 <span class="ot">&lt;-</span> <span class="fu">with</span>(trial, <span class="fu">table</span>(first_book, converted))</span>
+<span id="cb68-2"><a aria-hidden="true" tabindex="-1"></a>tab2</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          converted
+first_book   0   1
+     human 151  85
+     ai    128  36</code></pre>
+</div>
+</div>
+<p><strong>ביד:</strong> <span class="math inline">\(\text{odds}_{human} = \frac{85}{151} = 0.563\)</span>, <span class="math inline">\(\text{odds}_{ai} = \frac{36}{128} = 0.281\)</span>, <span class="math inline">\(\quad OR = \frac{0.281}{0.563} = 0.500\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a aria-hidden="true" tabindex="-1"></a>fit_b <span class="ot">&lt;-</span> <span class="fu">glm</span>(converted <span class="sc">~</span> first_book, <span class="at">family =</span> binomial, <span class="at">data =</span> trial)</span>
+<span id="cb70-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit_b)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept) first_bookai 
+     -0.5746      -0.6939 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(fit_b))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept) first_bookai 
+      0.5629       0.4996 </code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(e^{\hat\beta_0}\)</span> = ה-odds בקבוצת הבסיס (אנושי). <span class="math inline">\(e^{\hat\beta_1}\)</span> = <strong>יחס הסיכויים</strong>, בדיוק החישוב הידני</li>
+<li>מי שהתחיל בקול סינתטי: ה-odds שלו להירשם <strong>כחצי</strong>. זה מתיישב עם התרגיל המסכם</li>
+</ul>
+</section>
+<section id="אמידה-נראות-מקסימלית" class="slide level2 smaller">
+<h2>אמידה: נראות מקסימלית</h2>
+<p>אין ריבועים פחותים. מחפשים את המקדמים שעבורם <strong>הנתונים שראינו הכי סבירים</strong> (<span class="en">maximum likelihood</span>):</p>
+<p><span class="math display">\[
+L(\beta_0, \beta_1) = \prod_{i=1}^{n} p_i^{\,y_i}(1 - p_i)^{1 - y_i}
+\qquad
+\ell = \ln L = \sum_{i=1}^{n}\left[y_i \ln p_i + (1 - y_i)\ln(1 - p_i)\right]
+\]</span></p>
+<ul>
+<li>כל משתמש שנרשם (<span class="math inline">\(y_i = 1\)</span>) תורם <span class="math inline">\(p_i\)</span>, וכל מי שלא נרשם תורם <span class="math inline">\(1 - p_i\)</span>. רוצים <span class="math inline">\(p_i\)</span> גבוה למי שנרשם ונמוך למי שלא</li>
+<li>המקדמים “מסתתרים” בתוך <span class="math inline">\(p_i\)</span>. כדי לגזור, מציבים את המודל: <span class="math inline">\(\;p_i = \dfrac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\)</span></li>
+</ul>
+</section>
+<section id="הנגזרות-איפה-המקדמים" class="slide level2 smaller">
+<h2>הנגזרות: איפה המקדמים?</h2>
+<p><strong>צעד 1: מציבים את <span class="math inline">\(p_i\)</span> ב-<span class="math inline">\(\ell\)</span>.</strong> משתמשים ב-<span class="math inline">\(\ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i\)</span> וב-<span class="math inline">\(1 - p_i = \frac{1}{1 + e^{\beta_0 + \beta_1 x_i}}\)</span>:</p>
+<p><span class="math display">\[
+\ell = \sum_i\left[y_i \ln\frac{p_i}{1 - p_i} + \ln(1 - p_i)\right]
+= \sum_i\left[y_i(\beta_0 + \beta_1 x_i) - \ln\left(1 + e^{\beta_0 + \beta_1 x_i}\right)\right]
+\]</span></p>
+<p><strong>צעד 2: גוזרים.</strong> הנגזרת של <span class="math inline">\(\ln(1 + e^{\beta_0 + \beta_1 x_i})\)</span> לפי <span class="math inline">\(\beta_0\)</span> היא <span class="math inline">\(\frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = p_i\)</span>, ולפי <span class="math inline">\(\beta_1\)</span> היא <span class="math inline">\(x_i p_i\)</span>:</p>
+<p><span class="math display">\[
+\frac{\partial \ell}{\partial \beta_0} = \sum_i \left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i (y_i - p_i)
+\qquad
+\frac{\partial \ell}{\partial \beta_1} = \sum_i x_i\left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i x_i (y_i - p_i)
+\]</span></p>
+<p><strong>צעד 3: משווים לאפס.</strong> שתי משוואות בשני נעלמים:</p>
+<p><span class="math display">\[
+\sum_i y_i = \sum_i \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\qquad\qquad
+\sum_i x_i y_i = \sum_i \frac{x_i}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\]</span></p>
+<ul>
+<li><strong>אין פתרון סגור:</strong> המקדמים נמצאים בתוך מעריך, בתוך שבר, בתוך סכום. אי אפשר לבודד אותם כמו בריבועים פחותים. פותרים בשיטה איטרטיבית, <span class="en">Newton–Raphson</span>. ב-R זה <code>Number of Fisher Scoring iterations</code> בפלט</li>
+<li><strong>פירוש המשוואה הראשונה:</strong> סכום ההסתברויות החזויות שווה למספר המצטרפים בפועל. בנתונים שלנו הסכום הוא 121.0, ובפועל הצטרפו 121 משתמשים (בודקים ב-R עם <code>sum(fitted(fit_h))</code>)</li>
+</ul>
+</section>
+<section id="ב-r-glm" class="slide level2 smaller">
+<h2>ב-R: <code>glm()</code></h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a aria-hidden="true" tabindex="-1"></a>fit_h <span class="ot">&lt;-</span> <span class="fu">glm</span>(converted <span class="sc">~</span> hours, <span class="at">family =</span> binomial, <span class="at">data =</span> trial)</span>
+<span id="cb74-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_h)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = converted ~ hours, family = binomial, data = trial)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -2.8921     0.2782  -10.40   &lt;2e-16 ***
+hours         0.3908     0.0452    8.65   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 490.37  on 399  degrees of freedom
+Residual deviance: 379.38  on 398  degrees of freedom
+AIC: 383.4
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+</section>
+<section id="איך-קוראים-את-הפלט-1" class="slide level2 smaller">
+<h2>איך קוראים את הפלט</h2>
+<ul>
+<li><strong><code>hours</code></strong>, <span class="math inline">\(\hat\beta_1 = 0.391\)</span>: כל שעה מעלה את ה-<span class="en">logit</span> ב-0.391. יחס הסיכויים: <span class="math inline">\(e^{0.391} = 1.48\)</span>, כל שעה מגדילה את ה-odds ב-48%</li>
+<li><strong><code>z value</code></strong> = <code>Estimate / Std. Error</code>: מבחן <span class="en">Wald</span>. תחת <span class="math inline">\(H_0: \beta_1 = 0\)</span>, <span class="math inline">\(z \sim N(0, 1)\)</span> בקירוב. כאן <span class="math inline">\(z = 8.65\)</span></li>
+<li><strong>החציון:</strong> <span class="math inline">\(x_{50} = 2.892 / 0.391 = 7.4\)</span> שעות. מתחת לזה, רוב המשתמשים לא נרשמים</li>
+<li><strong>רווח סמך ל-OR:</strong> קודם ל-<span class="math inline">\(\beta_1\)</span>, ואז <span class="math inline">\(e^{(\cdot)}\)</span> על שני הקצוות:</li>
+</ul>
+<p><span class="math display">\[
+e^{0.3908 \pm 1.96 \cdot 0.0452} = [1.35,\ 1.61]
+\]</span></p>
+<ul>
+<li><strong><code>Null deviance</code>, <code>Residual deviance</code>, <code>AIC</code></strong>: על אלה בשקף הבא</li>
+</ul>
+</section>
+<section id="deviance-ומבחן-למובהקות-המודל" class="slide level2 smaller">
+<h2><span class="en">Deviance</span> ומבחן למובהקות המודל</h2>
+<p><strong><span class="en">Deviance</span>:</strong> <span class="math inline">\(D = -2\ell(\hat{\boldsymbol\beta})\)</span>, כש-<span class="math inline">\(\ell\)</span> היא הלוג-נראות במקסימום. ככל שהמודל מתאים יותר, <span class="math inline">\(D\)</span> קטן יותר. זה המקביל של <span class="math inline">\(SS_E\)</span>.</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מודל</th>
+<th>מה יש בו</th>
+<th><span class="en">Deviance</span></th>
+<th>df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>מודל האפס</strong> (<span class="en">null</span>)</td>
+<td>רק <span class="math inline">\(\beta_0\)</span>: אותה הסתברות לכולם</td>
+<td><span class="math inline">\(D_0 = 490.37\)</span></td>
+<td><span class="math inline">\(n - 1 = 399\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>המודל שלנו</strong></td>
+<td><span class="math inline">\(\beta_0 + \beta_1 x\)</span></td>
+<td><span class="math inline">\(D_1 = 379.38\)</span></td>
+<td><span class="math inline">\(n - 2 = 398\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>מבחן יחס הנראות</strong> (<span class="en">likelihood ratio test</span>) ל-<span class="math inline">\(H_0: \beta_1 = \dots = \beta_k = 0\)</span>:</p>
+<p><span class="math display">\[
+G = D_0 - D_1 = 490.37 - 379.38 = 111.00 \;\sim\; \chi^2_k \text{ תחת } H_0
+\]</span></p>
+<ul>
+<li><span class="math inline">\(k = 1\)</span> (מספר המשתנים המסבירים). <span class="math inline">\(\chi^2_{0.95;\,1} = 3.84\)</span>, ו-<span class="math inline">\(G = 111.0\)</span> גדול בהרבה: <strong>המודל מובהק</strong></li>
+<li>זה המקביל של מבחן F לכל המודל ברגרסיה לינארית</li>
+<li><strong><code>AIC</code></strong> <span class="math inline">\(= D_1 + 2(k + 1) = 379.38 + 4 = 383.4\)</span>: להשוואה בין מודלים. נמוך יותר = טוב יותר</li>
+</ul>
+</section>
+<section id="אותו-מבחן-ב-r" class="slide level2 smaller">
+<h2>אותו מבחן ב-R</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_h, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model: binomial, link: logit
+
+Response: converted
+
+Terms added sequentially (first to last)
+
+      Df Deviance Resid. Df Resid. Dev Pr(&gt;Chi)    
+NULL                    399        490             
+hours  1      111       398        379   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">G =</span> fit_h<span class="sc">$</span>null.deviance <span class="sc">-</span> fit_h<span class="sc">$</span>deviance, <span class="at">chi2_crit =</span> <span class="fu">qchisq</span>(<span class="fl">0.95</span>, <span class="at">df =</span> <span class="dv">1</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        G chi2_crit 
+  110.997     3.841 </code></pre>
+</div>
+</div>
+<ul>
+<li>שורת <code>hours</code>: העמודה <code>Deviance</code> היא <span class="math inline">\(G\)</span>, הירידה ב-<span class="en">deviance</span> כשמוסיפים את המשתנה. <code>Resid. Dev</code> הוא <span class="math inline">\(D\)</span> אחרי ההוספה</li>
+<li>כמו <code>anova()</code> של מודל לינארי, גם כאן המשתנים נכנסים <strong>לפי הסדר</strong> בנוסחה. עם כמה משתנים, כל שורה בודקת את התרומה של המשתנה <strong>בנוסחה אחרי הקודמים</strong>. נשתמש בזה בהרצאה הבאה למבחן חלקי</li>
+</ul>
+</section>
+<section id="חיזוי-מי-בסיכון" class="slide level2 smaller">
+<h2>חיזוי: מי בסיכון?</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit_h, <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">hours =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">12</span>)), <span class="at">type =</span> <span class="st">"response"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    1     2     3     4 
+0.108 0.281 0.558 0.858 </code></pre>
+</div>
+</div>
+<ul>
+<li><code>type = "response"</code> מחזיר הסתברות. בלי זה, <code>predict()</code> מחזיר את ה-<span class="en">logit</span></li>
+<li><strong>ביד, למשתמש שהאזין 5 שעות:</strong> <span class="math inline">\(\text{logit} = -2.892 + 0.391 \cdot 5 = -0.938\)</span>, ולכן <span class="math inline">\(p = \frac{1}{1 + e^{0.938}} = 0.281\)</span></li>
+<li><strong>ההחלטה העסקית:</strong> משתמש שהאזין עד 5 שעות נרשם בסיכוי של פחות מ-30%. הוא מועמד לתזכורת או להמלצה אישית. אבל זהירות: גם כאן אלה <strong>נתוני תצפית</strong>. משתמש שמאזין הרבה כנראה אוהב ספרי שמע מלכתחילה. כדי לדעת אם תזכורת <strong>גורמת</strong> להרשמה, צריך ניסוי</li>
+</ul>
+</section>
+<section id="בהרצאה-הבאה" class="slide level2 smaller">
+<h2>בהרצאה הבאה</h2>
+<ul>
+<li><strong>כמה משתנים מסבירים:</strong> שעות האזנה <strong>וגם</strong> סוג הספר הראשון. פירוש של OR “כשהשאר קבוע”</li>
+<li><strong>מבחן <span class="en">deviance</span> חלקי:</strong> האם משתנה אחד תורם, בנוכחות האחרים. המקביל של מבחן F חלקי</li>
+<li><strong>סיווג:</strong> מהסתברות להחלטה. סף, מטריצת בלבול (<span class="en">confusion matrix</span>), רגישות וסגוליות</li>
+<li><strong>מה יכול להשתבש:</strong> הפרדה מלאה (<span class="en">separation</span>), אירועים נדירים, ובלבול בין odds להסתברות</li>
+</ul>
+</section></section>
+<section>
+<section id="סיכום" class="title-slide slide level1 center">
+<h1>סיכום</h1>
+
+</section>
+<section id="מה-לקחת-מההרצאה" class="slide level2 smaller">
+<h2>מה לקחת מההרצאה</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>השאלה</th>
+<th>הכלי</th>
+<th>ב-R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>שני פקטורים, עם חזרות</td>
+<td><span class="math inline">\(SS_A + SS_B + SS_{AB} + SS_E\)</span>, קודם בודקים את האינטראקציה</td>
+<td><code>aov(y ~ A * B)</code></td>
+</tr>
+<tr class="even">
+<td>יש אינטראקציה</td>
+<td>אפקטים פשוטים, השוואות בין תאים</td>
+<td><code>emmeans(fit, ~ A, by = "B")</code></td>
+</tr>
+<tr class="odd">
+<td>מקור רעש ידוע (יום, משמרת)</td>
+<td>בלוק, <span class="math inline">\(n = 1\)</span>, מודל אדיטיבי</td>
+<td><code>aov(y ~ A + block)</code></td>
+</tr>
+<tr class="even">
+<td>הרמות הוגרלו</td>
+<td><span class="math inline">\(F_A = MS_A / MS_{AB}\)</span>, רכיבי שונות</td>
+<td><code>Error(A:B)</code></td>
+</tr>
+<tr class="odd">
+<td>B קיים רק בתוך A</td>
+<td>מודל היררכי, <span class="math inline">\(F_A = MS_A / MS_{B(A)}\)</span></td>
+<td><code>Error(A:B)</code></td>
+</tr>
+<tr class="even">
+<td>תגובה מוטה, השפעות כפליות</td>
+<td><span class="math inline">\(\log\)</span>, ופירוש של הפרשים כיחסים</td>
+<td><code>log10(y)</code></td>
+</tr>
+<tr class="odd">
+<td>מקדם ברגרסיה על נתוני תצפית</td>
+<td>מתאם, לא סיבתיות. לסיבתיות צריך ניסוי</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>תגובה בינארית</td>
+<td><span class="math inline">\(\text{logit}(p) = \beta_0 + \beta_1 x\)</span>, <span class="math inline">\(OR = e^{\beta_1}\)</span></td>
+<td><code>glm(y ~ x, family = binomial)</code></td>
+</tr>
+<tr class="odd">
+<td>האם המודל הלוגיסטי מובהק?</td>
+<td><span class="math inline">\(G = D_0 - D_1 \sim \chi^2_k\)</span></td>
+<td><code>anova(fit, test = "Chisq")</code></td>
+</tr>
+</tbody>
+</table>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>ניתוח נתונים סטטיסטי · תשפ״ז</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"\u003ci class=\"fas fa-gear\">\u003c/i>","content":"\u003cul class=\"slide-menu-items\">\n\u003cli class=\"slide-tool-item active\" data-item=\"0\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\">\u003ckbd>f\u003c/kbd> Fullscreen\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"1\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\">\u003ckbd>s\u003c/kbd> Speaker View\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"2\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\">\u003ckbd>o\u003c/kbd> Slide Overview\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"3\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\">\u003ckbd>e\u003c/kbd> PDF Export Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"4\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\">\u003ckbd>r\u003c/kbd> Scroll View Mode\u003c/a>\u003c/li>\n\u003cli class=\"slide-tool-item\" data-item=\"5\">\u003ca href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\">\u003ckbd>?\u003c/kbd> Keyboard Help\u003c/a>\u003c/li>\n\u003c/ul>"}],"openButton":true,"openButtonLabel":"Slide menu"},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: true,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "הועתק!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "הועתק!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/adisarid\.github\.io\/nanas-tau\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+          window.quartoDecorateExternalLinks = function (root) {
+         var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+              if (!link.classList.contains('no-external-icon')) {
+              }
+            }
+          }
+          };
+          window.quartoDecorateExternalLinks(window.document);
+        // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+        // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+        const hideOnEscAndFocusOut = {
+          name: 'hideOnEscAndFocusOut',
+          defaultValue: true,
+          fn(instance) {
+            const dismiss = () => {
+              // A show scheduled by the trigger delay would otherwise reopen it
+              instance.clearDelayTimeouts();
+              instance.hide();
+            };
+            const onKeyDown = (event) => {
+              if (event.key !== 'Escape') {
+                return;
+              }
+              // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+              // except an open reveal.js slide menu, which Esc should close too.
+              // The menu handles keys only when its keyboard option is on.
+              const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+                window.Reveal.getConfig().menu?.keyboard !== false;
+              if (!menuHandlesEsc) {
+                event.stopPropagation();
+              }
+              if (instance.popper.contains(window.document.activeElement)) {
+                // Disabled while refocusing so the focus trigger does not reopen it
+                instance.disable();
+                instance.reference.focus();
+                instance.enable();
+              }
+              dismiss();
+            };
+            const onFocusOut = (event) => {
+              const target = event.relatedTarget;
+              if (target && !instance.reference.contains(target) &&
+                  !instance.popper.contains(target)) {
+                dismiss();
+              }
+            };
+            // On the trigger too: a click trigger (code-annotations: select) has no
+            // blur handling. Attached for the instance's lifetime so leaving the
+            // trigger also cancels a show still pending on the trigger delay.
+            instance.reference.addEventListener('focusout', onFocusOut);
+            return {
+              onShow() {
+                window.document.addEventListener('keydown', onKeyDown, true);
+                instance.popper.addEventListener('focusout', onFocusOut);
+              },
+              onHide() {
+                window.document.removeEventListener('keydown', onKeyDown, true);
+                instance.popper.removeEventListener('focusout', onFocusOut);
+              },
+              onDestroy() {
+                instance.reference.removeEventListener('focusout', onFocusOut);
+              },
+            };
+          },
+        };
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+            plugins: [hideOnEscAndFocusOut],
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
