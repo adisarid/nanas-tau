@@ -1,0 +1,1425 @@
+---
+title: "7. ניתוח שונות דו-כיווני (המשך), תרגיל מסכם ורגרסיה לוגיסטית"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה 7"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: 07-logistic-regression-slides.html
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+data_dir <- "../data/anova"
+model_cols <- setNames(unname(nanas_pal[c("primary", "sky", "green", "accent", "yellow")]),
+                        paste0("M", 1:5))
+calls <- read_csv(file.path(data_dir, "support_ai.csv"), show_col_types = FALSE) |>
+  mutate(model = factor(model))
+f1 <- function(x, d = 1) format(round(x, d), big.mark = ",", nsmall = d)
+```
+
+## על מה נדבר היום
+
+- **השלמת ניתוח שונות דו-כיווני** ([two-way ANOVA]{.en}):
+  - המודל, פירוק השונות, טבלת ANOVA וחישוב ידני
+  - אפקטים פשוטים ובדיקת ההנחות
+  - בלוקים, אפקטים אקראיים ומודל היררכי ([nested]{.en})
+- **תרגיל מסכם מקצה לקצה:** איך לתמחר ספרי שמע לפי סוגה. כל מה שלמדנו עד עכשיו, בשאלה אחת בסגנון הבחינה
+- **רגרסיה לוגיסטית** ([logistic regression]{.en}), חלק א: כשהתגובה היא כן או לא
+
+::: notes
+תכנון זמנים משוער: חזרה 5 דק׳, השלמת הדו-כיווני 70, הפסקה, תרגיל מסכם 45, רגרסיה לוגיסטית 45. אם הזמן לא מספיק, האפקטים האקראיים והמודל ההיררכי יכולים להיות בקצב מהיר (הם מופיעים במלואם בדף הסיכום), אבל כדאי לא לקצר את התרגיל המסכם.
+:::
+
+# חזרה: איפה עצרנו
+
+## ניתוח דו-כיווני: השאלה {.smaller}
+
+צוות ה-AI במוקד בונה בוט שעונה ללקוחות. שתי החלטות פתוחות:
+
+- **גודל המודל** (פקטור A): קטן, בינוני או גדול. גדול מדויק יותר, אבל יקר
+- **[RAG]{.en}** (פקטור B): לשלוף מסמכי מדיניות ולהכניס אותם לפרומפט, או לא
+
+**הניסוי:** כל אחד מ-$3 \times 2 = 6$ השילובים רץ 4 פעמים על סט הערכה. התגובה: אחוז התשובות הנכונות. ניסוי עם כל השילובים נקרא **ניסוי עצרתי** ([factorial design]{.en}).
+
+- **אפקט ראשי** ([main effect]{.en}): ההשפעה של פקטור אחד, בממוצע על פני הרמות של השני
+- **אינטראקציה** ([interaction]{.en}): ההשפעה של פקטור אחד **תלויה ברמה** של השני
+- **בגרף אינטראקציה:** קווים מקבילים = אין אינטראקציה
+
+## הנתונים {.smaller}
+
+```{r}
+#| label: rag-data
+set.seed(606)
+rag <- tribble(~size, ~retrieval, ~m,
+  "small", "off", 62, "small", "on", 78, "medium", "off", 71,
+  "medium", "on", 82, "large", "off", 80, "large", "on", 84) |>
+  expand_grid(run = 1:4) |>
+  mutate(acc = round(m + rnorm(n(), 0, 3), 1),
+         size = factor(size, levels = c("small", "medium", "large")),
+         retrieval = factor(retrieval, levels = c("off", "on"))) |>
+  select(size, retrieval, run, acc)
+rag |> pivot_wider(names_from = run, values_from = acc, names_prefix = "run ")
+```
+
+## הנתונים בתרשים
+
+```{r}
+#| label: rag-plot
+#| echo: false
+#| fig-height: 4.2
+ggplot(rag, aes(retrieval, acc, colour = size)) +
+  geom_point(size = 2.5, alpha = 0.6, position = position_dodge(width = 0.3)) +
+  stat_summary(aes(group = size), fun = mean, geom = "line", linewidth = 1.2,
+               position = position_dodge(width = 0.3)) +
+  stat_summary(fun = mean, geom = "point", size = 4, shape = 18, position = position_dodge(width = 0.3)) +
+  scale_colour_manual(values = unname(nanas_pal[c("sky", "green", "primary")])) +
+  labs(title = "RAG עוזר מאוד למודל הקטן, ולא עוזר לגדול",
+       subtitle = "נקודה: ריצה אחת (200 שאלות) · מעוין וקו: ממוצע התא",
+       x = "RAG", y = "Accuracy (%)", colour = "Model size")
+```
+
+- הקווים לא מקבילים: נראה שיש אינטראקציה. עכשיו נבנה את המודל ונבדוק אותה בצורה פורמלית
+
+# ניתוח שונות דו-כיווני: המודל והמבחנים
+
+## סימון {.smaller}
+
+פקטור A עם $a$ רמות (גודל המודל, $a = 3$), פקטור B עם $b$ רמות (RAG, $b = 2$), **$n$ חזרות בכל תא** ($n = 4$). $N = abn = 24$.
+
+| | $B_1$ | $\cdots$ | $B_b$ | סכום |
+|---|---|---|---|---|
+| $A_1$ | $y_{111}, \dots, y_{11n}$ | $\cdots$ | $y_{1b1}, \dots, y_{1bn}$ | $y_{1\cdot\cdot}$ |
+| $\vdots$ | | $y_{ij\cdot}$ | | |
+| $A_a$ | $y_{a11}, \dots, y_{a1n}$ | $\cdots$ | $y_{ab1}, \dots, y_{abn}$ | $y_{a\cdot\cdot}$ |
+| סכום | $y_{\cdot 1\cdot}$ | $\cdots$ | $y_{\cdot b\cdot}$ | $y_{\cdot\cdot\cdot}$ |
+
+$y_{ijk}$: התצפית ה-$k$ ברמה $i$ של A וברמה $j$ של B. **נקודה במקום אינדקס = סכום על האינדקס הזה**:
+
+$$
+y_{ij\cdot} = \sum_{k=1}^{n} y_{ijk} \qquad
+y_{i\cdot\cdot} = \sum_{j=1}^{b}\sum_{k=1}^{n} y_{ijk} \qquad
+y_{\cdot j\cdot} = \sum_{i=1}^{a}\sum_{k=1}^{n} y_{ijk} \qquad
+y_{\cdot\cdot\cdot} = \sum_{i,j,k} y_{ijk}
+$$
+
+והממוצעים: $\bar y_{ij\cdot} = y_{ij\cdot}/n$, $\bar y_{i\cdot\cdot} = y_{i\cdot\cdot}/(bn)$, $\bar y_{\cdot j\cdot} = y_{\cdot j\cdot}/(an)$, $\bar y_{\cdot\cdot\cdot} = y_{\cdot\cdot\cdot}/(abn)$.
+
+## המודל {.smaller}
+
+$$
+y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}
+\qquad \varepsilon_{ijk} \overset{iid}{\sim} N(0, \sigma^2)
+$$
+
+| האיבר | המשמעות | אילוץ |
+|---|---|---|
+| $\mu$ | התוחלת הכללית | |
+| $\tau_i$ | האפקט של רמה $i$ של A (גודל המודל) | $\sum_i \tau_i = 0$ |
+| $\beta_j$ | האפקט של רמה $j$ של B (RAG) | $\sum_j \beta_j = 0$ |
+| $(\tau\beta)_{ij}$ | **האינטראקציה:** התוספת של השילוב $(i, j)$, מעבר לסכום האפקטים | $\sum_i (\tau\beta)_{ij} = 0$ לכל $j$, $\sum_j (\tau\beta)_{ij} = 0$ לכל $i$ |
+
+- התוחלת בתא: $\mu_{ij} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij}$
+- **בלי אינטראקציה** ($(\tau\beta)_{ij} = 0$): $\mu_{ij} = \mu + \tau_i + \beta_j$. המודל **אדיטיבי**, וזה בדיוק "קווים מקבילים"
+
+::: {.content-hidden when-format="revealjs"}
+**בעולם 2 מהדוגמה:** $\mu = 73.75$. האפקטים של המודל: $\tau_{small} = 67.5 - 73.75 = -6.25$, $\tau_{large} = +6.25$. האפקטים של RAG: $\beta_{off} = 70 - 73.75 = -3.75$, $\beta_{on} = +3.75$. בתא (קטן, כבוי) המודל האדיטיבי צופה $73.75 - 6.25 - 3.75 = 63.75$, והתצפית 60. לכן $(\tau\beta)_{small,off} = -3.75$. בדקו: בכל שורה ובכל עמודה של טבלת האינטראקציות הסכום אפס, ולכן שלושת התאים האחרים הם $\pm 3.75$.
+:::
+
+## שלוש מערכות השערות {.smaller}
+
+$$
+\begin{aligned}
+&\text{A:} && H_0: \tau_1 = \dots = \tau_a = 0 && H_1: \tau_i \neq 0 \text{ עבור } i \text{ כלשהו} \\
+&\text{B:} && H_0: \beta_1 = \dots = \beta_b = 0 && H_1: \beta_j \neq 0 \text{ עבור } j \text{ כלשהו} \\
+&\text{AB:} && H_0: (\tau\beta)_{ij} = 0 \text{ לכל } i, j && H_1: (\tau\beta)_{ij} \neq 0 \text{ עבור } i, j \text{ כלשהם}
+\end{aligned}
+$$
+
+**סדר הקריאה:** קודם האינטראקציה.
+
+- **אם האינטראקציה מובהקת:** האפקטים הראשיים הם ממוצע של אפקטים שונים, ולכן הם לא מספרים את כל הסיפור. בודקים את ההשפעה של A **בכל רמה** של B בנפרד
+- **אם היא לא מובהקת:** אפשר לפרש את האפקטים הראשיים ישירות
+
+## פירוק השונות {.smaller}
+
+כמו בחד-כיווני, מפרקים כל סטייה מהממוצע הכללי לחלקים:
+
+$$
+y_{ijk} - \bar y_{\cdot\cdot\cdot} =
+\underbrace{(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})}_{\hat\tau_i} +
+\underbrace{(\bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot})}_{\hat\beta_j} +
+\underbrace{(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot})}_{\widehat{(\tau\beta)}_{ij}} +
+\underbrace{(y_{ijk} - \bar y_{ij\cdot})}_{e_{ijk}}
+$$
+
+מעלים בריבוע וסוכמים. כל המכפלות המעורבות מתאפסות (בניסוי מאוזן), ונשאר:
+
+$$
+SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_A}
++ \underbrace{an\sum_j(\bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_B}
++ \underbrace{n\sum_{i,j}(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot})^2}_{SS_{AB}}
++ \underbrace{\sum_{i,j,k}(y_{ijk} - \bar y_{ij\cdot})^2}_{SS_E}
+$$
+
+**דרגות חופש:** $abn - 1 = (a-1) + (b-1) + (a-1)(b-1) + ab(n-1)$
+
+- **האינטראקציה:** כמה התא סוטה ממה שהמודל האדיטיבי צופה, $\bar y_{i\cdot\cdot} + \bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot}$
+- **השגיאה:** הפיזור **בתוך** כל תא. לכן צריך $n \ge 2$ כדי לאמוד אותה
+
+## טבלת ANOVA {.smaller}
+
+| מקור | סכום ריבועים | דרגות חופש | ממוצע ריבועים | $E(MS)$ | $F_0$ |
+|---|---|---|---|---|---|
+| A | $SS_A$ | $a-1$ | $MS_A$ | $\sigma^2 + \frac{bn\sum\tau_i^2}{a-1}$ | $MS_A/MS_E$ |
+| B | $SS_B$ | $b-1$ | $MS_B$ | $\sigma^2 + \frac{an\sum\beta_j^2}{b-1}$ | $MS_B/MS_E$ |
+| AB | $SS_{AB}$ | $(a-1)(b-1)$ | $MS_{AB}$ | $\sigma^2 + \frac{n\sum\sum(\tau\beta)_{ij}^2}{(a-1)(b-1)}$ | $MS_{AB}/MS_E$ |
+| שגיאה | $SS_E$ | $ab(n-1)$ | $MS_E$ | $\sigma^2$ | |
+| סך הכול | $SS_T$ | $abn-1$ | | | |
+
+- אותו היגיון כמו בחד-כיווני: תחת $H_0$ המונה והמכנה אומדים את $\sigma^2$, ו-$F_0 \sim F$ עם דרגות החופש שלהם
+- למשל, דוחים $H_0$ לאינטראקציה אם $F_0 > F_{1-\alpha;\,(a-1)(b-1),\,ab(n-1)}$
+- $bn$ ב-$E(MS_A)$: כל ממוצע $\bar y_{i\cdot\cdot}$ מבוסס על $bn$ תצפיות
+
+## נוסחאות לחישוב ידני {.smaller}
+
+עובדים עם **סכומים**. מגדירים את **גורם התיקון** $C = \dfrac{y_{\cdot\cdot\cdot}^2}{abn}$:
+
+$$
+\begin{aligned}
+SS_T &= \sum_{i,j,k} y_{ijk}^2 - C \\
+SS_A &= \frac{1}{bn}\sum_{i} y_{i\cdot\cdot}^2 - C \qquad\qquad
+SS_B = \frac{1}{an}\sum_{j} y_{\cdot j\cdot}^2 - C \\
+SS_{\text{cells}} &= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \qquad\quad\;\, \text{(ה-SS בין כל } ab \text{ התאים)} \\
+SS_{AB} &= SS_{\text{cells}} - SS_A - SS_B \\
+SS_E &= SS_T - SS_{\text{cells}}
+\end{aligned}
+$$
+
+- **הכלל:** סכום בריבוע, חלקי מספר התצפיות שבסכום, פחות $C$
+- $SS_{\text{cells}}$ הוא ה-$SS_{Tr}$ של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה
+
+## חישוב ידני: טבלת הסכומים {.smaller}
+
+```{r}
+#| label: rag-totals
+cell_tot <- rag |> group_by(size, retrieval) |> summarise(y_ij = sum(acc), .groups = "drop")
+cell_tot |>
+  pivot_wider(names_from = retrieval, values_from = y_ij) |>
+  mutate(y_i = off + on)
+c(y_off = sum(rag$acc[rag$retrieval == "off"]), y_on = sum(rag$acc[rag$retrieval == "on"]),
+  y_total = sum(rag$acc), sum_y2 = sum(rag$acc^2))
+```
+
+```{r}
+#| label: rag-hand
+#| include: false
+yi  <- tapply(rag$acc, rag$size, sum)
+yj  <- tapply(rag$acc, rag$retrieval, sum)
+yij <- cell_tot$y_ij
+ytot <- sum(rag$acc); C <- ytot^2 / 24
+ss_t <- sum(rag$acc^2) - C
+ss_a <- sum(yi^2) / 8 - C
+ss_b <- sum(yj^2) / 12 - C
+ss_cells <- sum(yij^2) / 4 - C
+ss_ab <- ss_cells - ss_a - ss_b
+ss_e <- ss_t - ss_cells
+f1 <- function(x, d = 1) format(round(x, d), big.mark = ",", nsmall = d)
+```
+
+## חישוב ידני: סכומי הריבועים {.smaller}
+
+$$
+C = \frac{`r f1(ytot)`^2}{24} = `r f1(C)` \qquad SS_T = `r f1(sum(rag$acc^2), 2)` - C = `r f1(ss_t)`
+$$
+
+$$
+SS_A = \frac{`r paste(f1(yi), collapse = "^2 + ")`^2}{2 \cdot 4} - C = `r f1(ss_a)`
+\qquad
+SS_B = \frac{`r paste(f1(yj), collapse = "^2 + ")`^2}{3 \cdot 4} - C = `r f1(ss_b)`
+$$
+
+$$
+SS_{\text{cells}} = \frac{`r paste(f1(yij), collapse = "^2 + ")`^2}{4} - C = `r f1(ss_cells)`
+$$
+
+$$
+SS_{AB} = `r f1(ss_cells)` - `r f1(ss_a)` - `r f1(ss_b)` = `r f1(ss_ab)`
+\qquad
+SS_E = `r f1(ss_t)` - `r f1(ss_cells)` = `r f1(ss_e)`
+$$
+
+| מקור | SS | df | MS | $F_0$ | $F_{0.95}$ |
+|---|---|---|---|---|---|
+| גודל (A) | `r f1(ss_a)` | 2 | `r f1(ss_a / 2)` | `r f1(ss_a / 2 / (ss_e / 18), 2)` | `r f1(qf(0.95, 2, 18), 2)` |
+| RAG (B) | `r f1(ss_b)` | 1 | `r f1(ss_b)` | `r f1(ss_b / (ss_e / 18), 2)` | `r f1(qf(0.95, 1, 18), 2)` |
+| AB | `r f1(ss_ab)` | 2 | `r f1(ss_ab / 2)` | `r f1(ss_ab / 2 / (ss_e / 18), 2)` | `r f1(qf(0.95, 2, 18), 2)` |
+| שגיאה | `r f1(ss_e)` | 18 | `r f1(ss_e / 18, 2)` | | |
+
+::: {.content-hidden when-format="revealjs"}
+**זהירות עם עיגול.** $C$ ו-$\sum y^2$ הם מספרים גדולים, וההפרש ביניהם קטן יחסית. אם מעגלים אותם מוקדם מדי, $SS_T$ יוצא שגוי. בבחינה שומרים כמה שיותר ספרות עד ההחסרה האחרונה.
+:::
+
+## אותו ניתוח ב-R {.smaller}
+
+```{r}
+#| label: rag-aov
+fit_rag <- aov(acc ~ size * retrieval, data = rag)   # size * retrieval = size + retrieval + size:retrieval
+summary(fit_rag)
+```
+
+- **`size:retrieval`** היא שורת האינטראקציה. $F_0 = `r f1(ss_ab / 2 / (ss_e / 18), 2)`$, $p < 0.001$: **יש אינטראקציה**
+- גם שני האפקטים הראשיים מובהקים, אבל בגלל האינטראקציה הם לא מספרים את כל הסיפור
+- $MS_E = `r f1(ss_e / 18, 2)`$, ולכן $\hat\sigma = `r f1(sqrt(ss_e / 18), 2)`$ נקודות אחוז: הרעש בין ריצות על מדגמי שאלות שונים
+
+::: {.content-hidden when-format="revealjs"}
+**`*` מול `+` בנוסחה.** `acc ~ size + retrieval` הוא המודל **האדיטיבי**, בלי אינטראקציה. במודל כזה ה-$SS_{AB}$ וה-$SS_E$ מתאחדים לשגיאה אחת עם $(a-1)(b-1) + ab(n-1)$ דרגות חופש. מסירים את האינטראקציה רק אם יש סיבה טובה, למשל כשהיא בבירור לא מובהקת וקטנה, או כשאין חזרות (בהמשך).
+:::
+
+## אומדים לאפקטים {.smaller}
+
+$$
+\hat\mu = \bar y_{\cdot\cdot\cdot} \qquad
+\hat\tau_i = \bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot} \qquad
+\hat\beta_j = \bar y_{\cdot j\cdot} - \bar y_{\cdot\cdot\cdot} \qquad
+\widehat{(\tau\beta)}_{ij} = \bar y_{ij\cdot} - \bar y_{i\cdot\cdot} - \bar y_{\cdot j\cdot} + \bar y_{\cdot\cdot\cdot} \qquad
+\hat\sigma^2 = MS_E
+$$
+
+```{r}
+#| label: rag-effects
+mu_hat <- mean(rag$acc)
+eff <- rag |>
+  group_by(size, retrieval) |> summarise(cell = mean(acc), .groups = "drop") |>
+  group_by(size) |> mutate(row_mean = mean(cell)) |>
+  group_by(retrieval) |> mutate(col_mean = mean(cell)) |> ungroup() |>
+  mutate(tau = row_mean - mu_hat, beta = col_mean - mu_hat,
+         tau_beta = cell - row_mean - col_mean + mu_hat)
+eff |> select(size, retrieval, cell, tau, beta, tau_beta) |> mutate(across(where(is.numeric), \(x) round(x, 2)))
+```
+
+- $\widehat{(\tau\beta)}_{small,\,on} > 0$, $\widehat{(\tau\beta)}_{large,\,on} < 0$: עם RAG, המודל הקטן מרוויח **יותר** ממה שהמודל האדיטיבי צופה, והגדול **פחות**
+
+## כשהאינטראקציה מובהקת: אפקטים פשוטים {.smaller}
+
+**אפקט פשוט** ([simple effect]{.en}): האפקט של RAG **בכל גודל מודל בנפרד**. כל השוואה משתמשת ב-$MS_E$ של המודל המלא:
+
+$$
+t_0 = \frac{\bar y_{i2\cdot} - \bar y_{i1\cdot}}{\sqrt{2MS_E/n}} \sim t_{ab(n-1)}
+$$
+
+```{r}
+#| label: rag-simple
+emm_rag <- emmeans::emmeans(fit_rag, ~ retrieval | size)
+emmeans::contrast(emm_rag, "revpairwise")
+```
+
+- **קטן:** RAG מוסיף כ-17 נקודות. **בינוני:** כ-9. **גדול:** 0
+- `SE` זהה בשלושתם: $\sqrt{2 \cdot `r f1(ss_e / 18, 2)` / 4} = `r f1(sqrt(2 * ss_e / 18 / 4), 2)`$
+
+## ומה עם "קטן + RAG" מול "גדול"? {.smaller}
+
+שאלה 3 משווה **תאים**, לא רמות של פקטור. לכן מתייחסים ל-6 התאים כאילו היו 6 קבוצות בניתוח חד-כיווני, ומריצים עליהם [Tukey]{.en}. הסף אחיד לכל 15 הזוגות:
+
+$$
+HSD = q_\alpha(ab,\, f_E)\cdot\sqrt{\frac{MS_E}{n}}
+$$
+
+| רכיב | ערך | למה |
+|---|---|---|
+| מספר הממוצעים | $ab = 6$ | כל התאים, לא $a = 3$ |
+| דרגות חופש לשגיאה | $f_E = ab(n-1) = 18$ | מה-$MS_E$ של המודל הדו-כיווני |
+| $n$ | 4 | ריצות בכל תא |
+| $q_{0.05}(6, 18)$ | `r f1(qtukey(0.95, 6, 18), 2)` | טבלת [studentized range]{.en}, או `qtukey()` |
+| $s_{\bar y} = \sqrt{MS_E/n}$ | $\sqrt{`r f1(ss_e / 18, 2)`/4} = `r f1(sqrt(ss_e / 18 / 4), 2)`$ | |
+
+$$
+HSD = `r f1(qtukey(0.95, 6, 18), 2)` \cdot `r f1(sqrt(ss_e / 18 / 4), 2)` = `r f1(qtukey(0.95, 6, 18) * sqrt(ss_e / 18 / 4), 2)` \text{ נקודות אחוז}
+$$
+
+- **כל** הפרש בין שני תאים שגדול מ-`r f1(qtukey(0.95, 6, 18) * sqrt(ss_e / 18 / 4), 2)` מובהק. קטן ממנו: לא מובהק
+
+::: notes
+להדגיש את שני השינויים לעומת Tukey החד-כיווני: מספר הממוצעים הוא 6 (התאים), ודרגות החופש הן של השגיאה במודל הדו-כיווני (18), לא N − 6 שמגיעים אליו במקרה לאותו מספר כאן. ה-HSD של 7.29 הוא "הסרגל" שנראה בתרשים הבא.
+:::
+
+## הסף האחיד: חישוב ב-R {.smaller}
+
+```{r}
+#| label: rag-hsd
+mse_rag <- deviance(fit_rag) / df.residual(fit_rag)          # MS_E = SS_E / 18
+q_rag   <- qtukey(0.95, nmeans = 6, df = df.residual(fit_rag))
+hsd_rag <- q_rag * sqrt(mse_rag / 4)
+c(MSE = mse_rag, q = q_rag, s_ybar = sqrt(mse_rag / 4), HSD = hsd_rag)
+
+cells <- rag |> group_by(size, retrieval) |> summarise(mean = mean(acc), .groups = "drop") |>
+  mutate(cell = paste(size, retrieval, sep = ":")) |> arrange(mean)
+cells |> select(cell, mean)
+```
+
+- התאים מסודרים מהנמוך לגבוה. כל זוג שהמרחק ביניהם גדול מ-`r f1(qtukey(0.95, 6, 18) * sqrt(ss_e / 18 / 4), 2)` נבדל
+
+## [Tukey]{.en} על 6 התאים: הפלט המלא {.smaller}
+
+```{r}
+#| label: rag-tukey-cells
+tk_rag <- TukeyHSD(fit_rag, "size:retrieval")$`size:retrieval`
+round(tk_rag, 3)
+```
+
+::: notes
+לשים לב: lwr = diff − 7.287 ו-upr = diff + 7.287 בכל השורות. זה ה-HSD. כל רווחי הסמך באותו רוחב, כי הניסוי מאוזן.
+:::
+
+## איך קוראים את הפלט {.smaller}
+
+- **רוחב אחיד:** בכל שורה, $\text{upr} - \text{diff} = \text{diff} - \text{lwr} = `r f1(qtukey(0.95, 6, 18) * sqrt(ss_e / 18 / 4), 3)`$. זה ה-HSD. הניסוי מאוזן, ולכן לכל 15 הזוגות יש אותו רווח
+- **מובהק** ⇔ $|\text{diff}| > HSD$ ⇔ הרווח לא כולל את 0 ⇔ `p adj` $< 0.05$. שלוש דרכים לומר אותו דבר
+- **10 מתוך 15 זוגות מובהקים.** 5 לא מובהקים, וכולם בין התאים "הטובים": קטן+RAG, בינוני+RAG, גדול עם RAG ובלי
+- **קבוצות:**
+  - **A:** קטן בלי RAG (`r f1(cells$mean[1])`), נמוך מכולם
+  - **B:** בינוני בלי RAG (`r f1(cells$mean[2])`) וקטן+RAG (`r f1(cells$mean[3])`). ההפרש ביניהם, `r f1(cells$mean[3] - cells$mean[2], 2)`, קטן מה-HSD
+  - **C:** קטן+RAG, בינוני+RAG, גדול+RAG, גדול בלי RAG. כל ההפרשים ביניהם עד `r f1(cells$mean[6] - cells$mean[3], 2)`
+- קטן+RAG נמצא גם ב-B וגם ב-C: הוא לא שונה מובהקות מאף אחד מהשכנים שלו
+
+## 15 ההפרשים מול הסף האחיד
+
+```{r}
+#| label: rag-hsd-plot
+#| echo: false
+#| fig-height: 4.4
+tk_df <- tk_rag |> as_tibble(rownames = "pair") |>
+  mutate(abs_diff = abs(diff), significant = `p adj` < 0.05,
+         pair = fct_reorder(pair, abs_diff))
+ggplot(tk_df, aes(abs_diff, pair, colour = significant)) +
+  annotate("rect", xmin = 0, xmax = hsd_rag, ymin = -Inf, ymax = Inf,
+           fill = nanas_pal[["grey"]], alpha = 0.15) +
+  geom_segment(aes(x = 0, xend = abs_diff, yend = pair), linewidth = 0.8) +
+  geom_point(size = 3) +
+  geom_vline(xintercept = hsd_rag, linetype = "dashed", colour = nanas_pal[["primary"]], linewidth = 1) +
+  annotate("label", x = hsd_rag, y = 2, label = sprintf("HSD = %.2f", hsd_rag),
+           colour = nanas_pal[["primary"]], hjust = -0.05, size = 4) +
+  scale_x_continuous(limits = c(0, NA), expand = expansion(mult = c(0, 0.05))) +
+  scale_colour_manual(values = c(`TRUE` = nanas_pal[["accent"]], `FALSE` = nanas_pal[["grey"]]),
+                      labels = c(`TRUE` = "מובהק", `FALSE` = "לא מובהק")) +
+  labs(title = "סרגל אחד לכל הזוגות: 10 מתוך 15 עוברים את ה-HSD",
+       subtitle = "האזור האפור: הפרשים קטנים מה-HSD, כלומר לא מובהקים",
+       x = "|Difference in mean accuracy| (pct. points)", y = NULL, colour = NULL)
+```
+
+## רווחי הסמך המשותפים בתרשים
+
+```{r}
+#| label: rag-tukey-ci-plot
+#| echo: false
+#| fig-height: 4.4
+tk_df |>
+  mutate(pair = fct_reorder(pair, diff)) |>
+  ggplot(aes(diff, pair, colour = significant)) +
+  geom_vline(xintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_errorbar(aes(xmin = lwr, xmax = upr), width = 0.25, linewidth = 1, orientation = "y") +
+  geom_point(size = 3) +
+  scale_colour_manual(values = c(`TRUE` = nanas_pal[["accent"]], `FALSE` = nanas_pal[["grey"]]),
+                      labels = c(`TRUE` = "מובהק", `FALSE` = "לא מובהק")) +
+  labs(title = "כל הרווחים באותו רוחב: ההפרש ± HSD",
+       subtitle = "רווחי סמך משותפים 95% · רווח שלא חוצה את 0 הוא מובהק",
+       x = "Difference in mean accuracy (pct. points)", y = NULL, colour = NULL)
+```
+
+## בחזרה לשאלה: קטן+RAG מול גדול {.smaller}
+
+```{r}
+#| label: rag-tukey-focus
+round(tk_rag[c("small:on-large:off", "large:on-small:on"), ], 3)
+```
+
+- `small:on-large:off`: הקטן עם RAG מפגר אחרי הגדול בלי RAG בכ-6 נקודות. $6.08 < HSD = `r f1(qtukey(0.95, 6, 18) * sqrt(ss_e / 18 / 4), 2)`$, ולכן **ההפרש לא מובהק** ($p = 0.14$)
+- **אבל "לא מובהק" אינו "שווה".** רווח הסמך המשותף: מ-13 נקודות לטובת הגדול ועד נקודה אחת לטובת הקטן. ייתכן שהפער אפסי, וייתכן שהוא 13 נקודות
+- **ההמלצה:** RAG לכל מודל קטן או בינוני. לפני שמחליפים את הגדול בקטן עם RAG, צריך ניסוי ממוקד עם יותר ריצות. עכשיו אפשר לחשב כמה (ניתוח עוצמה, הרצאה 4)
+
+::: notes
+זה הרגע להזכיר את מלכודת "לא מובהק ≠ שווה" מהרצאה 4. אם המנהל רוצה לדעת אם הקטן עם RAG "מספיק טוב", צריך להגדיר מראש פער מקסימלי סביר (למשל 2 נקודות) ולתכנן ניסוי שרווח הסמך שלו צר מזה.
+:::
+
+## בדיקת ההנחות {.smaller}
+
+אותן הנחות כמו בחד-כיווני, ואותם כלים. השאריות: $e_{ijk} = y_{ijk} - \bar y_{ij\cdot}$
+
+```{r}
+#| label: rag-resid
+#| echo: false
+#| fig-height: 3.3
+rag_r <- rag |> mutate(fitted = fitted(fit_rag), resid = resid(fit_rag))
+bind_rows(rag_r |> arrange(resid) |>
+            transmute(panel = "Q-Q: theoretical quantile (z)", x = qnorm((row_number() - 0.5) / n()), resid),
+          rag_r |> transmute(panel = "Fitted value = cell mean", x = fitted, resid)) |>
+  mutate(panel = fct_inorder(panel)) |>
+  ggplot(aes(x, resid)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_point(size = 2.5) +
+  facet_wrap(~ panel, scales = "free_x") +
+  labs(title = "השאריות קרובות לנורמליות, והפיזור דומה בתאים",
+       x = NULL, y = "Residual (accuracy points)")
+bartlett_rag <- bartlett.test(acc ~ interaction(size, retrieval), data = rag)
+```
+
+- הנקודות ב-Q-Q קרובות לקו. הפיזור דומה ברוב התאים. [Bartlett]{.en} על 6 התאים: $p = `r round(bartlett_rag$p.value, 2)`$
+- עם 4 תצפיות לתא, אי אפשר לראות הרבה. זה המצב הרגיל בניסויים, ולכן תכנון טוב (הגרלה, ריצות עצמאיות) חשוב יותר מבדיקות
+
+# בלוקים: ניתוח דו-כיווני בלי חזרות
+
+## חזרה למוקד: אפקט היום {.smaller}
+
+בהרצאה 4 ראינו שבימים 6 ו-8 הטיפול היה קצר **בכל המודלים**. כל יום הפעלנו את כל חמשת המודלים, על פניות אחרות.
+
+```{r}
+#| label: calls-days
+#| echo: false
+#| fig-height: 3.4
+calls_d <- calls |> mutate(day = factor(day))
+ggplot(calls_d, aes(day, aht, colour = model, group = model)) +
+  geom_line(linewidth = 0.9, alpha = 0.8) +
+  geom_point(size = 2) +
+  scale_colour_manual(values = model_cols) +
+  labs(title = "הקווים עולים ויורדים יחד: יש ימים קלים וימים קשים",
+       subtitle = "משך הטיפול הממוצע, לכל מודל בכל יום",
+       x = "Day", y = "Average handle time (min)", colour = NULL)
+```
+
+- **היום הוא פקטור שני.** הוא לא מעניין אותנו כשלעצמו, אבל הוא מוסיף רעש. פקטור כזה נקרא **בלוק** ([block]{.en})
+- **בכל תא יש תצפית אחת** ($n = 1$): מודל אחד ביום אחד
+
+## המודל עם בלוק {.smaller}
+
+$$
+y_{ij} = \mu + \tau_i + \beta_j + \varepsilon_{ij} \qquad i = 1, \dots, a \text{ (מודל)}, \quad j = 1, \dots, b \text{ (יום)}
+$$
+
+- **אין איבר אינטראקציה.** עם $n = 1$ אין פיזור בתוך תא, ולכן אי אפשר להפריד אינטראקציה משגיאה. מניחים שהמודל **אדיטיבי**: יום עמוס מאריך את הטיפול בכל המודלים באותה מידה
+- מה שהיה $SS_{AB}$ משמש כשגיאה:
+
+$$
+SS_E = SS_T - SS_A - SS_B \qquad df_E = (a-1)(b-1)
+$$
+
+| מקור | SS | df | $F_0$ |
+|---|---|---|---|
+| מודל (A) | $SS_A$ | $a - 1$ | $MS_A / MS_E$ |
+| יום (בלוק) | $SS_B$ | $b - 1$ | |
+| שגיאה | $SS_E$ | $(a-1)(b-1)$ | |
+| סך הכול | $SS_T$ | $ab - 1$ | |
+
+::: {.content-hidden when-format="revealjs"}
+**למה לא בודקים את הבלוק?** את הבלוק הכנסנו כי ידענו מראש שימים שונים זה מזה. לא שאלנו "האם יש הבדל בין ימים". R מדפיס $F$ גם לבלוק, וזה מראה אם הוא עזר, אבל זו לא השאלה של הניסוי. ניסוי כזה, שבו כל הטיפולים מופיעים בכל בלוק בסדר אקראי, נקרא **ניסוי בבלוקים מוגרלים** ([randomized complete block design, RCBD]{.en}). נרחיב עליו בהרצאה על תכנון ניסויים.
+:::
+
+## התוצאה: בלי בלוק ועם בלוק {.smaller}
+
+```{r}
+#| label: calls-block
+summary(aov(aht ~ model, data = calls_d))
+summary(aov(aht ~ model + day, data = calls_d))
+```
+
+- $SS_{model} = 18.02$ **לא השתנה**. מה שהשתנה: $25.9$ מתוך $34.1$ של השגיאה הם בעצם הבדלים בין ימים
+- $MS_E$ ירד מ-0.854 ל-0.259, ו-$F$ של המודלים קפץ מ-5.3 ל-17.4
+- **המחיר:** 8 דרגות חופש של השגיאה (40 → 32). כשהבלוק באמת משנה, המחיר זניח
+
+::: {.content-hidden when-format="revealjs"}
+**ההשלכה על ההשוואות המרובות.** עם $MS_E = 0.259$, $s_{\bar y} = \sqrt{0.259/9} = 0.17$, ו-HSD קטן בהרבה. ההשוואות של M1 מול M3, M4 ו-M5, שלא היו מובהקות ב-[Tukey]{.en} בלי הבלוק, מובהקות עכשיו ($p < 0.002$), ו-M2 מול M1 נשאר לא מובהק. התוצאה: אותן שתי קבוצות ש-[Duncan]{.en} מצא. בדקו בעצמכם: `TukeyHSD(aov(aht ~ model + day, data = calls_d), "model")`. הבלוק נתן לשיטה השמרנית את העוצמה שחסרה לה.
+:::
+
+# אפקטים אקראיים בניתוח דו-כיווני
+
+## השאלה: מתייגים וסוגי משימות {.smaller}
+
+צוות ה-AI משלם למתייגים ([annotators]{.en}) לתייג נתוני אימון. כמה זמן לוקח לתייג פריט, ומאיפה מגיעה השונות?
+
+- **מתייגים:** במאגר יש כ-40. **מגרילים 4**
+- **סוגי משימות:** בקטלוג יש עשרות סוגים (סיווג כוונה, זיהוי ישויות, דירוג תשובות...). **מגרילים 3**
+- כל מתייג מתייג **2 פריטים** מכל סוג משימה. התגובה: שניות לפריט
+
+```{r}
+#| label: annot-data
+set.seed(707)
+annot <- expand_grid(annotator = paste0("A", 1:4), task = paste0("T", 1:3)) |>
+  mutate(u_a = rep(rnorm(4, 0, 3), each = 3),      # annotator effect, sd 3 s
+         u_t = rep(rnorm(3, 0, 8), times = 4),     # task-type effect, sd 8 s
+         u_at = rnorm(12, 0, 2)) |>                 # interaction, sd 2 s
+  expand_grid(item = 1:2) |>
+  mutate(sec = round(40 + u_a + u_t + u_at + rnorm(n(), 0, 2.5), 1)) |>
+  select(annotator, task, item, sec)
+```
+
+**השאלה לא** "האם מתייג A3 איטי מ-A1", אלא: **כמה מהשונות בזמן התיוג נובעת ממתייגים, כמה מסוגי משימות, וכמה מהשילוב?**
+
+## המודל {.smaller}
+
+$$
+y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}
+$$
+
+$$
+\tau_i \sim N(0, \sigma_\tau^2) \qquad \beta_j \sim N(0, \sigma_\beta^2) \qquad (\tau\beta)_{ij} \sim N(0, \sigma_{\tau\beta}^2) \qquad \varepsilon_{ijk} \sim N(0, \sigma^2)
+$$
+
+כולם בלתי תלויים. **ההשערות:** $H_0: \sigma_\tau^2 = 0$, $H_0: \sigma_\beta^2 = 0$, $H_0: \sigma_{\tau\beta}^2 = 0$.
+
+**סכומי הריבועים ודרגות החופש זהים** למודל הקבוע. מה שמשתנה הן התוחלות:
+
+| מקור | $E(MS)$, אפקטים קבועים | $E(MS)$, אפקטים אקראיים |
+|---|---|---|
+| A | $\sigma^2 + \frac{bn\sum\tau_i^2}{a-1}$ | $\sigma^2 + n\sigma_{\tau\beta}^2 + bn\sigma_\tau^2$ |
+| B | $\sigma^2 + \frac{an\sum\beta_j^2}{b-1}$ | $\sigma^2 + n\sigma_{\tau\beta}^2 + an\sigma_\beta^2$ |
+| AB | $\sigma^2 + \frac{n\sum\sum(\tau\beta)_{ij}^2}{(a-1)(b-1)}$ | $\sigma^2 + n\sigma_{\tau\beta}^2$ |
+| שגיאה | $\sigma^2$ | $\sigma^2$ |
+
+## מה מחלקים במה? {.smaller}
+
+**הכלל:** המכנה של $F$ הוא ה-$MS$ שהתוחלת שלו **שווה לתוחלת המונה כש-$H_0$ נכונה**.
+
+- **A:** תחת $H_0: \sigma_\tau^2 = 0$, $E(MS_A) = \sigma^2 + n\sigma_{\tau\beta}^2 = E(MS_{AB})$. לכן:
+
+$$
+F_A = \frac{MS_A}{MS_{AB}} \sim F_{a-1,\,(a-1)(b-1)} \qquad F_B = \frac{MS_B}{MS_{AB}} \sim F_{b-1,\,(a-1)(b-1)} \qquad F_{AB} = \frac{MS_{AB}}{MS_E}
+$$
+
+- **האינטואיציה:** אם המתייגים שהוגרלו מגיבים אחרת לכל סוג משימה, הממוצעים שלהם "קופצים" גם בלי הבדל אמיתי ביניהם. הרעש הזה נכנס ל-$MS_A$, ולכן צריך להשוות אותו לרעש של האינטראקציה ולא רק לרעש בתוך תא
+
+**אומדים לרכיבי השונות** (פותרים את משוואות התוחלת):
+
+$$
+\hat\sigma^2 = MS_E \qquad
+\hat\sigma_{\tau\beta}^2 = \frac{MS_{AB} - MS_E}{n} \qquad
+\hat\sigma_\tau^2 = \frac{MS_A - MS_{AB}}{bn} \qquad
+\hat\sigma_\beta^2 = \frac{MS_B - MS_{AB}}{an}
+$$
+
+## ב-R: למה צריך להגיד לו מה אקראי {.smaller}
+
+```{r}
+#| label: annot-aov
+fit_ann <- aov(sec ~ annotator * task, data = annot)
+summary(fit_ann)
+```
+
+**R לא יודע שהפקטורים אקראיים**, אלא אם אומרים לו. הוא מחלק הכול ב-$MS_E$. קודם נתקן ידנית (כמו בבחינה), ובשקף הבא נראה איך אומרים ל-R:
+
+```{r}
+#| label: annot-random
+ms <- summary(fit_ann)[[1]][["Mean Sq"]]; dfs <- summary(fit_ann)[[1]][["Df"]]   # A, B, AB, E
+F_A <- ms[1] / ms[3]; F_B <- ms[2] / ms[3]
+rbind(annotator = c(F = F_A, p = pf(F_A, dfs[1], dfs[3], lower.tail = FALSE)),
+      task      = c(F = F_B, p = pf(F_B, dfs[2], dfs[3], lower.tail = FALSE)))
+vc <- c(annotator = (ms[1] - ms[3]) / (3 * 2), task = (ms[2] - ms[3]) / (4 * 2),
+        interaction = (ms[3] - ms[4]) / 2, error = ms[4])
+round(cbind(variance = vc, share = vc / sum(vc)), 3)
+```
+
+## איך קוראים את התוצאה {.smaller}
+
+- **מתייגים:** $F_A = `r f1(F_A, 2)`$ עם $(3, 6)$ דרגות חופש, $p = `r f1(pf(F_A, 3, 6, lower.tail = FALSE), 3)`$. עם המכנה של R ($MS_E$): $F = `r f1(ms[1] / ms[4], 1)`$, $p = `r signif(pf(ms[1] / ms[4], 3, 12, lower.tail = FALSE), 2)`$. ה-p-value הנכון גדול פי `r round(pf(F_A, 3, 6, lower.tail = FALSE) / pf(ms[1] / ms[4], 3, 12, lower.tail = FALSE))`, כי $MS_{AB}$ גדול פי `r f1(ms[3] / ms[4], 1)` מ-$MS_E$, ויש רק 6 דרגות חופש במכנה
+- **סוגי משימות:** כ-`r round(100 * vc[["task"]] / sum(vc))`% מהשונות. **ההחלטה:** לתמחר תיוג **לפי סוג משימה**, לא מחיר אחיד לפריט
+- **מתייגים:** כ-`r round(100 * vc[["annotator"]] / sum(vc))`% מהשונות. יש מתייגים מהירים ואיטיים, אבל זה פחות חשוב מסוג המשימה
+- **זהירות:** את $\sigma_\beta^2$ אומדים מ-3 סוגי משימות בלבד. האומד מאוד לא מדויק. כדי לאמוד אותו טוב, צריך **יותר סוגי משימות**, לא יותר פריטים
+
+## ב-R: הדרך הנכונה, עם `Error()` {.smaller}
+
+את החישוב הידני אפשר להחליף בשורה אחת. `Error()` אומר ל-R **מול איזה איבר אקראי** לבדוק את האפקטים:
+
+```{r}
+#| label: annot-error
+#| warning: false
+summary(aov(sec ~ annotator + task + Error(annotator:task), data = annot))
+```
+
+- הפלט מחולק ל**שכבות** ([strata]{.en}). בשכבה `annotator:task`, השורה `Residuals` היא $MS_{AB}$, ושני האפקטים נבדקים מולה
+- $F_A = `r f1(F_A, 2)`$ עם $(3, 6)$ דרגות חופש: **בדיוק** החישוב הידני. בשכבה `Within`, השורה `Residuals` היא $MS_E$
+- את רכיבי השונות עדיין מחשבים מתוחלות ה-MS, כמו קודם
+
+::: notes
+R מדפיס אזהרה "Error() model is singular". היא לא מזיקה כאן (כי A ו-B מופיעים גם כאפקטים וגם בתוך האיבר האקראי), אבל כדאי להזהיר את הסטודנטים שיראו אותה. בבחינה עדיין צריך לדעת לחשב ידנית מטבלת ANOVA.
+:::
+
+::: {.content-hidden when-format="revealjs"}
+**מודל מעורב** ([mixed model]{.en}): פקטור אחד קבוע ואחד אקראי. למשל, 3 ממשקי תיוג שאנחנו רוצים להשוות (קבוע), ו-4 מתייגים שהוגרלו (אקראי). אז $E(MS_A) = \sigma^2 + n\sigma_{\tau\beta}^2 + \frac{bn\sum\tau_i^2}{a-1}$ לפקטור הקבוע A, ולכן **את הפקטור הקבוע בודקים מול $MS_{AB}$**, ואת האינטראקציה מול $MS_E$. לגבי הפקטור האקראי יש שתי גרסאות של המודל בספרות (מוגבל ולא מוגבל), שנותנות מכנה שונה, $MS_E$ או $MS_{AB}$. בקורס הזה מספיק לזכור את הכלל הכללי: **בוחרים מכנה שהתוחלת שלו שווה לתוחלת המונה תחת $H_0$.**
+:::
+
+# מודל היררכי ([Nested]{.en})
+
+## מצטלב מול היררכי {.smaller}
+
+**מצטלב** ([crossed]{.en}): כל רמה של $A$ מופיעה עם **כל** רמה של $B$. כל מתייג תייג כל סוג משימה.
+
+**היררכי** ([nested]{.en}): כל רמה של $B$ קיימת **רק בתוך רמה אחת** של $A$. במקרה כזה אומרים ש-$B$ מקונן ב-$A$, ומסמנים $B(A)$.
+
+**הדוגמה:** שלושה מרכזי נתונים (ישראל, אירופה, ארה״ב). בכל אחד מגרילים **4 שרתים**, ושולחים לכל שרת 3 בקשות.
+
+| מרכז נתונים | ישראל | | | | אירופה | | | | ארה״ב | | | |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| שרת | s1 | s2 | s3 | s4 | s5 | s6 | s7 | s8 | s9 | s10 | s11 | s12 |
+
+- שרת s1 קיים רק בישראל. אין משמעות ל"שרת 1 באירופה", ולכן **אין אינטראקציה** מרכז × שרת
+- גם אם נמספר את השרתים 1–4 בכל מרכז, "שרת 1" בישראל ו"שרת 1" באירופה הם שרתים **שונים**
+
+## המודל והטבלה {.smaller}
+
+$$
+y_{ijk} = \mu + \tau_i + \beta_{j(i)} + \varepsilon_{ijk}
+\qquad i = 1..a \text{ (מרכז)}, \; j = 1..b \text{ (שרת בתוך מרכז)}, \; k = 1..n
+$$
+
+$$
+SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_{SS_A}
++ \underbrace{n\sum_{i,j}(\bar y_{ij\cdot} - \bar y_{i\cdot\cdot})^2}_{SS_{B(A)}}
++ \underbrace{\sum_{i,j,k}(y_{ijk} - \bar y_{ij\cdot})^2}_{SS_E}
+$$
+
+- $SS_{B(A)}$: הפיזור של השרתים **סביב הממוצע של המרכז שלהם**. דרגות חופש: $a(b-1)$
+- $SS_{B(A)} = SS_B + SS_{AB}$ של המודל המצטלב
+
+| מקור | df | $E(MS)$, השרתים אקראיים | $F_0$ |
+|---|---|---|---|
+| A (מרכז) | $a-1$ | $\sigma^2 + n\sigma_\beta^2 + \frac{bn\sum\tau_i^2}{a-1}$ | $MS_A / MS_{B(A)}$ |
+| B(A) (שרת) | $a(b-1)$ | $\sigma^2 + n\sigma_\beta^2$ | $MS_{B(A)} / MS_E$ |
+| שגיאה | $ab(n-1)$ | $\sigma^2$ | |
+
+::: {.content-hidden when-format="revealjs"}
+**אם גם B קבוע** (השרתים לא הוגרלו, אלא הם כל השרתים שמעניינים אותנו), אז $E(MS_{B(A)}) = \sigma^2 + \frac{n\sum\sum\beta_{j(i)}^2}{a(b-1)}$, ושני המבחנים הם מול $MS_E$. אבל ברוב המקרים המעשיים, הרמות המקוננות (שרתים, עובדים, אצוות, כיתות) הן מדגם, ולכן אקראיות.
+:::
+
+## השרתים: ב-R ובחישוב נכון {.smaller}
+
+```{r}
+#| label: nested
+set.seed(808)
+dc_servers <- tibble(dc = rep(c("il", "eu", "us"), each = 4), server = paste0("s", 1:12),
+                     dc_mean = rep(c(120, 110, 135), each = 4), u = rnorm(12, 0, 8)) |>
+  expand_grid(rep = 1:3) |>
+  mutate(ms = round(dc_mean + u + rnorm(n(), 0, 6), 1), dc = factor(dc, levels = c("il", "eu", "us")))
+fit_nest <- aov(ms ~ dc / server, data = dc_servers)   # dc / server = dc + dc:server
+summary(fit_nest)
+tab_n <- summary(fit_nest)[[1]]
+F_dc <- tab_n[1, "Mean Sq"] / tab_n[2, "Mean Sq"]
+c(F_dc = F_dc, p = pf(F_dc, 2, 9, lower.tail = FALSE), F_crit = qf(0.95, 2, 9))
+```
+
+- R בודק את המרכזים מול $MS_E$: $F = `r f1(tab_n[1, "F value"], 1)`$. **זה שגוי.** השרתים הוגרלו, ולכן המכנה הוא $MS_{B(A)}$: $F = `r f1(F_dc, 2)`$ עם $(2, 9)$ דרגות חופש
+- המסקנה נשארת (דוחים), אבל ה-p-value שונה בסדרי גודל. **יש לנו 4 שרתים לכל מרכז, לא 12 בקשות**
+
+::: notes
+זו בדיוק "החזרות המדומות" מהרצאה 4: 3 בקשות לאותו שרת הן לא 3 שרתים. המבחן הנכון על המרכזים מבוסס על 12 שרתים, ולא על 36 בקשות.
+:::
+
+## השרתים: הדרך הנכונה, עם `Error()` {.smaller}
+
+השרתים הוגרלו, ולכן אומרים ל-R שהם האיבר האקראי:
+
+```{r}
+#| label: nested-error
+summary(aov(ms ~ dc + Error(server), data = dc_servers))
+```
+
+- בשכבה `server`, השורה `Residuals` היא $MS_{B(A)}$ עם 9 דרגות חופש, והמרכזים נבדקים מולה: $F = `r f1(F_dc, 2)`$, כמו בחישוב הידני
+- שמות השרתים כאן ייחודיים (`s1`–`s12`), ולכן מספיק `Error(server)`. אם השרתים היו ממוספרים מחדש בכל מרכז (`s1`–`s4` בכל אחד), היינו כותבים `Error(dc:server)`
+
+
+# מה יכול להשתבש
+
+## חמש מלכודות בניתוח דו-כיווני {.smaller}
+
+1. **לפרש אפקט ראשי כשיש אינטראקציה:** "RAG מוסיף 9 נקודות בממוצע" נכון בממוצע, ולא נכון לאף מודל. מסתכלים קודם על האינטראקציה ועל הגרף
+2. **מכנה לא נכון:** עם אפקטים אקראיים או מודל היררכי, `aov()` רגיל מחלק הכול ב-$MS_E$. צריך לבחור את המכנה לפי תוחלות ה-MS, או להגדיר אותו ב-`Error()`
+3. **מצטלב במקום היררכי:** אם מריצים `dc * server` על שרתים שמקוננים במרכזים, מקבלים שורת "אינטראקציה" חסרת משמעות
+4. **להתעלם מבלוק:** אפקט היום נשאר בשגיאה, $MS_E$ מנופח, והמבחן מאבד עוצמה
+5. **ניסוי לא מאוזן:** כשמספר התצפיות בתאים שונה, הפירוק $SS_A + SS_B + SS_{AB} + SS_E$ כבר לא יחיד, ו-`aov()` נותן תוצאה **שתלויה בסדר** הפקטורים בנוסחה
+
+::: {.content-hidden when-format="revealjs"}
+**על ניסוי לא מאוזן.** `aov()` ו-`anova()` מחשבים סכומי ריבועים **סדרתיים** ([Type I]{.en}): הפקטור הראשון בנוסחה מקבל את כל השונות שהוא יכול להסביר, השני מקבל את מה שנשאר, וכן הלאה. בניסוי מאוזן הסדר לא משנה, כי הפקטורים אורתוגונליים. בניסוי לא מאוזן הם מתואמים, והסדר משנה. הפתרון הנפוץ הוא סכומי ריבועים מסוג II או III (למשל `car::Anova()`), שבהם כל פקטור נבדק "אחרי" האחרים. ההמלצה הכי טובה: לתכנן ניסוי מאוזן.
+:::
+
+
+# תרגיל מסכם: לתמחר ספרי שמע לפי סוגה
+
+## הסיפור {.smaller}
+
+**ליסנה** (שם בדוי) היא סטארט-אפ שמשיק חנות ספרי שמע ([audiobooks]{.en}). לפני ההשקה, ההנהלה רוצה לקבוע **מחיר לפי סוגה** ([genre]{.en}): מחיר גבוה לסוגות שיש עליהן ביקוש גבוה, ומחיר נמוך יותר כדי למשוך קהל לסוגות עם ביקוש נמוך.
+
+לליסנה עוד אין נתוני מכירות משלה. לכן אנליסטית בחברה אוספת מדגם מהקטלוג הציבורי של [Audible]{.en}:
+
+- **5 סוגות:** פנטזיה, מותחן, רומנטיקה, עזרה עצמית והיסטוריה
+- **סוג הקריינות:** קריין אנושי, או קול סינתטי ([AI narration]{.en}). ההפקה עם קול סינתטי זולה בהרבה
+- מכל צירוף של סוגה וקריינות היא מגרילה **12 ספרים** שיצאו ב-2025. סך הכול $N = 120$
+- **מדד הביקוש:** מספר הדירוגים שהספר קיבל בשנה הראשונה. [Audible]{.en} לא מפרסמת מכירות, ומספר הדירוגים הוא מדד עקיף נפוץ
+
+**השאלה העסקית:** אילו סוגות זוכות לביקוש גבוה, האם הקריינות משנה, ומה זה אומר על המחיר?
+
+::: {.content-hidden when-format="revealjs"}
+**הנתונים מדומים.** הם בנויים לפי המבנה של קטלוג ספרי שמע ציבורי (סוגה, משך, מחיר, סוג קריינות, מספר דירוגים), אבל המספרים עצמם מסומלצים, ואינם נתונים אמיתיים של [Audible]{.en} או של מוציא לאור כלשהו. מבנה התרגיל הוא מבנה של שאלה בבחינה: סיפור, פלט של R, ושאלות שחלקן דורשות חישוב ידני וחלקן פירוש וביקורת.
+:::
+
+## הנתונים {.smaller}
+
+```{r}
+#| label: books-sim
+#| include: false
+set.seed(2711)
+genres <- c("fantasy", "thriller", "romance", "self_help", "history")
+g_mean  <- c(fantasy = 3.25, thriller = 3.05, romance = 3.0, self_help = 2.75, history = 2.45)
+ai_pen  <- c(fantasy = -0.55, thriller = -0.50, romance = -0.55, self_help = 0, history = -0.05)
+g_hours <- c(fantasy = 16, thriller = 11, romance = 9, self_help = 7, history = 13)
+books <- expand_grid(genre = genres, narration = c("human", "ai"), i = 1:12) |>
+  mutate(pop   = rnorm(n()),                       # hidden "buzz": marketing, author fame
+         hours = round(pmax(2.5, g_hours[genre] + rnorm(n(), 0, 3)), 1),
+         price = round(pmin(45, pmax(9.99, 8 + 1.1 * hours + 3.5 * pop - 3 * (narration == "ai") +
+                                         rnorm(n(), 0, 2.5)))) - 0.01,
+         log_r = g_mean[genre] + ifelse(narration == "ai", ai_pen[genre], 0) +
+           0.28 * pop - 0.012 * (price - 22) + 0.006 * (hours - 11) + rnorm(n(), 0, 0.25),
+         ratings = round(10^log_r),
+         genre = factor(genre, levels = genres),
+         narration = factor(narration, levels = c("human", "ai"))) |>
+  select(genre, narration, hours, price, ratings)
+```
+
+```{r}
+#| label: books-head
+books |> slice_sample(n = 6)
+```
+
+- `hours`: משך ההקלטה בשעות · `price`: מחיר מחירון בדולרים · `ratings`: מספר הדירוגים בשנה הראשונה
+
+::: {.content-hidden when-format="revealjs"}
+קוד הסימולציה (כדי שתוכלו להריץ את הכול בעצמכם):
+
+```{r}
+#| label: books-sim-show
+#| ref.label: books-sim
+#| eval: false
+```
+
+בסימולציה יש משתנה נסתר, `pop`, שמייצג את ה"באזז" סביב הספר: שיווק, שם המחבר, ביקורות. הוא מעלה גם את הביקוש וגם את המחיר שהמו"ל קובע. לאנליסטית אין את המשתנה הזה. נחזור אליו בשאלה 6.
+:::
+
+## שאלה 1: מה מודדים? {.smaller}
+
+```{r}
+#| label: books-hist
+#| echo: false
+#| fig-height: 3.3
+bind_rows(books |> transmute(scale = "ratings", value = ratings),
+          books |> transmute(scale = "log10(ratings)", value = log10(ratings))) |>
+  mutate(scale = fct_inorder(scale)) |>
+  ggplot(aes(value)) +
+  geom_histogram(bins = 25, fill = nanas_pal[["sky"]], colour = "white") +
+  facet_wrap(~ scale, scales = "free_x") +
+  labs(title = "מספר הדירוגים: זנב ימני ארוך. אחרי לוגריתם: סימטרי",
+       x = NULL, y = "Number of titles")
+```
+
+**השאלה:** האנליסטית מנתחת את $\log_{10}(\text{ratings})$ ולא את מספר הדירוגים עצמו. למה? ואיך מפרשים הפרש של 0.3 בסולם הלוגריתמי?
+
+## תשובה 1 {.smaller}
+
+- **ההתפלגות מוטה ימינה:** רוב הספרים מקבלים כמה מאות דירוגים, ומעטים מקבלים אלפים. ממוצע של סוגה נגרר אחרי ספר מצליח אחד
+- **הפיזור גדל עם הממוצע:** בסוגה פופולרית ההבדלים בין ספרים גדולים יותר. זה מפר את הנחת שוויון השונויות
+- **ההשפעות כפליות:** קריינות טובה מכפילה ביקוש, היא לא "מוסיפה 200 דירוגים". הלוגריתם הופך השפעות כפליות לחיבוריות, וזה מה ש-ANOVA ורגרסיה מניחות
+
+**הפירוש:** הפרש $d$ בסולם $\log_{10}$ הוא **יחס** של $10^d$ בסולם המקורי.
+
+| הפרש ב-$\log_{10}$ | 0.1 | 0.3 | 0.5 | 1 |
+|---|---|---|---|---|
+| יחס בין מספרי הדירוגים | ×1.26 | ×2 | ×3.16 | ×10 |
+
+```{r}
+#| label: books-log
+books <- books |> mutate(log_r = log10(ratings))
+```
+
+## שאלה 2: השלימו את טבלת ה-ANOVA {.smaller}
+
+```{r}
+#| label: books-oneway-hidden
+#| include: false
+fit_g <- aov(log_r ~ genre, data = books)
+tab_g <- summary(fit_g)[[1]]
+ss_g <- tab_g[1, "Sum Sq"]; ss_eg <- tab_g[2, "Sum Sq"]; ss_tg <- ss_g + ss_eg
+ms_eg <- ss_eg / 115
+```
+
+ניתוח שונות חד-כיווני של $\log_{10}(\text{ratings})$ לפי סוגה (5 סוגות, 24 ספרים בכל אחת). חלק מהפלט נמחק:
+
+| מקור | SS | df | MS | $F_0$ |
+|---|---|---|---|---|
+| סוגה | `r f1(ss_g, 2)` | (א) | (ב) | (ה) |
+| שגיאה | (ג) | (ד) | `r f1(ms_eg, 3)` | |
+| סך הכול | `r f1(ss_tg, 2)` | 119 | | |
+
+1. השלימו את הטבלה
+2. נסחו את ההשערות, ובדקו אותן ב-$\alpha = 0.05$ ($F_{0.95;\,4,\,115} = `r f1(qf(0.95, 4, 115), 2)`$)
+3. כמה אחוזים מהשונות בביקוש מוסברים על ידי הסוגה?
+
+## תשובה 2 {.smaller}
+
+- (א) $a - 1 = 4$ · (ב) $MS = `r f1(ss_g, 2)` / 4 = `r f1(ss_g / 4, 3)`$ · (ג) $SS_E = `r f1(ss_tg, 2)` - `r f1(ss_g, 2)` = `r f1(ss_eg, 2)`$ · (ד) $N - a = 115$
+- (ה) $F_0 = `r f1(ss_g / 4, 3)` / `r f1(ms_eg, 3)` = `r f1(tab_g[1, "F value"], 2)` > `r f1(qf(0.95, 4, 115), 2)`$: **דוחים** את $H_0: \tau_1 = \dots = \tau_5 = 0$. יש הבדל בביקוש בין הסוגות
+- $\eta^2 = SS_{Tr} / SS_T = `r f1(ss_g, 2)` / `r f1(ss_tg, 2)` = `r f1(ss_g / ss_tg, 2)`$: הסוגה מסבירה כ-`r round(100 * ss_g / ss_tg)`% מהשונות. **מובהק, אבל רוב השונות היא בין ספרים בתוך אותה סוגה**
+
+```{r}
+#| label: books-oneway
+summary(fit_g)
+```
+
+## שאלה 3: האם אפשר לסמוך על המבחן? {.smaller}
+
+```{r}
+#| label: books-assumptions
+bartlett.test(ratings ~ genre, data = books)$p.value     # raw counts
+bartlett.test(log_r ~ genre, data = books)$p.value       # log scale
+kruskal.test(ratings ~ genre, data = books)
+```
+
+**השאלה:** מה אומרות שתי בדיקות [Bartlett]{.en}? למה האנליסטית הריצה גם [Kruskal–Wallis]{.en}, ומה היה יוצא אם הייתה מריצה אותו על `log_r`?
+
+## תשובה 3 {.smaller}
+
+- **על המספרים הגולמיים:** $p$ זעיר. השונויות שונות מאוד בין הסוגות, כצפוי כשהפיזור גדל עם הממוצע
+- **על הלוגריתם:** $p = `r f1(bartlett.test(log_r ~ genre, data = books)$p.value, 2)`$. אין עדות לשונויות שונות. **הלוגריתם תיקן את הבעיה**
+- **[Kruskal–Wallis]{.en}** לא מניח נורמליות. הוא מגיע לאותה מסקנה, וזה מחזק את התוצאה
+- **על `log_r` הוא היה נותן בדיוק אותה תוצאה.** הלוגריתם הוא פונקציה עולה, ולכן הוא לא משנה את **הדירוגים** ([ranks]{.en}) של התצפיות. מבחנים א-פרמטריים על דרגות לא רגישים לטרנספורמציה עולה
+
+::: {.content-hidden when-format="revealjs"}
+**בדיקה עצמית:** `kruskal.test(log_r ~ genre, data = books)` מחזיר בדיוק את אותו סטטיסטי. בבחינה זו שאלה טובה לבדוק אם מבינים מה מבחן על דרגות עושה ומה הוא לא עושה. כדאי גם להסתכל על גרף Q-Q של השאריות של `fit_g` ולראות שהן קרובות לנורמליות.
+:::
+
+## שאלה 4: אילו סוגות שונות זו מזו? {.smaller}
+
+```{r}
+#| label: books-tukey
+tk <- TukeyHSD(fit_g)$genre
+round(tk[order(tk[, "p adj"]), ], 3)
+```
+
+1. חשבו את ה-HSD ידנית ($q_{0.95}(5, 115) = `r f1(qtukey(0.95, 5, 115), 2)`$), ובדקו שהוא מתאים לרוחב רווחי הסמך בפלט
+2. חלקו את הסוגות לקבוצות. מה המשמעות לתמחור?
+
+## תשובה 4 {.smaller}
+
+$$
+HSD = q_{0.95}(5, 115)\sqrt{\frac{MS_E}{n}} = `r f1(qtukey(0.95, 5, 115), 2)` \sqrt{\frac{`r f1(ms_eg, 3)`}{24}} = `r f1(qtukey(0.95, 5, 115) * sqrt(ms_eg / 24), 3)`
+$$
+
+זה בדיוק חצי הרוחב של כל רווח סמך בפלט: $\text{diff} \pm HSD$.
+
+- **היסטוריה** נמוכה מכל ארבע הסוגות האחרות. ההפרש מפנטזיה, $`r f1(tk["history-fantasy", "diff"], 2)`$ בסולם $\log_{10}$, הוא יחס של $10^{`r f1(tk["history-fantasy", "diff"], 2)`} = `r f1(10^tk["history-fantasy", "diff"], 2)`$: **כרבע** מהדירוגים
+- **בין ארבע האחרות אין הבדל מובהק.** שתי קבוצות: {פנטזיה, מותחן, רומנטיקה, עזרה עצמית} ו-{היסטוריה}
+- **לתמחור:** לפי הניתוח הזה, שתי מדרגות מחיר. אבל רגע: עוד לא הסתכלנו על הקריינות
+
+## שאלה 5: סוגה × קריינות {.smaller}
+
+```{r}
+#| label: books-twoway-plot
+#| echo: false
+#| fig-height: 3.4
+books |>
+  group_by(genre, narration) |> summarise(m = mean(log_r), .groups = "drop") |>
+  ggplot(aes(narration, m, colour = genre, group = genre)) +
+  geom_line(linewidth = 1.2) + geom_point(size = 3) +
+  scale_colour_manual(values = unname(nanas_pal[c("primary", "accent", "purple", "green", "yellow")])) +
+  labs(title = "קול סינתטי מוריד את הביקוש לסיפורת, ולא לעיון",
+       subtitle = "ממוצע log10(ratings) בכל תא, 12 ספרים לתא",
+       x = "Narration", y = "Mean log10(ratings)", colour = NULL)
+```
+
+```{r}
+#| label: books-twoway
+fit_gn <- aov(log_r ~ genre * narration, data = books)
+summary(fit_gn)
+```
+
+**השאלה:** מה סדר הקריאה של הטבלה? מה המסקנה? בדקו ידנית את $F_0$ של האינטראקציה.
+
+## תשובה 5 {.smaller}
+
+```{r}
+#| label: books-twoway-hidden
+#| include: false
+tab_gn <- summary(fit_gn)[[1]]
+ms_ab <- tab_gn[3, "Mean Sq"]; ms_e2 <- tab_gn[4, "Mean Sq"]
+```
+
+- **קודם האינטראקציה:** $F_0 = \frac{`r f1(tab_gn[3, "Sum Sq"], 2)` / 4}{`r f1(tab_gn[4, "Sum Sq"], 2)` / 110} = \frac{`r f1(ms_ab, 3)`}{`r f1(ms_e2, 3)`} = `r f1(ms_ab / ms_e2, 2)` > F_{0.95;\,4,\,110} = `r f1(qf(0.95, 4, 110), 2)`$. **ההשפעה של הקריינות תלויה בסוגה**
+- לכן "קול סינתטי מוריד את הביקוש" (האפקט הראשי) הוא ממוצע שלא נכון לאף סוגה. בודקים **אפקטים פשוטים**:
+
+```{r}
+#| label: books-simple
+emmeans::emmeans(fit_gn, ~ narration | genre) |> emmeans::contrast("revpairwise") |>
+  as_tibble() |> transmute(genre, ai_minus_human = round(estimate, 2), ratio = round(10^estimate, 2),
+                           p = signif(p.value, 2))
+```
+
+- **בסיפורת** (פנטזיה, מותחן, רומנטיקה): קול סינתטי מוריד את הביקוש לכרבע, ומובהק מאוד
+- **בעיון:** בעזרה עצמית אין הבדל בכלל. בהיסטוריה ההפרש קטן יותר ולא מובהק, אבל רווח הסמך רחב: אי אפשר לשלול ירידה של עשרות אחוזים
+- $MS_E$ ירד מ-`r f1(ms_eg, 3)` ל-`r f1(ms_e2, 3)`: הקריינות הסבירה חלק ממה שבניתוח החד-כיווני נחשב לרעש
+
+## שאלה 6: ומה עם המחיר? {.smaller}
+
+האנליסטית מוסיפה את המחיר ואת המשך, ומריצה רגרסיה:
+
+```{r}
+#| label: books-lm
+fit_lm <- lm(log_r ~ price + hours + genre + narration, data = books)
+round(summary(fit_lm)$coefficients, 4)
+```
+
+1. פרשו את המקדם של `narrationai`, ובנו לו רווח סמך של 95% ($t_{0.975;\,112} = `r f1(qt(0.975, 112), 2)`$)
+2. מנהל המוצר אומר: "המקדם של המחיר **חיובי** ומובהק. נעלה מחירים, והביקוש יעלה." מה דעתכם?
+3. למה האנליסטית משתמשת ב-`log_r` כמשתנה התלוי ברגרסיה? האם אפשר לבנות את מודל הרגרסיה על המשתנה המקורי, מספר הדירוגים (`ratings`)?
+
+## תשובה 6 {.smaller}
+
+```{r}
+#| label: books-lm-hidden
+#| include: false
+cf <- summary(fit_lm)$coefficients
+b_ai <- cf["narrationai", "Estimate"]; se_ai <- cf["narrationai", "Std. Error"]
+ci_ai <- b_ai + c(-1, 1) * qt(0.975, 112) * se_ai
+b_p <- cf["price", "Estimate"]
+```
+
+- **`narrationai`:** $`r f1(b_ai, 3)` \pm `r f1(qt(0.975, 112), 2)` \cdot `r f1(se_ai, 4)` = [`r f1(ci_ai[1], 3)`,\ `r f1(ci_ai[2], 3)`]$. ביחס: $10^{`r f1(b_ai, 2)`} = `r f1(10^b_ai, 2)`$, כלומר קול סינתטי מקושר לכמחצית מהדירוגים (בין `r f1(10^ci_ai[1], 2)` ל-`r f1(10^ci_ai[2], 2)`), **כשהסוגה, המחיר והמשך קבועים**
+- **אבל** זה מודל בלי אינטראקציה. בשאלה 5 ראינו שהאפקט שונה מאוד בין סיפורת לעיון, ולכן "פי חצי" הוא ממוצע שלא מתאר אף סוגה (מלכודת 1 של הדו-כיווני)
+- **המחיר:** $`r f1(b_p, 4)`$ לכל דולר, יחס של $10^{`r f1(b_p, 4)`} = `r f1(10^b_p, 3)`$. **אסור להסיק מזה שהעלאת מחיר מעלה ביקוש:**
+  - אלה **נתוני תצפית**, לא ניסוי. אף אחד לא הגריל מחירים
+  - מו"לים קובעים מחיר גבוה לספרים **שהם מצפים שיצליחו** (מחבר מוכר, שיווק). ה"באזז" הזה מעלה גם את המחיר וגם את הביקוש, והוא לא במודל
+  - המקדם החיובי מתאר את **ההחלטות של המו"לים**, לא את התגובה של הקונים למחיר
+
+::: {.content-hidden when-format="revealjs"}
+**משתנה מתערב** ([confounder]{.en}). בסימולציה, האפקט האמיתי של המחיר על הביקוש **שלילי** ($-0.012$ לכל דולר), אבל המשתנה הנסתר `pop` מעלה גם את המחיר וגם את הביקוש. הרגרסיה רואה רק את המתאם, ולכן אומדת מקדם חיובי. זה אותו מנגנון כמו פרדוקס סימפסון מהרצאה 3: מקדם ברגרסיה הוא השוואה בין ספרים **שונים** שבמקרה יש להם מחירים שונים, לא תוצאה של שינוי המחיר של אותו ספר. כדי לדעת מה קורה כשמשנים מחיר צריך **ניסוי**: להגריל מחירים (מבחן A/B). זה הנושא של ההרצאה על תכנון ניסויים.
+:::
+
+## תשובה 6 (המשך): למה `log_r`? {.smaller}
+
+**טכנית, אפשר.** `lm()` ירוץ גם על `ratings`. השאלה היא אם ההנחות של המודל מתקיימות. נשווה בין שני המודלים:
+
+```{r}
+#| label: books-lm-raw
+fit_raw <- lm(ratings ~ price + hours + genre + narration, data = books)
+shapiro.test(resid(fit_raw))$p.value   # normality of residuals, raw scale
+shapiro.test(resid(fit_lm))$p.value    # normality of residuals, log scale
+sum(fitted(fit_raw) < 0)               # books with a negative predicted count
+```
+
+```{r}
+#| label: books-raw-hidden
+#| include: false
+b_ai_raw <- coef(fit_raw)[["narrationai"]]
+sd_by_fit <- function(m) tapply(resid(m), cut(fitted(m), quantile(fitted(m), 0:3 / 3), include.lowest = TRUE), sd)
+sd_raw <- sd_by_fit(fit_raw)
+g_means <- tapply(books$ratings, books$genre, mean)
+```
+
+- **השאריות לא נורמליות** במודל על `ratings` ($p < 0.001$ ב-[Shapiro–Wilk]{.en}), ונורמליות על `log_r` ($p = `r f1(shapiro.test(resid(fit_lm))$p.value, 2)`$)
+- **השונות לא קבועה:** סטיית התקן של השאריות עולה מכ-`r f1(sd_raw[1], 0)` בתחזיות הנמוכות לכ-`r f1(sd_raw[3], 0)` בגבוהות. זו אותה בעיה ש-[Bartlett]{.en} מצא בשאלה 3
+- **תחזיות בלתי אפשריות:** המודל חוזה מספר דירוגים **שלילי** ל-`r sum(fitted(fit_raw) < 0)` ספרים
+
+## למה `log_r`? השאריות של שני המודלים
+
+```{r}
+#| label: books-raw-resid-plot
+#| echo: false
+#| fig-height: 4.2
+bind_rows(
+  tibble(model = "ratings (raw)", fitted = fitted(fit_raw), resid = resid(fit_raw)),
+  tibble(model = "log10(ratings)", fitted = fitted(fit_lm), resid = resid(fit_lm))) |>
+  mutate(model = factor(model, levels = c("ratings (raw)", "log10(ratings)"))) |>
+  ggplot(aes(fitted, resid)) +
+  geom_hline(yintercept = 0, colour = nanas_pal[["grey"]]) +
+  geom_point(alpha = 0.6, size = 2) +
+  facet_wrap(~ model, scales = "free") +
+  labs(title = "על הסולם המקורי: משפך. על הסולם הלוגריתמי: ענן אחיד",
+       subtitle = "שאריות מול ערכים חזויים · אותם משתנים מסבירים בשני המודלים",
+       x = "Fitted value", y = "Residual")
+```
+
+## למה `log_r`? הפירוש {.smaller}
+
+- **ביקוש פועל באחוזים, לא ביחידות.** במודל על `ratings`, המקדם של `narrationai` הוא $`r f1(b_ai_raw, 0)`$ דירוגים, **אותו מספר בכל סוגה**. אבל לספר היסטוריה ממוצע יש רק `r f1(g_means[["history"]], 0)` דירוגים, ולספר פנטזיה `r f1(g_means[["fantasy"]], 0)`. הורדה של `r f1(-b_ai_raw, 0)` דירוגים גדולה מכל הביקוש הממוצע בהיסטוריה, ובפנטזיה היא רק כ-`r round(100 * -b_ai_raw / g_means[["fantasy"]])`% ממנו
+- **על `log_r`, המקדם הוא יחס:** $10^{`r f1(b_ai, 2)`} = `r f1(10^b_ai, 2)`$, כלומר "פי חצי" בכל סוגה. זה פירוש שאפשר לקחת להנהלה
+- **המסקנה:** אפשר לבנות את המודל על `ratings`, אבל הוא מפר את הנחות הנורמליות ושוויון השונויות, חוזה ערכים שליליים ומניח שהאפקטים חיבוריים. כשהתגובה היא ספירה מוטה ימינה, שמשתנה בסדרי גודל, מנתחים את הלוגריתם שלה
+
+::: {.content-hidden when-format="revealjs"}
+**הערה על $R^2$.** ב-`fit_raw`, $R^2 = `r f1(summary(fit_raw)$r.squared, 2)`$, וב-`fit_lm`, $R^2 = `r f1(summary(fit_lm)$r.squared, 2)`$. אבל אי אפשר להשוות ישירות $R^2$ בין מודלים עם משתנה תלוי שונה: כל אחד מודד את השונות המוסברת **בסולם שלו**. ההשוואה הנכונה היא דרך השאריות וההנחות, כמו למעלה. **הערה נוספת:** ספירות אפשר לנתח גם ישירות, בלי טרנספורמציה, במודל [Poisson]{.en} או בינומי שלילי. זה מודל ליניארי מוכלל ([GLM]{.en}), מאותה משפחה של הרגרסיה הלוגיסטית שנלמד בהמשך ההרצאה.
+:::
+
+::: notes
+אפשר לשאול את הכיתה לפני שמראים: "מה יקרה לשאריות?" רובם יזכרו את Bartlett משאלה 3. הנקודה החשובה לבחינה: "אפשר" ו"כדאי" הן שתי שאלות שונות. לנמק דרך ההנחות (שאריות, שונות) ודרך הפירוש (יחס מול הפרש קבוע).
+:::
+
+## שאלה 7: ההמלצה {.smaller}
+
+**מה ממליצים להנהלה של ליסנה?**
+
+::: {.fragment}
+1. **סוגה:** ביקוש גבוה לסיפורת ולעזרה עצמית, נמוך להיסטוריה (כרבע). אפשר להתחיל בשתי מדרגות מחיר
+2. **קריינות:** בסיפורת קול סינתטי מוריד את הביקוש לכרבע. **בעזרה עצמית אין לו מחיר נראה לעין.** לכן: להפיק עזרה עצמית בקול סינתטי (זול) ולתמחר אותה נמוך, להשקיע בקריינים לסיפורת, ולבדוק היסטוריה בניסוי קטן לפני שמחליטים
+3. **מחיר:** הנתונים האלה **לא יכולים** לענות כמה הביקוש רגיש למחיר. ההמלצה: ניסוי מחיר מוגרל בהשקה, למשל שני מחירים לכל סוגה
+4. **הסתייגויות:** מספר דירוגים ≠ מכירות. [Audible]{.en} ≠ השוק של ליסנה. ומדגם של 12 ספרים לתא מספיק לאפקטים גדולים בלבד
+:::
+
+::: notes
+זה המקום להדגיש את המבנה של שאלה בבחינה: תמיד יש חלק של חישוב ידני (השלמת טבלה, HSD, רווח סמך), חלק של קריאת פלט, וחלק של פירוש וביקורת. החלק האחרון הוא זה שמבדיל בין ציון טוב לציון מצוין.
+:::
+
+## מה ראינו בתרגיל {.smaller}
+
+| שלב | הכלי | מה למדנו |
+|---|---|---|
+| להחליט מה מודדים | התפלגות, טרנספורמציה | $\log$ כשההשפעות כפליות והפיזור גדל עם הממוצע |
+| האם יש הבדל? | ANOVA חד-כיווני | יש, אבל הסוגה מסבירה רק כ-`r round(100 * ss_g / ss_tg)`% |
+| האם אפשר לסמוך? | [Bartlett]{.en}, [Kruskal–Wallis]{.en} | הלוגריתם תיקן את השונויות, והמסקנה עמידה |
+| בין מי למי? | [Tukey HSD]{.en} | היסטוריה לבד, השאר יחד |
+| האם ההשפעה תלויה במשהו? | ANOVA דו-כיווני, אפקטים פשוטים | קול סינתטי פוגע בסיפורת בלבד |
+| ומה עם משתנים רציפים? | רגרסיה מרובה | מקדם מובהק ≠ סיבתיות |
+
+# רגרסיה לוגיסטית ([Logistic regression]{.en})
+
+## השאלה: מי יהפוך למנוי? {.smaller}
+
+ליסנה השיקה. כל משתמש חדש מקבל **שבוע ניסיון חינם**, ובסופו מחליט אם להירשם למנוי בתשלום.
+
+**השאלה העסקית:** האם כמות ההאזנה בשבוע הניסיון מנבאת הרשמה? אם כן, אפשר לזהות מוקדם משתמשים "בסיכון", ולשלוח להם תזכורת או המלצה.
+
+- **התגובה:** $Y_i = 1$ אם המשתמש נרשם, $Y_i = 0$ אם לא. **משתנה בינארי**
+- **המשתנה המסביר:** $x_i$ = שעות האזנה בשבוע הניסיון
+- **המטרה:** לאמוד את $p(x) = P(Y = 1 \mid x)$, הסיכוי להירשם כפונקציה של שעות ההאזנה
+
+```{r}
+#| label: trial-data
+set.seed(1123)
+trial <- tibble(hours = round(rgamma(400, shape = 2, scale = 2.5), 1),
+                first_ai = rbinom(400, 1, 0.4)) |>
+  mutate(converted  = rbinom(n(), 1, plogis(-2.4 + 0.38 * hours - 0.7 * first_ai)),
+         first_book = factor(ifelse(first_ai == 1, "ai", "human"), levels = c("human", "ai"))) |>
+  select(hours, first_book, converted)
+```
+
+`r nrow(trial)` משתמשי ניסיון, מתוכם `r sum(trial$converted)` (`r round(100 * mean(trial$converted))`%) נרשמו.
+
+## למה לא רגרסיה לינארית? {.smaller}
+
+```{r}
+#| label: lpm-plot
+#| echo: false
+#| fig-height: 3.6
+fit_lpm <- lm(converted ~ hours, data = trial)
+fit_h <- glm(converted ~ hours, family = binomial, data = trial)
+grid_h <- tibble(hours = seq(0, 26, by = 0.1))
+grid_h <- grid_h |>
+  mutate(linear = predict(fit_lpm, grid_h), logistic = predict(fit_h, grid_h, type = "response")) |>
+  pivot_longer(c(linear, logistic), names_to = "model", values_to = "p")
+ggplot(trial, aes(hours, converted)) +
+  geom_hline(yintercept = c(0, 1), colour = nanas_pal[["grey"]], linetype = "dotted") +
+  geom_jitter(height = 0.04, width = 0, alpha = 0.35, size = 1.6, colour = nanas_pal[["grey"]]) +
+  geom_line(data = grid_h, aes(y = p, colour = model), linewidth = 1.2) +
+  scale_colour_manual(values = unname(nanas_pal[c("accent", "primary")])) +
+  labs(title = "הקו הישר חוצה את 1. העקומה הלוגיסטית נשארת בין 0 ל-1",
+       subtitle = "נקודה: משתמש (0 = לא נרשם, 1 = נרשם)",
+       x = "Listening hours in the trial week", y = "P(subscribe)", colour = NULL)
+```
+
+- **חיזוי מחוץ ל-$[0, 1]$:** הקו הישר צופה "הסתברות" של `r f1(max(fitted(fit_lpm)), 2)` למשתמש שהאזין 25 שעות
+- **השונות לא קבועה:** $\text{Var}(Y \mid x) = p(x)(1 - p(x))$. היא תלויה ב-$x$, בניגוד להנחה של רגרסיה לינארית
+- **השגיאות לא נורמליות:** $Y$ מקבל רק 0 או 1, ולכן גם השארית מקבלת רק שני ערכים לכל $x$
+
+## סיכוי ([Odds]{.en}) ו-[logit]{.en} {.smaller}
+
+**הסיכוי** ([odds]{.en}): היחס בין ההסתברות להצלחה להסתברות לכישלון.
+
+$$
+\text{odds} = \frac{p}{1 - p} \qquad\qquad \text{logit}(p) = \ln\frac{p}{1 - p}
+$$
+
+| $p$ | 0.1 | 0.2 | 0.5 | 0.8 | 0.9 |
+|---|---|---|---|---|---|
+| **odds** | 0.11 | 0.25 ("1 ל-4") | 1 | 4 ("4 ל-1") | 9 |
+| **logit** | −2.20 | −1.39 | 0 | 1.39 | 2.20 |
+
+- $p$ חסום בין 0 ל-1. ה-odds בין 0 לאינסוף. ה-[logit]{.en} **בין מינוס אינסוף לאינסוף**
+- לכן את ה-[logit]{.en} אפשר למדל בפונקציה לינארית בלי לחשוש מחיזוי לא חוקי
+- **סימטריה:** $\text{logit}(1 - p) = -\text{logit}(p)$
+
+## המודל {.smaller}
+
+$$
+Y_i \sim \text{Bernoulli}(p_i), \qquad \text{logit}(p_i) = \ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i
+$$
+
+ובכיוון ההפוך, **הפונקציה הלוגיסטית** ([sigmoid]{.en}):
+
+$$
+p_i = \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+$$
+
+- **אין איבר שגיאה נורמלי.** האקראיות היא של משתנה ברנולי: בהינתן $p_i$, המשתמש נרשם או לא
+- **הקשר בין $x$ ל-$p$ לא לינארי:** הוא לינארי רק בסולם ה-[logit]{.en}
+- **עם כמה משתנים מסבירים:** $\text{logit}(p_i) = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$. כמו ברגרסיה מרובה
+
+## איך $\beta_0$ ו-$\beta_1$ קובעים את העקומה {.smaller}
+
+```{r}
+#| label: logistic-shapes
+#| echo: false
+#| fig-height: 3.3
+shapes <- tribble(~label, ~b0, ~b1,
+  "b0 = -3, b1 = 0.5", -3, 0.5,
+  "b0 = -6, b1 = 1",   -6, 1,
+  "b0 = -3, b1 = 1",   -3, 1,
+  "b0 = 3, b1 = -0.5",  3, -0.5) |>
+  mutate(label = fct_inorder(label)) |>
+  expand_grid(x = seq(0, 12, by = 0.05)) |>
+  mutate(p = plogis(b0 + b1 * x))
+ggplot(shapes, aes(x, p, colour = label)) +
+  geom_hline(yintercept = 0.5, colour = nanas_pal[["grey"]], linetype = "dotted") +
+  geom_line(linewidth = 1.2) +
+  scale_colour_manual(values = unname(nanas_pal[c("primary", "accent", "green", "purple")])) +
+  labs(title = "שני מקדמים קובעים את הכיוון, את התלילות ואת המיקום של העקומה",
+       subtitle = "הקו המקווקו: הסתברות של חצי",
+       x = "x", y = "p(x)", colour = NULL)
+```
+
+- **כיוון:** כש-$\beta_1$ חיובי, ההסתברות עולה עם $x$. כשהוא שלילי, היא יורדת (העקומה הסגולה)
+- **תלילות:** ככל שהערך המוחלט של $\beta_1$ גדול יותר, המעבר חד יותר (הירוקה והכתומה מול הכחולה)
+- **מיקום:** ההסתברות שווה לחצי כשהביטוי $\beta_0 + \beta_1 x$ מתאפס, כלומר בנקודה $x_{50} = -\beta_0 / \beta_1$
+- **השיפוע בנקודה הזו** הוא $\beta_1 / 4$. זה השינוי המקסימלי בהסתברות לכל יחידה של $x$
+
+## תרגיל: מציאת המקדמים משתי נקודות {.smaller}
+
+מנתונים קודמים ידוע: משתמש שהאזין **2 שעות** נרשם בהסתברות **20%**, ומשתמש שהאזין **10 שעות** נרשם בהסתברות **80%**.
+
+1. מצאו את $\beta_0$ ו-$\beta_1$ של מודל לוגיסטי שעובר בשתי הנקודות
+2. מה ההסתברות להירשם אחרי 12 שעות?
+3. כמה שעות צריך להאזין כדי שההסתברות תהיה לפחות 90%?
+
+::: {.fragment}
+**הרמז:** בסולם ה-[logit]{.en} המודל לינארי. שתי נקודות, שני נעלמים.
+:::
+
+## פתרון {.smaller}
+
+**1.** $\text{logit}(0.2) = \ln\frac{0.2}{0.8} = -1.386$, $\text{logit}(0.8) = 1.386$:
+
+$$
+\begin{cases} \beta_0 + 2\beta_1 = -1.386 \\ \beta_0 + 10\beta_1 = 1.386 \end{cases}
+\quad\Rightarrow\quad
+\beta_1 = \frac{1.386 - (-1.386)}{10 - 2} = 0.347, \qquad \beta_0 = -1.386 - 2 \cdot 0.347 = -2.079
+$$
+
+**2.** $\text{logit} = -2.079 + 0.347 \cdot 12 = 2.079$, ולכן $p = \dfrac{1}{1 + e^{-2.079}} = 0.889$
+
+**3.** $\text{logit}(0.9) = \ln 9 = 2.197$. צריך $-2.079 + 0.347x \ge 2.197$, כלומר $x \ge 12.3$ שעות
+
+```{r}
+#| label: two-points
+b1 <- (qlogis(0.8) - qlogis(0.2)) / (10 - 2); b0 <- qlogis(0.2) - 2 * b1
+c(b0 = b0, b1 = b1, p_12 = plogis(b0 + 12 * b1), x_90 = (qlogis(0.9) - b0) / b1)
+```
+
+::: {.content-hidden when-format="revealjs"}
+`qlogis()` היא פונקציית ה-[logit]{.en}, ו-`plogis()` היא הפונקציה הלוגיסטית (ההפוכה לה). שימו לב שהחציון, $x_{50} = 2.079 / 0.347 = 6$, נמצא בדיוק באמצע בין 2 ל-10. זה לא מקרי: 20% ו-80% סימטריים סביב 50%.
+:::
+
+## פירוש המקדם: יחס סיכויים ([Odds ratio]{.en}) {.smaller}
+
+מה קורה ל-odds כש-$x$ עולה ביחידה אחת?
+
+$$
+\frac{\text{odds}(x + 1)}{\text{odds}(x)} = \frac{e^{\beta_0 + \beta_1 (x+1)}}{e^{\beta_0 + \beta_1 x}} = e^{\beta_1}
+$$
+
+- **$e^{\beta_1}$ הוא יחס הסיכויים** ([odds ratio, OR]{.en}): כל שעת האזנה נוספת **מכפילה** את ה-odds ב-$e^{\beta_1}$, בלי קשר לנקודת ההתחלה
+- בתרגיל: $e^{0.347} = 1.41$. כל שעה מגדילה את ה-odds ב-41%
+- **ה-odds עולה ב-41%, לא ההסתברות.** השינוי בהסתברות תלוי בנקודת ההתחלה:
+
+| שעות | 0 → 1 | 5 → 6 | 12 → 13 |
+|---|---|---|---|
+| $p$ | 0.111 → 0.150 | 0.414 → 0.500 | 0.889 → 0.919 |
+| השינוי בהסתברות | +0.039 | +0.086 | +0.030 |
+
+## משתנה מסביר בינארי: טבלת 2×2 {.smaller}
+
+האם הספר הראשון ששמעו (קריין אנושי או קול סינתטי) קשור להרשמה?
+
+```{r}
+#| label: trial-2x2
+tab2 <- with(trial, table(first_book, converted))
+tab2
+```
+
+**ביד:** $\text{odds}_{human} = \frac{`r tab2["human", "1"]`}{`r tab2["human", "0"]`} = `r f1(tab2["human", "1"] / tab2["human", "0"], 3)`$, $\text{odds}_{ai} = \frac{`r tab2["ai", "1"]`}{`r tab2["ai", "0"]`} = `r f1(tab2["ai", "1"] / tab2["ai", "0"], 3)`$, $\quad OR = \frac{`r f1(tab2["ai", "1"] / tab2["ai", "0"], 3)`}{`r f1(tab2["human", "1"] / tab2["human", "0"], 3)`} = `r f1((tab2["ai", "1"] / tab2["ai", "0"]) / (tab2["human", "1"] / tab2["human", "0"]), 3)`$
+
+```{r}
+#| label: trial-2x2-glm
+fit_b <- glm(converted ~ first_book, family = binomial, data = trial)
+coef(fit_b)
+exp(coef(fit_b))
+```
+
+- $e^{\hat\beta_0}$ = ה-odds בקבוצת הבסיס (אנושי). $e^{\hat\beta_1}$ = **יחס הסיכויים**, בדיוק החישוב הידני
+- מי שהתחיל בקול סינתטי: ה-odds שלו להירשם **כחצי**. זה מתיישב עם התרגיל המסכם
+
+## אמידה: נראות מקסימלית {.smaller}
+
+אין ריבועים פחותים. מחפשים את המקדמים שעבורם **הנתונים שראינו הכי סבירים** ([maximum likelihood]{.en}):
+
+$$
+L(\beta_0, \beta_1) = \prod_{i=1}^{n} p_i^{\,y_i}(1 - p_i)^{1 - y_i}
+\qquad
+\ell = \ln L = \sum_{i=1}^{n}\left[y_i \ln p_i + (1 - y_i)\ln(1 - p_i)\right]
+$$
+
+- כל משתמש שנרשם ($y_i = 1$) תורם $p_i$, וכל מי שלא נרשם תורם $1 - p_i$. רוצים $p_i$ גבוה למי שנרשם ונמוך למי שלא
+- המקדמים "מסתתרים" בתוך $p_i$. כדי לגזור, מציבים את המודל: $\;p_i = \dfrac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}$
+
+## הנגזרות: איפה המקדמים? {.smaller}
+
+**צעד 1: מציבים את $p_i$ ב-$\ell$.** משתמשים ב-$\ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i$ וב-$1 - p_i = \frac{1}{1 + e^{\beta_0 + \beta_1 x_i}}$:
+
+$$
+\ell = \sum_i\left[y_i \ln\frac{p_i}{1 - p_i} + \ln(1 - p_i)\right]
+= \sum_i\left[y_i(\beta_0 + \beta_1 x_i) - \ln\left(1 + e^{\beta_0 + \beta_1 x_i}\right)\right]
+$$
+
+**צעד 2: גוזרים.** הנגזרת של $\ln(1 + e^{\beta_0 + \beta_1 x_i})$ לפי $\beta_0$ היא $\frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = p_i$, ולפי $\beta_1$ היא $x_i p_i$:
+
+$$
+\frac{\partial \ell}{\partial \beta_0} = \sum_i \left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i (y_i - p_i)
+\qquad
+\frac{\partial \ell}{\partial \beta_1} = \sum_i x_i\left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i x_i (y_i - p_i)
+$$
+
+**צעד 3: משווים לאפס.** שתי משוואות בשני נעלמים:
+
+$$
+\sum_i y_i = \sum_i \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\qquad\qquad
+\sum_i x_i y_i = \sum_i \frac{x_i}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+$$
+
+- **אין פתרון סגור:** המקדמים נמצאים בתוך מעריך, בתוך שבר, בתוך סכום. אי אפשר לבודד אותם כמו בריבועים פחותים. פותרים בשיטה איטרטיבית, [Newton–Raphson]{.en}. ב-R זה `Number of Fisher Scoring iterations` בפלט
+- **פירוש המשוואה הראשונה:** סכום ההסתברויות החזויות שווה למספר המצטרפים בפועל. בנתונים שלנו הסכום הוא `r f1(sum(fitted(glm(converted ~ hours, family = binomial, data = trial))), 1)`, ובפועל הצטרפו `r sum(trial$converted)` משתמשים (בודקים ב-R עם `sum(fitted(fit_h))`)
+
+::: {.content-hidden when-format="revealjs"}
+**שיטת ניוטון–רפסון.** מתחילים מניחוש (למשל $\boldsymbol\beta = \mathbf 0$), ובכל צעד מעדכנים:
+
+$$
+\boldsymbol\beta^{(t+1)} = \boldsymbol\beta^{(t)} + (X'WX)^{-1}X'(\mathbf y - \mathbf p), \qquad W = \text{diag}\big(p_i(1 - p_i)\big)
+$$
+
+$X'(\mathbf y - \mathbf p)$ הוא הגרדיאנט של $\ell$, ו-$-X'WX$ היא מטריצת הנגזרות השניות. ברגרסיה לוגיסטית ניוטון–רפסון ו-[Fisher scoring]{.en} הם אותה שיטה. כמה איטרציות מספיקות:
+
+```{r}
+#| label: newton
+X <- cbind(1, trial$hours); y <- trial$converted; beta <- c(0, 0)
+for (it in 1:6) {
+  p <- plogis(X %*% beta)
+  beta <- beta + solve(t(X) %*% (X * as.vector(p * (1 - p))), t(X) %*% (y - p))
+  cat(it, round(beta, 5), "\n")
+}
+```
+
+אחרי 4–5 איטרציות המקדמים כבר לא זזים, והם זהים לפלט של `glm()` בשקף הבא. שגיאות התקן בפלט הן השורשים של האלכסון של $(X'WX)^{-1}$ בנקודת המקסימום. **בבחינה** צריך לדעת לרשום את פונקציית הנראות ואת המשוואות, ולהסביר את הרעיון של השיטה האיטרטיבית. לא צריך לבצע אותה ביד.
+:::
+
+## ב-R: `glm()` {.smaller}
+
+```{r}
+#| label: trial-glm
+fit_h <- glm(converted ~ hours, family = binomial, data = trial)
+summary(fit_h)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+```{r}
+#| label: trial-glm-hidden
+#| include: false
+bh <- coef(fit_h); seh <- sqrt(diag(vcov(fit_h)))
+d0 <- fit_h$null.deviance; d1 <- fit_h$deviance; G <- d0 - d1
+```
+
+- **`hours`**, $\hat\beta_1 = `r f1(bh[2], 3)`$: כל שעה מעלה את ה-[logit]{.en} ב-`r f1(bh[2], 3)`. יחס הסיכויים: $e^{`r f1(bh[2], 3)`} = `r f1(exp(bh[2]), 2)`$, כל שעה מגדילה את ה-odds ב-`r round(100 * (exp(bh[2]) - 1))`%
+- **`z value`** = `Estimate / Std. Error`: מבחן [Wald]{.en}. תחת $H_0: \beta_1 = 0$, $z \sim N(0, 1)$ בקירוב. כאן $z = `r f1(bh[2] / seh[2], 2)`$
+- **החציון:** $x_{50} = `r f1(-bh[1], 3)` / `r f1(bh[2], 3)` = `r f1(-bh[1] / bh[2], 1)`$ שעות. מתחת לזה, רוב המשתמשים לא נרשמים
+- **רווח סמך ל-OR:** קודם ל-$\beta_1$, ואז $e^{(\cdot)}$ על שני הקצוות:
+
+$$
+e^{`r f1(bh[2], 4)` \pm 1.96 \cdot `r f1(seh[2], 4)`} = [`r f1(exp(bh[2] - 1.96 * seh[2]), 2)`,\ `r f1(exp(bh[2] + 1.96 * seh[2]), 2)`]
+$$
+
+- **`Null deviance`, `Residual deviance`, `AIC`**: על אלה בשקף הבא
+
+## [Deviance]{.en} ומבחן למובהקות המודל {.smaller}
+
+**[Deviance]{.en}:** $D = -2\ell(\hat{\boldsymbol\beta})$, כש-$\ell$ היא הלוג-נראות במקסימום. ככל שהמודל מתאים יותר, $D$ קטן יותר. זה המקביל של $SS_E$.
+
+| מודל | מה יש בו | [Deviance]{.en} | df |
+|---|---|---|---|
+| **מודל האפס** ([null]{.en}) | רק $\beta_0$: אותה הסתברות לכולם | $D_0 = `r f1(d0, 2)`$ | $n - 1 = `r fit_h$df.null`$ |
+| **המודל שלנו** | $\beta_0 + \beta_1 x$ | $D_1 = `r f1(d1, 2)`$ | $n - 2 = `r fit_h$df.residual`$ |
+
+**מבחן יחס הנראות** ([likelihood ratio test]{.en}) ל-$H_0: \beta_1 = \dots = \beta_k = 0$:
+
+$$
+G = D_0 - D_1 = `r f1(d0, 2)` - `r f1(d1, 2)` = `r f1(G, 2)` \;\sim\; \chi^2_k \text{ תחת } H_0
+$$
+
+- $k = 1$ (מספר המשתנים המסבירים). $\chi^2_{0.95;\,1} = 3.84$, ו-$G = `r f1(G, 1)`$ גדול בהרבה: **המודל מובהק**
+- זה המקביל של מבחן F לכל המודל ברגרסיה לינארית
+- **`AIC`** $= D_1 + 2(k + 1) = `r f1(d1, 2)` + 4 = `r f1(AIC(fit_h), 1)`$: להשוואה בין מודלים. נמוך יותר = טוב יותר
+
+## אותו מבחן ב-R {.smaller}
+
+```{r}
+#| label: trial-lrt
+anova(fit_h, test = "Chisq")
+c(G = fit_h$null.deviance - fit_h$deviance, chi2_crit = qchisq(0.95, df = 1))
+```
+
+- שורת `hours`: העמודה `Deviance` היא $G$, הירידה ב-[deviance]{.en} כשמוסיפים את המשתנה. `Resid. Dev` הוא $D$ אחרי ההוספה
+- כמו `anova()` של מודל לינארי, גם כאן המשתנים נכנסים **לפי הסדר** בנוסחה. עם כמה משתנים, כל שורה בודקת את התרומה של המשתנה **בנוסחה אחרי הקודמים**. נשתמש בזה בהרצאה הבאה למבחן חלקי
+
+## חיזוי: מי בסיכון? {.smaller}
+
+```{r}
+#| label: trial-predict
+predict(fit_h, newdata = tibble(hours = c(2, 5, 8, 12)), type = "response") |> round(3)
+```
+
+- `type = "response"` מחזיר הסתברות. בלי זה, `predict()` מחזיר את ה-[logit]{.en}
+- **ביד, למשתמש שהאזין 5 שעות:** $\text{logit} = `r f1(bh[1], 3)` + `r f1(bh[2], 3)` \cdot 5 = `r f1(bh[1] + 5 * bh[2], 3)`$, ולכן $p = \frac{1}{1 + e^{`r f1(-(bh[1] + 5 * bh[2]), 3)`}} = `r f1(plogis(bh[1] + 5 * bh[2]), 3)`$
+- **ההחלטה העסקית:** משתמש שהאזין עד 5 שעות נרשם בסיכוי של פחות מ-30%. הוא מועמד לתזכורת או להמלצה אישית. אבל זהירות: גם כאן אלה **נתוני תצפית**. משתמש שמאזין הרבה כנראה אוהב ספרי שמע מלכתחילה. כדי לדעת אם תזכורת **גורמת** להרשמה, צריך ניסוי
+
+## בהרצאה הבאה {.smaller}
+
+- **כמה משתנים מסבירים:** שעות האזנה **וגם** סוג הספר הראשון. פירוש של OR "כשהשאר קבוע"
+- **מבחן [deviance]{.en} חלקי:** האם משתנה אחד תורם, בנוכחות האחרים. המקביל של מבחן F חלקי
+- **סיווג:** מהסתברות להחלטה. סף, מטריצת בלבול ([confusion matrix]{.en}), רגישות וסגוליות
+- **מה יכול להשתבש:** הפרדה מלאה ([separation]{.en}), אירועים נדירים, ובלבול בין odds להסתברות
+
+# סיכום
+
+## מה לקחת מההרצאה {.smaller}
+
+| השאלה | הכלי | ב-R |
+|---|---|---|
+| שני פקטורים, עם חזרות | $SS_A + SS_B + SS_{AB} + SS_E$, קודם בודקים את האינטראקציה | `aov(y ~ A * B)` |
+| יש אינטראקציה | אפקטים פשוטים, השוואות בין תאים | `emmeans(fit, ~ A, by = "B")` |
+| מקור רעש ידוע (יום, משמרת) | בלוק, $n = 1$, מודל אדיטיבי | `aov(y ~ A + block)` |
+| הרמות הוגרלו | $F_A = MS_A / MS_{AB}$, רכיבי שונות | `Error(A:B)` |
+| B קיים רק בתוך A | מודל היררכי, $F_A = MS_A / MS_{B(A)}$ | `Error(A:B)` |
+| תגובה מוטה, השפעות כפליות | $\log$, ופירוש של הפרשים כיחסים | `log10(y)` |
+| מקדם ברגרסיה על נתוני תצפית | מתאם, לא סיבתיות. לסיבתיות צריך ניסוי | |
+| תגובה בינארית | $\text{logit}(p) = \beta_0 + \beta_1 x$, $OR = e^{\beta_1}$ | `glm(y ~ x, family = binomial)` |
+| האם המודל הלוגיסטי מובהק? | $G = D_0 - D_1 \sim \chi^2_k$ | `anova(fit, test = "Chisq")` |
