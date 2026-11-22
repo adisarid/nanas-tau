@@ -84,9 +84,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-df99d872f4c54f7aa56ff7441a5fca8a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-32c66c77c0fdd61c2af8acec97226e6f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-b147bb89d2cd97f51fa58b0a52fef25f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-32c66c77c0fdd61c2af8acec97226e6f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5797534ee9925ab393f5668b2bb5d8a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-a39f30abd484cb844c0809dea7c6e511.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-5797534ee9925ab393f5668b2bb5d8a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -376,8 +376,12 @@ window.Quarto = {
  <span class="dropdown-text">6. השוואות מרובות (המשך) וניתוח שונות דו-כיווני</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../lectures/07-logistic-regression.html">
- <span class="dropdown-text">7. דו-כיווני (המשך), תרגיל מסכם ורגרסיה לוגיסטית</span></a>
+    <a class="dropdown-item" href="../lectures/07-two-way-anova-exercise.html">
+ <span class="dropdown-text">7. דו-כיווני (המשך) ותרגיל מסכם</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/08-logistic-regression.html">
+ <span class="dropdown-text">8. רגרסיה לוגיסטית</span></a>
   </li>  
     </ul>
   </li>
@@ -502,7 +506,7 @@ window.Quarto = {
   <li><a href="#אותו-ניתוח-ב-r" id="toc-אותו-ניתוח-ב-r" class="nav-link" data-scroll-target="#אותו-ניתוח-ב-r">אותו ניתוח ב-R</a></li>
   <li><a href="#אומדים-לאפקטים" id="toc-אומדים-לאפקטים" class="nav-link" data-scroll-target="#אומדים-לאפקטים">אומדים לאפקטים</a></li>
   <li><a href="#כשהאינטראקציה-מובהקת-אפקטים-פשוטים" id="toc-כשהאינטראקציה-מובהקת-אפקטים-פשוטים" class="nav-link" data-scroll-target="#כשהאינטראקציה-מובהקת-אפקטים-פשוטים">כשהאינטראקציה מובהקת: אפקטים פשוטים</a></li>
-  <li><a href="#ומה-עם-קטן-rag-מול-גדול" id="toc-ומה-עם-קטן-rag-מול-גדול" class="nav-link" data-scroll-target="#ומה-עם-קטן-rag-מול-גדול">ומה עם “קטן + RAG” מול “גדול”?</a></li>
+  <li><a href="#ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול" id="toc-ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול" class="nav-link" data-scroll-target="#ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול">ומה עם מודל קטן עם RAG מול מודל גדול?</a></li>
   <li><a href="#בדיקת-ההנחות" id="toc-בדיקת-ההנחות" class="nav-link" data-scroll-target="#בדיקת-ההנחות">בדיקת ההנחות</a></li>
   </ul></li>
   <li><a href="#בלוקים-ניתוח-דו-כיווני-בלי-חזרות" id="toc-בלוקים-ניתוח-דו-כיווני-בלי-חזרות" class="nav-link" data-scroll-target="#בלוקים-ניתוח-דו-כיווני-בלי-חזרות">בלוקים: ניתוח דו-כיווני בלי חזרות</a>
@@ -562,7 +566,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">פורסם</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">20 בנובמבר 2026</p>
+      <p class="date">22 בנובמבר 2026</p>
     </div>
   </div>
   
@@ -2446,14 +2450,14 @@ SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_
 SS_T &amp;= \sum_{i,j,k} y_{ijk}^2 - C \\
 SS_A &amp;= \frac{1}{bn}\sum_{i} y_{i\cdot\cdot}^2 - C \qquad\qquad
 SS_B = \frac{1}{an}\sum_{j} y_{\cdot j\cdot}^2 - C \\
-SS_{\text{cells}} &amp;= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \qquad\quad\;\, \text{(ה-SS בין כל } ab \text{ התאים)} \\
+SS_{\text{cells}} &amp;= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \\
 SS_{AB} &amp;= SS_{\text{cells}} - SS_A - SS_B \\
 SS_E &amp;= SS_T - SS_{\text{cells}}
 \end{aligned}
 \]</span></p>
 <ul>
 <li><strong>הכלל:</strong> סכום בריבוע, חלקי מספר התצפיות שבסכום, פחות <span class="math inline">\(C\)</span></li>
-<li><span class="math inline">\(SS_{\text{cells}}\)</span> הוא ה-<span class="math inline">\(SS_{Tr}\)</span> של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה</li>
+<li><span class="math inline">\(SS_{\text{cells}}\)</span> הוא סכום הריבועים בין כל <span class="math inline">\(ab\)</span> התאים, כלומר ה-<span class="math inline">\(SS_{Tr}\)</span> של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה</li>
 </ul>
 </section>
 <section id="חישוב-ידני-טבלת-הסכומים" class="level2 smaller">
@@ -2644,9 +2648,9 @@ size = large:
 <li><code>SE</code> זהה בשלושתם: <span class="math inline">\(\sqrt{2 \cdot 10.52 / 4} = 2.29\)</span></li>
 </ul>
 </section>
-<section id="ומה-עם-קטן-rag-מול-גדול" class="level2 smaller">
-<h2 class="smaller anchored" data-anchor-id="ומה-עם-קטן-rag-מול-גדול">ומה עם “קטן + RAG” מול “גדול”?</h2>
-<p>שאלה 3 משווה <strong>תאים</strong>. <span class="en">Tukey</span> על כל 6 התאים, עם ה-<span class="math inline">\(MS_E\)</span> של המודל הדו-כיווני:</p>
+<section id="ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול">ומה עם מודל קטן עם RAG מול מודל גדול?</h2>
+<p><strong>השאלה העסקית:</strong> האם מודל קטן עם RAG, הזול יותר, יכול להחליף את המודל הגדול? זו השוואה בין <strong>תאים</strong>. <span class="en">Tukey</span> על כל 6 התאים, עם ה-<span class="math inline">\(MS_E\)</span> של המודל הדו-כיווני:</p>
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>קוד</summary>
@@ -3760,7 +3764,7 @@ Residuals 24    712    29.7               </code></pre>
 <p>ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז</p>
 <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/06-two-way-anova.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>עודכן לאחרונה: 20.11.2026</p>
+<p>עודכן לאחרונה: 22.11.2026</p>
 </div>
   </div>
 </footer>

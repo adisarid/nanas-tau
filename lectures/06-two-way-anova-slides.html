@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.11.9">
 
   <meta name="author" content="ד״ר עדי שריד">
-  <meta name="dcterms.date" content="2026-11-20">
+  <meta name="dcterms.date" content="2026-11-22">
   <title>ניתוח נתונים סטטיסטי – 6. השוואות מרובות (המשך) וניתוח שונות דו-כיווני</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -219,7 +219,7 @@
 </div>
 </div>
 
-  <p class="date">2026-11-20</p>
+  <p class="date">2026-11-22</p>
 </section>
 <section id="על-מה-נדבר-היום" class="slide level2">
 <h2>על מה נדבר היום</h2>
@@ -2016,14 +2016,14 @@ SS_T = \underbrace{bn\sum_i(\bar y_{i\cdot\cdot} - \bar y_{\cdot\cdot\cdot})^2}_
 SS_T &amp;= \sum_{i,j,k} y_{ijk}^2 - C \\
 SS_A &amp;= \frac{1}{bn}\sum_{i} y_{i\cdot\cdot}^2 - C \qquad\qquad
 SS_B = \frac{1}{an}\sum_{j} y_{\cdot j\cdot}^2 - C \\
-SS_{\text{cells}} &amp;= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \qquad\quad\;\, \text{(ה-SS בין כל } ab \text{ התאים)} \\
+SS_{\text{cells}} &amp;= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \\
 SS_{AB} &amp;= SS_{\text{cells}} - SS_A - SS_B \\
 SS_E &amp;= SS_T - SS_{\text{cells}}
 \end{aligned}
 \]</span></p>
 <ul>
 <li><strong>הכלל:</strong> סכום בריבוע, חלקי מספר התצפיות שבסכום, פחות <span class="math inline">\(C\)</span></li>
-<li><span class="math inline">\(SS_{\text{cells}}\)</span> הוא ה-<span class="math inline">\(SS_{Tr}\)</span> של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה</li>
+<li><span class="math inline">\(SS_{\text{cells}}\)</span> הוא סכום הריבועים בין כל <span class="math inline">\(ab\)</span> התאים, כלומר ה-<span class="math inline">\(SS_{Tr}\)</span> של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה</li>
 </ul>
 </section>
 <section id="חישוב-ידני-טבלת-הסכומים" class="slide level2 smaller">
@@ -2197,9 +2197,9 @@ size = large:
 <li><code>SE</code> זהה בשלושתם: <span class="math inline">\(\sqrt{2 \cdot 10.52 / 4} = 2.29\)</span></li>
 </ul>
 </section>
-<section id="ומה-עם-קטן-rag-מול-גדול" class="slide level2 smaller">
-<h2>ומה עם “קטן + RAG” מול “גדול”?</h2>
-<p>שאלה 3 משווה <strong>תאים</strong>. <span class="en">Tukey</span> על כל 6 התאים, עם ה-<span class="math inline">\(MS_E\)</span> של המודל הדו-כיווני:</p>
+<section id="ומה-עם-מודל-קטן-עם-rag-מול-מודל-גדול" class="slide level2 smaller">
+<h2>ומה עם מודל קטן עם RAG מול מודל גדול?</h2>
+<p><strong>השאלה העסקית:</strong> האם מודל קטן עם RAG, הזול יותר, יכול להחליף את המודל הגדול? זו השוואה בין <strong>תאים</strong>. <span class="en">Tukey</span> על כל 6 התאים, עם ה-<span class="math inline">\(MS_E\)</span> של המודל הדו-כיווני:</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(fit_rag, <span class="st">"size:retrieval"</span>)<span class="sc">$</span><span class="st">`</span><span class="at">size:retrieval</span><span class="st">`</span>[<span class="fu">c</span>(<span class="st">"small:on-large:off"</span>, <span class="st">"large:on-small:on"</span>), ]</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">

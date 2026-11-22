@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="he" xml:lang="he" dir="rtl"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="ד״ר עדי שריד">
+
+<title>8. רגרסיה לוגיסטית – ניתוח נתונים סטטיסטי</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-df99d872f4c54f7aa56ff7441a5fca8a.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-8c4e33a7014a71d15d08e1b4dbb43596.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-df99d872f4c54f7aa56ff7441a5fca8a.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5797534ee9925ab393f5668b2bb5d8a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-a39f30abd484cb844c0809dea7c6e511.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-5797534ee9925ab393f5668b2bb5d8a1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "אין תוצאות",
+    "search-matching-documents-text": "מסמכים תואמים",
+    "search-copy-link-title": "העתק קישור לחיפוש",
+    "search-hide-matches-text": "הסתר התאמות נוספות",
+    "search-more-match-text": "התאמה נוספת במסמך זה",
+    "search-more-matches-text": "התאמות נוספות במסמך זה",
+    "search-clear-button-title": "נקה",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "בטל",
+    "search-submit-button-title": "שלח",
+    "search-label": "חפש"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          toggle.setAttribute("aria-checked", alternate ? "true" : "false");
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455).
+    // Not run on load: stylesheets are set before first paint there, and
+    // scrolling would undo the scroll to a URL fragment (#14973).
+    // The one pixel nudge keeps the reader where they were.
+    const refreshSafariScrollbar = () => {
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        const scrollY = window.scrollY;
+        window.scrollTo(0, scrollY > 0 ? scrollY - 1 : 1);
+        setTimeout(() => {
+          window.scrollTo(0, scrollY);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      refreshSafariScrollbar();
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="אתר אינטרנט">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">ניתוח נתונים סטטיסטי</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="הצג/הסתר ניווט" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">בית</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">הרצאות</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
+        <li>
+    <a class="dropdown-item" href="../lectures.html">
+ <span class="dropdown-text">כל ההרצאות</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li>
+    <a class="dropdown-item" href="../lectures/00-course-intro.html">
+ <span class="dropdown-text">0. פתיחה: על הקורס</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/01-nonparametric.html">
+ <span class="dropdown-text">1. שיטות א-פרמטריות</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/02-exit-polls.html">
+ <span class="dropdown-text">בונוס: למה טעו מדגמי היציאה?</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/03-multiple-regression.html">
+ <span class="dropdown-text">3. רגרסיה לינארית מרובה</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/04-one-way-anova.html">
+ <span class="dropdown-text">4. ניתוח שונות חד-כיווני</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/05-contrasts-multiple-comparisons.html">
+ <span class="dropdown-text">5. ניגודים, השוואות מרובות וא-פרמטרי</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/06-two-way-anova.html">
+ <span class="dropdown-text">6. השוואות מרובות (המשך) וניתוח שונות דו-כיווני</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/07-two-way-anova-exercise.html">
+ <span class="dropdown-text">7. דו-כיווני (המשך) ותרגיל מסכם</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../lectures/08-logistic-regression.html">
+ <span class="dropdown-text">8. רגרסיה לוגיסטית</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu--1" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">מחשבונים אונליין</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu--1">    
+        <li>
+    <a class="dropdown-item" href="../calculators/prediction-intervals.html">
+ <span class="dropdown-text">רווח סמך מול רווח חיזוי</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../syllabus.html"> 
+<span class="menu-text">סילבוס</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://moodle.tau.ac.il/course/view.php?id=571313701" target="_blank"> 
+<span class="menu-text">Moodle</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/adisarid/nanas-tau"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <button type="button" role="switch" aria-checked="false" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="הצג/הסתר מצב חשוך" aria-label="הצג/הסתר מצב חשוך"><i class="bi"></i></button>
+</div>
+            <div id="quarto-search" class="" title="חפש"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">בעמוד זה</h2>
+   
+  <ul>
+  <li><a href="#על-מה-נדבר-היום" id="toc-על-מה-נדבר-היום" class="nav-link active" data-scroll-target="#על-מה-נדבר-היום">על מה נדבר היום</a></li>
+  <li><a href="#רגרסיה-לוגיסטית-logistic-regression" id="toc-רגרסיה-לוגיסטית-logistic-regression" class="nav-link" data-scroll-target="#רגרסיה-לוגיסטית-logistic-regression">רגרסיה לוגיסטית (<span class="en">Logistic regression</span>)</a>
+  <ul class="collapse">
+  <li><a href="#השאלה-מי-יהפוך-למנוי" id="toc-השאלה-מי-יהפוך-למנוי" class="nav-link" data-scroll-target="#השאלה-מי-יהפוך-למנוי">השאלה: מי יהפוך למנוי?</a></li>
+  <li><a href="#למה-לא-רגרסיה-לינארית" id="toc-למה-לא-רגרסיה-לינארית" class="nav-link" data-scroll-target="#למה-לא-רגרסיה-לינארית">למה לא רגרסיה לינארית?</a></li>
+  <li><a href="#סיכוי-odds-ו-logit" id="toc-סיכוי-odds-ו-logit" class="nav-link" data-scroll-target="#סיכוי-odds-ו-logit">סיכוי (<span class="en">Odds</span>) ו-<span class="en">logit</span></a></li>
+  <li><a href="#המודל" id="toc-המודל" class="nav-link" data-scroll-target="#המודל">המודל</a></li>
+  <li><a href="#איך-beta_0-ו-beta_1-קובעים-את-העקומה" id="toc-איך-beta_0-ו-beta_1-קובעים-את-העקומה" class="nav-link" data-scroll-target="#איך-beta_0-ו-beta_1-קובעים-את-העקומה">איך <span class="math inline">\(\beta_0\)</span> ו-<span class="math inline">\(\beta_1\)</span> קובעים את העקומה</a></li>
+  <li><a href="#תרגיל-מציאת-המקדמים-משתי-נקודות" id="toc-תרגיל-מציאת-המקדמים-משתי-נקודות" class="nav-link" data-scroll-target="#תרגיל-מציאת-המקדמים-משתי-נקודות">תרגיל: מציאת המקדמים משתי נקודות</a></li>
+  <li><a href="#פתרון" id="toc-פתרון" class="nav-link" data-scroll-target="#פתרון">פתרון</a></li>
+  <li><a href="#פירוש-המקדם-יחס-סיכויים-odds-ratio" id="toc-פירוש-המקדם-יחס-סיכויים-odds-ratio" class="nav-link" data-scroll-target="#פירוש-המקדם-יחס-סיכויים-odds-ratio">פירוש המקדם: יחס סיכויים (<span class="en">Odds ratio</span>)</a></li>
+  <li><a href="#משתנה-מסביר-בינארי-טבלת-22" id="toc-משתנה-מסביר-בינארי-טבלת-22" class="nav-link" data-scroll-target="#משתנה-מסביר-בינארי-טבלת-22">משתנה מסביר בינארי: טבלת 2×2</a></li>
+  <li><a href="#אמידה-נראות-מקסימלית" id="toc-אמידה-נראות-מקסימלית" class="nav-link" data-scroll-target="#אמידה-נראות-מקסימלית">אמידה: נראות מקסימלית</a></li>
+  <li><a href="#הנגזרות-איפה-המקדמים" id="toc-הנגזרות-איפה-המקדמים" class="nav-link" data-scroll-target="#הנגזרות-איפה-המקדמים">הנגזרות: איפה המקדמים?</a></li>
+  <li><a href="#ב-r-glm" id="toc-ב-r-glm" class="nav-link" data-scroll-target="#ב-r-glm">ב-R: <code>glm()</code></a></li>
+  <li><a href="#איך-קוראים-את-הפלט" id="toc-איך-קוראים-את-הפלט" class="nav-link" data-scroll-target="#איך-קוראים-את-הפלט">איך קוראים את הפלט</a></li>
+  <li><a href="#deviance-ומבחן-למובהקות-המודל" id="toc-deviance-ומבחן-למובהקות-המודל" class="nav-link" data-scroll-target="#deviance-ומבחן-למובהקות-המודל"><span class="en">Deviance</span> ומבחן למובהקות המודל</a></li>
+  <li><a href="#אותו-מבחן-ב-r" id="toc-אותו-מבחן-ב-r" class="nav-link" data-scroll-target="#אותו-מבחן-ב-r">אותו מבחן ב-R</a></li>
+  <li><a href="#חיזוי-מי-בסיכון" id="toc-חיזוי-מי-בסיכון" class="nav-link" data-scroll-target="#חיזוי-מי-בסיכון">חיזוי: מי בסיכון?</a></li>
+  <li><a href="#בחלק-ב" id="toc-בחלק-ב" class="nav-link" data-scroll-target="#בחלק-ב">בחלק ב</a></li>
+  </ul></li>
+  <li><a href="#סיכום" id="toc-סיכום" class="nav-link" data-scroll-target="#סיכום">סיכום</a>
+  <ul class="collapse">
+  <li><a href="#מה-לקחת-מההרצאה" id="toc-מה-לקחת-מההרצאה" class="nav-link" data-scroll-target="#מה-לקחת-מההרצאה">מה לקחת מההרצאה</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/08-logistic-regression.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div><div class="quarto-alternate-formats"><h2>תבניות אחרות</h2><ul><li><a href="08-logistic-regression-slides.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">8. רגרסיה לוגיסטית</h1>
+<p class="subtitle lead">ניתוח נתונים סטטיסטי · הרצאה 8</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">כותב</div>
+    <div class="quarto-title-meta-contents">
+             <p>ד״ר עדי שריד </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">פורסם</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">22 בנובמבר 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="על-מה-נדבר-היום" class="level2">
+<h2 class="anchored" data-anchor-id="על-מה-נדבר-היום">על מה נדבר היום</h2>
+<ul>
+<li><strong>רגרסיה לוגיסטית</strong> (<span class="en">logistic regression</span>), חלק א: כשהתגובה היא כן או לא
+<ul>
+<li>סיכוי (<span class="en">odds</span>), <span class="en">logit</span> והמודל הלוגיסטי</li>
+<li>יחס סיכויים (<span class="en">odds ratio</span>) ופירוש המקדמים</li>
+<li>אמידה בנראות מקסימלית, הפלט של <code>glm()</code> ומבחן <span class="en">deviance</span></li>
+</ul></li>
+<li><strong>רגרסיה לוגיסטית, חלק ב:</strong> כמה משתנים מסבירים, מבחן חלקי וסיווג</li>
+</ul>
+</section>
+<section id="רגרסיה-לוגיסטית-logistic-regression" class="level1">
+<h1>רגרסיה לוגיסטית (<span class="en">Logistic regression</span>)</h1>
+<section id="השאלה-מי-יהפוך-למנוי" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="השאלה-מי-יהפוך-למנוי">השאלה: מי יהפוך למנוי?</h2>
+<p><strong>ליסנה</strong>, חנות ספרי השמע מהתרגיל המסכם בהרצאה הקודמת, השיקה. כל משתמש חדש מקבל <strong>שבוע ניסיון חינם</strong>, ובסופו מחליט אם להירשם למנוי בתשלום.</p>
+<p><strong>השאלה העסקית:</strong> האם כמות ההאזנה בשבוע הניסיון מנבאת הרשמה? אם כן, אפשר לזהות מוקדם משתמשים “בסיכון”, ולשלוח להם תזכורת או המלצה.</p>
+<ul>
+<li><strong>התגובה:</strong> <span class="math inline">\(Y_i = 1\)</span> אם המשתמש נרשם, <span class="math inline">\(Y_i = 0\)</span> אם לא. <strong>משתנה בינארי</strong></li>
+<li><strong>המשתנה המסביר:</strong> <span class="math inline">\(x_i\)</span> = שעות האזנה בשבוע הניסיון</li>
+<li><strong>המטרה:</strong> לאמוד את <span class="math inline">\(p(x) = P(Y = 1 \mid x)\)</span>, הסיכוי להירשם כפונקציה של שעות ההאזנה</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1123</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>trial <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">hours =</span> <span class="fu">round</span>(<span class="fu">rgamma</span>(<span class="dv">400</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="fl">2.5</span>), <span class="dv">1</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">first_ai =</span> <span class="fu">rbinom</span>(<span class="dv">400</span>, <span class="dv">1</span>, <span class="fl">0.4</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">converted  =</span> <span class="fu">rbinom</span>(<span class="fu">n</span>(), <span class="dv">1</span>, <span class="fu">plogis</span>(<span class="sc">-</span><span class="fl">2.4</span> <span class="sc">+</span> <span class="fl">0.38</span> <span class="sc">*</span> hours <span class="sc">-</span> <span class="fl">0.7</span> <span class="sc">*</span> first_ai)),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">first_book =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(first_ai <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"ai"</span>, <span class="st">"human"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"human"</span>, <span class="st">"ai"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hours, first_book, converted)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>400 משתמשי ניסיון, מתוכם 121 (30%) נרשמו.</p>
+</section>
+<section id="למה-לא-רגרסיה-לינארית" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="למה-לא-רגרסיה-לינארית">למה לא רגרסיה לינארית?</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08-logistic-regression_files/figure-html/lpm-plot-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1200"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>חיזוי מחוץ ל-<span class="math inline">\([0, 1]\)</span>:</strong> הקו הישר צופה “הסתברות” של 1.66 למשתמש שהאזין 25 שעות</li>
+<li><strong>השונות לא קבועה:</strong> <span class="math inline">\(\text{Var}(Y \mid x) = p(x)(1 - p(x))\)</span>. היא תלויה ב-<span class="math inline">\(x\)</span>, בניגוד להנחה של רגרסיה לינארית</li>
+<li><strong>השגיאות לא נורמליות:</strong> <span class="math inline">\(Y\)</span> מקבל רק 0 או 1, ולכן גם השארית מקבלת רק שני ערכים לכל <span class="math inline">\(x\)</span></li>
+</ul>
+</section>
+<section id="סיכוי-odds-ו-logit" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="סיכוי-odds-ו-logit">סיכוי (<span class="en">Odds</span>) ו-<span class="en">logit</span></h2>
+<p><strong>הסיכוי</strong> (<span class="en">odds</span>): היחס בין ההסתברות להצלחה להסתברות לכישלון.</p>
+<p><span class="math display">\[
+\text{odds} = \frac{p}{1 - p} \qquad\qquad \text{logit}(p) = \ln\frac{p}{1 - p}
+\]</span></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(p\)</span></th>
+<th>0.1</th>
+<th>0.2</th>
+<th>0.5</th>
+<th>0.8</th>
+<th>0.9</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>odds</strong></td>
+<td>0.11</td>
+<td>0.25 (“1 ל-4”)</td>
+<td>1</td>
+<td>4 (“4 ל-1”)</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><strong>logit</strong></td>
+<td>−2.20</td>
+<td>−1.39</td>
+<td>0</td>
+<td>1.39</td>
+<td>2.20</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><span class="math inline">\(p\)</span> חסום בין 0 ל-1. ה-odds בין 0 לאינסוף. ה-<span class="en">logit</span> <strong>בין מינוס אינסוף לאינסוף</strong></li>
+<li>לכן את ה-<span class="en">logit</span> אפשר למדל בפונקציה לינארית בלי לחשוש מחיזוי לא חוקי</li>
+<li><strong>סימטריה:</strong> <span class="math inline">\(\text{logit}(1 - p) = -\text{logit}(p)\)</span></li>
+</ul>
+</section>
+<section id="המודל" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="המודל">המודל</h2>
+<p><span class="math display">\[
+Y_i \sim \text{Bernoulli}(p_i), \qquad \text{logit}(p_i) = \ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i
+\]</span></p>
+<p>ובכיוון ההפוך, <strong>הפונקציה הלוגיסטית</strong> (<span class="en">sigmoid</span>):</p>
+<p><span class="math display">\[
+p_i = \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\]</span></p>
+<ul>
+<li><strong>אין איבר שגיאה נורמלי.</strong> האקראיות היא של משתנה ברנולי: בהינתן <span class="math inline">\(p_i\)</span>, המשתמש נרשם או לא</li>
+<li><strong>הקשר בין <span class="math inline">\(x\)</span> ל-<span class="math inline">\(p\)</span> לא לינארי:</strong> הוא לינארי רק בסולם ה-<span class="en">logit</span></li>
+<li><strong>עם כמה משתנים מסבירים:</strong> <span class="math inline">\(\text{logit}(p_i) = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}\)</span>. כמו ברגרסיה מרובה</li>
+</ul>
+</section>
+<section id="איך-beta_0-ו-beta_1-קובעים-את-העקומה" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="איך-beta_0-ו-beta_1-קובעים-את-העקומה">איך <span class="math inline">\(\beta_0\)</span> ו-<span class="math inline">\(\beta_1\)</span> קובעים את העקומה</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08-logistic-regression_files/figure-html/logistic-shapes-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1200"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>כיוון:</strong> כש-<span class="math inline">\(\beta_1\)</span> חיובי, ההסתברות עולה עם <span class="math inline">\(x\)</span>. כשהוא שלילי, היא יורדת (העקומה הסגולה)</li>
+<li><strong>תלילות:</strong> ככל שהערך המוחלט של <span class="math inline">\(\beta_1\)</span> גדול יותר, המעבר חד יותר (הירוקה והכתומה מול הכחולה)</li>
+<li><strong>מיקום:</strong> ההסתברות שווה לחצי כשהביטוי <span class="math inline">\(\beta_0 + \beta_1 x\)</span> מתאפס, כלומר בנקודה <span class="math inline">\(x_{50} = -\beta_0 / \beta_1\)</span></li>
+<li><strong>השיפוע בנקודה הזו</strong> הוא <span class="math inline">\(\beta_1 / 4\)</span>. זה השינוי המקסימלי בהסתברות לכל יחידה של <span class="math inline">\(x\)</span></li>
+</ul>
+</section>
+<section id="תרגיל-מציאת-המקדמים-משתי-נקודות" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="תרגיל-מציאת-המקדמים-משתי-נקודות">תרגיל: מציאת המקדמים משתי נקודות</h2>
+<p>מנתונים קודמים ידוע: משתמש שהאזין <strong>2 שעות</strong> נרשם בהסתברות <strong>20%</strong>, ומשתמש שהאזין <strong>10 שעות</strong> נרשם בהסתברות <strong>80%</strong>.</p>
+<ol type="1">
+<li>מצאו את <span class="math inline">\(\beta_0\)</span> ו-<span class="math inline">\(\beta_1\)</span> של מודל לוגיסטי שעובר בשתי הנקודות</li>
+<li>מה ההסתברות להירשם אחרי 12 שעות?</li>
+<li>כמה שעות צריך להאזין כדי שההסתברות תהיה לפחות 90%?</li>
+</ol>
+<div class="fragment">
+<p><strong>הרמז:</strong> בסולם ה-<span class="en">logit</span> המודל לינארי. שתי נקודות, שני נעלמים.</p>
+</div>
+</section>
+<section id="פתרון" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="פתרון">פתרון</h2>
+<p><strong>1.</strong> <span class="math inline">\(\text{logit}(0.2) = \ln\frac{0.2}{0.8} = -1.386\)</span>, <span class="math inline">\(\text{logit}(0.8) = 1.386\)</span>:</p>
+<p><span class="math display">\[
+\begin{cases} \beta_0 + 2\beta_1 = -1.386 \\ \beta_0 + 10\beta_1 = 1.386 \end{cases}
+\quad\Rightarrow\quad
+\beta_1 = \frac{1.386 - (-1.386)}{10 - 2} = 0.347, \qquad \beta_0 = -1.386 - 2 \cdot 0.347 = -2.079
+\]</span></p>
+<p><strong>2.</strong> <span class="math inline">\(\text{logit} = -2.079 + 0.347 \cdot 12 = 2.079\)</span>, ולכן <span class="math inline">\(p = \dfrac{1}{1 + e^{-2.079}} = 0.889\)</span></p>
+<p><strong>3.</strong> <span class="math inline">\(\text{logit}(0.9) = \ln 9 = 2.197\)</span>. צריך <span class="math inline">\(-2.079 + 0.347x \ge 2.197\)</span>, כלומר <span class="math inline">\(x \ge 12.3\)</span> שעות</p>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> (<span class="fu">qlogis</span>(<span class="fl">0.8</span>) <span class="sc">-</span> <span class="fu">qlogis</span>(<span class="fl">0.2</span>)) <span class="sc">/</span> (<span class="dv">10</span> <span class="sc">-</span> <span class="dv">2</span>); b0 <span class="ot">&lt;-</span> <span class="fu">qlogis</span>(<span class="fl">0.2</span>) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> b1</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">b0 =</span> b0, <span class="at">b1 =</span> b1, <span class="at">p_12 =</span> <span class="fu">plogis</span>(b0 <span class="sc">+</span> <span class="dv">12</span> <span class="sc">*</span> b1), <span class="at">x_90 =</span> (<span class="fu">qlogis</span>(<span class="fl">0.9</span>) <span class="sc">-</span> b0) <span class="sc">/</span> b1)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     b0      b1    p_12    x_90 
+-2.0794  0.3466  0.8889 12.3399 </code></pre>
+</div>
+</div>
+<p><code>qlogis()</code> היא פונקציית ה-<span class="en">logit</span>, ו-<code>plogis()</code> היא הפונקציה הלוגיסטית (ההפוכה לה). שימו לב שהחציון, <span class="math inline">\(x_{50} = 2.079 / 0.347 = 6\)</span>, נמצא בדיוק באמצע בין 2 ל-10. זה לא מקרי: 20% ו-80% סימטריים סביב 50%.</p>
+</section>
+<section id="פירוש-המקדם-יחס-סיכויים-odds-ratio" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="פירוש-המקדם-יחס-סיכויים-odds-ratio">פירוש המקדם: יחס סיכויים (<span class="en">Odds ratio</span>)</h2>
+<p>מה קורה ל-odds כש-<span class="math inline">\(x\)</span> עולה ביחידה אחת?</p>
+<p><span class="math display">\[
+\frac{\text{odds}(x + 1)}{\text{odds}(x)} = \frac{e^{\beta_0 + \beta_1 (x+1)}}{e^{\beta_0 + \beta_1 x}} = e^{\beta_1}
+\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(e^{\beta_1}\)</span> הוא יחס הסיכויים</strong> (<span class="en">odds ratio, OR</span>): כל שעת האזנה נוספת <strong>מכפילה</strong> את ה-odds ב-<span class="math inline">\(e^{\beta_1}\)</span>, בלי קשר לנקודת ההתחלה</li>
+<li>בתרגיל: <span class="math inline">\(e^{0.347} = 1.41\)</span>. כל שעה מגדילה את ה-odds ב-41%</li>
+<li><strong>ה-odds עולה ב-41%, לא ההסתברות.</strong> השינוי בהסתברות תלוי בנקודת ההתחלה:</li>
+</ul>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>שעות</th>
+<th>0 → 1</th>
+<th>5 → 6</th>
+<th>12 → 13</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(p\)</span></td>
+<td>0.111 → 0.150</td>
+<td>0.414 → 0.500</td>
+<td>0.889 → 0.919</td>
+</tr>
+<tr class="even">
+<td>השינוי בהסתברות</td>
+<td>+0.039</td>
+<td>+0.086</td>
+<td>+0.030</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="משתנה-מסביר-בינארי-טבלת-22" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="משתנה-מסביר-בינארי-טבלת-22">משתנה מסביר בינארי: טבלת 2×2</h2>
+<p>האם הספר הראשון ששמעו (קריין אנושי או קול סינתטי) קשור להרשמה?</p>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tab2 <span class="ot">&lt;-</span> <span class="fu">with</span>(trial, <span class="fu">table</span>(first_book, converted))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tab2</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          converted
+first_book   0   1
+     human 151  85
+     ai    128  36</code></pre>
+</div>
+</div>
+<p><strong>ביד:</strong> <span class="math inline">\(\text{odds}_{human} = \frac{85}{151} = 0.563\)</span>, <span class="math inline">\(\text{odds}_{ai} = \frac{36}{128} = 0.281\)</span>, <span class="math inline">\(\quad OR = \frac{0.281}{0.563} = 0.500\)</span></p>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit_b <span class="ot">&lt;-</span> <span class="fu">glm</span>(converted <span class="sc">~</span> first_book, <span class="at">family =</span> binomial, <span class="at">data =</span> trial)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(fit_b)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept) first_bookai 
+     -0.5746      -0.6939 </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">coef</span>(fit_b))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> (Intercept) first_bookai 
+      0.5629       0.4996 </code></pre>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(e^{\hat\beta_0}\)</span> = ה-odds בקבוצת הבסיס (אנושי). <span class="math inline">\(e^{\hat\beta_1}\)</span> = <strong>יחס הסיכויים</strong>, בדיוק החישוב הידני</li>
+<li>מי שהתחיל בקול סינתטי: ה-odds שלו להירשם <strong>כחצי</strong>. זה מתיישב עם התרגיל המסכם בהרצאה הקודמת</li>
+</ul>
+</section>
+<section id="אמידה-נראות-מקסימלית" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="אמידה-נראות-מקסימלית">אמידה: נראות מקסימלית</h2>
+<p>אין ריבועים פחותים. מחפשים את המקדמים שעבורם <strong>הנתונים שראינו הכי סבירים</strong> (<span class="en">maximum likelihood</span>):</p>
+<p><span class="math display">\[
+L(\beta_0, \beta_1) = \prod_{i=1}^{n} p_i^{\,y_i}(1 - p_i)^{1 - y_i}
+\qquad
+\ell = \ln L = \sum_{i=1}^{n}\left[y_i \ln p_i + (1 - y_i)\ln(1 - p_i)\right]
+\]</span></p>
+<ul>
+<li>כל משתמש שנרשם (<span class="math inline">\(y_i = 1\)</span>) תורם <span class="math inline">\(p_i\)</span>, וכל מי שלא נרשם תורם <span class="math inline">\(1 - p_i\)</span>. רוצים <span class="math inline">\(p_i\)</span> גבוה למי שנרשם ונמוך למי שלא</li>
+<li>המקדמים “מסתתרים” בתוך <span class="math inline">\(p_i\)</span>. כדי לגזור, מציבים את המודל: <span class="math inline">\(\;p_i = \dfrac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\)</span></li>
+</ul>
+</section>
+<section id="הנגזרות-איפה-המקדמים" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="הנגזרות-איפה-המקדמים">הנגזרות: איפה המקדמים?</h2>
+<p><strong>צעד 1: מציבים את <span class="math inline">\(p_i\)</span> ב-<span class="math inline">\(\ell\)</span>.</strong> משתמשים ב-<span class="math inline">\(\ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i\)</span> וב-<span class="math inline">\(1 - p_i = \frac{1}{1 + e^{\beta_0 + \beta_1 x_i}}\)</span>:</p>
+<p><span class="math display">\[
+\ell = \sum_i\left[y_i \ln\frac{p_i}{1 - p_i} + \ln(1 - p_i)\right]
+= \sum_i\left[y_i(\beta_0 + \beta_1 x_i) - \ln\left(1 + e^{\beta_0 + \beta_1 x_i}\right)\right]
+\]</span></p>
+<p><strong>צעד 2: גוזרים.</strong> הנגזרת של <span class="math inline">\(\ln(1 + e^{\beta_0 + \beta_1 x_i})\)</span> לפי <span class="math inline">\(\beta_0\)</span> היא <span class="math inline">\(\frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = p_i\)</span>, ולפי <span class="math inline">\(\beta_1\)</span> היא <span class="math inline">\(x_i p_i\)</span>:</p>
+<p><span class="math display">\[
+\frac{\partial \ell}{\partial \beta_0} = \sum_i \left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i (y_i - p_i)
+\qquad
+\frac{\partial \ell}{\partial \beta_1} = \sum_i x_i\left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i x_i (y_i - p_i)
+\]</span></p>
+<p><strong>צעד 3: משווים לאפס.</strong> שתי משוואות בשני נעלמים:</p>
+<p><span class="math display">\[
+\sum_i y_i = \sum_i \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\qquad\qquad
+\sum_i x_i y_i = \sum_i \frac{x_i}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\]</span></p>
+<ul>
+<li><strong>אין פתרון סגור:</strong> המקדמים נמצאים בתוך מעריך, בתוך שבר, בתוך סכום. אי אפשר לבודד אותם כמו בריבועים פחותים. פותרים בשיטה איטרטיבית, <span class="en">Newton–Raphson</span>. ב-R זה <code>Number of Fisher Scoring iterations</code> בפלט</li>
+<li><strong>פירוש המשוואה הראשונה:</strong> סכום ההסתברויות החזויות שווה למספר המצטרפים בפועל. בנתונים שלנו הסכום הוא 121.0, ובפועל הצטרפו 121 משתמשים (בודקים ב-R עם <code>sum(fitted(fit_h))</code>)</li>
+</ul>
+<p><strong>שיטת ניוטון–רפסון.</strong> מתחילים מניחוש (למשל <span class="math inline">\(\boldsymbol\beta = \mathbf 0\)</span>), ובכל צעד מעדכנים:</p>
+<p><span class="math display">\[
+\boldsymbol\beta^{(t+1)} = \boldsymbol\beta^{(t)} + (X'WX)^{-1}X'(\mathbf y - \mathbf p), \qquad W = \text{diag}\big(p_i(1 - p_i)\big)
+\]</span></p>
+<p><span class="math inline">\(X'(\mathbf y - \mathbf p)\)</span> הוא הגרדיאנט של <span class="math inline">\(\ell\)</span>, ו-<span class="math inline">\(-X'WX\)</span> היא מטריצת הנגזרות השניות. ברגרסיה לוגיסטית ניוטון–רפסון ו-<span class="en">Fisher scoring</span> הם אותה שיטה. כמה איטרציות מספיקות:</p>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>, trial<span class="sc">$</span>hours); y <span class="ot">&lt;-</span> trial<span class="sc">$</span>converted; beta <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (it <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) {</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">plogis</span>(X <span class="sc">%*%</span> beta)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  beta <span class="ot">&lt;-</span> beta <span class="sc">+</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> (X <span class="sc">*</span> <span class="fu">as.vector</span>(p <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> p))), <span class="fu">t</span>(X) <span class="sc">%*%</span> (y <span class="sc">-</span> p))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(it, <span class="fu">round</span>(beta, <span class="dv">5</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>1 -2.056 0.2632 
+2 -2.743 0.3679 
+3 -2.887 0.3899 
+4 -2.892 0.3908 
+5 -2.892 0.3908 
+6 -2.892 0.3908 </code></pre>
+</div>
+</div>
+<p>אחרי 4–5 איטרציות המקדמים כבר לא זזים, והם זהים לפלט של <code>glm()</code> בשקף הבא. שגיאות התקן בפלט הן השורשים של האלכסון של <span class="math inline">\((X'WX)^{-1}\)</span> בנקודת המקסימום. <strong>בבחינה</strong> צריך לדעת לרשום את פונקציית הנראות ואת המשוואות, ולהסביר את הרעיון של השיטה האיטרטיבית. לא צריך לבצע אותה ביד.</p>
+</section>
+<section id="ב-r-glm" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="ב-r-glm">ב-R: <code>glm()</code></h2>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit_h <span class="ot">&lt;-</span> <span class="fu">glm</span>(converted <span class="sc">~</span> hours, <span class="at">family =</span> binomial, <span class="at">data =</span> trial)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_h)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = converted ~ hours, family = binomial, data = trial)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -2.8921     0.2782  -10.40   &lt;2e-16 ***
+hours         0.3908     0.0452    8.65   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 490.37  on 399  degrees of freedom
+Residual deviance: 379.38  on 398  degrees of freedom
+AIC: 383.4
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+</section>
+<section id="איך-קוראים-את-הפלט" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="איך-קוראים-את-הפלט">איך קוראים את הפלט</h2>
+<ul>
+<li><strong><code>hours</code></strong>, <span class="math inline">\(\hat\beta_1 = 0.391\)</span>: כל שעה מעלה את ה-<span class="en">logit</span> ב-0.391. יחס הסיכויים: <span class="math inline">\(e^{0.391} = 1.48\)</span>, כל שעה מגדילה את ה-odds ב-48%</li>
+<li><strong><code>z value</code></strong> = <code>Estimate / Std. Error</code>: מבחן <span class="en">Wald</span>. תחת <span class="math inline">\(H_0: \beta_1 = 0\)</span>, <span class="math inline">\(z \sim N(0, 1)\)</span> בקירוב. כאן <span class="math inline">\(z = 8.65\)</span></li>
+<li><strong>החציון:</strong> <span class="math inline">\(x_{50} = 2.892 / 0.391 = 7.4\)</span> שעות. מתחת לזה, רוב המשתמשים לא נרשמים</li>
+<li><strong>רווח סמך ל-OR:</strong> קודם ל-<span class="math inline">\(\beta_1\)</span>, ואז <span class="math inline">\(e^{(\cdot)}\)</span> על שני הקצוות:</li>
+</ul>
+<p><span class="math display">\[
+e^{0.3908 \pm 1.96 \cdot 0.0452} = [1.35,\ 1.61]
+\]</span></p>
+<ul>
+<li><strong><code>Null deviance</code>, <code>Residual deviance</code>, <code>AIC</code></strong>: על אלה בשקף הבא</li>
+</ul>
+</section>
+<section id="deviance-ומבחן-למובהקות-המודל" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="deviance-ומבחן-למובהקות-המודל"><span class="en">Deviance</span> ומבחן למובהקות המודל</h2>
+<p><strong><span class="en">Deviance</span>:</strong> <span class="math inline">\(D = -2\ell(\hat{\boldsymbol\beta})\)</span>, כש-<span class="math inline">\(\ell\)</span> היא הלוג-נראות במקסימום. ככל שהמודל מתאים יותר, <span class="math inline">\(D\)</span> קטן יותר. זה המקביל של <span class="math inline">\(SS_E\)</span>.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>מודל</th>
+<th>מה יש בו</th>
+<th><span class="en">Deviance</span></th>
+<th>df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>מודל האפס</strong> (<span class="en">null</span>)</td>
+<td>רק <span class="math inline">\(\beta_0\)</span>: אותה הסתברות לכולם</td>
+<td><span class="math inline">\(D_0 = 490.37\)</span></td>
+<td><span class="math inline">\(n - 1 = 399\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>המודל שלנו</strong></td>
+<td><span class="math inline">\(\beta_0 + \beta_1 x\)</span></td>
+<td><span class="math inline">\(D_1 = 379.38\)</span></td>
+<td><span class="math inline">\(n - 2 = 398\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>מבחן יחס הנראות</strong> (<span class="en">likelihood ratio test</span>) ל-<span class="math inline">\(H_0: \beta_1 = \dots = \beta_k = 0\)</span>:</p>
+<p><span class="math display">\[
+G = D_0 - D_1 = 490.37 - 379.38 = 111.00 \;\sim\; \chi^2_k \text{ תחת } H_0
+\]</span></p>
+<ul>
+<li><span class="math inline">\(k = 1\)</span> (מספר המשתנים המסבירים). <span class="math inline">\(\chi^2_{0.95;\,1} = 3.84\)</span>, ו-<span class="math inline">\(G = 111.0\)</span> גדול בהרבה: <strong>המודל מובהק</strong></li>
+<li>זה המקביל של מבחן F לכל המודל ברגרסיה לינארית</li>
+<li><strong><code>AIC</code></strong> <span class="math inline">\(= D_1 + 2(k + 1) = 379.38 + 4 = 383.4\)</span>: להשוואה בין מודלים. נמוך יותר = טוב יותר</li>
+</ul>
+</section>
+<section id="אותו-מבחן-ב-r" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="אותו-מבחן-ב-r">אותו מבחן ב-R</h2>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_h, <span class="at">test =</span> <span class="st">"Chisq"</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model: binomial, link: logit
+
+Response: converted
+
+Terms added sequentially (first to last)
+
+      Df Deviance Resid. Df Resid. Dev Pr(&gt;Chi)    
+NULL                    399        490             
+hours  1      111       398        379   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">G =</span> fit_h<span class="sc">$</span>null.deviance <span class="sc">-</span> fit_h<span class="sc">$</span>deviance, <span class="at">chi2_crit =</span> <span class="fu">qchisq</span>(<span class="fl">0.95</span>, <span class="at">df =</span> <span class="dv">1</span>))</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        G chi2_crit 
+  110.997     3.841 </code></pre>
+</div>
+</div>
+<ul>
+<li>שורת <code>hours</code>: העמודה <code>Deviance</code> היא <span class="math inline">\(G\)</span>, הירידה ב-<span class="en">deviance</span> כשמוסיפים את המשתנה. <code>Resid. Dev</code> הוא <span class="math inline">\(D\)</span> אחרי ההוספה</li>
+<li>כמו <code>anova()</code> של מודל לינארי, גם כאן המשתנים נכנסים <strong>לפי הסדר</strong> בנוסחה. עם כמה משתנים, כל שורה בודקת את התרומה של המשתנה <strong>בנוסחה אחרי הקודמים</strong>. נשתמש בזה בחלק ב למבחן חלקי</li>
+</ul>
+</section>
+<section id="חיזוי-מי-בסיכון" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="חיזוי-מי-בסיכון">חיזוי: מי בסיכון?</h2>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>קוד</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(fit_h, <span class="at">newdata =</span> <span class="fu">tibble</span>(<span class="at">hours =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">12</span>)), <span class="at">type =</span> <span class="st">"response"</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code></pre></div><button title="העתק ללוח" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    1     2     3     4 
+0.108 0.281 0.558 0.858 </code></pre>
+</div>
+</div>
+<ul>
+<li><code>type = "response"</code> מחזיר הסתברות. בלי זה, <code>predict()</code> מחזיר את ה-<span class="en">logit</span></li>
+<li><strong>ביד, למשתמש שהאזין 5 שעות:</strong> <span class="math inline">\(\text{logit} = -2.892 + 0.391 \cdot 5 = -0.938\)</span>, ולכן <span class="math inline">\(p = \frac{1}{1 + e^{0.938}} = 0.281\)</span></li>
+<li><strong>ההחלטה העסקית:</strong> משתמש שהאזין עד 5 שעות נרשם בסיכוי של פחות מ-30%. הוא מועמד לתזכורת או להמלצה אישית. אבל זהירות: גם כאן אלה <strong>נתוני תצפית</strong>. משתמש שמאזין הרבה כנראה אוהב ספרי שמע מלכתחילה. כדי לדעת אם תזכורת <strong>גורמת</strong> להרשמה, צריך ניסוי</li>
+</ul>
+</section>
+<section id="בחלק-ב" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="בחלק-ב">בחלק ב</h2>
+<ul>
+<li><strong>כמה משתנים מסבירים:</strong> שעות האזנה <strong>וגם</strong> סוג הספר הראשון. פירוש של OR “כשהשאר קבוע”</li>
+<li><strong>מבחן <span class="en">deviance</span> חלקי:</strong> האם משתנה אחד תורם, בנוכחות האחרים. המקביל של מבחן F חלקי</li>
+<li><strong>סיווג:</strong> מהסתברות להחלטה. סף, מטריצת בלבול (<span class="en">confusion matrix</span>), רגישות וסגוליות</li>
+<li><strong>מה יכול להשתבש:</strong> הפרדה מלאה (<span class="en">separation</span>), אירועים נדירים, ובלבול בין odds להסתברות</li>
+</ul>
+</section>
+</section>
+<section id="סיכום" class="level1">
+<h1>סיכום</h1>
+<section id="מה-לקחת-מההרצאה" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="מה-לקחת-מההרצאה">מה לקחת מההרצאה</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>השאלה</th>
+<th>הכלי</th>
+<th>ב-R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>תגובה בינארית</td>
+<td><span class="math inline">\(\text{logit}(p) = \beta_0 + \beta_1 x\)</span>, <span class="math inline">\(OR = e^{\beta_1}\)</span></td>
+<td><code>glm(y ~ x, family = binomial)</code></td>
+</tr>
+<tr class="even">
+<td>מה המשמעות של המקדם?</td>
+<td><span class="math inline">\(e^{\beta_1}\)</span> מכפיל את ה-odds, לא את ההסתברות</td>
+<td><code>exp(coef(fit))</code></td>
+</tr>
+<tr class="odd">
+<td>האם המודל הלוגיסטי מובהק?</td>
+<td><span class="math inline">\(G = D_0 - D_1 \sim \chi^2_k\)</span></td>
+<td><code>anova(fit, test = "Chisq")</code></td>
+</tr>
+<tr class="even">
+<td>מה ההסתברות למשתמש חדש?</td>
+<td><span class="math inline">\(p = 1 / (1 + e^{-(\hat\beta_0 + \hat\beta_1 x)})\)</span></td>
+<td><code>predict(fit, type = "response")</code></td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const toggle = window.document.createElement('button');
+      toggle.type = "button";
+      toggle.setAttribute("role", "switch");
+      toggle.setAttribute("aria-checked", "false");
+      toggle.classList.add('top-right');
+      toggle.classList.add('quarto-color-scheme-toggle');
+      toggle.setAttribute("aria-label", "הצג/הסתר מצב חשוך");
+      toggle.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      toggle.appendChild(i);
+      // Put the toggle in a landmark of its own, so that landmark navigation
+      // can reach it.
+      //
+      // The container is always a fresh direct child of body, and the toggle is
+      // never moved into page furniture that the theme or the author controls.
+      // The toggle is positioned against the page, so any ancestor that
+      // establishes a containing block captures it: a positioned element or a
+      // grid for position: absolute, and transform, filter, will-change or
+      // contain for position: fixed. A direct child of body has none of these
+      // to inherit, and the shift when one appears is silent and visual.
+      //
+      // ARIA says a document should have at most one banner, and axe reports a
+      // duplicate whether or not the banners carry distinct labels. So use a
+      // header when the page has no banner yet, and a named region otherwise.
+      //
+      // A header is a banner wherever it sits, unless it is inside sectioning
+      // content, so this cannot just look at the children of body: a custom
+      // page layout wraps the title block header in a plain div. An explicit
+      // role="banner" always counts.
+      const sectioning = 'article, aside, main, nav, section, [role="article"], [role="complementary"], [role="main"], [role="navigation"], [role="region"]';
+      const hasBanner = Array.from(
+        window.document.querySelectorAll('header:not([role]), [role="banner"]')
+      ).some(function(el) {
+        return el.hasAttribute("role") || el.closest(sectioning) === null;
+      });
+      const container = window.document.createElement(hasBanner ? "div" : "header");
+      if (hasBanner) {
+        container.setAttribute("role", "region");
+        container.setAttribute("aria-label", "הצג/הסתר מצב חשוך");
+      }
+      container.classList.add('quarto-color-scheme-toggle-container');
+      container.appendChild(toggle);
+      window.document.body.appendChild(container);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "הועתק!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "הועתק!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/adisarid\.github\.io\/nanas-tau\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"קוד הניתן לגלילה","output":"פלט הניתן לגלילה"};
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/adisarid/nanas-tau/blob/main/lectures/08-logistic-regression.qmd" class="toc-action"><i class="bi bi-github"></i>הצג מקור</a></li><li><a href="https://github.com/adisarid/nanas-tau/issues/new" class="toc-action"><i class="bi empty"></i>דווח על בעיה</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>עודכן לאחרונה: 22.11.2026</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
