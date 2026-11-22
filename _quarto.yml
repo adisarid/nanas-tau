@@ -55,8 +55,10 @@ website:
             text: "5. ניגודים, השוואות מרובות וא-פרמטרי"
           - href: lectures/06-two-way-anova.qmd
             text: "6. השוואות מרובות (המשך) וניתוח שונות דו-כיווני"
-          - href: lectures/07-logistic-regression.qmd
-            text: "7. דו-כיווני (המשך), תרגיל מסכם ורגרסיה לוגיסטית"
+          - href: lectures/07-two-way-anova-exercise.qmd
+            text: "7. דו-כיווני (המשך) ותרגיל מסכם"
+          - href: lectures/08-logistic-regression.qmd
+            text: "8. רגרסיה לוגיסטית"
       - text: מחשבונים אונליין
         menu:
           - href: calculators/prediction-intervals.qmd
@@ -72,7 +74,7 @@ website:
         aria-label: GitHub
   page-footer:
     center: "ד״ר עדי שריד · הפקולטה להנדסה, אוניברסיטת תל אביב · תשפ״ז"
-    right: "עודכן לאחרונה: 20.11.2026"   # update on every push to main (see README)
+    right: "עודכן לאחרונה: 22.11.2026"   # update on every push to main (see README)
 
 format:
   html:

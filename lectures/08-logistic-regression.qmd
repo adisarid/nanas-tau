@@ -1,0 +1,360 @@
+---
+title: "8. רגרסיה לוגיסטית"
+subtitle: "ניתוח נתונים סטטיסטי · הרצאה 8"
+author: "ד״ר עדי שריד"
+date: last-modified
+format:
+  revealjs:
+    output-file: 08-logistic-regression-slides.html
+---
+
+```{r}
+#| label: setup
+#| include: false
+source("../R/setup.R")
+f1 <- function(x, d = 1) format(round(x, d), big.mark = ",", nsmall = d)
+```
+
+## על מה נדבר היום
+
+- **רגרסיה לוגיסטית** ([logistic regression]{.en}), חלק א: כשהתגובה היא כן או לא
+  - סיכוי ([odds]{.en}), [logit]{.en} והמודל הלוגיסטי
+  - יחס סיכויים ([odds ratio]{.en}) ופירוש המקדמים
+  - אמידה בנראות מקסימלית, הפלט של `glm()` ומבחן [deviance]{.en}
+- **רגרסיה לוגיסטית, חלק ב:** כמה משתנים מסבירים, מבחן חלקי וסיווג
+
+# רגרסיה לוגיסטית ([Logistic regression]{.en})
+
+## השאלה: מי יהפוך למנוי? {.smaller}
+
+**ליסנה**, חנות ספרי השמע מהתרגיל המסכם בהרצאה הקודמת, השיקה. כל משתמש חדש מקבל **שבוע ניסיון חינם**, ובסופו מחליט אם להירשם למנוי בתשלום.
+
+**השאלה העסקית:** האם כמות ההאזנה בשבוע הניסיון מנבאת הרשמה? אם כן, אפשר לזהות מוקדם משתמשים "בסיכון", ולשלוח להם תזכורת או המלצה.
+
+- **התגובה:** $Y_i = 1$ אם המשתמש נרשם, $Y_i = 0$ אם לא. **משתנה בינארי**
+- **המשתנה המסביר:** $x_i$ = שעות האזנה בשבוע הניסיון
+- **המטרה:** לאמוד את $p(x) = P(Y = 1 \mid x)$, הסיכוי להירשם כפונקציה של שעות ההאזנה
+
+```{r}
+#| label: trial-data
+set.seed(1123)
+trial <- tibble(hours = round(rgamma(400, shape = 2, scale = 2.5), 1),
+                first_ai = rbinom(400, 1, 0.4)) |>
+  mutate(converted  = rbinom(n(), 1, plogis(-2.4 + 0.38 * hours - 0.7 * first_ai)),
+         first_book = factor(ifelse(first_ai == 1, "ai", "human"), levels = c("human", "ai"))) |>
+  select(hours, first_book, converted)
+```
+
+`r nrow(trial)` משתמשי ניסיון, מתוכם `r sum(trial$converted)` (`r round(100 * mean(trial$converted))`%) נרשמו.
+
+## למה לא רגרסיה לינארית? {.smaller}
+
+```{r}
+#| label: lpm-plot
+#| echo: false
+#| fig-height: 3.6
+fit_lpm <- lm(converted ~ hours, data = trial)
+fit_h <- glm(converted ~ hours, family = binomial, data = trial)
+grid_h <- tibble(hours = seq(0, 26, by = 0.1))
+grid_h <- grid_h |>
+  mutate(linear = predict(fit_lpm, grid_h), logistic = predict(fit_h, grid_h, type = "response")) |>
+  pivot_longer(c(linear, logistic), names_to = "model", values_to = "p")
+ggplot(trial, aes(hours, converted)) +
+  geom_hline(yintercept = c(0, 1), colour = nanas_pal[["grey"]], linetype = "dotted") +
+  geom_jitter(height = 0.04, width = 0, alpha = 0.35, size = 1.6, colour = nanas_pal[["grey"]]) +
+  geom_line(data = grid_h, aes(y = p, colour = model), linewidth = 1.2) +
+  scale_colour_manual(values = unname(nanas_pal[c("accent", "primary")])) +
+  labs(title = "הקו הישר חוצה את 1. העקומה הלוגיסטית נשארת בין 0 ל-1",
+       subtitle = "נקודה: משתמש (0 = לא נרשם, 1 = נרשם)",
+       x = "Listening hours in the trial week", y = "P(subscribe)", colour = NULL)
+```
+
+- **חיזוי מחוץ ל-$[0, 1]$:** הקו הישר צופה "הסתברות" של `r f1(max(fitted(fit_lpm)), 2)` למשתמש שהאזין 25 שעות
+- **השונות לא קבועה:** $\text{Var}(Y \mid x) = p(x)(1 - p(x))$. היא תלויה ב-$x$, בניגוד להנחה של רגרסיה לינארית
+- **השגיאות לא נורמליות:** $Y$ מקבל רק 0 או 1, ולכן גם השארית מקבלת רק שני ערכים לכל $x$
+
+## סיכוי ([Odds]{.en}) ו-[logit]{.en} {.smaller}
+
+**הסיכוי** ([odds]{.en}): היחס בין ההסתברות להצלחה להסתברות לכישלון.
+
+$$
+\text{odds} = \frac{p}{1 - p} \qquad\qquad \text{logit}(p) = \ln\frac{p}{1 - p}
+$$
+
+| $p$ | 0.1 | 0.2 | 0.5 | 0.8 | 0.9 |
+|---|---|---|---|---|---|
+| **odds** | 0.11 | 0.25 ("1 ל-4") | 1 | 4 ("4 ל-1") | 9 |
+| **logit** | −2.20 | −1.39 | 0 | 1.39 | 2.20 |
+
+- $p$ חסום בין 0 ל-1. ה-odds בין 0 לאינסוף. ה-[logit]{.en} **בין מינוס אינסוף לאינסוף**
+- לכן את ה-[logit]{.en} אפשר למדל בפונקציה לינארית בלי לחשוש מחיזוי לא חוקי
+- **סימטריה:** $\text{logit}(1 - p) = -\text{logit}(p)$
+
+## המודל {.smaller}
+
+$$
+Y_i \sim \text{Bernoulli}(p_i), \qquad \text{logit}(p_i) = \ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i
+$$
+
+ובכיוון ההפוך, **הפונקציה הלוגיסטית** ([sigmoid]{.en}):
+
+$$
+p_i = \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+$$
+
+- **אין איבר שגיאה נורמלי.** האקראיות היא של משתנה ברנולי: בהינתן $p_i$, המשתמש נרשם או לא
+- **הקשר בין $x$ ל-$p$ לא לינארי:** הוא לינארי רק בסולם ה-[logit]{.en}
+- **עם כמה משתנים מסבירים:** $\text{logit}(p_i) = \beta_0 + \beta_1 x_{i1} + \dots + \beta_k x_{ik}$. כמו ברגרסיה מרובה
+
+## איך $\beta_0$ ו-$\beta_1$ קובעים את העקומה {.smaller}
+
+```{r}
+#| label: logistic-shapes
+#| echo: false
+#| fig-height: 3.3
+shapes <- tribble(~label, ~b0, ~b1,
+  "b0 = -3, b1 = 0.5", -3, 0.5,
+  "b0 = -6, b1 = 1",   -6, 1,
+  "b0 = -3, b1 = 1",   -3, 1,
+  "b0 = 3, b1 = -0.5",  3, -0.5) |>
+  mutate(label = fct_inorder(label)) |>
+  expand_grid(x = seq(0, 12, by = 0.05)) |>
+  mutate(p = plogis(b0 + b1 * x))
+ggplot(shapes, aes(x, p, colour = label)) +
+  geom_hline(yintercept = 0.5, colour = nanas_pal[["grey"]], linetype = "dotted") +
+  geom_line(linewidth = 1.2) +
+  scale_colour_manual(values = unname(nanas_pal[c("primary", "accent", "green", "purple")])) +
+  labs(title = "שני מקדמים קובעים את הכיוון, את התלילות ואת המיקום של העקומה",
+       subtitle = "הקו המקווקו: הסתברות של חצי",
+       x = "x", y = "p(x)", colour = NULL)
+```
+
+- **כיוון:** כש-$\beta_1$ חיובי, ההסתברות עולה עם $x$. כשהוא שלילי, היא יורדת (העקומה הסגולה)
+- **תלילות:** ככל שהערך המוחלט של $\beta_1$ גדול יותר, המעבר חד יותר (הירוקה והכתומה מול הכחולה)
+- **מיקום:** ההסתברות שווה לחצי כשהביטוי $\beta_0 + \beta_1 x$ מתאפס, כלומר בנקודה $x_{50} = -\beta_0 / \beta_1$
+- **השיפוע בנקודה הזו** הוא $\beta_1 / 4$. זה השינוי המקסימלי בהסתברות לכל יחידה של $x$
+
+## תרגיל: מציאת המקדמים משתי נקודות {.smaller}
+
+מנתונים קודמים ידוע: משתמש שהאזין **2 שעות** נרשם בהסתברות **20%**, ומשתמש שהאזין **10 שעות** נרשם בהסתברות **80%**.
+
+1. מצאו את $\beta_0$ ו-$\beta_1$ של מודל לוגיסטי שעובר בשתי הנקודות
+2. מה ההסתברות להירשם אחרי 12 שעות?
+3. כמה שעות צריך להאזין כדי שההסתברות תהיה לפחות 90%?
+
+::: {.fragment}
+**הרמז:** בסולם ה-[logit]{.en} המודל לינארי. שתי נקודות, שני נעלמים.
+:::
+
+## פתרון {.smaller}
+
+**1.** $\text{logit}(0.2) = \ln\frac{0.2}{0.8} = -1.386$, $\text{logit}(0.8) = 1.386$:
+
+$$
+\begin{cases} \beta_0 + 2\beta_1 = -1.386 \\ \beta_0 + 10\beta_1 = 1.386 \end{cases}
+\quad\Rightarrow\quad
+\beta_1 = \frac{1.386 - (-1.386)}{10 - 2} = 0.347, \qquad \beta_0 = -1.386 - 2 \cdot 0.347 = -2.079
+$$
+
+**2.** $\text{logit} = -2.079 + 0.347 \cdot 12 = 2.079$, ולכן $p = \dfrac{1}{1 + e^{-2.079}} = 0.889$
+
+**3.** $\text{logit}(0.9) = \ln 9 = 2.197$. צריך $-2.079 + 0.347x \ge 2.197$, כלומר $x \ge 12.3$ שעות
+
+```{r}
+#| label: two-points
+b1 <- (qlogis(0.8) - qlogis(0.2)) / (10 - 2); b0 <- qlogis(0.2) - 2 * b1
+c(b0 = b0, b1 = b1, p_12 = plogis(b0 + 12 * b1), x_90 = (qlogis(0.9) - b0) / b1)
+```
+
+::: {.content-hidden when-format="revealjs"}
+`qlogis()` היא פונקציית ה-[logit]{.en}, ו-`plogis()` היא הפונקציה הלוגיסטית (ההפוכה לה). שימו לב שהחציון, $x_{50} = 2.079 / 0.347 = 6$, נמצא בדיוק באמצע בין 2 ל-10. זה לא מקרי: 20% ו-80% סימטריים סביב 50%.
+:::
+
+## פירוש המקדם: יחס סיכויים ([Odds ratio]{.en}) {.smaller}
+
+מה קורה ל-odds כש-$x$ עולה ביחידה אחת?
+
+$$
+\frac{\text{odds}(x + 1)}{\text{odds}(x)} = \frac{e^{\beta_0 + \beta_1 (x+1)}}{e^{\beta_0 + \beta_1 x}} = e^{\beta_1}
+$$
+
+- **$e^{\beta_1}$ הוא יחס הסיכויים** ([odds ratio, OR]{.en}): כל שעת האזנה נוספת **מכפילה** את ה-odds ב-$e^{\beta_1}$, בלי קשר לנקודת ההתחלה
+- בתרגיל: $e^{0.347} = 1.41$. כל שעה מגדילה את ה-odds ב-41%
+- **ה-odds עולה ב-41%, לא ההסתברות.** השינוי בהסתברות תלוי בנקודת ההתחלה:
+
+| שעות | 0 → 1 | 5 → 6 | 12 → 13 |
+|---|---|---|---|
+| $p$ | 0.111 → 0.150 | 0.414 → 0.500 | 0.889 → 0.919 |
+| השינוי בהסתברות | +0.039 | +0.086 | +0.030 |
+
+## משתנה מסביר בינארי: טבלת 2×2 {.smaller}
+
+האם הספר הראשון ששמעו (קריין אנושי או קול סינתטי) קשור להרשמה?
+
+```{r}
+#| label: trial-2x2
+tab2 <- with(trial, table(first_book, converted))
+tab2
+```
+
+**ביד:** $\text{odds}_{human} = \frac{`r tab2["human", "1"]`}{`r tab2["human", "0"]`} = `r f1(tab2["human", "1"] / tab2["human", "0"], 3)`$, $\text{odds}_{ai} = \frac{`r tab2["ai", "1"]`}{`r tab2["ai", "0"]`} = `r f1(tab2["ai", "1"] / tab2["ai", "0"], 3)`$, $\quad OR = \frac{`r f1(tab2["ai", "1"] / tab2["ai", "0"], 3)`}{`r f1(tab2["human", "1"] / tab2["human", "0"], 3)`} = `r f1((tab2["ai", "1"] / tab2["ai", "0"]) / (tab2["human", "1"] / tab2["human", "0"]), 3)`$
+
+```{r}
+#| label: trial-2x2-glm
+fit_b <- glm(converted ~ first_book, family = binomial, data = trial)
+coef(fit_b)
+exp(coef(fit_b))
+```
+
+- $e^{\hat\beta_0}$ = ה-odds בקבוצת הבסיס (אנושי). $e^{\hat\beta_1}$ = **יחס הסיכויים**, בדיוק החישוב הידני
+- מי שהתחיל בקול סינתטי: ה-odds שלו להירשם **כחצי**. זה מתיישב עם התרגיל המסכם בהרצאה הקודמת
+
+## אמידה: נראות מקסימלית {.smaller}
+
+אין ריבועים פחותים. מחפשים את המקדמים שעבורם **הנתונים שראינו הכי סבירים** ([maximum likelihood]{.en}):
+
+$$
+L(\beta_0, \beta_1) = \prod_{i=1}^{n} p_i^{\,y_i}(1 - p_i)^{1 - y_i}
+\qquad
+\ell = \ln L = \sum_{i=1}^{n}\left[y_i \ln p_i + (1 - y_i)\ln(1 - p_i)\right]
+$$
+
+- כל משתמש שנרשם ($y_i = 1$) תורם $p_i$, וכל מי שלא נרשם תורם $1 - p_i$. רוצים $p_i$ גבוה למי שנרשם ונמוך למי שלא
+- המקדמים "מסתתרים" בתוך $p_i$. כדי לגזור, מציבים את המודל: $\;p_i = \dfrac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}$
+
+## הנגזרות: איפה המקדמים? {.smaller}
+
+**צעד 1: מציבים את $p_i$ ב-$\ell$.** משתמשים ב-$\ln\frac{p_i}{1 - p_i} = \beta_0 + \beta_1 x_i$ וב-$1 - p_i = \frac{1}{1 + e^{\beta_0 + \beta_1 x_i}}$:
+
+$$
+\ell = \sum_i\left[y_i \ln\frac{p_i}{1 - p_i} + \ln(1 - p_i)\right]
+= \sum_i\left[y_i(\beta_0 + \beta_1 x_i) - \ln\left(1 + e^{\beta_0 + \beta_1 x_i}\right)\right]
+$$
+
+**צעד 2: גוזרים.** הנגזרת של $\ln(1 + e^{\beta_0 + \beta_1 x_i})$ לפי $\beta_0$ היא $\frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}} = p_i$, ולפי $\beta_1$ היא $x_i p_i$:
+
+$$
+\frac{\partial \ell}{\partial \beta_0} = \sum_i \left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i (y_i - p_i)
+\qquad
+\frac{\partial \ell}{\partial \beta_1} = \sum_i x_i\left[y_i - \frac{e^{\beta_0 + \beta_1 x_i}}{1 + e^{\beta_0 + \beta_1 x_i}}\right] = \sum_i x_i (y_i - p_i)
+$$
+
+**צעד 3: משווים לאפס.** שתי משוואות בשני נעלמים:
+
+$$
+\sum_i y_i = \sum_i \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+\qquad\qquad
+\sum_i x_i y_i = \sum_i \frac{x_i}{1 + e^{-(\beta_0 + \beta_1 x_i)}}
+$$
+
+- **אין פתרון סגור:** המקדמים נמצאים בתוך מעריך, בתוך שבר, בתוך סכום. אי אפשר לבודד אותם כמו בריבועים פחותים. פותרים בשיטה איטרטיבית, [Newton–Raphson]{.en}. ב-R זה `Number of Fisher Scoring iterations` בפלט
+- **פירוש המשוואה הראשונה:** סכום ההסתברויות החזויות שווה למספר המצטרפים בפועל. בנתונים שלנו הסכום הוא `r f1(sum(fitted(glm(converted ~ hours, family = binomial, data = trial))), 1)`, ובפועל הצטרפו `r sum(trial$converted)` משתמשים (בודקים ב-R עם `sum(fitted(fit_h))`)
+
+::: {.content-hidden when-format="revealjs"}
+**שיטת ניוטון–רפסון.** מתחילים מניחוש (למשל $\boldsymbol\beta = \mathbf 0$), ובכל צעד מעדכנים:
+
+$$
+\boldsymbol\beta^{(t+1)} = \boldsymbol\beta^{(t)} + (X'WX)^{-1}X'(\mathbf y - \mathbf p), \qquad W = \text{diag}\big(p_i(1 - p_i)\big)
+$$
+
+$X'(\mathbf y - \mathbf p)$ הוא הגרדיאנט של $\ell$, ו-$-X'WX$ היא מטריצת הנגזרות השניות. ברגרסיה לוגיסטית ניוטון–רפסון ו-[Fisher scoring]{.en} הם אותה שיטה. כמה איטרציות מספיקות:
+
+```{r}
+#| label: newton
+X <- cbind(1, trial$hours); y <- trial$converted; beta <- c(0, 0)
+for (it in 1:6) {
+  p <- plogis(X %*% beta)
+  beta <- beta + solve(t(X) %*% (X * as.vector(p * (1 - p))), t(X) %*% (y - p))
+  cat(it, round(beta, 5), "\n")
+}
+```
+
+אחרי 4–5 איטרציות המקדמים כבר לא זזים, והם זהים לפלט של `glm()` בשקף הבא. שגיאות התקן בפלט הן השורשים של האלכסון של $(X'WX)^{-1}$ בנקודת המקסימום. **בבחינה** צריך לדעת לרשום את פונקציית הנראות ואת המשוואות, ולהסביר את הרעיון של השיטה האיטרטיבית. לא צריך לבצע אותה ביד.
+:::
+
+## ב-R: `glm()` {.smaller}
+
+```{r}
+#| label: trial-glm
+fit_h <- glm(converted ~ hours, family = binomial, data = trial)
+summary(fit_h)
+```
+
+## איך קוראים את הפלט {.smaller}
+
+```{r}
+#| label: trial-glm-hidden
+#| include: false
+bh <- coef(fit_h); seh <- sqrt(diag(vcov(fit_h)))
+d0 <- fit_h$null.deviance; d1 <- fit_h$deviance; G <- d0 - d1
+```
+
+- **`hours`**, $\hat\beta_1 = `r f1(bh[2], 3)`$: כל שעה מעלה את ה-[logit]{.en} ב-`r f1(bh[2], 3)`. יחס הסיכויים: $e^{`r f1(bh[2], 3)`} = `r f1(exp(bh[2]), 2)`$, כל שעה מגדילה את ה-odds ב-`r round(100 * (exp(bh[2]) - 1))`%
+- **`z value`** = `Estimate / Std. Error`: מבחן [Wald]{.en}. תחת $H_0: \beta_1 = 0$, $z \sim N(0, 1)$ בקירוב. כאן $z = `r f1(bh[2] / seh[2], 2)`$
+- **החציון:** $x_{50} = `r f1(-bh[1], 3)` / `r f1(bh[2], 3)` = `r f1(-bh[1] / bh[2], 1)`$ שעות. מתחת לזה, רוב המשתמשים לא נרשמים
+- **רווח סמך ל-OR:** קודם ל-$\beta_1$, ואז $e^{(\cdot)}$ על שני הקצוות:
+
+$$
+e^{`r f1(bh[2], 4)` \pm 1.96 \cdot `r f1(seh[2], 4)`} = [`r f1(exp(bh[2] - 1.96 * seh[2]), 2)`,\ `r f1(exp(bh[2] + 1.96 * seh[2]), 2)`]
+$$
+
+- **`Null deviance`, `Residual deviance`, `AIC`**: על אלה בשקף הבא
+
+## [Deviance]{.en} ומבחן למובהקות המודל {.smaller}
+
+**[Deviance]{.en}:** $D = -2\ell(\hat{\boldsymbol\beta})$, כש-$\ell$ היא הלוג-נראות במקסימום. ככל שהמודל מתאים יותר, $D$ קטן יותר. זה המקביל של $SS_E$.
+
+| מודל | מה יש בו | [Deviance]{.en} | df |
+|---|---|---|---|
+| **מודל האפס** ([null]{.en}) | רק $\beta_0$: אותה הסתברות לכולם | $D_0 = `r f1(d0, 2)`$ | $n - 1 = `r fit_h$df.null`$ |
+| **המודל שלנו** | $\beta_0 + \beta_1 x$ | $D_1 = `r f1(d1, 2)`$ | $n - 2 = `r fit_h$df.residual`$ |
+
+**מבחן יחס הנראות** ([likelihood ratio test]{.en}) ל-$H_0: \beta_1 = \dots = \beta_k = 0$:
+
+$$
+G = D_0 - D_1 = `r f1(d0, 2)` - `r f1(d1, 2)` = `r f1(G, 2)` \;\sim\; \chi^2_k \text{ תחת } H_0
+$$
+
+- $k = 1$ (מספר המשתנים המסבירים). $\chi^2_{0.95;\,1} = 3.84$, ו-$G = `r f1(G, 1)`$ גדול בהרבה: **המודל מובהק**
+- זה המקביל של מבחן F לכל המודל ברגרסיה לינארית
+- **`AIC`** $= D_1 + 2(k + 1) = `r f1(d1, 2)` + 4 = `r f1(AIC(fit_h), 1)`$: להשוואה בין מודלים. נמוך יותר = טוב יותר
+
+## אותו מבחן ב-R {.smaller}
+
+```{r}
+#| label: trial-lrt
+anova(fit_h, test = "Chisq")
+c(G = fit_h$null.deviance - fit_h$deviance, chi2_crit = qchisq(0.95, df = 1))
+```
+
+- שורת `hours`: העמודה `Deviance` היא $G$, הירידה ב-[deviance]{.en} כשמוסיפים את המשתנה. `Resid. Dev` הוא $D$ אחרי ההוספה
+- כמו `anova()` של מודל לינארי, גם כאן המשתנים נכנסים **לפי הסדר** בנוסחה. עם כמה משתנים, כל שורה בודקת את התרומה של המשתנה **בנוסחה אחרי הקודמים**. נשתמש בזה בחלק ב למבחן חלקי
+
+## חיזוי: מי בסיכון? {.smaller}
+
+```{r}
+#| label: trial-predict
+predict(fit_h, newdata = tibble(hours = c(2, 5, 8, 12)), type = "response") |> round(3)
+```
+
+- `type = "response"` מחזיר הסתברות. בלי זה, `predict()` מחזיר את ה-[logit]{.en}
+- **ביד, למשתמש שהאזין 5 שעות:** $\text{logit} = `r f1(bh[1], 3)` + `r f1(bh[2], 3)` \cdot 5 = `r f1(bh[1] + 5 * bh[2], 3)`$, ולכן $p = \frac{1}{1 + e^{`r f1(-(bh[1] + 5 * bh[2]), 3)`}} = `r f1(plogis(bh[1] + 5 * bh[2]), 3)`$
+- **ההחלטה העסקית:** משתמש שהאזין עד 5 שעות נרשם בסיכוי של פחות מ-30%. הוא מועמד לתזכורת או להמלצה אישית. אבל זהירות: גם כאן אלה **נתוני תצפית**. משתמש שמאזין הרבה כנראה אוהב ספרי שמע מלכתחילה. כדי לדעת אם תזכורת **גורמת** להרשמה, צריך ניסוי
+
+## בחלק ב {.smaller}
+
+- **כמה משתנים מסבירים:** שעות האזנה **וגם** סוג הספר הראשון. פירוש של OR "כשהשאר קבוע"
+- **מבחן [deviance]{.en} חלקי:** האם משתנה אחד תורם, בנוכחות האחרים. המקביל של מבחן F חלקי
+- **סיווג:** מהסתברות להחלטה. סף, מטריצת בלבול ([confusion matrix]{.en}), רגישות וסגוליות
+- **מה יכול להשתבש:** הפרדה מלאה ([separation]{.en}), אירועים נדירים, ובלבול בין odds להסתברות
+
+# סיכום
+
+## מה לקחת מההרצאה {.smaller}
+
+| השאלה | הכלי | ב-R |
+|---|---|---|
+| תגובה בינארית | $\text{logit}(p) = \beta_0 + \beta_1 x$, $OR = e^{\beta_1}$ | `glm(y ~ x, family = binomial)` |
+| מה המשמעות של המקדם? | $e^{\beta_1}$ מכפיל את ה-odds, לא את ההסתברות | `exp(coef(fit))` |
+| האם המודל הלוגיסטי מובהק? | $G = D_0 - D_1 \sim \chi^2_k$ | `anova(fit, test = "Chisq")` |
+| מה ההסתברות למשתמש חדש? | $p = 1 / (1 + e^{-(\hat\beta_0 + \hat\beta_1 x)})$ | `predict(fit, type = "response")` |

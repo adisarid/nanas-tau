@@ -15,10 +15,10 @@ toc: false
 | 4 | ניתוח שונות חד-כיווני (One-way ANOVA). יום א׳ 8.11, שיעור ההשלמה | [סיכום](lectures/04-one-way-anova.qmd) · [מצגת](lectures/04-one-way-anova-slides.html) · [PDF](lectures/pdf/04-one-way-anova-slides.pdf) |
 | 5 | ניגודים, השוואות מרובות וניתוח שונות א-פרמטרי. יום ב׳ 9.11, נפתח בחזרה קצרה על הרצאה 4 | [סיכום](lectures/05-contrasts-multiple-comparisons.qmd) · [מצגת](lectures/05-contrasts-multiple-comparisons-slides.html) · [PDF](lectures/pdf/05-contrasts-multiple-comparisons-slides.pdf) |
 | 6 | השלמת השוואות מרובות ([Duncan]{.en}, [Tukey]{.en}, [Kruskal–Wallis]{.en}) וניתוח שונות דו-כיווני (Two-way ANOVA). יום ב׳ 16.11 | [סיכום](lectures/06-two-way-anova.qmd) · [מצגת](lectures/06-two-way-anova-slides.html) · [PDF](lectures/pdf/06-two-way-anova-slides.pdf) |
-| 7 | השלמת ניתוח שונות דו-כיווני (בלוקים, אפקטים אקראיים, מודל היררכי), תרגיל מסכם מקצה לקצה (תמחור ספרי שמע), ורגרסיה לוגיסטית (חלק א). יום ב׳ 23.11 | [סיכום](lectures/07-logistic-regression.qmd) · [מצגת](lectures/07-logistic-regression-slides.html) · [PDF](lectures/pdf/07-logistic-regression-slides.pdf) |
-| 8 | ניתוח גורמים ראשיים (PCA) | |
-| 9 | תכנון ניסויים (DOE) | |
-| 10 | סדרות עתיות וחיזוי (א) | |
-| 11 | סדרות עתיות וחיזוי (ב) | |
-| 12 | שיעור השלמה | |
+| 7 | השלמת ניתוח שונות דו-כיווני (בלוקים, אפקטים אקראיים, מודל היררכי) ותרגיל מסכם מקצה לקצה (תמחור ספרי שמע). יום ב׳ 23.11 | [סיכום](lectures/07-two-way-anova-exercise.qmd) · [מצגת](lectures/07-two-way-anova-exercise-slides.html) · [PDF](lectures/pdf/07-two-way-anova-exercise-slides.pdf) |
+| 8 | רגרסיה לוגיסטית (Logistic regression). יום ב׳ 30.11 | [סיכום](lectures/08-logistic-regression.qmd) · [מצגת](lectures/08-logistic-regression-slides.html) · [PDF](lectures/pdf/08-logistic-regression-slides.pdf) |
+| 9 | ניתוח גורמים ראשיים (PCA) | |
+| 10 | תכנון ניסויים (DOE) | |
+| 11 | סדרות עתיות וחיזוי (א) | |
+| 12 | סדרות עתיות וחיזוי (ב) | |
 | 13 | חזרה לבחינה | |

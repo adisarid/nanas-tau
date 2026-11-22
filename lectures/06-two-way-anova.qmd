@@ -1133,7 +1133,7 @@ ggplot(rag, aes(retrieval, acc, colour = size)) +
                position = position_dodge(width = 0.3)) +
   stat_summary(fun = mean, geom = "point", size = 4, shape = 18, position = position_dodge(width = 0.3)) +
   scale_colour_manual(values = unname(nanas_pal[c("sky", "green", "primary")])) +
-  labs(title = "RAG עוזר מאוד למודל הקטן, ולא עוזר לגדול",
+  labs(title = "הוספת RAG עוזרת מאוד למודל הקטן, ולא עוזרת לגדול",
        subtitle = "נקודה: ריצה אחת (200 שאלות) · מעוין וקו: ממוצע התא",
        x = "RAG", y = "Accuracy (%)", colour = "Model size")
 ```
@@ -1245,14 +1245,14 @@ $$
 SS_T &= \sum_{i,j,k} y_{ijk}^2 - C \\
 SS_A &= \frac{1}{bn}\sum_{i} y_{i\cdot\cdot}^2 - C \qquad\qquad
 SS_B = \frac{1}{an}\sum_{j} y_{\cdot j\cdot}^2 - C \\
-SS_{\text{cells}} &= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \qquad\quad\;\, \text{(ה-SS בין כל } ab \text{ התאים)} \\
+SS_{\text{cells}} &= \frac{1}{n}\sum_{i,j} y_{ij\cdot}^2 - C \\
 SS_{AB} &= SS_{\text{cells}} - SS_A - SS_B \\
 SS_E &= SS_T - SS_{\text{cells}}
 \end{aligned}
 $$
 
 - **הכלל:** סכום בריבוע, חלקי מספר התצפיות שבסכום, פחות $C$
-- $SS_{\text{cells}}$ הוא ה-$SS_{Tr}$ של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה
+- $SS_{\text{cells}}$ הוא סכום הריבועים בין כל $ab$ התאים, כלומר ה-$SS_{Tr}$ של ניתוח חד-כיווני על 6 התאים. מתוכו, מה שלא מוסבר על ידי A ו-B לבד הוא האינטראקציה
 
 ## חישוב ידני: טבלת הסכומים {.smaller}
 
@@ -1372,9 +1372,9 @@ emmeans::contrast(emm_rag, "revpairwise")
 - **קטן:** RAG מוסיף כ-17 נקודות. **בינוני:** כ-9. **גדול:** 0
 - `SE` זהה בשלושתם: $\sqrt{2 \cdot `r f1(ss_e / 18, 2)` / 4} = `r f1(sqrt(2 * ss_e / 18 / 4), 2)`$
 
-## ומה עם "קטן + RAG" מול "גדול"? {.smaller}
+## ומה עם מודל קטן עם RAG מול מודל גדול? {.smaller}
 
-שאלה 3 משווה **תאים**. [Tukey]{.en} על כל 6 התאים, עם ה-$MS_E$ של המודל הדו-כיווני:
+**השאלה העסקית:** האם מודל קטן עם RAG, הזול יותר, יכול להחליף את המודל הגדול? זו השוואה בין **תאים**. [Tukey]{.en} על כל 6 התאים, עם ה-$MS_E$ של המודל הדו-כיווני:
 
 ```{r}
 #| label: rag-tukey-cells
